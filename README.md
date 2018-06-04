@@ -1,9 +1,9 @@
 # Hawaii
 
-###Getting Started
+### Getting Started
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
-####Prerequisites
+#### Prerequisites
 What things you need to setup before starting server
 
 - Install [Java](https://docs.oracle.com/javase/10/install/overview-jdk-10-and-jre-10-installation.htm#JSJIG-GUID-8677A77F-231A-40F7-98B9-1FD0B48C346A) and set the JAVA_HOME Environment Variable
