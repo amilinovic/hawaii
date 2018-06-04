@@ -13,7 +13,7 @@ What things you need to setup before starting server
 - Install Lombok plugin in IntelliJ
 - Install PlantUml plugin in IntelliJ
 
-**Create MySQL database:**
+#### Create MySQL database:
 ```sh
 Database name: hawaii
 Port: 3306
@@ -21,7 +21,7 @@ Username: root
 Password: root
 ```
 
-**Server starting:**
+#### Server starting:
 
 1 . Generate war file
 ```sh
