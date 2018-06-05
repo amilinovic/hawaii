@@ -11,14 +11,5 @@ target/
 *.iml
 .idea
 
-# CSS
-**/css/*main.css
-**/css/*.map
-
-# DEPENDENCIES
-**/node_modules
-/.metadata/
-/.metadata/
-
 # SPRING
 .springBeans

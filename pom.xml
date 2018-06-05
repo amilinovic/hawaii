@@ -9,7 +9,7 @@
   <packaging>war</packaging>
 
   <name>hawaii</name>
-  <description>Demo project for Spring Boot</description>
+  <description>Absence management system</description>
 
   <parent>
     <groupId>org.springframework.boot</groupId>
@@ -82,7 +82,7 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.7.0</version>
         <configuration>
-          <release>10</release>
+          <release>${java.version}}</release>
         </configuration>
       </plugin>
     </plugins>
