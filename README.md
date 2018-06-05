@@ -17,6 +17,9 @@ What things you need to setup before starting server
 Navigate to <br/>
 _project\_root_
 
+Install node_modules <br/>
+_yarn_ or _npm_ _install_
+
 And start with <br/>
 _yarn_ _start_ or _npm_ _start_
 
