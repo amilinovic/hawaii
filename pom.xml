@@ -65,6 +65,11 @@
       <artifactId>jaxb-api</artifactId>
       <version>2.3.0</version>
     </dependency>
+    <dependency>
+      <groupId>net.sourceforge.plantuml</groupId>
+      <artifactId>plantuml</artifactId>
+      <version>1.2018.0</version>
+    </dependency>
   </dependencies>
 
   <build>
@@ -84,6 +89,49 @@
         <configuration>
           <release>${java.version}</release>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.liquibase</groupId>
+        <artifactId>liquibase-maven-plugin</artifactId>
+        <version>3.2.0</version>
+        <configuration>
+          <propertyFile>src/main/resources/liquibase.properties</propertyFile>
+        </configuration>
+        <!--<executions>
+          <execution>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>update</goal>
+            </goals>
+          </execution>
+        </executions>-->
+      </plugin>
+
+      <plugin>
+        <groupId>com.github.jeluard</groupId>
+        <artifactId>plantuml-maven-plugin</artifactId>
+        <version>1.2</version>
+
+        <configuration>
+          <sourceFiles>
+            <directory>${basedir}/plantuml</directory>
+            <includes>
+              <include>hawaii.puml</include>
+            </includes>
+          </sourceFiles>
+          <outputDirectory>${basedir}/images</outputDirectory>
+        </configuration>
+
+        <executions>
+          <execution>
+            <id>GeneratePlantUml</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+          </execution>
+        </executions>
+
       </plugin>
     </plugins>
   </build>
