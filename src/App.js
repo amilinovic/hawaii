@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import './App.css';
 import Login from './pages/Login';
-import Dashboard from './pages/Dashboard';
-import {Switch, Route, BrowserRouter} from 'react-router-dom';
+import Dashboard from './pages/Control';
+import {Switch, Route, BrowserRouter, Redirect} from 'react-router-dom';
 
 class App extends Component {
   render() {
@@ -10,6 +10,7 @@ class App extends Component {
       <div className="App">
         <BrowserRouter>
           <Switch>
+            <Redirect exact from="/" to="/leave" />
             <Route path="/login" component={Login} />
             <Route path="/" component={Dashboard} />
           </Switch>

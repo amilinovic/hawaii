@@ -13,8 +13,10 @@ export default class Login extends Component {
           </div>
         </div>
         <h1 className="App-title">Hello Hawaii</h1>
-        <div className="link">
-          <NavLink to="/">Log in</NavLink>
+        <div className="link__block">
+          <NavLink className="link" to="/">
+            Log in
+          </NavLink>
         </div>
       </div>
     );
