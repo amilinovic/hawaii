@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import palms from './palms.gif';
-import './App.scss';
+import './App.css';
 
 class App extends Component {
   render() {
