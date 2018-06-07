@@ -25,23 +25,30 @@ Username: root
 Password: root
 ```
 
-#### Server starting:
+#### Building application:
 
-1 . Generate war file
-```sh
-mvn clean install
-```
-2 . Move war file to tomcat "webapps" folder
+1 . Navigate to <br/>
+_project\_root_
 
-3 . Start tomcat with:
-```sh
-service tomcat start 
-```
+2 . Generate war file <br/>
+_mvn_ _clean_ _install_
 
-Or startup.sh from bin folder
-```sh
-./startup.sh
-```
+##### Start with maven
+
+1 . _mvn_ _spring-boot:run_
+
+##### Start with tomcat
+
+1 . Move war file from _target_ folder to tomcat _webapps_ folder
+
+2 . Start tomcat with: <br/>
+_service_ _tomcat_ _start_ 
+
+Or startup.sh from bin folder <br/>
+_./startup.sh_
+
+3 . Stop tomcat with: <br/>
+_./shutdown.sh_ 
 
 Then go to http://localhost:8080/ to see results
 
@@ -55,19 +62,17 @@ These instructions will get you a copy of the project up and running on your loc
 
 What things you need to setup before starting server
 
-<ul>
-    <li>Install <a target="_blank" href="https://nodejs.org/en/">Node</a></li>
-</ul>
+- Install [Node](https://nodejs.org/en/)
 
 #### Server starting
 
-Navigate to <br/>
+1 . Navigate to <br/>
 _project\_root_/_src_/_main_/_frontend_
 
-Install node_modules <br/>
+2 . Install node_modules <br/>
 _yarn_ or _npm_ _install_
 
-And start with <br/>
+3 . And start with <br/>
 _yarn_ _start_ or _npm_ _start_
 
 Then open http://localhost:3000/ to see your app
