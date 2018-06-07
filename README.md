@@ -37,6 +37,8 @@ _mvn_ _clean_ _install_
 
 1 . _mvn_ _spring-boot:run_
 
+Then go to http://localhost:8080 to see results
+
 ##### Start with tomcat
 
 1 . Move war file from _target_ folder to tomcat _webapps_ folder
@@ -47,10 +49,12 @@ _service_ _tomcat_ _start_
 Or startup.sh from bin folder <br/>
 _./startup.sh_
 
+Then go to http://localhost:8080/hawaii (*) to see results
+
+* _/hawaii_ path depends on tomcat configuration
+
 3 . Stop tomcat with: <br/>
 _./shutdown.sh_ 
-
-Then go to http://localhost:8080/ to see results
 
 ## Frontend
 
