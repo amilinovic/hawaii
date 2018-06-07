@@ -62,7 +62,7 @@ What things you need to setup before starting server
 #### Server starting
 
 Navigate to <br/>
-_project\_root_
+_project\_root_/_src_/_main_/_frontend_
 
 Install node_modules <br/>
 _yarn_ or _npm_ _install_
