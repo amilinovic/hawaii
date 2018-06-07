@@ -51,7 +51,7 @@ _./startup.sh_
 
 Then go to http://localhost:8080/hawaii (*) to see results
 
-* _/hawaii_ path depends on tomcat configuration
+(*) _/hawaii_ path depends on tomcat configuration
 
 3 . Stop tomcat with: <br/>
 _./shutdown.sh_ 
