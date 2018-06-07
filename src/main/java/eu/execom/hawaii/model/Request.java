@@ -22,7 +22,7 @@ import lombok.Data;
 @Data
 public class Request implements Serializable {
 
-  private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = -2334871552852759172L;
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

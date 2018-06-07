@@ -16,7 +16,7 @@ import lombok.Data;
 @Data
 public class Team implements Serializable {
 
-  private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = -448979442951482200L;
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,8 +28,8 @@ public class Team implements Serializable {
   private String emails;
 
   @OneToMany(mappedBy = "team")
-  private Set<UserTeam> managerTeams;
+  private Set<ManagerTeam> teamManagers;
 
   @OneToMany(mappedBy = "team")
-  private Set<UserTeam> userTeams;
+  private Set<User> users;
 }

@@ -20,6 +20,8 @@ import lombok.Data;
 @Data
 public class Day implements Serializable {
 
+  private static final long serialVersionUID = -8942661964026176956L;
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;

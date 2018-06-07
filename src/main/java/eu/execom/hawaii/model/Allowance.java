@@ -2,13 +2,11 @@ package eu.execom.hawaii.model;
 
 import java.io.Serializable;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 
 import lombok.Data;
 
@@ -16,7 +14,7 @@ import lombok.Data;
 @Data
 public class Allowance implements Serializable {
 
-  private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 4288980454836980764L;
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,8 +34,7 @@ public class Allowance implements Serializable {
 
   private int manualAdjust;
 
-  @OneToOne(cascade = CascadeType.ALL)
-  @JoinColumn(name = "user_id")
+  @ManyToOne
   private User user;
 
 }

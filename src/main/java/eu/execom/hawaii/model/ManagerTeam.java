@@ -10,9 +10,9 @@ import lombok.Data;
 
 @Entity
 @Data
-public class UserTeam implements Serializable {
+public class ManagerTeam implements Serializable {
 
-  private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 2606476682255482836L;
 
   @Id
   private Long id;

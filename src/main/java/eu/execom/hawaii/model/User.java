@@ -2,7 +2,6 @@ package eu.execom.hawaii.model;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -10,6 +9,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
@@ -24,7 +24,7 @@ import lombok.Data;
 @Where(clause = "active = 'false'")
 public class User implements Serializable {
 
-  private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 950754391551134726L;
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,7 +34,7 @@ public class User implements Serializable {
   private boolean active;
 
   @NotNull
-  private String name;
+  private String fullName;
 
   private String jobTitle;
 
@@ -45,13 +45,18 @@ public class User implements Serializable {
   @NotNull
   private String email;
 
-  @OneToMany(mappedBy = "user")
-  private Set<UserTeam> userTeams;
+  @ManyToOne
+  private Team team;
+
+  @OneToMany
+  private List<ManagerTeam> managerTeams;
 
   @OneToMany(mappedBy = "user")
   private List<Request> requests;
 
-  @OneToOne(mappedBy = "user")
-  private Allowance allowance;
+  @OneToMany(mappedBy = "user")
+  private List<Allowance> allowance;
+
+  private LeaveProfile leaveProfile;
 
 }
