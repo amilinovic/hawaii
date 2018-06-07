@@ -30,7 +30,7 @@ hs_err_pid*
 .springBeans
 
 # dependencies
-/node_modules
+**/node_modules
 
 # testing
 /coverage
