@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import '../node_modules/reset-css/reset.css';
+import 'reset-css/reset.css';
 import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 import { injectGlobal } from 'styled-components';

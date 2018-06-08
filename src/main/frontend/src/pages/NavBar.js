@@ -17,7 +17,7 @@ const navLinks = [
   </NavLink>
 ));
 
-export default class Control extends Component {
+export default class NavBar extends Component {
   render() {
     return (
       <Fragment>
