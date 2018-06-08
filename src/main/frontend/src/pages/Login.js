@@ -1,6 +1,7 @@
 import React, { Component, Fragment } from 'react';
+import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
-import Link from '../components/Link';
+import { StyledLink } from '../components/StyledLink';
 
 const Title = styled.h1`
   font-size: 1.5em;
@@ -12,9 +13,9 @@ export default class Login extends Component {
     return (
       <Fragment>
         <Title>Hello Hawaii</Title>
-        <Link url="/" color="white">
-          Log in
-        </Link>
+        <NavLink to="/leave">
+          <StyledLink>Log in</StyledLink>
+        </NavLink>
       </Fragment>
     );
   }

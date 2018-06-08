@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
-export default styled.button`
-  color: white;
+export const StyledLink = styled.span`
+  color: ${props => (props.color ? props.color : 'white')};
   padding: 10px;
   border-radius: 5px;
   background: #fb4b4f;
