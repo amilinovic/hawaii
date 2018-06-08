@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 import lombok.Data;
 
@@ -19,4 +20,7 @@ public class PublicHoliday {
   private String name;
 
   private LocalDate date;
+
+  @ManyToOne
+  private LeaveProfile leaveProfile;
 }

@@ -1,6 +1,7 @@
 package eu.execom.hawaii.model;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Entity;
@@ -28,8 +29,8 @@ public class Team implements Serializable {
   private String emails;
 
   @OneToMany(mappedBy = "team")
-  private Set<ManagerTeam> teamManagers;
+  private List<User> users;
 
   @OneToMany(mappedBy = "team")
-  private Set<User> users;
+  private List<ManagerTeam> teamManagers;
 }

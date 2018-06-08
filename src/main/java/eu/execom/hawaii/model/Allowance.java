@@ -24,13 +24,13 @@ public class Allowance implements Serializable {
 
   private int annual;
 
-  private int sick;
+  private int taken;
 
-  private int training;
-
-  private int carriedOver;
+  private int sickness;
 
   private int bonus;
+
+  private int carriedOver;
 
   private int manualAdjust;
 

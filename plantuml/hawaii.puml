@@ -1,0 +1,81 @@
+@startuml
+!define Table(name,desc) class name as "desc" << (T,#FFAAAA) >>
+' we use bold for primary key
+' green color for unique
+' and underscore for not_null
+!define primary_key(x) <b>x</b>
+!define unique(x) <color:green>x</color>
+!define not_null(x) <u>x</u>
+' other tags available:
+' <i></i>
+' <back:COLOR></color>, where color is a color name or html color code
+' (#FFAACC)
+' see: http://plantuml.com/classes.html#More
+hide methods
+hide stereotypes
+skinparam linetype ortho
+' skinparam linetype polyline
+' skinparam style strictuml
+
+' entities
+
+Table(user, "User") {
+  primary_key(Id) Bigint
+  not_null(active) Bit
+  not_null(name) Varchar[255]
+  job_title Varchar[255]
+  not_null(user_role) Varchar[255]
+  not_null(email) Varchar[255]
+}
+
+Table(user_team, "User Team") {
+  primary_key(Id) Bigint
+  team_id Bigint
+  user_id Bigint
+}
+
+Table(team, "Team") {
+  primary_key(Id) Bigint
+  not_null(name) Varchar[255]
+  emails Varchar[255]
+}
+
+Table(allowance, "Allowance") {
+  primary_key(Id) Bigint
+  not_null(year) Int
+  not_null(annual) Int
+  not_null(sick) Int
+  not_null(training) Int
+  not_null(carried_over) Int
+  not_null(bonus) Int
+  not_null(manual_adjust) Int
+  user_id Bigint
+}
+
+Table(request, "Request") {
+  primary_key(Id) Bigint
+  user_id Bigint
+  not_null(request_type) Varchar[255]
+  not_null(request_status) Varchar[255]
+  reason Varchar[255]
+  approved_by Bigint
+}
+
+Table(day, "Day") {
+  primary_key(Id) Bigint
+  date Date
+  not_null(duration) Varchar[255]
+  request_id Bigint
+}
+
+
+' relationships
+
+' one to many relationship
+user -{ user_team
+team -{ user_team
+user -{ allowance
+user -{ request
+user -{ request
+request -{ day
+@enduml

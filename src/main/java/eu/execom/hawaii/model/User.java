@@ -11,7 +11,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Where;
@@ -48,7 +47,7 @@ public class User implements Serializable {
   @ManyToOne
   private Team team;
 
-  @OneToMany
+  @OneToMany(mappedBy = "user")
   private List<ManagerTeam> managerTeams;
 
   @OneToMany(mappedBy = "user")
@@ -57,6 +56,7 @@ public class User implements Serializable {
   @OneToMany(mappedBy = "user")
   private List<Allowance> allowance;
 
+  @ManyToOne
   private LeaveProfile leaveProfile;
 
 }

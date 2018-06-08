@@ -1,7 +1,6 @@
 package eu.execom.hawaii.model.enumerations;
 
-public enum RequestType {
+public enum AbsenceType {
   LEAVE,
-  SICK,
-  BONUS
+  SICK
 }

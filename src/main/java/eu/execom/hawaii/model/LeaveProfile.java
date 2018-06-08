@@ -1,28 +1,30 @@
 package eu.execom.hawaii.model;
 
 import java.util.List;
-import java.util.Map;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 import lombok.Data;
 
 @Entity
 @Data
-public class LeaveProfile {
-
-  @Id
-  @GeneratedValue
-  private Long id;
+public class LeaveProfile extends BaseEntity {
 
   private String name;
 
   private String comment;
 
-  private Map<Long, LeaveProfileDetail> leaveProfileDetails;
+  private int entitlement;
 
+  private int maxCarriedOver;
+
+  private int training;
+
+  @OneToMany(mappedBy = "leaveProfile")
   private List<PublicHoliday> publicHolidays;
+
+  @OneToMany(mappedBy = "leaveProfile")
+  private List<User> users;
 
 }
