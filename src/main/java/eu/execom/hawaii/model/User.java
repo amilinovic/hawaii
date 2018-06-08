@@ -6,28 +6,20 @@ import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.annotations.Where;
-
 import eu.execom.hawaii.model.enumerations.UserRole;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Entity
 @Data
-@Where(clause = "active = 'false'")
-public class User implements Serializable {
+@EqualsAndHashCode(callSuper = false)
+public class User extends BaseEntity implements Serializable {
 
   private static final long serialVersionUID = 950754391551134726L;
-
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
 
   @NotNull
   private boolean active;

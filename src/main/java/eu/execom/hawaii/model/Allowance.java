@@ -3,22 +3,17 @@ package eu.execom.hawaii.model;
 import java.io.Serializable;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Entity
 @Data
-public class Allowance implements Serializable {
+@EqualsAndHashCode(callSuper = false)
+public class Allowance extends BaseEntity implements Serializable {
 
   private static final long serialVersionUID = 4288980454836980764L;
-
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
 
   private int year;
 

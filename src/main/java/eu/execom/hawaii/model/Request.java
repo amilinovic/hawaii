@@ -14,9 +14,11 @@ import javax.validation.constraints.NotNull;
 
 import eu.execom.hawaii.model.enumerations.RequestStatus;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Entity
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class Request extends BaseEntity implements Serializable {
 
   private static final long serialVersionUID = -2334871552852759172L;
