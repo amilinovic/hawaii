@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.NotNull;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -16,6 +17,7 @@ public class LeaveProfile extends BaseEntity implements Serializable {
 
   private static final long serialVersionUID = -7099701790737670685L;
 
+  @NotNull
   private String name;
 
   private String comment;

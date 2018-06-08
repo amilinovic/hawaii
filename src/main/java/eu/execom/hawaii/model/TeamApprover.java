@@ -11,7 +11,7 @@ import lombok.EqualsAndHashCode;
 @Entity
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class ManagerTeam extends BaseEntity implements Serializable {
+public class TeamApprover extends BaseEntity implements Serializable {
 
   private static final long serialVersionUID = 2606476682255482836L;
 

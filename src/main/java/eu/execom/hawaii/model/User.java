@@ -21,7 +21,6 @@ public class User extends BaseEntity implements Serializable {
 
   private static final long serialVersionUID = 950754391551134726L;
 
-  @NotNull
   private boolean active;
 
   @NotNull
@@ -40,7 +39,7 @@ public class User extends BaseEntity implements Serializable {
   private Team team;
 
   @OneToMany(mappedBy = "user")
-  private List<ManagerTeam> managerTeams;
+  private List<TeamApprover> teamApprovers;
 
   @OneToMany(mappedBy = "user")
   private List<Request> requests;

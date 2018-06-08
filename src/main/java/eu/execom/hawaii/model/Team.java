@@ -26,5 +26,5 @@ public class Team extends BaseEntity implements Serializable {
   private List<User> users;
 
   @OneToMany(mappedBy = "team")
-  private List<ManagerTeam> teamManagers;
+  private List<TeamApprover> teamApprovers;
 }

@@ -1,7 +1,7 @@
 package eu.execom.hawaii.model.enumerations;
 
 public enum UserRole {
-  HR_ADMIN,
-  TEAM_MANAGER,
+  HR_MANAGER,
+  APPROVER,
   USER
 }

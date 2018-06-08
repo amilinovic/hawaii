@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.NotNull;
 
 import eu.execom.hawaii.model.enumerations.AbsenceType;
 import lombok.Data;
@@ -21,10 +22,12 @@ public class Absence extends BaseEntity implements Serializable {
   private static final long serialVersionUID = -3525779850487542671L;
 
   @Column
+  @NotNull
   private String name;
 
   @Column
   @Enumerated(EnumType.STRING)
+  @NotNull
   private AbsenceType absenceType;
 
   @Column

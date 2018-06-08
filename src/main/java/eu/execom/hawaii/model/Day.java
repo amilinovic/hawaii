@@ -23,8 +23,10 @@ public class Day extends BaseEntity implements Serializable {
 
   @ManyToOne
   @JoinColumn(name = "request_id")
+  @NotNull
   private Request request;
 
+  @NotNull
   private LocalDate date;
 
   @NotNull
