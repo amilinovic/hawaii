@@ -6,6 +6,7 @@ import TeamCalendar from '../components/TeamCalendar';
 import ExecomCalendar from '../components/ExecomCalendar';
 import Button from '../components/Button';
 import Link from '../components/Link';
+import TopHeader from '../components/TopHeader';
 
 const navLinks = [
   { url: 'leave', name: 'Leave' },
@@ -30,10 +31,10 @@ export default class Control extends Component {
           <Route path="/team-calendar" component={TeamCalendar} />
           <Route path="/execom-calendar" component={ExecomCalendar} />
         </Switch>
-        <Button>Test button</Button>
         <Link color="white" url="/login">
           Log out
         </Link>
+        <TopHeader />
       </Fragment>
     );
   }
