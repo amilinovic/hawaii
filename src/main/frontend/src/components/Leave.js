@@ -1,11 +1,11 @@
-import React, {Component} from 'react';
+import React, { Component, Fragment } from 'react';
 
 export default class Leave extends Component {
   render() {
     return (
-      <div>
+      <Fragment>
         <div>Leave</div>
-      </div>
+      </Fragment>
     );
   }
 }

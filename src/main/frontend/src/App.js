@@ -1,13 +1,12 @@
-import React, {Component} from 'react';
-import './App.css';
+import React, { Component, Fragment } from 'react';
 import Login from './pages/Login';
 import Dashboard from './pages/Control';
-import {Switch, Route, BrowserRouter, Redirect} from 'react-router-dom';
+import { Switch, Route, BrowserRouter, Redirect } from 'react-router-dom';
 
-class App extends Component {
+export default class App extends Component {
   render() {
     return (
-      <div className="App">
+      <Fragment>
         <BrowserRouter>
           <Switch>
             <Redirect exact from="/" to="/leave" />
@@ -15,9 +14,7 @@ class App extends Component {
             <Route path="/" component={Dashboard} />
           </Switch>
         </BrowserRouter>
-      </div>
+      </Fragment>
     );
   }
 }
-
-export default App;

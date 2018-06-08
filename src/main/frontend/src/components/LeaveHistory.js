@@ -1,11 +1,11 @@
-import React, {Component} from 'react';
+import React, { Component, Fragment } from 'react';
 
 export default class LeaveHistory extends Component {
   render() {
     return (
-      <div>
+      <Fragment>
         <div>Leave history</div>
-      </div>
+      </Fragment>
     );
   }
 }

@@ -1,37 +1,40 @@
-import React, {Component} from 'react';
-import {NavLink} from 'react-router-dom';
-import {Switch, Route} from 'react-router-dom';
+import React, { Component, Fragment } from 'react';
+import { Switch, Route } from 'react-router-dom';
 import Leave from '../components/Leave';
 import LeaveHistory from '../components/LeaveHistory';
 import TeamCalendar from '../components/TeamCalendar';
 import ExecomCalendar from '../components/ExecomCalendar';
+import Button from '../components/Button';
+import Link from '../components/Link';
+
+const navLinks = [
+  { url: 'leave', name: 'Leave' },
+  { url: 'leave-history', name: 'Leave history' },
+  { url: 'team-calendar', name: 'Team calendar' },
+  { url: 'execom-calendar', name: 'Execom calendar' }
+];
 
 export default class Control extends Component {
   render() {
+    const linkItems = navLinks.map(navLink => (
+      <Link color="white" key={navLink.url} url={navLink.url}>
+        {navLink.name}
+      </Link>
+    ));
     return (
-      <div>
-        <NavLink className="link" to="/leave">
-          Leave
-        </NavLink>
-        <NavLink className="link" to="/leave-history">
-          Leave history
-        </NavLink>
-        <NavLink className="link" to="/team-calendar">
-          Team calendar
-        </NavLink>
-        <NavLink className="link" to="/execom-calendar">
-          Execom calendar
-        </NavLink>
+      <Fragment>
+        {linkItems}
         <Switch>
           <Route path="/leave" component={Leave} />
           <Route path="/leave-history" component={LeaveHistory} />
           <Route path="/team-calendar" component={TeamCalendar} />
           <Route path="/execom-calendar" component={ExecomCalendar} />
         </Switch>
-        <NavLink className="link" to="/login">
+        <Button>Test button</Button>
+        <Link color="white" url="/login">
           Log out
-        </NavLink>
-      </div>
+        </Link>
+      </Fragment>
     );
   }
 }

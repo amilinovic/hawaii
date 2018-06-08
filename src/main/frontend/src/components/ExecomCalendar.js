@@ -1,11 +1,11 @@
-import React, {Component} from 'react';
+import React, { Component, Fragment } from 'react';
 
 export default class ExecomCalendar extends Component {
   render() {
     return (
-      <div>
+      <Fragment>
         <div>Execom calendar</div>
-      </div>
+      </Fragment>
     );
   }
 }

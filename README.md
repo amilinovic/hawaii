@@ -28,14 +28,19 @@ Password: root
 #### Building application:
 
 1 . Navigate to <br/>
-_project\_root_
+```
+project_root
+```
 
 2 . Generate war file <br/>
-_mvn_ _clean_ _install_
+```
+mvn clean install
+```
 
 ##### Start with maven
-
-1 . _mvn_ _spring-boot:run_
+```
+mvn spring-boot:run
+```
 
 Then go to http://localhost:8080 to see results
 
@@ -44,17 +49,23 @@ Then go to http://localhost:8080 to see results
 1 . Move war file from _target_ folder to tomcat _webapps_ folder
 
 2 . Start tomcat with: <br/>
-_service_ _tomcat_ _start_ 
+```
+service tomcat start 
+```
 
 Or startup.sh from bin folder <br/>
-_./startup.sh_
+```
+./startup.sh
+```
 
 Then go to http://localhost:8080/hawaii (*) to see results
 
 (*) _/hawaii_ path depends on tomcat configuration
 
 3 . Stop tomcat with: <br/>
-_./shutdown.sh_ 
+```
+./shutdown.sh 
+```
 
 ## Frontend
 
@@ -71,12 +82,18 @@ What things you need to setup before starting server
 #### Server starting
 
 1 . Navigate to <br/>
-_project\_root_/_src_/_main_/_frontend_
+```
+project_root/src/main/frontend
+```
 
 2 . Install node_modules <br/>
-_yarn_ or _npm_ _install_
+```
+yarn or npm install
+```
 
 3 . And start with <br/>
-_yarn_ _start_ or _npm_ _start_
+```
+yarn start or npm start
+```
 
 Then open http://localhost:3000/ to see your app

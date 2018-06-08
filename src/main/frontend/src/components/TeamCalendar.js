@@ -1,11 +1,11 @@
-import React, {Component} from 'react';
+import React, { Component, Fragment } from 'react';
 
 export default class TeamCalendar extends Component {
   render() {
     return (
-      <div>
+      <Fragment>
         <div>Team calendar</div>
-      </div>
+      </Fragment>
     );
   }
 }
