@@ -11,8 +11,8 @@
 ' <back:COLOR></color>, where color is a color name or html color code
 ' (#FFAACC)
 ' see: http://plantuml.com/classes.html#More
-hide methods
-hide stereotypes
+'hide methods
+'hide stereotypes
 skinparam linetype ortho
 ' skinparam linetype polyline
 ' skinparam style strictuml
@@ -22,13 +22,15 @@ skinparam linetype ortho
 Table(user, "User") {
   primary_key(Id) Bigint
   not_null(active) Bit
-  not_null(name) Varchar[255]
+  not_null(full_name) Varchar[255]
   job_title Varchar[255]
   not_null(user_role) Varchar[255]
   not_null(email) Varchar[255]
+  leave_profile_id Bigint
+  team_id Bigint
 }
 
-Table(user_team, "User Team") {
+Table(team_approver, "Team Approver") {
   primary_key(Id) Bigint
   team_id Bigint
   user_id Bigint
@@ -44,10 +46,10 @@ Table(allowance, "Allowance") {
   primary_key(Id) Bigint
   not_null(year) Int
   not_null(annual) Int
-  not_null(sick) Int
-  not_null(training) Int
-  not_null(carried_over) Int
+  not_null(taken) Int
+  not_null(sickness) Int
   not_null(bonus) Int
+  not_null(carried_over) Int
   not_null(manual_adjust) Int
   user_id Bigint
 }
@@ -55,27 +57,58 @@ Table(allowance, "Allowance") {
 Table(request, "Request") {
   primary_key(Id) Bigint
   user_id Bigint
-  not_null(request_type) Varchar[255]
+  not_null(is_bonus) Bit
+  absence_id Bigint
   not_null(request_status) Varchar[255]
   reason Varchar[255]
   approved_by Bigint
 }
 
+Table(absence, "Absence") {
+  primary_key(Id) Bigint
+  not_null(name) Varchar[255]
+  comment  Varchar[255]
+  not_null(absence_type) Varchar[255]
+  deducted Bit
+}
+
 Table(day, "Day") {
   primary_key(Id) Bigint
-  date Date
+  not_null(date) Date
   not_null(duration) Varchar[255]
   request_id Bigint
+}
+
+Table(leave_profile, "Leave Profile") {
+  primary_key(Id) Bigint
+  not_null(name) Varchar[255]
+  comment  Varchar[255]
+  not_null(entitlement) Int
+  not_null(max_carried_over) Int
+  not_null(training) Int
+}
+
+Table(public_holiday, "Public Holiday") {
+  primary_key(Id) Bigint
+  not_null(name) Varchar[255]
+  not_null(date) Date
+  leave_profile_id Bigint
 }
 
 
 ' relationships
 
 ' one to many relationship
-user -{ user_team
-team -{ user_team
+user --{ team_approver
+team -{ team_approver
+team -{ user : Member
 user -{ allowance
-user -{ request
-user -{ request
-request -{ day
+user --{ request
+user --{ request
+absence -{ request
+request --{ day
+leave_profile --{ user
+leave_profile -{ public_holiday
+note right of request: The two separate relations\nrepresent the user that\nmakes the request and\nthe approver
+note right of day: Duration represents one of\nthe three options: morning,\nafternoon or full day
 @enduml
