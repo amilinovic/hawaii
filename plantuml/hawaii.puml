@@ -119,11 +119,13 @@ enum UserRole {
 ' relationships
 
 ' one to many relationship
-user --{ team_approver
-team -{ team_approver
-team -{ user : member
+team_approver }- user
+team_approver -[hidden]> user
+team_approver }- team
+team -[hidden]-> team_approver
+team --{ user : member
 user . UserRole
-user --{ allowance
+allowance }- user
 user --{ request : user_id
 user ---{ request : approver_id
 absence -{ request
