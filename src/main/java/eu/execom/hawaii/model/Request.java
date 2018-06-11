@@ -44,6 +44,6 @@ public class Request extends BaseEntity implements Serializable {
   private List<Day> days;
 
   @ManyToOne
-  private User approvedBy;
+  private User approver;
 
 }
