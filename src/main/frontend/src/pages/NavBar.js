@@ -5,23 +5,13 @@ import LeaveHistory from '../components/LeaveHistory';
 import TeamCalendar from '../components/TeamCalendar';
 import ExecomCalendar from '../components/ExecomCalendar';
 import { StyledLink } from '../components/StyledLink';
-
-const navLinks = [
-  { url: 'leave', name: 'Leave' },
-  { url: 'leave-history', name: 'Leave history' },
-  { url: 'team-calendar', name: 'Team calendar' },
-  { url: 'execom-calendar', name: 'Execom calendar' }
-].map(navLink => (
-  <NavLink color="white" key={navLink.url} to={navLink.url}>
-    <StyledLink>{navLink.name}</StyledLink>
-  </NavLink>
-));
+import Sidebar from '../components/Sidebar';
 
 export default class NavBar extends Component {
   render() {
     return (
       <Fragment>
-        {navLinks}
+        <Sidebar />
         <Switch>
           <Route path="/leave" component={Leave} />
           <Route path="/leave-history" component={LeaveHistory} />
