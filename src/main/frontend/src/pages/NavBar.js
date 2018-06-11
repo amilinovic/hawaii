@@ -5,6 +5,7 @@ import LeaveHistory from '../components/LeaveHistory';
 import TeamCalendar from '../components/TeamCalendar';
 import ExecomCalendar from '../components/ExecomCalendar';
 import { StyledLink } from '../components/StyledLink';
+import InformationHeader from '../components/InformationHeader';
 
 const navLinks = [
   { url: 'leave', name: 'Leave' },
@@ -21,6 +22,7 @@ export default class NavBar extends Component {
   render() {
     return (
       <Fragment>
+        <InformationHeader />
         {navLinks}
         <Switch>
           <Route path="/leave" component={Leave} />
