@@ -6,7 +6,6 @@ import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 
 import eu.execom.hawaii.model.request.Request;
-import eu.execom.hawaii.model.request.SicknessRequest;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -17,7 +16,7 @@ public class Sickness extends Absence {
 
   private static final long serialVersionUID = -1173499998168099381L;
 
-  @OneToMany(mappedBy = "sickness", targetEntity = SicknessRequest.class)
+  @OneToMany(mappedBy = "absence")
   private List<Request> sicknessRequests;
 
 }

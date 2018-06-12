@@ -6,7 +6,6 @@ import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 
 import eu.execom.hawaii.model.request.Request;
-import eu.execom.hawaii.model.request.LeaveRequest;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -19,7 +18,7 @@ public class Leave extends Absence {
 
   private boolean deducted;
 
-  @OneToMany(mappedBy = "leave", targetEntity = LeaveRequest.class)
+  @OneToMany(mappedBy = "absence")
   private List<Request> leaveRequests;
 
 }

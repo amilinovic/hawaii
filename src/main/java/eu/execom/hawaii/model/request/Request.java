@@ -16,6 +16,7 @@ import javax.validation.constraints.NotNull;
 import eu.execom.hawaii.model.BaseEntity;
 import eu.execom.hawaii.model.Day;
 import eu.execom.hawaii.model.User;
+import eu.execom.hawaii.model.absence.Absence;
 import eu.execom.hawaii.model.enumerations.RequestStatus;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -40,6 +41,9 @@ public abstract class Request extends BaseEntity implements Serializable {
 
   @OneToMany(mappedBy = "request")
   private List<Day> days;
+
+  @ManyToOne
+  private Absence absence;
 
   @ManyToOne
   private User approver;

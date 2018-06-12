@@ -53,9 +53,11 @@ Table(allowance, "Allowance") {
 
 Table(request, "Request") {
   primary_key(Id) Bigint
+  not_null(dtype) Varchar[31]
   user_id Bigint
   approver_id Bigint
-  absence_id Bigint
+  leave_id Bigint
+  sickness_id Bigint
   not_null(request_status) RequestStatus
   reason Varchar[255]
   not_null(is_bonus) Bit
@@ -63,8 +65,8 @@ Table(request, "Request") {
 
 Table(absence, "Absence") {
   primary_key(Id) Bigint
+  not_null(dtype) Varchar[31]
   not_null(name) Varchar[255]
-  not_null(absence_type) AbsenceType
   deducted Bit
   comment  Varchar[255]
 }
@@ -105,11 +107,6 @@ enum RequestStatus {
   CANCELLED
 }
 
-enum AbsenceType {
-  LEAVE
-  SICK
-}
-
 enum UserRole {
   HR_MANAGER
   APPROVER
@@ -126,11 +123,14 @@ user . UserRole
 user --{ allowance
 user --{ request : requested_by
 user ---{ request : approved_by
-absence -{ request
-request --{ day
+'absence -{ request : leave_id
+'absence -{ request : sickness_id
+request }-- absence
+'request --{ day
+day }- request
 leave_profile --{ user
 leave_profile -{ public_holiday
-day . Duration
-AbsenceType . absence
+'day . Duration
+Duration . day
 request . RequestStatus
 @enduml
