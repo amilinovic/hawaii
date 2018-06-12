@@ -45,9 +45,32 @@ public class User extends BaseEntity implements Serializable {
   private List<Request> requests;
 
   @OneToMany(mappedBy = "user")
-  private List<Allowance> allowance;
+  private List<Allowance> allowances;
 
   @ManyToOne
   private LeaveProfile leaveProfile;
+
+  private Allowance getCurrentAllowance() {
+    return allowances.get(allowances.size());
+  }
+
+  public void addBonusDays(int added) {
+    Allowance currentAllowance = getCurrentAllowance();
+    int oldBonus = currentAllowance.getBonus();
+    currentAllowance.setBonus(oldBonus + added);
+  }
+
+  public void addSickDays(int added) {
+    Allowance currentAllowance = getCurrentAllowance();
+    int oldSickDays = currentAllowance.getSickness();
+    currentAllowance.setBonus(oldSickDays + added);
+  }
+
+  public void addTakenDays(int taken) {
+    Allowance currentAllowance = getCurrentAllowance();
+    int oldTaken = currentAllowance.getTaken();
+    currentAllowance.setBonus(oldTaken + taken);
+  }
+
 
 }

@@ -124,8 +124,8 @@ team -{ team_approver
 team -{ user : member
 user . UserRole
 user --{ allowance
-user --{ request : user_id
-user ---{ request : approver_id
+user --{ request : requested_by
+user ---{ request : approved_by
 absence -{ request
 request --{ day
 leave_profile --{ user
