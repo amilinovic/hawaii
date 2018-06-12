@@ -13,12 +13,11 @@ import lombok.EqualsAndHashCode;
 @Entity
 @Data
 @EqualsAndHashCode(callSuper = true)
-@DiscriminatorValue("sickness")
-public class Sickness extends Absence {
+@DiscriminatorValue("bonus")
+public class BonusDays extends Absence {
 
-  private static final long serialVersionUID = -1173499998168099381L;
+  private static final long serialVersionUID = -2588261514154877517L;
 
   @OneToMany(mappedBy = "absence")
-  private List<Request> sicknessRequests;
-
+  private List<Request> bonusDaysRequests;
 }

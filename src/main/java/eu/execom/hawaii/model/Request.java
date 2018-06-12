@@ -1,4 +1,4 @@
-package eu.execom.hawaii.model.request;
+package eu.execom.hawaii.model;
 
 import java.io.Serializable;
 import java.util.List;
@@ -13,9 +13,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 
-import eu.execom.hawaii.model.BaseEntity;
-import eu.execom.hawaii.model.Day;
-import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.absence.Absence;
 import eu.execom.hawaii.model.enumerations.RequestStatus;
 import lombok.Data;
@@ -25,7 +22,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-public abstract class Request extends BaseEntity implements Serializable {
+public class Request extends BaseEntity implements Serializable {
 
   private static final long serialVersionUID = -2334871552852759172L;
 

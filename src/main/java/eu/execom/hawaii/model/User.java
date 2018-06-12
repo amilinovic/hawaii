@@ -11,7 +11,6 @@ import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 
 import eu.execom.hawaii.model.enumerations.UserRole;
-import eu.execom.hawaii.model.request.Request;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
