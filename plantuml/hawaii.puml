@@ -65,7 +65,7 @@ Table(request, "Request") {
 
 Table(absence, "Absence") {
   primary_key(Id) Bigint
-  not_null(dtype) Varchar[31]
+  not_null(absence_type) Varchar[31]
   not_null(name) Varchar[255]
   deducted Bit
   comment  Varchar[255]
