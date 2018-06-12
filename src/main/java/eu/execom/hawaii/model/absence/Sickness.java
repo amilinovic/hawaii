@@ -2,6 +2,7 @@ package eu.execom.hawaii.model.absence;
 
 import java.util.List;
 
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 
@@ -12,6 +13,7 @@ import lombok.EqualsAndHashCode;
 @Entity
 @Data
 @EqualsAndHashCode(callSuper = true)
+@DiscriminatorValue("sickness")
 public class Sickness extends Absence {
 
   private static final long serialVersionUID = -1173499998168099381L;
