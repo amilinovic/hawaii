@@ -1,10 +1,18 @@
 package eu.execom.hawaii.model.request;
 
-import javax.persistence.Entity;
+import java.util.List;
 
-import eu.execom.hawaii.model.Absence;
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+
+import eu.execom.hawaii.model.AbsenceType;
+import eu.execom.hawaii.model.Request;
 
 @Entity
-public class SicknessType extends Absence {
+public class SicknessType extends AbsenceType {
+
+  @OneToMany(mappedBy = "sicknessType", targetEntity = SicknessRequest.class)
+  private List<Request> requests;
+
 
 }
