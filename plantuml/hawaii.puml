@@ -123,14 +123,10 @@ user . UserRole
 user --{ allowance
 user --{ request : requested_by
 user ---{ request : approved_by
-'absence -{ request : leave_id
-'absence -{ request : sickness_id
 request }-- absence
-'request --{ day
 day }- request
 leave_profile --{ user
 leave_profile -{ public_holiday
-'day . Duration
 Duration . day
 request . RequestStatus
 @enduml
