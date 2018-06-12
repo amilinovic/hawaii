@@ -1,4 +1,4 @@
-package eu.execom.hawaii.model;
+package eu.execom.hawaii.model.request;
 
 import java.io.Serializable;
 import java.util.List;
@@ -13,6 +13,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 
+import eu.execom.hawaii.model.BaseEntity;
+import eu.execom.hawaii.model.Day;
+import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.enumerations.RequestStatus;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -40,8 +43,5 @@ public abstract class Request extends BaseEntity implements Serializable {
 
   @ManyToOne
   private User approver;
-
-  public void approve() {
-  };
 
 }

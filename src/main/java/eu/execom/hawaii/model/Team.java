@@ -27,4 +27,5 @@ public class Team extends BaseEntity implements Serializable {
 
   @OneToMany(mappedBy = "team")
   private List<TeamApprover> teamApprovers;
+
 }

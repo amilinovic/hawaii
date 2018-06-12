@@ -3,18 +3,18 @@ package eu.execom.hawaii.model.request;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 
-import eu.execom.hawaii.model.Request;
-import eu.execom.hawaii.model.enumerations.RequestStatus;
+import eu.execom.hawaii.model.absence.Sickness;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Entity
+@Data
+@EqualsAndHashCode(callSuper = true)
 public class SicknessRequest extends Request {
 
-  @ManyToOne
-  private SicknessType sicknessType;
+  private static final long serialVersionUID = -1814915934204264243L;
 
-  @Override
-  public void approve() {
-    this.getUser().addSickDays(this.getDays().size());
-    this.setRequestStatus(RequestStatus.APPROVED);
-  }
+  @ManyToOne
+  private Sickness sickness;
+
 }

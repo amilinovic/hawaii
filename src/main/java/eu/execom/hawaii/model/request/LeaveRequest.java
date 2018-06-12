@@ -3,18 +3,18 @@ package eu.execom.hawaii.model.request;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 
-import eu.execom.hawaii.model.Request;
-import eu.execom.hawaii.model.enumerations.RequestStatus;
+import eu.execom.hawaii.model.absence.Leave;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Entity
+@Data
+@EqualsAndHashCode(callSuper = true)
 public class LeaveRequest extends Request {
 
-  @ManyToOne
-  private LeaveType leaveType;
+  private static final long serialVersionUID = -8246653641796359126L;
 
-  @Override
-  public void approve() {
-    this.getUser().addTakenDays(this.getDays().size());
-    this.setRequestStatus(RequestStatus.APPROVED);
-  }
+  @ManyToOne
+  private Leave leave;
+
 }

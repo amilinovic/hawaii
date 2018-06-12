@@ -25,4 +25,5 @@ public class PublicHoliday extends BaseEntity implements Serializable {
 
   @ManyToOne
   private LeaveProfile leaveProfile;
+
 }
