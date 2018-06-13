@@ -18,17 +18,18 @@ skinparam linetype ortho
 
 Table(user, "User") {
   primary_key(Id) Bigint
+  team_id Bigint
+  leave_profile_id Bigint
   not_null(full_name) Varchar[255]
   not_null(email) Varchar[255]
   not_null(user_role) UserRole
   job_title Varchar[255]
   not_null(active) Bit
-  leave_profile_id Bigint
-  team_id Bigint
 }
 
 Table(team_approver, "Team Approver") {
   primary_key(Id) Bigint
+  deleted (Bit)
   team_id Bigint
   user_id Bigint
 }
@@ -63,8 +64,9 @@ Table(request, "Request") {
 
 Table(absence, "Absence") {
   primary_key(Id) Bigint
+  deleted Bit
+  not_null(absence_type) Varchar[31]
   not_null(name) Varchar[255]
-  not_null(absence_type) AbsenceType
   deducted Bit
   comment  Varchar[255]
 }
@@ -88,6 +90,7 @@ Table(leave_profile, "Leave Profile") {
 Table(public_holiday, "Public Holiday") {
   primary_key(Id) Bigint
   leave_profile_id Bigint
+  deleted Bit
   not_null(name) Varchar[255]
   not_null(date) Date
 }
@@ -105,11 +108,6 @@ enum RequestStatus {
   CANCELLED
 }
 
-enum AbsenceType {
-  LEAVE
-  SICK
-}
-
 enum UserRole {
   HR_MANAGER
   APPROVER
@@ -119,20 +117,17 @@ enum UserRole {
 ' relationships
 
 ' one to many relationship
-team_approver }- user
-team_approver -[hidden]> user
-team_approver }- team
-team -[hidden]-> team_approver
-team --{ user : member
+user --{ team_approver
+team -{ team_approver
+team -{ user : member
 user . UserRole
-allowance }- user
-user --{ request : user_id
-user ---{ request : approver_id
-absence -{ request
-request --{ day
+user --{ allowance
+user --{ request : requested_by
+user ---{ request : approved_by
+request }-- absence
+day }- request
 leave_profile --{ user
 leave_profile -{ public_holiday
-day . Duration
-AbsenceType . absence
+Duration . day
 request . RequestStatus
 @enduml

@@ -45,7 +45,7 @@ public class User extends BaseEntity implements Serializable {
   private List<Request> requests;
 
   @OneToMany(mappedBy = "user")
-  private List<Allowance> allowance;
+  private List<Allowance> allowances;
 
   @ManyToOne
   private LeaveProfile leaveProfile;

@@ -22,9 +22,12 @@ public class Team extends BaseEntity implements Serializable {
 
   private String emails;
 
+  private boolean deleted;
+
   @OneToMany(mappedBy = "team")
   private List<User> users;
 
   @OneToMany(mappedBy = "team")
   private List<TeamApprover> teamApprovers;
+
 }

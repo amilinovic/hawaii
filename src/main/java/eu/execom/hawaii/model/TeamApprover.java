@@ -20,4 +20,5 @@ public class TeamApprover extends BaseEntity implements Serializable {
 
   @ManyToOne
   private Team team;
+
 }
