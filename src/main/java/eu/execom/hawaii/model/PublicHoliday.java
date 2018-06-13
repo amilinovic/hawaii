@@ -23,6 +23,8 @@ public class PublicHoliday extends BaseEntity implements Serializable {
   @NotNull
   private LocalDate date;
 
+  private boolean deleted;
+
   @ManyToOne
   private LeaveProfile leaveProfile;
 

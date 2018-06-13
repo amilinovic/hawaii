@@ -26,4 +26,6 @@ public abstract class Absence extends BaseEntity implements Serializable {
 
   private String comment;
 
+  private boolean deleted;
+
 }
