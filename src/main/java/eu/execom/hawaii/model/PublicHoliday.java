@@ -17,6 +17,9 @@ public class PublicHoliday extends BaseEntity implements Serializable {
 
   private static final long serialVersionUID = -482913463156061328L;
 
+  @ManyToOne
+  private LeaveProfile leaveProfile;
+
   @NotNull
   private String name;
 
@@ -24,8 +27,5 @@ public class PublicHoliday extends BaseEntity implements Serializable {
   private LocalDate date;
 
   private boolean deleted;
-
-  @ManyToOne
-  private LeaveProfile leaveProfile;
 
 }

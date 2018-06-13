@@ -21,6 +21,9 @@ public class User extends BaseEntity implements Serializable {
 
   private static final long serialVersionUID = 950754391551134726L;
 
+  @ManyToOne
+  private LeaveProfile leaveProfile;
+
   private boolean active;
 
   @NotNull
@@ -46,8 +49,5 @@ public class User extends BaseEntity implements Serializable {
 
   @OneToMany(mappedBy = "user")
   private List<Allowance> allowances;
-
-  @ManyToOne
-  private LeaveProfile leaveProfile;
 
 }

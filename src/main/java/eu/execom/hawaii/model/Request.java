@@ -30,6 +30,12 @@ public class Request extends BaseEntity implements Serializable {
   @JoinColumn(name = "user_id")
   private User user;
 
+  @ManyToOne
+  private User approver;
+
+  @ManyToOne
+  private Absence absence;
+
   @NotNull
   @Enumerated(EnumType.STRING)
   private RequestStatus requestStatus;
@@ -38,11 +44,5 @@ public class Request extends BaseEntity implements Serializable {
 
   @OneToMany(mappedBy = "request")
   private List<Day> days;
-
-  @ManyToOne
-  private Absence absence;
-
-  @ManyToOne
-  private User approver;
 
 }

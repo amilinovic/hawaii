@@ -32,4 +32,5 @@ public class Day extends BaseEntity implements Serializable {
   @NotNull
   @Enumerated(EnumType.STRING)
   private Duration duration;
+
 }

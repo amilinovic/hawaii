@@ -20,4 +20,5 @@ public class BonusDays extends Absence {
 
   @OneToMany(mappedBy = "absence")
   private List<Request> bonusDaysRequests;
+
 }
