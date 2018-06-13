@@ -8,10 +8,10 @@
       <column autoIncrement="true" name="id" type="BIGINT(19)">
         <constraints primaryKey="true"/>
       </column>
-      <column name="comment" type="VARCHAR(255)"/>
-      <column name="deleted" type="BIT(1)">
+      <column name="active" type="BIT(1)">
         <constraints nullable="false"/>
       </column>
+      <column name="comment" type="VARCHAR(255)"/>
       <column name="name" type="VARCHAR(255)"/>
       <column name="deducted" type="BIT(1)"/>
     </createTable>
@@ -78,10 +78,10 @@
       <column autoIncrement="true" name="id" type="BIGINT(19)">
         <constraints primaryKey="true"/>
       </column>
-      <column name="date" type="date"/>
-      <column name="deleted" type="BIT(1)">
+      <column name="active" type="BIT(1)">
         <constraints nullable="false"/>
       </column>
+      <column name="date" type="date"/>
       <column name="name" type="VARCHAR(255)"/>
       <column name="leave_profile_id" type="BIGINT(19)"/>
     </createTable>
@@ -103,7 +103,7 @@
       <column autoIncrement="true" name="id" type="BIGINT(19)">
         <constraints primaryKey="true"/>
       </column>
-      <column name="deleted" type="BIT(1)">
+      <column name="active" type="BIT(1)">
         <constraints nullable="false"/>
       </column>
       <column name="emails" type="VARCHAR(255)"/>

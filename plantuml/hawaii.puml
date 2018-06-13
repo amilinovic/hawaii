@@ -29,7 +29,6 @@ Table(user, "User") {
 
 Table(team_approver, "Team Approver") {
   primary_key(Id) Bigint
-  deleted (Bit)
   team_id Bigint
   user_id Bigint
 }
@@ -38,6 +37,7 @@ Table(team, "Team") {
   primary_key(Id) Bigint
   not_null(name) Varchar[255]
   emails Varchar[255]
+  not_null(active) Bit
 }
 
 Table(allowance, "Allowance") {
@@ -64,7 +64,7 @@ Table(request, "Request") {
 
 Table(absence, "Absence") {
   primary_key(Id) Bigint
-  deleted Bit
+  not_null(active) Bit
   not_null(absence_type) Varchar[31]
   not_null(name) Varchar[255]
   deducted Bit
@@ -90,7 +90,7 @@ Table(leave_profile, "Leave Profile") {
 Table(public_holiday, "Public Holiday") {
   primary_key(Id) Bigint
   leave_profile_id Bigint
-  deleted Bit
+  not_null(active) Bit
   not_null(name) Varchar[255]
   not_null(date) Date
 }

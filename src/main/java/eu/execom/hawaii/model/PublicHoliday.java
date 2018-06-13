@@ -26,6 +26,6 @@ public class PublicHoliday extends BaseEntity implements Serializable {
   @NotNull
   private LocalDate date;
 
-  private boolean deleted;
+  private boolean active;
 
 }

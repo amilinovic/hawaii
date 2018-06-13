@@ -22,7 +22,7 @@ public class Team extends BaseEntity implements Serializable {
 
   private String emails;
 
-  private boolean deleted;
+  private boolean active;
 
   @OneToMany(mappedBy = "team")
   private List<User> users;
