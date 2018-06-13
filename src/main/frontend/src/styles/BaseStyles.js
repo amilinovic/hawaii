@@ -1,3 +1,0 @@
-/* 
-File for the global css styles
-*/
