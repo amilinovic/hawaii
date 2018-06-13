@@ -18,17 +18,18 @@ skinparam linetype ortho
 
 Table(user, "User") {
   primary_key(Id) Bigint
+  team_id Bigint
+  leave_profile_id Bigint
   not_null(full_name) Varchar[255]
   not_null(email) Varchar[255]
   not_null(user_role) UserRole
   job_title Varchar[255]
   not_null(active) Bit
-  leave_profile_id Bigint
-  team_id Bigint
 }
 
 Table(team_approver, "Team Approver") {
   primary_key(Id) Bigint
+  deleted (Bit)
   team_id Bigint
   user_id Bigint
 }
@@ -53,11 +54,9 @@ Table(allowance, "Allowance") {
 
 Table(request, "Request") {
   primary_key(Id) Bigint
-  not_null(dtype) Varchar[31]
   user_id Bigint
   approver_id Bigint
-  leave_id Bigint
-  sickness_id Bigint
+  absence_id Bigint
   not_null(request_status) RequestStatus
   reason Varchar[255]
   not_null(is_bonus) Bit
@@ -65,6 +64,7 @@ Table(request, "Request") {
 
 Table(absence, "Absence") {
   primary_key(Id) Bigint
+  deleted Bit
   not_null(absence_type) Varchar[31]
   not_null(name) Varchar[255]
   deducted Bit
@@ -90,6 +90,7 @@ Table(leave_profile, "Leave Profile") {
 Table(public_holiday, "Public Holiday") {
   primary_key(Id) Bigint
   leave_profile_id Bigint
+  deleted Bit
   not_null(name) Varchar[255]
   not_null(date) Date
 }
