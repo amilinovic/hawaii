@@ -8,6 +8,7 @@ const Aside = styled.aside`
   height: 100vh;
   width: 20%;
   background-color: #3e3e48;
+  z-index: 1;
 `;
 
 const navLinks = [
