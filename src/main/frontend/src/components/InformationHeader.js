@@ -5,10 +5,9 @@ export default class InformationHeader extends Component {
   render() {
     // TODO change mocked data with actual data
     return (
-      <Container fluid={true}>
+      <Container fluid>
         <Row>
           <Col xs="3">
-            {/* Component with image in circle should come here once it's pr goes through */}
             <h3>Nikola Kavezic</h3>
             <h5>Web developer</h5>
             <h5>nkavezic@execom.eu</h5>
