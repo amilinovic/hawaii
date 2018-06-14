@@ -1,7 +1,14 @@
 import React, { Component } from 'react';
 import { StyledLink } from '../components/StyledLink';
 import { NavLink } from 'react-router-dom';
-import { StyledAside } from './StyledAside';
+import styled from 'styled-components';
+
+const Aside = styled.aside`
+  position: fixed;
+  height: 100vh;
+  width: 20%;
+  background-color: #3e3e48;
+`;
 
 const navLinks = [
   { url: 'leave', name: 'Leave' },
@@ -12,6 +19,7 @@ const navLinks = [
 ].map(navLink => (
   <NavLink key={navLink.url} to={navLink.url}>
     <StyledLink
+      // TODO change mocked data with actual data
       icon="https://cdn1.iconfinder.com/data/icons/freeline/32/home_house_real_estate-512.png"
       background="transparent"
       display="block"
@@ -23,6 +31,6 @@ const navLinks = [
 
 export default class Sidebar extends Component {
   render() {
-    return <StyledAside>{navLinks}</StyledAside>;
+    return <Aside>{navLinks}</Aside>;
   }
 }
