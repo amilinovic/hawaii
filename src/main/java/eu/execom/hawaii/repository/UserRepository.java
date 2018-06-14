@@ -6,6 +6,6 @@ import eu.execom.hawaii.model.User;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-  User getByEmail(String email);
+  User findByEmail(String email);
 
 }

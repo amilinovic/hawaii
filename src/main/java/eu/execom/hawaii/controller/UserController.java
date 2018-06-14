@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import eu.execom.hawaii.model.User;
@@ -31,7 +31,7 @@ public class UserController {
   }
 
   @GetMapping("/{email}")
-  public ResponseEntity<User> getUserByEmail(@RequestParam String email) {
+  public ResponseEntity<User> getUserByEmail(@PathVariable("email") String email) {
     User user = userService.getUserByEmail(email);
     return new ResponseEntity<>(user, HttpStatus.OK);
   }
