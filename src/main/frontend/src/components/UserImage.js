@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { prop } from 'styled-tools';
 
 export const UserImage = styled.div`
   border-radius: 50%;
@@ -7,10 +8,10 @@ export const UserImage = styled.div`
   overflow: hidden;
   display: inline-flex;
   justify-content: center;
-  background-image: url('${props =>
-    props.image
-      ? props.image
-      : 'https://openclipart.org/download/247324/abstract-user-flat-1.svg'}');
+  background-image: url('${prop(
+    'image',
+    'https://openclipart.org/download/247324/abstract-user-flat-1.svg'
+  )}');
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
