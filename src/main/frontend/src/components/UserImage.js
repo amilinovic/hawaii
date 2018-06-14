@@ -1,6 +1,8 @@
 import styled from 'styled-components';
 import { prop } from 'styled-tools';
 
+// TODO change mocked image data with actual data
+
 export const UserImage = styled.div`
   border-radius: 50%;
   width: 50px;

@@ -5,7 +5,8 @@ import { UserImage } from './UserImage';
 export default class TopHeader extends Component {
   render() {
     return (
-      <Container fluid={true}>
+      // TODO change mocked data with actual data
+      <Container fluid>
         <Row className="justify-content-between align-items-end py-2">
           <Col xs="3">
             <img
