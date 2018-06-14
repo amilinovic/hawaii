@@ -6,6 +6,7 @@ import TeamCalendar from '../components/TeamCalendar';
 import ExecomCalendar from '../components/ExecomCalendar';
 import { StyledLink } from '../components/StyledLink';
 import InformationHeader from '../components/InformationHeader';
+import TopHeader from '../components/TopHeader';
 
 const navLinks = [
   { url: 'leave', name: 'Leave' },
@@ -22,6 +23,7 @@ export default class NavBar extends Component {
   render() {
     return (
       <Fragment>
+        <TopHeader />
         <InformationHeader />
         {navLinks}
         <Switch>
