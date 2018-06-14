@@ -1,4 +1,4 @@
-package eu.execom.hawaii.controller;
+package eu.execom.hawaii.api.controller;
 
 import java.util.List;
 
