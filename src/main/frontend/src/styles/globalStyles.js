@@ -1,6 +1,6 @@
 import { injectGlobal } from 'styled-components';
 
-(() => injectGlobal`
+injectGlobal`
   @import url('https://fonts.googleapis.com/css?family=Montserrat:400,900|Roboto');
 
 *{
@@ -41,4 +41,4 @@ textarea {
     outline: none;	
   }	
 }	
-`)();
+`;
