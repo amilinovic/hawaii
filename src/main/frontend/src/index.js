@@ -7,6 +7,17 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import BaseStyles from './styles/BaseStyles';
 
 BaseStyles();
+const rootEl = document.getElementById('root');
 
-ReactDOM.render(<App />, document.getElementById('root'));
+let render = () => {
+  ReactDOM.render(<App />, rootEl);
+};
+
+if (module.hot) {
+  module.hot.accept('./App', () => {
+    setTimeout(render);
+  });
+}
+
+render();
 registerServiceWorker();
