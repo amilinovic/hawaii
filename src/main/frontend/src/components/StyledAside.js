@@ -5,5 +5,4 @@ export const StyledAside = styled.aside`
   height: 100vh;
   width: 20%;
   background-color: #3e3e48;
-  transition: 0.6s ease-in-out;
 `;
