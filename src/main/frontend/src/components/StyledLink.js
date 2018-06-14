@@ -1,7 +1,8 @@
 import styled from 'styled-components';
+import { prop } from 'styled-tools';
 
 export const StyledLink = styled.span`
-  color: ${props => (props.color ? props.color : 'white')};
+  color: ${prop('color', 'white')};
   padding: 10px;
   border-radius: 5px;
   background: #fb4b4f;
