@@ -20,13 +20,13 @@ public class LeaveProfile extends BaseEntity implements Serializable {
   @NotNull
   private String name;
 
-  private String comment;
-
   private int entitlement;
 
   private int maxCarriedOver;
 
   private int training;
+
+  private String comment;
 
   @OneToMany(mappedBy = "leaveProfile")
   private List<PublicHoliday> publicHolidays;

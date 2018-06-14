@@ -15,6 +15,9 @@ public class Allowance extends BaseEntity implements Serializable {
 
   private static final long serialVersionUID = 4288980454836980764L;
 
+  @ManyToOne
+  private User user;
+
   private int year;
 
   private int annual;
@@ -28,8 +31,5 @@ public class Allowance extends BaseEntity implements Serializable {
   private int carriedOver;
 
   private int manualAdjust;
-
-  @ManyToOne
-  private User user;
 
 }

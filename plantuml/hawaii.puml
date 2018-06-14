@@ -59,16 +59,15 @@ Table(request, "Request") {
   absence_id Bigint
   not_null(request_status) RequestStatus
   reason Varchar[255]
-  not_null(is_bonus) Bit
 }
 
 Table(absence, "Absence") {
   primary_key(Id) Bigint
-  not_null(active) Bit
   not_null(absence_type) Varchar[31]
   not_null(name) Varchar[255]
-  deducted Bit
   comment  Varchar[255]
+  not_null(active) Bit
+  deducted Bit
 }
 
 Table(day, "Day") {
