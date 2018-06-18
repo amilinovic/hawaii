@@ -1,5 +1,7 @@
 # Hawaii
 
+## Backend
+
 ### Getting Started
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
@@ -23,22 +25,75 @@ Username: root
 Password: root
 ```
 
-#### Server starting:
+#### Building application:
 
-1 . Generate war file
-```sh
+1 . Navigate to <br/>
+```
+project_root
+```
+
+2 . Generate war file <br/>
+```
 mvn clean install
 ```
-2 . Move war file to tomcat "webapps" folder
 
-3 . Start tomcat with:
-```sh
+##### Start with maven
+```
+mvn spring-boot:run
+```
+
+Then go to http://localhost:8080 to see results
+
+##### Start with tomcat
+
+1 . Move war file from _target_ folder to tomcat _webapps_ folder
+
+2 . Start tomcat with: <br/>
+```
 service tomcat start 
 ```
 
-Or startup.sh from bin folder
-```sh
+Or startup.sh from bin folder <br/>
+```
 ./startup.sh
 ```
 
-**Then go to http://localhost:8080/ to see results**
+Then go to http://localhost:8080/hawaii (*) to see results
+
+(*) _/hawaii_ path depends on tomcat configuration
+
+3 . Stop tomcat with: <br/>
+```
+./shutdown.sh 
+```
+
+## Frontend
+
+### Getting Started
+
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
+
+#### Prerequisites
+
+What things you need to setup before starting server
+
+- Install [Node](https://nodejs.org/en/)
+
+#### Server starting
+
+1 . Navigate to <br/>
+```
+project_root/src/main/frontend
+```
+
+2 . Install node_modules <br/>
+```
+yarn or npm install
+```
+
+3 . And start with <br/>
+```
+yarn start or npm start
+```
+
+Then open http://localhost:3000/ to see your app

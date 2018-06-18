@@ -20,12 +20,12 @@ public class PublicHoliday extends BaseEntity implements Serializable {
   @ManyToOne
   private LeaveProfile leaveProfile;
 
+  private boolean active;
+
   @NotNull
   private String name;
 
   @NotNull
   private LocalDate date;
-
-  private boolean active;
 
 }

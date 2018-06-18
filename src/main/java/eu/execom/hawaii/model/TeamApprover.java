@@ -16,9 +16,9 @@ public class TeamApprover extends BaseEntity implements Serializable {
   private static final long serialVersionUID = 2606476682255482836L;
 
   @ManyToOne
-  private User user;
+  private Team team;
 
   @ManyToOne
-  private Team team;
+  private User user;
 
 }

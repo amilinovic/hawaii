@@ -22,24 +22,24 @@ public class User extends BaseEntity implements Serializable {
   private static final long serialVersionUID = 950754391551134726L;
 
   @ManyToOne
-  private LeaveProfile leaveProfile;
+  private Team team;
 
-  private boolean active;
+  @ManyToOne
+  private LeaveProfile leaveProfile;
 
   @NotNull
   private String fullName;
 
-  private String jobTitle;
+  @NotNull
+  private String email;
 
   @NotNull
   @Enumerated(EnumType.STRING)
   private UserRole userRole;
 
-  @NotNull
-  private String email;
+  private String jobTitle;
 
-  @ManyToOne
-  private Team team;
+  private boolean active;
 
   @OneToMany(mappedBy = "user")
   private List<TeamApprover> teamApprovers;
