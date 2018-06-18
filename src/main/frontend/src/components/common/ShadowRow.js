@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export const ShadowRow = styled.div`
-  box-shadow: 1px 4px 7px #8888887d;
+  box-shadow: 1px 4px 7px rgba(136, 136, 136, 0.5);
   display: flex;
   flex-wrap: wrap;
   margin-right: -15px;

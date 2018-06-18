@@ -12,7 +12,7 @@ body {
   -webkit-font-smoothing: antialiased;	
 }
 
-#root{
+#root {
   display: flex;
   min-height: 100vh;
   flex-direction: column;
@@ -27,8 +27,7 @@ a {
   &:active {	
     text-decoration: none;	
   }	
-  
-  &.active{
+  &.active {
     background: #E45052;
   }
 }	
