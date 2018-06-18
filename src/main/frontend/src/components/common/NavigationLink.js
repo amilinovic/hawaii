@@ -4,7 +4,6 @@ import { prop, ifProp } from 'styled-tools';
 export const NavigationLink = styled.span`
   color: ${prop('color', 'white')};
   padding: 10px;
-  border-radius: 5px;
   background: ${prop('background', '#FA4C50')};
   border: 1px solid #3c3c46;
   display: ${prop('display', 'inline-block')};

@@ -20,11 +20,16 @@ body {
 
 a {	
   text-decoration: none;	
+  display: block;
+  transition: 0.2s ease-in-out;
   &:hover,	
   &:focus,	
   &:active {	
     text-decoration: none;	
   }	
+  &.active{
+    background: #E45052;
+  }
 }	
 	
 button {	

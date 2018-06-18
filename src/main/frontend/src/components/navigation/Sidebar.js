@@ -10,11 +10,11 @@ const Aside = styled.aside`
 `;
 
 const navLinks = [
-  { url: 'leave', name: 'Leave' },
-  { url: 'leave-history', name: 'Leave history' },
-  { url: 'team-calendar', name: 'Team calendar' },
-  { url: 'execom-calendar', name: 'Execom calendar' },
-  { url: 'login', name: 'Logout' }
+  { url: '/leave', name: 'Leave' },
+  { url: '/leave-history', name: 'Leave history' },
+  { url: '/team-calendar', name: 'Team calendar' },
+  { url: '/execom-calendar', name: 'Execom calendar' },
+  { url: '/login', name: 'Logout' }
 ].map(navLink => (
   <NavLink key={navLink.url} to={navLink.url}>
     <NavigationLink
