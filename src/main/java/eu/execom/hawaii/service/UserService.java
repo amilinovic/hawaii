@@ -30,7 +30,7 @@ public class UserService {
 
   public User getUserByEmail(String email) {
     User user = userRepository.findByEmail(email);
-    if(user == null) {
+    if (user == null) {
       throw new EntityNotFoundException();
     }
     return user;
