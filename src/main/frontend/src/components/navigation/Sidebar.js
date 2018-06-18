@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { NavigationLink } from '../UI/NavigationLink';
+import { NavigationLink } from '../common/NavigationLink';
 import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
 

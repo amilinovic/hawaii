@@ -4,7 +4,7 @@ import Leave from '../../pages/Leave';
 import LeaveHistory from '../../pages/LeaveHistory';
 import TeamCalendar from '../../pages/TeamCalendar';
 import ExecomCalendar from '../../pages/ExecomCalendar';
-import { NavigationLink } from '../UI/NavigationLink';
+import { NavigationLink } from '../common/NavigationLink';
 import Sidebar from '../navigation/Sidebar';
 import TopHeader from '../header/TopHeader';
 

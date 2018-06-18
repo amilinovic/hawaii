@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { NavLink } from 'react-router-dom';
-import { NavigationLink } from '../components/UI/NavigationLink';
+import { NavigationLink } from '../components/common/NavigationLink';
 
 export default class Login extends Component {
   render() {
