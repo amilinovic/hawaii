@@ -31,28 +31,24 @@ public class UserService {
   /**
    * Retrieves a User with a specific Id
    *
-   * @param id
-   * @return
+   * @param id User id
+   * @return User with specified id
    * @throws EntityNotFoundException if user does not exist
    */
   public User getUserById(Long id) {
-    if (!userRepository.existsById(id)) {
-      throw new EntityNotFoundException();
-    }
+    checkIfUserNotFound(id);
     return userRepository.getOne(id);
   }
 
   /**
    * Retrieves a User with a specific email
    *
-   * @param email
+   * @param email User email
    * @return User with specified email if exists
    * @throws EntityNotFoundException if user does not exist
    */
-  public User getUserByEmail(String email) {
-    if (!userRepository.existsByEmail(email)) {
-      throw new EntityNotFoundException();
-    }
+  public User getUserDtoByEmail(String email) {
+    checkIfUserNotFound(email);
     return userRepository.findByEmail(email);
   }
 
@@ -62,13 +58,19 @@ public class UserService {
    * @param user the User entity to be persisted.
    * @throws EntityExistsException if a user with same email already exists
    */
-  public void saveUser(User user) {
+  public User saveUser(User user) {
     checkIfUserAlreadyExists(user);
-    userRepository.save(user);
+    return userRepository.save(user);
   }
 
-  public void updateUser(User user) {
+  public User updateUser(User user) {
     checkIfUserNotFound(user.getEmail());
+    return userRepository.save(user);
+  }
+
+  public void deleteUser(User user) {
+    checkIfUserNotFound(user.getEmail());
+    user.setActive(false);
     userRepository.save(user);
   }
 
@@ -80,12 +82,13 @@ public class UserService {
   }
 
   private void checkIfUserNotFound(Long id) {
-    userRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+    if (!userRepository.existsById(id)) {
+      throw new EntityNotFoundException();
+    }
   }
 
   private void checkIfUserNotFound(String email) {
-    User user = userRepository.findByEmail(email);
-    if (user == null) {
+    if (!userRepository.existsByEmail(email)) {
       throw new EntityNotFoundException();
     }
   }
