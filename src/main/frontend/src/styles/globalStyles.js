@@ -27,6 +27,7 @@ a {
   &:active {	
     text-decoration: none;	
   }	
+  
   &.active{
     background: #E45052;
   }
