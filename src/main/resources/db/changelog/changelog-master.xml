@@ -1,0 +1,11 @@
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+  <property name="initialId" value="initial_data" dbms="mysql"/>
+  <property name="migrationId" value="migration" dbms="mysql"/>
+
+  <!--Place where should be included new migration xml file -->
+  <include file="db/changelog/initialDbSchema.xml" />
+</databaseChangeLog>

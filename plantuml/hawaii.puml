@@ -1,0 +1,132 @@
+@startuml
+!define Table(name,desc) class name as "desc" << (T,#5DADE2) >>
+' we use bold for primary key
+' green color for unique
+' and underscore for not_null
+!define primary_key(x) <b>x</b>
+!define unique(x) <color:green>x</color>
+!define not_null(x) <u>x</u>
+' other tags available:
+' <i></i>
+' <back:COLOR></color>, where color is a color name or html color code
+' (#FFAACC)
+' see: http://plantuml.com/classes.html#More
+hide methods
+skinparam linetype ortho
+
+' entities
+
+Table(user, "User") {
+  primary_key(Id) Bigint
+  team_id Bigint
+  leave_profile_id Bigint
+  not_null(full_name) Varchar[255]
+  not_null(email) Varchar[255]
+  not_null(user_role) UserRole
+  job_title Varchar[255]
+  not_null(active) Bit
+}
+
+Table(team_approver, "Team Approver") {
+  primary_key(Id) Bigint
+  team_id Bigint
+  user_id Bigint
+}
+
+Table(team, "Team") {
+  primary_key(Id) Bigint
+  not_null(name) Varchar[255]
+  emails Varchar[255]
+  not_null(active) Bit
+}
+
+Table(allowance, "Allowance") {
+  primary_key(Id) Bigint
+  user_id Bigint
+  not_null(year) Int
+  not_null(annual) Int
+  not_null(taken) Int
+  not_null(sickness) Int
+  not_null(bonus) Int
+  not_null(carried_over) Int
+  not_null(manual_adjust) Int
+}
+
+Table(request, "Request") {
+  primary_key(Id) Bigint
+  user_id Bigint
+  approver_id Bigint
+  absence_id Bigint
+  not_null(request_status) RequestStatus
+  reason Varchar[255]
+}
+
+Table(absence, "Absence") {
+  primary_key(Id) Bigint
+  not_null(absence_type) Varchar[31]
+  not_null(name) Varchar[255]
+  comment  Varchar[255]
+  not_null(active) Bit
+  deducted Bit
+}
+
+Table(day, "Day") {
+  primary_key(Id) Bigint
+  request_id Bigint
+  not_null(date) Date
+  not_null(duration) Duration
+}
+
+Table(leave_profile, "Leave Profile") {
+  primary_key(Id) Bigint
+  not_null(name) Varchar[255]
+  not_null(entitlement) Int
+  not_null(max_carried_over) Int
+  not_null(training) Int
+  comment  Varchar[255]
+}
+
+Table(public_holiday, "Public Holiday") {
+  primary_key(Id) Bigint
+  leave_profile_id Bigint
+  not_null(active) Bit
+  not_null(name) Varchar[255]
+  not_null(date) Date
+}
+
+enum Duration {
+  FULL_DAY
+  MORNING
+  AFTERNOON
+}
+
+enum RequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+enum UserRole {
+  HR_MANAGER
+  APPROVER
+  USER
+}
+
+' relationships
+
+' one to many relationship
+user --{ team_approver
+team -{ team_approver
+team -{ user : member
+user . UserRole
+user --{ allowance
+user --{ request : requested_by
+user ---{ request : approved_by
+request }-- absence
+day }- request
+leave_profile --{ user
+leave_profile -{ public_holiday
+Duration . day
+request . RequestStatus
+@enduml

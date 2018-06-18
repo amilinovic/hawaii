@@ -1,12 +1,13 @@
 import React, { Component, Fragment } from 'react';
 import { NavLink, Switch, Route } from 'react-router-dom';
-import Leave from '../components/Leave';
-import LeaveHistory from '../components/LeaveHistory';
-import TeamCalendar from '../components/TeamCalendar';
-import ExecomCalendar from '../components/ExecomCalendar';
-import { StyledLink } from '../components/StyledLink';
-import InformationHeader from '../components/InformationHeader';
-import TopHeader from '../components/TopHeader';
+import Leave from '../../pages/Leave';
+import InformationHeader from '../header/InformationHeader';
+import LeaveHistory from '../../pages/LeaveHistory';
+import TeamCalendar from '../../pages/TeamCalendar';
+import ExecomCalendar from '../../pages/ExecomCalendar';
+import { NavigationLink } from '../common/NavigationLink';
+import Sidebar from '../navigation/Sidebar';
+import TopHeader from '../header/TopHeader';
 
 const navLinks = [
   { url: 'leave', name: 'Leave' },
@@ -15,7 +16,7 @@ const navLinks = [
   { url: 'execom-calendar', name: 'Execom calendar' }
 ].map(navLink => (
   <NavLink color="white" key={navLink.url} to={navLink.url}>
-    <StyledLink>{navLink.name}</StyledLink>
+    <NavigationLink>{navLink.name}</NavigationLink>
   </NavLink>
 ));
 
@@ -23,6 +24,7 @@ export default class NavBar extends Component {
   render() {
     return (
       <Fragment>
+        <Sidebar />
         <TopHeader />
         <InformationHeader />
         {navLinks}
@@ -33,7 +35,7 @@ export default class NavBar extends Component {
           <Route path="/execom-calendar" component={ExecomCalendar} />
         </Switch>
         <NavLink to="/login">
-          <StyledLink>Log Out</StyledLink>
+          <NavigationLink>Log Out</NavigationLink>
         </NavLink>
       </Fragment>
     );
