@@ -1,16 +1,23 @@
 import { injectGlobal } from 'styled-components';
 
 injectGlobal`
-  @import url('https://fonts.googleapis.com/css?family=Montserrat:400,900|Roboto');
+  @import url('https://fonts.googleapis.com/css?family=Montserrat');
 
 *{
   user-select: none;	
 }	
 	
 body {	
+  font-family: 'Montserrat', sans-serif;
   -webkit-font-smoothing: antialiased;	
-}	
-	
+}
+
+#root{
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
 a {	
   text-decoration: none;	
   &:hover,	

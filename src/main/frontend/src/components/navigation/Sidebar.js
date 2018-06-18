@@ -4,11 +4,9 @@ import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
 
 const Aside = styled.aside`
-  position: fixed;
-  height: 100vh;
-  width: 20%;
   background-color: #3e3e48;
-  z-index: 1;
+  order: -1;
+  flex: 0 0 250px;
 `;
 
 const navLinks = [
