@@ -1,6 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import { NavLink, Switch, Route } from 'react-router-dom';
 import Leave from '../../pages/Leave';
+import InformationHeader from '../header/InformationHeader';
 import LeaveHistory from '../../pages/LeaveHistory';
 import TeamCalendar from '../../pages/TeamCalendar';
 import ExecomCalendar from '../../pages/ExecomCalendar';
@@ -25,6 +26,7 @@ export default class NavBar extends Component {
       <Fragment>
         <Sidebar />
         <TopHeader />
+        <InformationHeader />
         {navLinks}
         <Switch>
           <Route path="/leave" component={Leave} />
