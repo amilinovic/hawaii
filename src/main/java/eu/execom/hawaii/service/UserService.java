@@ -37,6 +37,7 @@ public class UserService {
    * @return
    */
   public User getUserById(Long id) {
+    checkIfUserNotFound(id);
     return userRepository.getOne(id);
   }
 
@@ -48,11 +49,8 @@ public class UserService {
    * @throws EntityNotFoundException if user does not exist
    */
   public User getUserByEmail(String email) {
-    User user = userRepository.findByEmail(email);
-    if(user == null) {
-      throw new EntityNotFoundException();
-    }
-    return user;
+    checkIfUserNotFound(email);
+    return userRepository.findByEmail(email);
   }
 
   /**
@@ -62,11 +60,13 @@ public class UserService {
    * @throws EntityExistsException if a user with same email already exists
    */
   public void saveUser(User user) {
+    checkIfUserAlreadyExists(user);
     userRepository.save(user);
   }
 
   public void updateUser(User user) {
-
+    checkIfUserNotFound(user.getEmail());
+    userRepository.save(user);
   }
 
   private void checkIfUserAlreadyExists(User user) {
@@ -86,4 +86,5 @@ public class UserService {
       throw new EntityNotFoundException();
     }
   }
+
 }
