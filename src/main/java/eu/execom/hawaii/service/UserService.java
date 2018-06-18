@@ -1,15 +1,13 @@
 package eu.execom.hawaii.service;
 
-import java.util.List;
-
-import javax.persistence.EntityExistsException;
-import javax.persistence.EntityNotFoundException;
-
+import eu.execom.hawaii.model.User;
+import eu.execom.hawaii.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import eu.execom.hawaii.model.User;
-import eu.execom.hawaii.repository.UserRepository;
+import javax.persistence.EntityExistsException;
+import javax.persistence.EntityNotFoundException;
+import java.util.List;
 
 @Service
 public class UserService {
@@ -35,9 +33,12 @@ public class UserService {
    *
    * @param id
    * @return
+   * @throws EntityNotFoundException if user does not exist
    */
   public User getUserById(Long id) {
-    checkIfUserNotFound(id);
+    if (!userRepository.existsById(id)) {
+      throw new EntityNotFoundException();
+    }
     return userRepository.getOne(id);
   }
 
@@ -49,7 +50,9 @@ public class UserService {
    * @throws EntityNotFoundException if user does not exist
    */
   public User getUserByEmail(String email) {
-    checkIfUserNotFound(email);
+    if (!userRepository.existsByEmail(email)) {
+      throw new EntityNotFoundException();
+    }
     return userRepository.findByEmail(email);
   }
 
