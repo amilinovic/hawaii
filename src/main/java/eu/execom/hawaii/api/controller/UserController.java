@@ -34,18 +34,14 @@ public class UserController {
   }
 
   @GetMapping(value = "/{email}", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<UserDto> getUserByEmail(
-      @PathVariable("email")
-          String email) {
+  public ResponseEntity<UserDto> getUserByEmail(@PathVariable("email") String email) {
     User user = userService.getUserDtoByEmail(email);
     UserDto userDto = new UserDto(user);
     return new ResponseEntity<>(userDto, HttpStatus.OK);
   }
 
   @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<UserDto> createUser(
-      @RequestBody
-          UserDto userDto) {
+  public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto) {
     User user = mapper.map(userDto, User.class);
     user = userService.saveUser(user);
     UserDto userDtoResponse = new UserDto(user);
