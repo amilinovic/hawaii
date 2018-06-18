@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { NavLink } from 'react-router-dom';
-import { StyledLink } from '../components/StyledLink';
+import { NavigationLink } from '../components/UI/NavigationLink';
 
 export default class Login extends Component {
   render() {
@@ -8,7 +8,7 @@ export default class Login extends Component {
       <Fragment>
         <h1>Hello Hawaii</h1>
         <NavLink to="/leave">
-          <StyledLink>Log in</StyledLink>
+          <NavigationLink>Log in</NavigationLink>
         </NavLink>
       </Fragment>
     );

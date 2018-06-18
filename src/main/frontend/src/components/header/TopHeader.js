@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Container, Row, Col } from 'reactstrap';
-import { UserImage } from './UserImage';
+import { UserImage } from '../UI/UserImage';
 
 export default class TopHeader extends Component {
   render() {

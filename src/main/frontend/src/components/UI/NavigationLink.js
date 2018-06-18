@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { prop, ifProp } from 'styled-tools';
 
-export const StyledLink = styled.span`
+export const NavigationLink = styled.span`
   color: ${prop('color', 'white')};
   padding: 10px;
   border-radius: 5px;
