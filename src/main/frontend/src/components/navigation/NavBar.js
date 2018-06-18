@@ -8,6 +8,8 @@ import ExecomCalendar from '../../pages/ExecomCalendar';
 import { NavigationLink } from '../common/NavigationLink';
 import Sidebar from '../navigation/Sidebar';
 import TopHeader from '../header/TopHeader';
+import { connect } from 'react-redux';
+import { fetchUsers } from '../../actions/EmployeesActions';
 
 const navLinks = [
   { url: 'leave', name: 'Leave' },
@@ -20,8 +22,13 @@ const navLinks = [
   </NavLink>
 ));
 
-export default class NavBar extends Component {
+class NavBar extends Component {
+  componentDidMount = () => {
+    this.props.fetchUsers();
+  };
+
   render() {
+    console.log(this.props.users);
     return (
       <Fragment>
         <Sidebar />
@@ -41,3 +48,12 @@ export default class NavBar extends Component {
     );
   }
 }
+
+const mapStateToProps = (state, props) => ({
+  users: state.employees.users
+});
+
+export default connect(
+  mapStateToProps,
+  { fetchUsers }
+)(NavBar);
