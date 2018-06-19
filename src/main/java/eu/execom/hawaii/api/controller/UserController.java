@@ -19,7 +19,7 @@ public class UserController {
 
   private UserService userService;
 
-  public static final ModelMapper mapper = new ModelMapper();
+  private static final ModelMapper mapper = new ModelMapper();
 
   @Autowired
   public UserController(UserService userService) {
@@ -35,7 +35,7 @@ public class UserController {
 
   @GetMapping(value = "/{email}", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<UserDto> getUserByEmail(@PathVariable("email") String email) {
-    User user = userService.getUserDtoByEmail(email);
+    User user = userService.getUserByEmail(email);
     UserDto userDto = new UserDto(user);
     return new ResponseEntity<>(userDto, HttpStatus.OK);
   }
@@ -53,10 +53,10 @@ public class UserController {
     User user = mapper.map(userDto, User.class);
     user = userService.updateUser(user);
     UserDto userDtoResponse = new UserDto(user);
-    return new ResponseEntity<>(userDtoResponse, HttpStatus.CREATED);
+    return new ResponseEntity<>(userDtoResponse, HttpStatus.OK);
   }
 
-  @DeleteMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+  @DeleteMapping(value = "/{id}")
   public ResponseEntity deleteUser(@PathVariable("id") Long id) {
     userService.deleteUser(id);
     return new ResponseEntity(HttpStatus.NO_CONTENT);

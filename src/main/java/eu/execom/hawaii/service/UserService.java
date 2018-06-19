@@ -32,25 +32,13 @@ public class UserService {
   }
 
   /**
-   * Retrieves a User with a specific Id
-   *
-   * @param id User id
-   * @return User with specified id
-   * @throws EntityNotFoundException if a user with given id is not found
-   */
-  public User getUserById(Long id) {
-    checkIfUserNotFound(id);
-    return userRepository.getOne(id);
-  }
-
-  /**
    * Retrieves a User with a specific email
    *
    * @param email User email
    * @return User with specified email if exists
    * @throws EntityNotFoundException if a user with given email is not found
    */
-  public User getUserDtoByEmail(String email) {
+  public User getUserByEmail(String email) {
     checkIfUserNotFound(email);
     return userRepository.findByEmail(email);
   }
@@ -71,10 +59,10 @@ public class UserService {
    *
    * @param user the User object to update
    * @return the updated user
-   * @throws EntityNotFoundException if a user with given email is not found
+   * @throws EntityNotFoundException if a user with given id is not found
    */
   public User updateUser(User user) {
-    checkIfUserNotFound(user.getEmail());
+    checkIfUserNotFound(user.getId());
     return userRepository.save(user);
   }
 
@@ -85,7 +73,6 @@ public class UserService {
    * @throws EntityNotFoundException if a user with given id is not found
    */
   public void deleteUser(Long id) {
-    //    checkIfUserNotFound(id);
     User user = userRepository.getOne(id);
     user.setActive(false);
     userRepository.save(user);
