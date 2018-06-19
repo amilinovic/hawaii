@@ -6,5 +6,5 @@ export const ShadowRow = styled.div`
   flex-wrap: wrap;
   margin-right: -15px;
   margin-left: -15px;
-  border-top: 1px solid #40404a47;
+  border-top: 1px solid rgba(64, 64, 74, 0.3);
 `;
