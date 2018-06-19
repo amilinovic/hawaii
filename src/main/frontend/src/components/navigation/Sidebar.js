@@ -4,19 +4,17 @@ import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
 
 const Aside = styled.aside`
-  position: fixed;
-  height: 100vh;
-  width: 20%;
   background-color: #3e3e48;
-  z-index: 1;
+  order: -1;
+  flex: 0 0 250px;
 `;
 
 const navLinks = [
-  { url: 'leave', name: 'Leave' },
-  { url: 'leave-history', name: 'Leave history' },
-  { url: 'team-calendar', name: 'Team calendar' },
-  { url: 'execom-calendar', name: 'Execom calendar' },
-  { url: 'login', name: 'Logout' }
+  { url: '/leave', name: 'Leave' },
+  { url: '/leave-history', name: 'Leave history' },
+  { url: '/team-calendar', name: 'Team calendar' },
+  { url: '/execom-calendar', name: 'Execom calendar' },
+  { url: '/login', name: 'Logout' }
 ].map(navLink => (
   <NavLink key={navLink.url} to={navLink.url}>
     <NavigationLink
