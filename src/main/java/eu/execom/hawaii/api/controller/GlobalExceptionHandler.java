@@ -1,15 +1,15 @@
 package eu.execom.hawaii.api.controller;
 
-import javax.persistence.EntityExistsException;
-import javax.persistence.EntityNotFoundException;
-import javax.servlet.http.HttpServletRequest;
-
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import lombok.extern.slf4j.Slf4j;
+import javax.persistence.EntityExistsException;
+import javax.persistence.EntityNotFoundException;
+import javax.servlet.http.HttpServletRequest;
 
 @Slf4j
 @ControllerAdvice
@@ -24,6 +24,12 @@ public class GlobalExceptionHandler {
   @ResponseStatus(HttpStatus.CONFLICT) // 409
   @ExceptionHandler(EntityExistsException.class)
   public void handleEntityExistsException(HttpServletRequest request, Exception exception) {
+    logException(request, exception);
+  }
+
+  @ResponseStatus(HttpStatus.CONFLICT) // 409
+  @ExceptionHandler(DataIntegrityViolationException.class)
+  public void handleDataIntegrityViolationException(HttpServletRequest request, Exception exception) {
     logException(request, exception);
   }
 
