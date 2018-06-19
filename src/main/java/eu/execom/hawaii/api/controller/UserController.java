@@ -48,4 +48,18 @@ public class UserController {
     return new ResponseEntity<>(userDtoResponse, HttpStatus.CREATED);
   }
 
+  @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<UserDto> updateUser(@RequestBody UserDto userDto) {
+    User user = mapper.map(userDto, User.class);
+    user = userService.updateUser(user);
+    UserDto userDtoResponse = new UserDto(user);
+    return new ResponseEntity<>(userDtoResponse, HttpStatus.CREATED);
+  }
+
+  @DeleteMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity deleteUser(@PathVariable("id") Long id) {
+    userService.deleteUser(id);
+    return new ResponseEntity(HttpStatus.NO_CONTENT);
+  }
+
 }

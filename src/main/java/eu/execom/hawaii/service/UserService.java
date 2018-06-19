@@ -9,6 +9,9 @@ import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
+/**
+ *
+ */
 @Service
 public class UserService {
 
@@ -33,7 +36,7 @@ public class UserService {
    *
    * @param id User id
    * @return User with specified id
-   * @throws EntityNotFoundException if user does not exist
+   * @throws EntityNotFoundException if a user with given id is not found
    */
   public User getUserById(Long id) {
     checkIfUserNotFound(id);
@@ -45,7 +48,7 @@ public class UserService {
    *
    * @param email User email
    * @return User with specified email if exists
-   * @throws EntityNotFoundException if user does not exist
+   * @throws EntityNotFoundException if a user with given email is not found
    */
   public User getUserDtoByEmail(String email) {
     checkIfUserNotFound(email);
@@ -63,13 +66,27 @@ public class UserService {
     return userRepository.save(user);
   }
 
+  /**
+   * Retrieves a User with a specific email
+   *
+   * @param user the User object to update
+   * @return the updated user
+   * @throws EntityNotFoundException if a user with given email is not found
+   */
   public User updateUser(User user) {
     checkIfUserNotFound(user.getEmail());
     return userRepository.save(user);
   }
 
-  public void deleteUser(User user) {
-    checkIfUserNotFound(user.getEmail());
+  /**
+   * Sets user to inactive
+   *
+   * @param id - the user id
+   * @throws EntityNotFoundException if a user with given id is not found
+   */
+  public void deleteUser(Long id) {
+    //    checkIfUserNotFound(id);
+    User user = userRepository.getOne(id);
     user.setActive(false);
     userRepository.save(user);
   }
