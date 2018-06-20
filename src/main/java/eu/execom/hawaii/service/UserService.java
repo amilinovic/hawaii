@@ -10,7 +10,7 @@ import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 /**
- *
+ * User management service.
  */
 @Service
 public class UserService {
@@ -23,23 +23,23 @@ public class UserService {
   }
 
   /**
-   * Retrieves a list of all users from repository
+   * Retrieves a list of all users from repository.
    *
    * @return a list of all users
    */
-  public List<User> getAllUsers() {
+  public List<User> getAll() {
     return userRepository.findAll();
   }
 
   /**
-   * Retrieves a User with a specific email
+   * Retrieves a User with a specific email.
    *
    * @param email User email
    * @return User with specified email if exists
    * @throws EntityNotFoundException if a user with given email is not found
    */
-  public User getUserByEmail(String email) {
-    checkIfUserNotFound(email);
+  public User getByEmail(String email) {
+    checkIfNotFound(email);
     return userRepository.findByEmail(email);
   }
 
@@ -49,49 +49,49 @@ public class UserService {
    * @param user the User entity to be persisted.
    * @throws EntityExistsException if a user with same email already exists
    */
-  public User saveUser(User user) {
-    checkIfUserAlreadyExists(user);
+  public User save(User user) {
+    checkIfAlreadyExists(user);
     return userRepository.save(user);
   }
 
   /**
-   * Retrieves a User with a specific email
+   * Retrieves a User with a specific email.
    *
    * @param user the User object to update
    * @return the updated user
    * @throws EntityNotFoundException if a user with given id is not found
    */
-  public User updateUser(User user) {
-    checkIfUserNotFound(user.getId());
+  public User update(User user) {
+    checkIfNotFound(user.getId());
     return userRepository.save(user);
   }
 
   /**
-   * Sets user to inactive
+   * Logically deletes User.
    *
    * @param id - the user id
    * @throws EntityNotFoundException if a user with given id is not found
    */
-  public void deleteUser(Long id) {
+  public void delete(Long id) {
     User user = userRepository.getOne(id);
     user.setActive(false);
     userRepository.save(user);
   }
 
-  private void checkIfUserAlreadyExists(User user) {
+  private void checkIfAlreadyExists(User user) {
     User existingUser = userRepository.findByEmail(user.getEmail());
     if (existingUser != null) {
       throw new EntityExistsException();
     }
   }
 
-  private void checkIfUserNotFound(Long id) {
+  private void checkIfNotFound(Long id) {
     if (!userRepository.existsById(id)) {
       throw new EntityNotFoundException();
     }
   }
 
-  private void checkIfUserNotFound(String email) {
+  private void checkIfNotFound(String email) {
     if (!userRepository.existsByEmail(email)) {
       throw new EntityNotFoundException();
     }

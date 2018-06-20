@@ -8,7 +8,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,9 +24,9 @@ import java.util.stream.Collectors;
 @RequestMapping("/users")
 public class UserController {
 
-  private UserService userService;
+  private static final ModelMapper MAPPER = new ModelMapper();
 
-  private static final ModelMapper mapper = new ModelMapper();
+  private UserService userService;
 
   @Autowired
   public UserController(UserService userService) {
@@ -28,37 +35,37 @@ public class UserController {
 
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<List<UserDto>> getUsers() {
-    List<User> users = userService.getAllUsers();
+    List<User> users = userService.getAll();
     List<UserDto> userDtos = users.stream().map(UserDto::new).collect(Collectors.toList());
     return new ResponseEntity<>(userDtos, HttpStatus.OK);
   }
 
   @GetMapping(value = "/{email}", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<UserDto> getUserByEmail(@PathVariable("email") String email) {
-    User user = userService.getUserByEmail(email);
+    User user = userService.getByEmail(email);
     UserDto userDto = new UserDto(user);
     return new ResponseEntity<>(userDto, HttpStatus.OK);
   }
 
   @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto) {
-    User user = mapper.map(userDto, User.class);
-    user = userService.saveUser(user);
+    User user = MAPPER.map(userDto, User.class);
+    user = userService.save(user);
     UserDto userDtoResponse = new UserDto(user);
     return new ResponseEntity<>(userDtoResponse, HttpStatus.CREATED);
   }
 
   @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<UserDto> updateUser(@RequestBody UserDto userDto) {
-    User user = mapper.map(userDto, User.class);
-    user = userService.updateUser(user);
+    User user = MAPPER.map(userDto, User.class);
+    user = userService.update(user);
     UserDto userDtoResponse = new UserDto(user);
     return new ResponseEntity<>(userDtoResponse, HttpStatus.OK);
   }
 
   @DeleteMapping(value = "/{id}")
   public ResponseEntity deleteUser(@PathVariable("id") Long id) {
-    userService.deleteUser(id);
+    userService.delete(id);
     return new ResponseEntity(HttpStatus.NO_CONTENT);
   }
 

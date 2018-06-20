@@ -18,8 +18,8 @@ public class UserDto {
 
   public UserDto(User user) {
     this.id = user.getId();
-    this.teamId = (user.getTeam() == null ? null : user.getTeam().getId());
-    this.leaveProfileId = (user.getLeaveProfile() == null ? null : user.getLeaveProfile().getId());
+    this.teamId = (user.getTeam().getId());
+    this.leaveProfileId = (user.getLeaveProfile().getId());
     this.fullName = user.getFullName();
     this.email = user.getEmail();
     this.userRole = user.getUserRole();
