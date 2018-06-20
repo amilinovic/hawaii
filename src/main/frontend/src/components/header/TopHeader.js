@@ -31,16 +31,19 @@ class TopHeader extends Component {
             <div className="d-inline-flex align-items-center">
               <UserImage
                 image={
-                  this.props.data.fetching === ''
+                  this.props.store.fetching === ''
                     ? 'none'
-                    : this.props.data.data.results[0].picture.large
+                    : this.props.store.employeeInformation.results[0].picture
+                        .large
                 }
               />
-              {this.props.data.fetching === '' ? (
+              {this.props.store.fetching === '' ? (
                 <span>Fetching...</span>
               ) : (
                 <div>
-                  <span>{this.props.data.data.results[0].name.first}</span>
+                  <span>
+                    {this.props.store.employeeInformation.results[0].name.first}
+                  </span>
                 </div>
               )}
             </div>
@@ -51,7 +54,7 @@ class TopHeader extends Component {
   }
 }
 
-const mapStateToProps = state => ({ data: state.data });
+const mapStateToProps = state => ({ store: state.employeeInformation });
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators({ requestApiData }, dispatch);

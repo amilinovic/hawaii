@@ -6,8 +6,8 @@ import { fetchData } from '../services/user';
 
 function* getApiData() {
   try {
-    const data = yield call(fetchData);
-    yield put(receiveApiData(data));
+    const employeeInformation = yield call(fetchData);
+    yield put(receiveApiData(employeeInformation));
   } catch (e) {
     // TODO error handling
     console.log(e);

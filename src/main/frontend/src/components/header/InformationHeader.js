@@ -19,19 +19,22 @@ class InformationHeader extends Component {
           <Col className="d-flex align-items-center">
             <UserImage
               image={
-                this.props.data.fetching === ''
+                this.props.store.fetching === ''
                   ? 'none'
-                  : this.props.data.data.results[0].picture.large
+                  : this.props.store.employeeInformation.results[0].picture
+                      .large
               }
               size="100px"
             />
-            {this.props.data.fetching === '' ? (
+            {this.props.store.fetching === '' ? (
               <span>Fetching...</span>
             ) : (
               <div>
-                <h3>{this.props.data.data.results[0].name.first}</h3>
+                <h3>
+                  {this.props.store.employeeInformation.results[0].name.first}
+                </h3>
                 <h5>Web developer</h5>
-                <h5>{this.props.data.data.results[0].email}</h5>
+                <h5>{this.props.store.employeeInformation.results[0].email}</h5>
               </div>
             )}
           </Col>
@@ -49,7 +52,7 @@ class InformationHeader extends Component {
   }
 }
 
-const mapStateToProps = state => ({ data: state.data });
+const mapStateToProps = state => ({ store: state.employeeInformation });
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators({ requestApiData }, dispatch);
