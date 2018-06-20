@@ -1,10 +1,9 @@
 import { RECEIVE_API_DATA } from '../actions/types';
 
-export default (state = { fetching: true }, { type, data }) => {
+export default (state = { fetching: '' }, { type, data }) => {
   switch (type) {
     case RECEIVE_API_DATA:
-      console.log(data);
-      return { fetching: false, data };
+      return { fetching: 'done', data };
     default:
       return state;
   }

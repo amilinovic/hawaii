@@ -11,7 +11,6 @@ class TopHeader extends Component {
   }
 
   render() {
-    console.log(this.props.data);
     return (
       // TODO change mocked data with actual data
       <Container fluid>
@@ -32,12 +31,12 @@ class TopHeader extends Component {
             <div className="d-inline-flex align-items-center">
               <UserImage
                 image={
-                  this.props.data.fetching
+                  this.props.data.fetching === ''
                     ? 'none'
                     : this.props.data.data.results[0].picture.large
                 }
               />
-              {this.props.data.fetching ? (
+              {this.props.data.fetching === '' ? (
                 <span>Fetching...</span>
               ) : (
                 <div>
