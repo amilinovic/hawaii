@@ -11,7 +11,6 @@
     "reactstrap": "^6.1.0",
     "redux": "^4.0.0",
     "redux-saga": "^0.16.0",
-    "redux-thunk": "^2.2.0",
     "reset-css": "^4.0.1",
     "styled-components": "^3.3.2",
     "styled-tools": "^0.5.0",
