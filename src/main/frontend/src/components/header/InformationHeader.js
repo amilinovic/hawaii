@@ -16,7 +16,7 @@ class InformationHeader extends Component {
     return (
       <Container fluid>
         <ShadowRow className="py-2">
-          <Col xl="4" className="d-flex align-items-center">
+          <Col className="d-flex align-items-center">
             <UserImage
               image={
                 this.props.data.fetching === ''
@@ -35,7 +35,7 @@ class InformationHeader extends Component {
               </div>
             )}
           </Col>
-          <Col className="col-8 flex-column d-none d-xl-flex">
+          <Col className="flex-column d-none d-xl-flex">
             <Row className="h-100 align-items-center">
               <Col>Team</Col>
             </Row>

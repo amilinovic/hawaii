@@ -1,15 +1,15 @@
 import { call, put, takeLatest } from 'redux-saga/effects';
 
-import { receiveApiData } from '../actions/EmployeesActions';
-import { REQUEST_API_DATA } from '../actions/types';
+import { REQUEST_API_DATA, receiveApiData } from '../actions/EmployeesActions';
 
-import { fetchData } from './api';
+import { fetchData } from '../services/user';
 
 function* getApiData() {
   try {
     const data = yield call(fetchData);
     yield put(receiveApiData(data));
   } catch (e) {
+    // TODO error handling
     console.log(e);
   }
 }

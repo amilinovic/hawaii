@@ -1,4 +1,4 @@
-import { RECEIVE_API_DATA } from '../actions/types';
+import { RECEIVE_API_DATA } from '../actions/EmployeesActions';
 
 export default (state = { fetching: '' }, { type, data }) => {
   switch (type) {

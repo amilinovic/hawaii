@@ -2,18 +2,17 @@ import request from 'superagent';
 
 export const fetchData = async () => {
   try {
-    const response = request
+    const response = await request
       .get('https://randomuser.me/api')
       .then(res => {
-        const data = res.body;
-        return data;
+        return res.body;
       })
       .catch(err => {
         console.log(err);
       });
-    const data = await response;
-    return data;
+    return response;
   } catch (e) {
+    // TODO error handling
     console.log(e);
   }
 };
