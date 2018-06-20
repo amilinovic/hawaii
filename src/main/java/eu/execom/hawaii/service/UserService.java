@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
+import javax.transaction.Transactional;
 import java.util.List;
 
 /**
@@ -38,6 +39,7 @@ public class UserService {
    * @return User with specified email if exists
    * @throws EntityNotFoundException if a user with given email is not found
    */
+  @Transactional
   public User getUserByEmail(String email) {
     checkIfUserNotFound(email);
     return userRepository.findByEmail(email);

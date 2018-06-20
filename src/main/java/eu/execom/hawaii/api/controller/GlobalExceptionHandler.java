@@ -3,6 +3,7 @@ package eu.execom.hawaii.api.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -30,6 +31,12 @@ public class GlobalExceptionHandler {
   @ResponseStatus(HttpStatus.CONFLICT) // 409
   @ExceptionHandler(DataIntegrityViolationException.class)
   public void handleDataIntegrityViolationException(HttpServletRequest request, Exception exception) {
+    logException(request, exception);
+  }
+
+  @ResponseStatus(HttpStatus.FORBIDDEN) // 403
+  @ExceptionHandler(AccessDeniedException.class)
+  public void handleAccessDeniedException(HttpServletRequest request, Exception exception) {
     logException(request, exception);
   }
 
