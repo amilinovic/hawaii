@@ -1,8 +1,15 @@
 import React, { Component } from 'react';
 import { Container, Row, Col } from 'reactstrap';
 import { UserImage } from '../common/UserImage';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { requestApiData } from '../../store/actions/EmployeesActions';
 
-export default class TopHeader extends Component {
+class TopHeader extends Component {
+  componentDidMount() {
+    this.props.requestApiData();
+  }
+
   render() {
     return (
       // TODO change mocked data with actual data
@@ -22,8 +29,20 @@ export default class TopHeader extends Component {
           </Col>
           <Col xs="3" className="justify-content-end d-none d-lg-inline-flex">
             <div className="d-inline-flex align-items-center">
-              <UserImage />
-              <span>Nikola Kavezic</span>
+              <UserImage
+                image={
+                  this.props.data.fetching
+                    ? 'none'
+                    : this.props.data.data.results[0].picture.large
+                }
+              />
+              {this.props.data.fetching ? (
+                <span>Fetching...</span>
+              ) : (
+                <div>
+                  <span>{this.props.data.data.results[0].name.first}</span>
+                </div>
+              )}
             </div>
           </Col>
         </Row>
@@ -31,3 +50,13 @@ export default class TopHeader extends Component {
     );
   }
 }
+
+const mapStateToProps = state => ({ data: state.data });
+
+const mapDispatchToProps = dispatch =>
+  bindActionCreators({ requestApiData }, dispatch);
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(TopHeader);

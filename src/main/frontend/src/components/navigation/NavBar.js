@@ -8,9 +8,6 @@ import ExecomCalendar from '../../pages/ExecomCalendar';
 import { NavigationLink } from '../common/NavigationLink';
 import Sidebar from '../navigation/Sidebar';
 import TopHeader from '../header/TopHeader';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { requestApiData } from '../../store/actions/EmployeesActions';
 
 const navLinks = [
   { url: 'leave', name: 'Leave' },
@@ -23,13 +20,8 @@ const navLinks = [
   </NavLink>
 ));
 
-class NavBar extends Component {
-  componentDidMount() {
-    this.props.requestApiData();
-  }
-
+export default class NavBar extends Component {
   render() {
-    console.log(this.props);
     return (
       <Fragment>
         <Sidebar />
@@ -49,13 +41,3 @@ class NavBar extends Component {
     );
   }
 }
-
-const mapStateToProps = state => ({ data: state.data });
-
-const mapDispatchToProps = dispatch =>
-  bindActionCreators({ requestApiData }, dispatch);
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(NavBar);
