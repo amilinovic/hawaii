@@ -9,7 +9,8 @@ import { NavigationLink } from '../common/NavigationLink';
 import Sidebar from '../navigation/Sidebar';
 import TopHeader from '../header/TopHeader';
 import { connect } from 'react-redux';
-import { fetchUsers } from '../../actions/EmployeesActions';
+import { bindActionCreators } from 'redux';
+import { requestApiData } from '../../store/actions/EmployeesActions';
 
 const navLinks = [
   { url: 'leave', name: 'Leave' },
@@ -23,12 +24,12 @@ const navLinks = [
 ));
 
 class NavBar extends Component {
-  componentDidMount = () => {
-    this.props.fetchUsers();
-  };
+  componentDidMount() {
+    this.props.requestApiData();
+  }
 
   render() {
-    console.log(this.props.users);
+    console.log(this.props);
     return (
       <Fragment>
         <Sidebar />
@@ -49,11 +50,12 @@ class NavBar extends Component {
   }
 }
 
-const mapStateToProps = (state, props) => ({
-  users: state.employees.users
-});
+const mapStateToProps = state => ({ data: state.data });
+
+const mapDispatchToProps = dispatch =>
+  bindActionCreators({ requestApiData }, dispatch);
 
 export default connect(
   mapStateToProps,
-  { fetchUsers }
+  mapDispatchToProps
 )(NavBar);
