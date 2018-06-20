@@ -5,8 +5,8 @@ import { prop } from 'styled-tools';
 
 export const UserImage = styled.div`
   border-radius: 50%;
-  width: 50px;
-  height: 50px;
+  width: ${prop('size', '50px')};
+  height: ${prop('size', '50px')};
   overflow: hidden;
   display: inline-flex;
   justify-content: center;
