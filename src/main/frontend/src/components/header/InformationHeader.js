@@ -12,7 +12,6 @@ class InformationHeader extends Component {
   }
 
   render() {
-    console.log(this.props.data);
     // TODO change mocked data with actual data
     return (
       <Container fluid>
