@@ -2,20 +2,39 @@ import React, { Component } from 'react';
 import { Container, Row, Col } from 'reactstrap';
 import { UserImage } from '../common/UserImage';
 import { ShadowRow } from '../common/ShadowRow';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { requestApiData } from '../../store/actions/EmployeesActions';
 
-export default class InformationHeader extends Component {
+class InformationHeader extends Component {
+  componentDidMount() {
+    this.props.requestApiData();
+  }
+
   render() {
+    console.log(this.props.data);
     // TODO change mocked data with actual data
     return (
       <Container fluid>
         <ShadowRow className="py-2">
           <Col xl="4" className="d-flex align-items-center">
-            <UserImage size="100px" />
-            <div>
-              <h3>Nikola Kavezic</h3>
-              <h5>Web developer</h5>
-              <h5>nkavezic@execom.eu</h5>
-            </div>
+            <UserImage
+              image={
+                this.props.data.fetching === ''
+                  ? 'none'
+                  : this.props.data.data.results[0].picture.large
+              }
+              size="100px"
+            />
+            {this.props.data.fetching === '' ? (
+              <span>Fetching...</span>
+            ) : (
+              <div>
+                <h3>{this.props.data.data.results[0].name.first}</h3>
+                <h5>Web developer</h5>
+                <h5>{this.props.data.data.results[0].email}</h5>
+              </div>
+            )}
           </Col>
           <Col className="col-8 flex-column d-none d-xl-flex">
             <Row className="h-100 align-items-center">
@@ -30,3 +49,13 @@ export default class InformationHeader extends Component {
     );
   }
 }
+
+const mapStateToProps = state => ({ data: state.data });
+
+const mapDispatchToProps = dispatch =>
+  bindActionCreators({ requestApiData }, dispatch);
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(InformationHeader);
