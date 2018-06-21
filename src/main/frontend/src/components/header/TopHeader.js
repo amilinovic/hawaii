@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { requestApiData } from '../../store/actions/EmployeesActions';
 import UserInfo from '../UserInfo';
+import { createSelector } from 'reselect';
 
 class TopHeader extends Component {
   componentDidMount() {
@@ -29,10 +30,8 @@ class TopHeader extends Component {
           </Col>{' '}
           <Col xs="3" className="justify-content-end d-none d-lg-inline-flex">
             {' '}
-            {this.props.store.fetching === '' ? null : (
-              <UserInfo
-                employeeInfo={this.props.store.employeeInformation.results[0]}
-              />
+            {this.props.fetching === '' ? null : (
+              <UserInfo employeeInfo={this.props.employee.results[0]} />
             )}{' '}
           </Col>{' '}
         </Row>{' '}
@@ -41,9 +40,25 @@ class TopHeader extends Component {
   }
 }
 
-const mapStateToProps = state => ({
-  store: state.employeeInformation
-});
+const getEmployeeState = state => state.employeeInformation.employeeInformation;
+const getFetchingState = state => state.employeeInformation.fetching;
+
+export const getEmployee = createSelector(
+  [getEmployeeState],
+  employee => employee
+);
+
+export const getFetching = createSelector(
+  [getFetchingState],
+  fetching => fetching
+);
+
+const mapStateToProps = state => {
+  return {
+    employee: getEmployee(state),
+    fetching: getFetching(state)
+  };
+};
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators(

@@ -5,6 +5,7 @@ import { ShadowRow } from '../common/ShadowRow';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { requestApiData } from '../../store/actions/EmployeesActions';
+import { createSelector } from 'reselect';
 
 class InformationHeader extends Component {
   componentDidMount() {
@@ -13,14 +14,11 @@ class InformationHeader extends Component {
 
   render() {
     // TODO change mocked data with actual data
-    console.log(this.props);
     return (
       <Container fluid>
         <ShadowRow className="py-2">
-          {this.props.store.fetching === '' ? null : (
-            <UserInfoComponent
-              employeeInfo={this.props.store.employeeInformation.results[0]}
-            />
+          {this.props.fetching === '' ? null : (
+            <UserInfoComponent employeeInfo={this.props.employee.results[0]} />
           )}
           <Col className="flex-column d-none d-xl-flex">
             <Row className="h-100 align-items-center">
@@ -36,7 +34,25 @@ class InformationHeader extends Component {
   }
 }
 
-const mapStateToProps = state => ({ store: state.employeeInformation });
+const getEmployeeState = state => state.employeeInformation.employeeInformation;
+const getFetchingState = state => state.employeeInformation.fetching;
+
+export const getEmployee = createSelector(
+  [getEmployeeState],
+  employee => employee
+);
+
+export const getFetching = createSelector(
+  [getFetchingState],
+  fetching => fetching
+);
+
+const mapStateToProps = state => {
+  return {
+    employee: getEmployee(state),
+    fetching: getFetching(state)
+  };
+};
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators({ requestApiData }, dispatch);
