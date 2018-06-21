@@ -21,20 +21,19 @@ class TopHeader extends Component {
               src="https://lh3.googleusercontent.com/Zeu3x2hWQxFtX6Mh8DYIgdqkkzN8EXI5C5regdIJm-lf0mCe2hKkQrs-kzSN7bTlY5IJbKuRI_N1Y5VLx6Z_0V51Ndk8fJ5oCIgmFg=h43"
               alt="hawaii logo"
             />
-          </Col>{' '}
+          </Col>
           <Col xs="3" className="text-center d-none d-lg-block">
             <img
               src="https://lh3.googleusercontent.com/Zeu3x2hWQxFtX6Mh8DYIgdqkkzN8EXI5C5regdIJm-lf0mCe2hKkQrs-kzSN7bTlY5IJbKuRI_N1Y5VLx6Z_0V51Ndk8fJ5oCIgmFg=h43"
               alt="execom logo"
             />
-          </Col>{' '}
+          </Col>
           <Col xs="3" className="justify-content-end d-none d-lg-inline-flex">
-            {' '}
             {this.props.fetching === '' ? null : (
               <UserInfo employeeInfo={this.props.employee.results[0]} />
-            )}{' '}
-          </Col>{' '}
-        </Row>{' '}
+            )}
+          </Col>
+        </Row>
       </Container>
     );
   }
