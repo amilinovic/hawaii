@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { Container, Row, Col } from 'reactstrap';
-import { UserImage } from '../common/UserImage';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { requestApiData } from '../../store/actions/EmployeesActions';
+import UserInfo from '../UserInfo';
 
 class TopHeader extends Component {
   componentDidMount() {
@@ -20,44 +20,38 @@ class TopHeader extends Component {
               src="https://lh3.googleusercontent.com/Zeu3x2hWQxFtX6Mh8DYIgdqkkzN8EXI5C5regdIJm-lf0mCe2hKkQrs-kzSN7bTlY5IJbKuRI_N1Y5VLx6Z_0V51Ndk8fJ5oCIgmFg=h43"
               alt="hawaii logo"
             />
-          </Col>
+          </Col>{' '}
           <Col xs="3" className="text-center d-none d-lg-block">
             <img
               src="https://lh3.googleusercontent.com/Zeu3x2hWQxFtX6Mh8DYIgdqkkzN8EXI5C5regdIJm-lf0mCe2hKkQrs-kzSN7bTlY5IJbKuRI_N1Y5VLx6Z_0V51Ndk8fJ5oCIgmFg=h43"
               alt="execom logo"
             />
-          </Col>
+          </Col>{' '}
           <Col xs="3" className="justify-content-end d-none d-lg-inline-flex">
-            <div className="d-inline-flex align-items-center">
-              <UserImage
-                image={
-                  this.props.store.fetching === ''
-                    ? 'none'
-                    : this.props.store.employeeInformation.results[0].picture
-                        .large
-                }
+            {' '}
+            {this.props.store.fetching === '' ? null : (
+              <UserInfo
+                employeeInfo={this.props.store.employeeInformation.results[0]}
               />
-              {this.props.store.fetching === '' ? (
-                <span>Fetching...</span>
-              ) : (
-                <div>
-                  <span>
-                    {this.props.store.employeeInformation.results[0].name.first}
-                  </span>
-                </div>
-              )}
-            </div>
-          </Col>
-        </Row>
+            )}{' '}
+          </Col>{' '}
+        </Row>{' '}
       </Container>
     );
   }
 }
 
-const mapStateToProps = state => ({ store: state.employeeInformation });
+const mapStateToProps = state => ({
+  store: state.employeeInformation
+});
 
 const mapDispatchToProps = dispatch =>
-  bindActionCreators({ requestApiData }, dispatch);
+  bindActionCreators(
+    {
+      requestApiData
+    },
+    dispatch
+  );
 
 export default connect(
   mapStateToProps,
