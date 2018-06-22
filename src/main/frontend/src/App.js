@@ -10,16 +10,18 @@ export default class App extends Component {
   };
 
   componentDidMount() {
-    request.get('/authentication').then(function(res) {
-      this.setState({
-        redirect:
-          res.status !== 200 ? (
-            <Redirect exact from="/" to="/login" />
-          ) : (
-            <Redirect from="/" to="/leave" />
-          )
+    request
+      .get('/authentication')
+      .then(function(res) {
+        this.setState({
+          redirect: <Redirect exact from="/" to="/login" />
+        });
+      })
+      .catch(function(err) {
+        this.setState({
+          redirect: <Redirect exact from="/" to="/login" />
+        });
       });
-    });
   }
 
   render() {
