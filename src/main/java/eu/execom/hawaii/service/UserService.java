@@ -105,7 +105,7 @@ public class UserService {
     }
   }
 
-  private void checkIfUserNotFound(String email) {
+  private void checkIfNotFound(String email) {
     if (!userRepository.existsByEmail(email)) {
       throw new EntityNotFoundException();
     }
