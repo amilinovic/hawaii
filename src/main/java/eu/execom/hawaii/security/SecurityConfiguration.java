@@ -18,7 +18,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         .disable()
         .antMatcher("/**")
         .authorizeRequests()
-        .antMatchers("/", "welcome", "/signin", "/authentication")
+        .antMatchers("/", "/welcome", "/authentication")
         .permitAll()
         .antMatchers("/users").hasRole("HR_MANAGER")
         .anyRequest()
