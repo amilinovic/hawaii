@@ -33,6 +33,18 @@ public class UserService {
   }
 
   /**
+   * Retrieves a User with a specific id
+   *
+   * @param id User email
+   * @return User with specified email if exists
+   * @throws EntityNotFoundException if a user with given id is not found
+   */
+  @Transactional
+  public User getUserById(Long id) {
+    return userRepository.getOne(id);
+  }
+
+  /**
    * Retrieves a User with a specific email
    *
    * @param email User email

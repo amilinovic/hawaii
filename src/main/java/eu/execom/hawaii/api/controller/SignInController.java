@@ -39,6 +39,8 @@ public class SignInController {
 
     final Collection<GrantedAuthority> authorities = new ArrayList<>();
     authorities.add(new SimpleGrantedAuthority(user.getUserRole().name()));
+    //    oAuth2Authentication.getUserAuthentication().getAuthorities().addAll(authorities);
+    //    ((OAuth2Authentication) principal).getUserAuthentication().getAuthorities().addAll(authorities);
 
     final Authentication authentication = new PreAuthenticatedAuthenticationToken(principal, null, authorities);
     SecurityContextHolder.getContext().setAuthentication(authentication);
