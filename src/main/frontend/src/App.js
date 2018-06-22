@@ -8,7 +8,7 @@ export default class App extends Component {
     return (
       <BrowserRouter>
         <Switch>
-          <Redirect exact from="/" to="/leave" />
+          <Redirect exact from="/" to="/login" />
           <Route path="/login" component={Login} />
           <Route path="/" component={NavBar} />
         </Switch>
