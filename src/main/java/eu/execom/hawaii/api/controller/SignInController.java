@@ -50,7 +50,7 @@ public class SignInController {
     HttpHeaders headers = new HttpHeaders();
     headers.setLocation(URI.create("localhost:3000"));
 
-    return new ResponseEntity<>(principal, HttpStatus.MOVED_PERMANENTLY);
+    return new ResponseEntity<>(principal, headers, HttpStatus.MOVED_PERMANENTLY);
   }
 
 }
