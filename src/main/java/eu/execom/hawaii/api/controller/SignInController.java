@@ -35,7 +35,7 @@ public class SignInController {
     OAuth2Authentication oAuth2Authentication = (OAuth2Authentication) principal;
     Map<String, String> details = (Map<String, String>) oAuth2Authentication.getUserAuthentication().getDetails();
     String email = details.get("email");
-    User user = userService.getUserByEmail(email);
+    User user = userService.getByEmail(email);
 
     final Collection<GrantedAuthority> authorities = new ArrayList<>();
     authorities.add(new SimpleGrantedAuthority(user.getUserRole().name()));
