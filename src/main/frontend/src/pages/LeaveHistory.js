@@ -1,11 +1,11 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 
 export default class LeaveHistory extends Component {
   render() {
     return (
-      <Fragment>
-        <div>Leave history</div>
-      </Fragment>
+      <div className="d-flex h-100 align-items-center justify-content-center">
+        Leave history
+      </div>
     );
   }
 }
