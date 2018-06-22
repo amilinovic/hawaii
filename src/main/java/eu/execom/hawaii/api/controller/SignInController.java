@@ -8,8 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -47,7 +45,7 @@ public class SignInController {
     return new ResponseEntity<>(principal, headers, HttpStatus.FOUND);
   }
 
-  @RequestMapping(value = "/authentication", method = RequestMethod.GET)
+  @GetMapping("/authentication")
   public ResponseEntity authenticate(HttpServletRequest request) {
     HttpStatus status = authenticationStatus(request);
     return new ResponseEntity(status);
