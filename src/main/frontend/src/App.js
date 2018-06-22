@@ -5,9 +5,20 @@ import { Switch, Route, BrowserRouter, Redirect } from 'react-router-dom';
 import request from 'superagent';
 
 export default class App extends Component {
+  state = {
+    redirect: 'test'
+  };
+
   componentDidMount() {
     request.get('/authentication').then(function(res) {
-      console.log(res.body);
+      this.setState({
+        redirect:
+          res.status !== 200 ? (
+            <Redirect exact from="/" to="/login" />
+          ) : (
+            <Redirect from="/" to="/leave" />
+          )
+      });
     });
   }
 
@@ -15,7 +26,7 @@ export default class App extends Component {
     return (
       <BrowserRouter>
         <Switch>
-          <Redirect exact from="/" to="/login" />
+          {this.state.redirect}
           <Route path="/login" component={Login} />
           <Route path="/" component={NavBar} />
         </Switch>
