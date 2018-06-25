@@ -13,7 +13,8 @@ const navLinks = [
   { url: '/leave', name: 'Leave' },
   { url: '/leave-history', name: 'Leave history' },
   { url: '/team-calendar', name: 'Team calendar' },
-  { url: '/execom-calendar', name: 'Execom calendar' }
+  { url: '/execom-calendar', name: 'Execom calendar' },
+  { url: '/login', name: 'Log out' }
 ].map(navLink => (
   <NavLink key={navLink.url} to={navLink.url}>
     <NavigationLink
@@ -29,20 +30,6 @@ const navLinks = [
 
 export default class Sidebar extends Component {
   render() {
-    return (
-      <Aside>
-        {navLinks}
-        <a href="http://localhost:8080/logout">
-          <NavigationLink
-            // TODO change mocked data with actual data
-            icon="https://cdn1.iconfinder.com/data/icons/freeline/32/home_house_real_estate-512.png"
-            background="transparent"
-            display="block"
-          >
-            Log out
-          </NavigationLink>
-        </a>
-      </Aside>
-    );
+    return <Aside>{navLinks}</Aside>;
   }
 }

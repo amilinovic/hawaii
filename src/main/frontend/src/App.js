@@ -11,15 +11,13 @@ export default class App extends Component {
 
   componentDidMount() {
     request
-      .get('/users')
+      .get('/authentication')
       .then(res => {
-        console.log(res, 'test');
         this.setState({
           redirect: <Redirect exact from="/" to="/leave" />
         });
       })
       .catch(err => {
-        console.log(err);
         this.setState({
           redirect: <Redirect exact from="/" to="/login" />
         });
