@@ -1,21 +1,32 @@
 package eu.execom.hawaii.api.controller;
 
+import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
+import org.springframework.social.google.api.Google;
+import org.springframework.social.google.api.impl.GoogleTemplate;
+import org.springframework.social.google.api.plus.Person;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.net.URI;
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.Collection;
 
 @RestController
 public class SignInController {
+
+  private static final String EXECOM_DOMAIN = "execom.eu";
 
   private UserService userService;
 
@@ -25,24 +36,25 @@ public class SignInController {
   }
 
   @GetMapping(value = "/signin")
-  public ResponseEntity<Principal> signIn(Principal principal) {
-    //        OAuth2Authentication oAuth2Authentication = (OAuth2Authentication) principal;
-    //        Map<String, String> details = (Map<String, String>) oAuth2Authentication.getUserAuthentication().getDetails();
-    //        String email = details.get("email");
-    //        User user = userService.getByEmail(email);
-    //
-    //        final Collection<GrantedAuthority> authorities = new ArrayList<>();
-    //        authorities.add(new SimpleGrantedAuthority(user.getUserRole().name()));
-    //        //    oAuth2Authentication.getUserAuthentication().getAuthorities().addAll(authorities);
-    //        //    ((OAuth2Authentication) principal).getUserAuthentication().getAuthorities().addAll(authorities);
-    //
-    //        final Authentication authentication = new PreAuthenticatedAuthenticationToken(principal, null, authorities);
-    //        SecurityContextHolder.getContext().setAuthentication(authentication);
+  public ResponseEntity<Principal> signIn(@RequestHeader(value = "Authorization") String token) {
 
-    HttpHeaders headers = new HttpHeaders();
-    headers.setLocation(URI.create("http://localhost:3000"));
+    Google google = new GoogleTemplate(token);
+    Person profile = google.plusOperations().getGoogleProfile();
+    String email = profile.getAccountEmail();
 
-    return new ResponseEntity<>(principal, headers, HttpStatus.FOUND);
+    if (!email.endsWith(EXECOM_DOMAIN)) {
+      return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+    }
+
+    User user = userService.getByEmail(email);
+
+    final Collection<GrantedAuthority> authorities = new ArrayList<>();
+    authorities.add(new SimpleGrantedAuthority(user.getUserRole().name()));
+
+    final Authentication authentication = new PreAuthenticatedAuthenticationToken(user, null, authorities);
+    SecurityContextHolder.getContext().setAuthentication(authentication);
+
+    return new ResponseEntity<>(HttpStatus.OK);
   }
 
   @GetMapping("/authentication")
