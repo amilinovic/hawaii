@@ -1,18 +1,21 @@
 import { call, put, takeLatest } from 'redux-saga/effects';
 
-import { REQUEST_API_DATA, receiveApiData } from '../actions/EmployeesActions';
+import {
+  REQUEST_API_DATA,
+  receiveApiData,
+  errorReceivingApiData
+} from '../actions/EmployeesActions';
 
 import { fetchData } from '../services/user';
 
-function* getApiData() {
+export const getApiData = function*(action) {
   try {
     const employeeInformation = yield call(fetchData);
     yield put(receiveApiData(employeeInformation));
-  } catch (e) {
-    // TODO error handling
-    console.log(e);
+  } catch (error) {
+    yield put(errorReceivingApiData(error));
   }
-}
+};
 
 export default function* mySaga() {
   yield takeLatest(REQUEST_API_DATA, getApiData);
