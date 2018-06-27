@@ -2,20 +2,7 @@ import React, { Component } from 'react';
 import { NavigationLink } from '../components/common/NavigationLink';
 import { GoogleLogin } from 'react-google-login';
 import request from 'superagent';
-
-const responseGoogle = response => {
-  const idToken = response.tokenId;
-  request
-    .post('/signin')
-    .set('Authorization', idToken)
-    .set('Accept', 'application/json')
-    .then(res => {
-      alert('yay got ' + JSON.stringify(res.body));
-    })
-    .catch(err => {
-      console.log(err);
-    });
-};
+import { Redirect } from 'react-router-dom';
 
 var loginButtonStyle = {
   padding: '0',
@@ -23,9 +10,31 @@ var loginButtonStyle = {
 };
 
 export default class Login extends Component {
+  state = {
+    redirect: null
+  };
+
   render() {
+    const responseGoogle = response => {
+      const idToken = response.accessToken;
+      console.log(idToken);
+      console.log(response);
+      request
+        .get('/signin')
+        .set('Authorization', idToken)
+        .set('Accept', 'application/json')
+        .then(res => {
+          this.setState({
+            redirect: <Redirect exact from="/" to="/leave" />
+          });
+        })
+        .catch(err => {
+          alert(err.response.statusText);
+        });
+    };
     return (
       <div className="align-items-center justify-content-center d-flex flex-grow-1 flex-column">
+        {this.state.redirect}
         <h1>Hello Hawaii</h1>
         <GoogleLogin
           style={loginButtonStyle}
