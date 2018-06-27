@@ -4,10 +4,11 @@ import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
-import javax.transaction.Transactional;
 import java.util.List;
 
 /**
@@ -51,7 +52,7 @@ public class UserService {
    * @return User with specified email if exists
    * @throws EntityNotFoundException if a user with given email is not found
    */
-  @Transactional
+  @Transactional(propagation = Propagation.REQUIRED)
   public User getByEmail(String email) {
     checkIfNotFound(email);
     return userRepository.findByEmail(email);
