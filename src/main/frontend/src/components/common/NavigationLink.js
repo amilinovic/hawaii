@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { ifProp, prop } from 'styled-tools';
+import { prop, ifProp } from 'styled-tools';
 
 export const NavigationLink = styled.span`
   color: ${prop('color', 'white')};

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Col, Container, Row } from 'reactstrap';
+import { Container, Row, Col } from 'reactstrap';
 import { UserImage } from '../common/UserImage';
 import { ShadowRow } from '../common/ShadowRow';
 
