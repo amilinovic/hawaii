@@ -3,6 +3,7 @@ package eu.execom.hawaii.model;
 import eu.execom.hawaii.model.enumerations.UserRole;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,6 +18,7 @@ import java.util.List;
 
 @Entity
 @Data
+@ToString(exclude = {"teamApprovers", "requests", "allowances"})
 @EqualsAndHashCode(callSuper = false)
 public class User extends BaseEntity implements Serializable {
 
