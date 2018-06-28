@@ -2,13 +2,13 @@ package eu.execom.hawaii.security;
 
 import org.springframework.boot.autoconfigure.security.oauth2.client.EnableOAuth2Sso;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
 @Configuration
 @EnableOAuth2Sso
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
   @Override
@@ -17,12 +17,17 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         .disable()
         .antMatcher("/**")
         .authorizeRequests()
-        .antMatchers("/", "welcome")
+        .antMatchers("/", "/welcome", "/authentication", "/signin")
         .permitAll()
+        .antMatchers("/users").hasRole("HR_MANAGER")
         .anyRequest()
         .authenticated()
         .and()
         .logout()
+        .invalidateHttpSession(true)
+        .deleteCookies("JSESSIONID")
+        .logoutSuccessUrl("http://localhost:3000/")
         .permitAll();
   }
+
 }
