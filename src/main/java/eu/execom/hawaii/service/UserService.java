@@ -39,7 +39,7 @@ public class UserService {
    * @return User with specified email if exists
    * @throws EntityNotFoundException if a user with given id is not found
    */
-  @Transactional
+  @Transactional(readOnly = true)
   public User getUserById(Long id) {
     return userRepository.getOne(id);
   }
@@ -51,7 +51,7 @@ public class UserService {
    * @return User with specified email if exists
    * @throws EntityNotFoundException if a user with given email is not found
    */
-  @Transactional
+  @Transactional(readOnly = true)
   public User getByEmail(String email) {
     checkIfNotFound(email);
     return userRepository.findByEmail(email);

@@ -48,10 +48,10 @@ public class SignInController {
 
     User user = userService.getByEmail(email);
 
-    final Collection<GrantedAuthority> authorities = new ArrayList<>();
+    Collection<GrantedAuthority> authorities = new ArrayList<>();
     authorities.add(new SimpleGrantedAuthority(user.getUserRole().name()));
 
-    final Authentication authentication = new PreAuthenticatedAuthenticationToken(user, null, authorities);
+    Authentication authentication = new PreAuthenticatedAuthenticationToken(user, null, authorities);
     SecurityContextHolder.getContext().setAuthentication(authentication);
 
     return new ResponseEntity<>(HttpStatus.OK);
