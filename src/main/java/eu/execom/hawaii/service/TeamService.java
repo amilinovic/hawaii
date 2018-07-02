@@ -40,6 +40,14 @@ public class TeamService {
     return teamRepository.findById(id).orElseThrow(EntityNotFoundException::new);
   }
 
+  public Team save(Team team) {
+    return teamRepository.save(team);
+  }
 
+  public void delete(Long id) {
+    Team team = teamRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+    team.setActive(false);
+    teamRepository.save(team);
+  }
 
 }
