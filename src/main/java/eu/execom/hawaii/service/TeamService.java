@@ -40,10 +40,21 @@ public class TeamService {
     return teamRepository.findById(id).orElseThrow(EntityNotFoundException::new);
   }
 
+  /**
+   * Saves the provided Team to repository.
+   *
+   * @param team the Team entity to be persisted.
+   */
   public Team save(Team team) {
     return teamRepository.save(team);
   }
 
+  /**
+   * Logically deletes Team.
+   *
+   * @param id - the team id
+   * @throws EntityNotFoundException if a team with given id is not found
+   */
   public void delete(Long id) {
     Team team = getById(id);
     team.setActive(false);
