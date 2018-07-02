@@ -45,7 +45,7 @@ public class TeamService {
   }
 
   public void delete(Long id) {
-    Team team = teamRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+    Team team = getById(id);
     team.setActive(false);
     teamRepository.save(team);
   }
