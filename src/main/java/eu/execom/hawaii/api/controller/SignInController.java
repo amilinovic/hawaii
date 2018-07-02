@@ -20,8 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 
 @RestController
 public class SignInController {
@@ -48,8 +48,8 @@ public class SignInController {
 
     User user = userService.getByEmail(email);
 
-    Collection<GrantedAuthority> authorities = new ArrayList<>();
-    authorities.add(new SimpleGrantedAuthority(user.getUserRole().name()));
+    Collection<GrantedAuthority> authorities = Collections.singletonList(
+        new SimpleGrantedAuthority(user.getUserRole().name()));
 
     Authentication authentication = new PreAuthenticatedAuthenticationToken(user, null, authorities);
     SecurityContextHolder.getContext().setAuthentication(authentication);
