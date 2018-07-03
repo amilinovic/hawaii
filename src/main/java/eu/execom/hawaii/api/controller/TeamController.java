@@ -35,31 +35,31 @@ public class TeamController {
 
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<List<TeamDto>> getTeams() {
-    List<Team> teams = teamService.getAll();
-    List<TeamDto> teamDtos = teams.stream().map(TeamDto::new).collect(Collectors.toList());
+    var teams = teamService.getAll();
+    var teamDtos = teams.stream().map(TeamDto::new).collect(Collectors.toList());
     return new ResponseEntity<>(teamDtos, HttpStatus.OK);
   }
 
   @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<TeamDto> getTeam(@PathVariable Long id) {
-    Team team = teamService.getById(id);
-    TeamDto teamDto = new TeamDto(team);
+    var team = teamService.getById(id);
+    var teamDto = new TeamDto(team);
     return new ResponseEntity<>(teamDto, HttpStatus.OK);
   }
 
   @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<TeamDto> createTeam(@RequestBody TeamDto teamDto) {
-    Team team = MAPPER.map(teamDto, Team.class);
+    var team = MAPPER.map(teamDto, Team.class);
     team = teamService.save(team);
-    TeamDto teamDtoResponse = new TeamDto(team);
+    var teamDtoResponse = new TeamDto(team);
     return new ResponseEntity<>(teamDtoResponse, HttpStatus.CREATED);
   }
 
   @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<TeamDto> updateTeam(@RequestBody TeamDto teamDto) {
-    Team team = MAPPER.map(teamDto, Team.class);
+    var team = MAPPER.map(teamDto, Team.class);
     team = teamService.save(team);
-    TeamDto teamDtoResponse = new TeamDto(team);
+    var teamDtoResponse = new TeamDto(team);
     return new ResponseEntity<>(teamDtoResponse, HttpStatus.OK);
   }
 

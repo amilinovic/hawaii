@@ -56,7 +56,7 @@ public class TeamService {
    * @throws EntityNotFoundException if a team with given id is not found
    */
   public void delete(Long id) {
-    Team team = getById(id);
+    var team = getById(id);
     team.setActive(false);
     teamRepository.save(team);
   }
