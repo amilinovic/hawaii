@@ -58,7 +58,6 @@ public class LeaveProfileController {
   @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<LeaveProfileDto> updateLeaveProfile(@RequestBody LeaveProfileDto leaveProfileDto) {
     var leaveProfile = MAPPER.map(leaveProfileDto, LeaveProfile.class);
-    leaveProfile = leaveProfileService.save(leaveProfile);
     var leaveProfileDtoResponse = new LeaveProfileDto(leaveProfile);
     return new ResponseEntity<>(leaveProfileDtoResponse, HttpStatus.OK);
   }
