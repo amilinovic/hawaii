@@ -1,7 +1,9 @@
 package eu.execom.hawaii.dto;
 
 import eu.execom.hawaii.model.LeaveProfile;
+import lombok.Data;
 
+@Data
 public class LeaveProfileDto {
 
   private Long id;
