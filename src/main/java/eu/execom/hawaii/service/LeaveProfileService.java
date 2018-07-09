@@ -26,7 +26,7 @@ public class LeaveProfileService {
    *
    * @return a list of all leave profiles
    */
-  public List<LeaveProfile> getAll() {
+  public List<LeaveProfile> findAll() {
     return leaveProfileRepository.findAll();
   }
 
@@ -44,7 +44,7 @@ public class LeaveProfileService {
   /**
    * Saves the provided leave profile to repository.
    *
-   * @param leaveProfile the Team entity to be persisted.
+   * @param leaveProfile the LeaveProfile entity to be persisted.
    */
   public LeaveProfile save(LeaveProfile leaveProfile) {
     return leaveProfileRepository.save(leaveProfile);
