@@ -12,12 +12,12 @@ describe('employees reducer', () => {
     }
   ];
 
-  it('should set default state', () => {
-    const state = employeesReducer(undefined, { type: '@@INIT' });
+  it('should have default state', () => {
+    const state = employeesReducer(undefined, {});
     expect(state).toEqual({ fetching: '' });
   });
 
-  it('should set new state', () => {
+  it('should update employee data with api response', () => {
     const stateWithResults = {
       type: 'RECEIVE_API_DATA',
       employee: mockEmployeesInformation

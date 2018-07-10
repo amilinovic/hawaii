@@ -8,8 +8,8 @@ import {
 import { getApiData } from '../../../store/sagas/sagas';
 import { fetchData } from '../../../store/services/user';
 
-describe('get users from api ', () => {
-  it('fetching successfully', () => {
+describe('get users saga', () => {
+  it('should fetch users', () => {
     const mockResults = [
       {
         name: 'someuser',
@@ -24,7 +24,7 @@ describe('get users from api ', () => {
     );
     expect(iterator.next().done).toBe(true);
 
-    it('puts error action if requesting users failed', () => {
+    it('should handle request errors when fetching users', () => {
       const requestAction = requestApiData();
       const error = new Error('error fetching users');
       const iterator = getApiData(requestAction);
