@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { requestApiData } from '../../store/actions/EmployeesActions';
 import UserInfo from '../UserInfo';
-import { createSelector } from 'reselect';
+import { getEmployee, getFetching } from '../../store/Selectors';
 
 class TopHeader extends Component {
   componentDidMount() {
@@ -38,19 +38,6 @@ class TopHeader extends Component {
     );
   }
 }
-
-const getEmployeeState = state => state.employee.employeeInformation;
-const getFetchingState = state => state.employee.fetching;
-
-export const getEmployee = createSelector(
-  [getEmployeeState],
-  employee => employee
-);
-
-export const getFetching = createSelector(
-  [getFetchingState],
-  fetching => fetching
-);
 
 const mapStateToProps = state => {
   return {

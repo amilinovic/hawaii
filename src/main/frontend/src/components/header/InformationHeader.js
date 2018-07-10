@@ -5,7 +5,7 @@ import { ShadowRow } from '../common/ShadowRow';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { requestApiData } from '../../store/actions/EmployeesActions';
-import { createSelector } from 'reselect';
+import { getEmployee, getFetching } from '../../store/Selectors';
 
 class InformationHeader extends Component {
   componentDidMount() {
@@ -33,19 +33,6 @@ class InformationHeader extends Component {
     );
   }
 }
-
-const getEmployeeState = state => state.employee.employeeInformation;
-const getFetchingState = state => state.employee.fetching;
-
-export const getEmployee = createSelector(
-  [getEmployeeState],
-  employee => employee
-);
-
-export const getFetching = createSelector(
-  [getFetchingState],
-  fetching => fetching
-);
 
 const mapStateToProps = state => {
   return {
