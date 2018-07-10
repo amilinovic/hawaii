@@ -34,8 +34,8 @@ class InformationHeader extends Component {
   }
 }
 
-const getEmployeeState = state => state.employeeInformation.employeeInformation;
-const getFetchingState = state => state.employeeInformation.fetching;
+const getEmployeeState = state => state.employee.employeeInformation;
+const getFetchingState = state => state.employee.fetching;
 
 export const getEmployee = createSelector(
   [getEmployeeState],
