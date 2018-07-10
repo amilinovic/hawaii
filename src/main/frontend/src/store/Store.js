@@ -10,8 +10,6 @@ export default createStore(
   reducer,
   compose(
     applyMiddleware(sagaMiddleware),
-    // Comment out this line before opening (testing) the app in browser
-    // without redux dev tools installed, for example when demoing the app
     window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
   )
 );
