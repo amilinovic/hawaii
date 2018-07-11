@@ -39,12 +39,10 @@ class TopHeader extends Component {
   }
 }
 
-const mapStateToProps = state => {
-  return {
-    employee: getEmployee(state),
-    fetching: getFetching(state)
-  };
-};
+const mapStateToProps = state => ({
+  employee: getEmployee(state),
+  fetching: getFetching(state)
+});
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
