@@ -1,8 +1,8 @@
 package eu.execom.hawaii.api.controller;
 
-import eu.execom.hawaii.dto.UserDto;
-import eu.execom.hawaii.model.User;
-import eu.execom.hawaii.service.UserService;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,8 +17,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import eu.execom.hawaii.dto.UserDto;
+import eu.execom.hawaii.model.User;
+import eu.execom.hawaii.service.UserService;
 
 @RestController
 @RequestMapping("/users")
@@ -58,7 +59,7 @@ public class UserController {
   @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<UserDto> updateUser(@RequestBody UserDto userDto) {
     User user = MAPPER.map(userDto, User.class);
-    user = userService.update(user);
+    user = userService.save(user);
     UserDto userDtoResponse = new UserDto(user);
     return new ResponseEntity<>(userDtoResponse, HttpStatus.OK);
   }

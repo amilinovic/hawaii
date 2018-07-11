@@ -17,7 +17,7 @@ public class EntityBuilder {
 
   static Team team() {
     var team = new Team();
-    team.setName("My team");
+    team.setName("My team1");
     team.setActive(true);
     team.setEmails("example@example.com");
     team.setUsers(new ArrayList<>());
