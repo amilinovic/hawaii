@@ -83,7 +83,7 @@ public class UserServiceTest {
   @Test
   public void shouldGetUserByEmail() {
     // given
-    String email = "aria.stark@gmail.com";
+    var email = "aria.stark@gmail.com";
     given(userRepository.findByEmail(email)).willReturn(Optional.of(mockUser));
 
     // when
@@ -112,7 +112,7 @@ public class UserServiceTest {
   @Test
   public void shouldDeleteUser() {
     // given
-    Long userId = 1L;
+    var userId = 1L;
     given(userRepository.getOne(userId)).willReturn(mockUser);
 
     // when
