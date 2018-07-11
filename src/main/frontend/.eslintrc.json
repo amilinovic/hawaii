@@ -1,0 +1,25 @@
+{
+  "extends": [
+    "airbnb",
+    "plugin:prettier/recommended",
+    "prettier/react"
+  ],
+  "plugins": [
+    "prettier"
+  ],
+  "env": {
+    "browser": true,
+    "jasmine": true
+  },
+  "rules": {
+    "react/jsx-filename-extension": [1, {"extensions": [".js"]}],
+    "prettier/prettier": ["error", { "singleQuote": true }],
+    "react/prefer-stateless-function": [0],
+    "generator-star-spacing": ["error", {"before": false, "after": true}],
+    "no-underscore-dangle": [0],
+    "react/prop-types": [0],
+    "react/destructuring-assignment": [0],
+    "import/prefer-default-export": [0],
+    "func-names": ["error", "as-needed"]
+  }
+}

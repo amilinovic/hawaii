@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { Container, Row, Col } from 'reactstrap';
-import UserInfoComponent from '../UserInfoExtended';
-import { ShadowRow } from '../common/ShadowRow';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import UserInfoComponent from '../UserInfoExtended';
+import { ShadowRow } from '../common/ShadowRow';
 import { requestApiData } from '../../store/actions/EmployeesActions';
 import { getEmployee, getFetching } from '../../store/Selectors';
 
@@ -34,12 +34,10 @@ class InformationHeader extends Component {
   }
 }
 
-const mapStateToProps = state => {
-  return {
-    employee: getEmployee(state),
-    fetching: getFetching(state)
-  };
-};
+const mapStateToProps = state => ({
+  employee: getEmployee(state),
+  fetching: getFetching(state)
+});
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators({ requestApiData }, dispatch);

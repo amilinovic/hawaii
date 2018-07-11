@@ -8,7 +8,8 @@ import {
 
 import { fetchData } from '../services/user';
 
-export const getApiData = function*(action) {
+/* prettier-ignore */
+export const getApiData = function* () {
   try {
     const employeeInformation = yield call(fetchData);
     yield put(receiveApiData(employeeInformation));
