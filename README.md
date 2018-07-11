@@ -97,3 +97,9 @@ yarn start or npm start
 ```
 
 Then open http://localhost:3000/ to see your app
+
+#### Swagger
+
+Always you can check endpoints on url:
+
+```http://localhost:8080/swagger-ui.html```
