@@ -1,12 +1,14 @@
 package eu.execom.hawaii.service;
 
-import eu.execom.hawaii.model.LeaveProfile;
-import eu.execom.hawaii.repository.LeaveProfileRepository;
+import java.util.List;
+
+import javax.persistence.EntityNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityNotFoundException;
-import java.util.List;
+import eu.execom.hawaii.model.LeaveProfile;
+import eu.execom.hawaii.repository.LeaveProfileRepository;
 
 /**
  * Leave profile management service.
@@ -24,7 +26,7 @@ public class LeaveProfileService {
   /**
    * Retrieves a list of all leave profiles from repository.
    *
-   * @return a list of all leave profiles
+   * @return a list of all leave profiles.
    */
   public List<LeaveProfile> getAll() {
     return leaveProfileRepository.findAll();
@@ -33,9 +35,9 @@ public class LeaveProfileService {
   /**
    * Retrieves a leave profile with a specific id.
    *
-   * @param id Leave profile id
-   * @return Leave profile with provided id if exists
-   * @throws EntityNotFoundException if a leave profile with given id is not found
+   * @param id Leave profile id.
+   * @return Leave profile with provided id if exists.
+   * @throws EntityNotFoundException if a leave profile with given id is not found.
    */
   public LeaveProfile getById(Long id) {
     return leaveProfileRepository.getOne(id);
@@ -53,8 +55,8 @@ public class LeaveProfileService {
   /**
    * Deletes leave profile.
    *
-   * @param id - the leave profile id
-   * @throws EntityNotFoundException if a leave profile with given id is not found
+   * @param id - the leave profile id.
+   * @throws EntityNotFoundException if a leave profile with given id is not found.
    */
   public void delete(Long id) {
     if (!leaveProfileRepository.existsById(id)) {

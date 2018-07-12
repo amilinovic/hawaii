@@ -1,12 +1,11 @@
 package eu.execom.hawaii.api.controller;
 
-import eu.execom.hawaii.dto.TeamDto;
-import eu.execom.hawaii.model.Team;
-import eu.execom.hawaii.service.TeamService;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,8 +16,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import eu.execom.hawaii.dto.TeamDto;
+import eu.execom.hawaii.model.Team;
+import eu.execom.hawaii.service.TeamService;
 
 @RestController
 @RequestMapping("/teams")
@@ -33,21 +33,21 @@ public class TeamController {
 
   private static final ModelMapper MAPPER = new ModelMapper();
 
-  @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+  @GetMapping
   public ResponseEntity<List<TeamDto>> getTeams() {
     var teams = teamService.getAll();
     var teamDtos = teams.stream().map(TeamDto::new).collect(Collectors.toList());
     return new ResponseEntity<>(teamDtos, HttpStatus.OK);
   }
 
-  @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+  @GetMapping("/{id}")
   public ResponseEntity<TeamDto> getTeam(@PathVariable Long id) {
     var team = teamService.getById(id);
     var teamDto = new TeamDto(team);
     return new ResponseEntity<>(teamDto, HttpStatus.OK);
   }
 
-  @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+  @PostMapping
   public ResponseEntity<TeamDto> createTeam(@RequestBody TeamDto teamDto) {
     var team = MAPPER.map(teamDto, Team.class);
     team = teamService.save(team);
@@ -55,7 +55,7 @@ public class TeamController {
     return new ResponseEntity<>(teamDtoResponse, HttpStatus.CREATED);
   }
 
-  @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+  @PutMapping
   public ResponseEntity<TeamDto> updateTeam(@RequestBody TeamDto teamDto) {
     var team = MAPPER.map(teamDto, Team.class);
     team = teamService.save(team);
@@ -63,7 +63,7 @@ public class TeamController {
     return new ResponseEntity<>(teamDtoResponse, HttpStatus.OK);
   }
 
-  @DeleteMapping(value = "/{id}")
+  @DeleteMapping("/{id}")
   public ResponseEntity deleteTeam(@PathVariable Long id) {
     teamService.delete(id);
     return new ResponseEntity(HttpStatus.NO_CONTENT);
