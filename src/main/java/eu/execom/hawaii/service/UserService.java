@@ -1,14 +1,15 @@
 package eu.execom.hawaii.service;
 
-import eu.execom.hawaii.model.User;
-import eu.execom.hawaii.repository.UserRepository;
+import java.util.List;
+
+import javax.persistence.EntityNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityExistsException;
-import javax.persistence.EntityNotFoundException;
-import java.util.List;
+import eu.execom.hawaii.model.User;
+import eu.execom.hawaii.repository.UserRepository;
 
 /**
  * User management service.
@@ -53,30 +54,16 @@ public class UserService {
    */
   @Transactional(readOnly = true)
   public User getByEmail(String email) {
-    checkIfNotFound(email);
-    return userRepository.findByEmail(email);
+    return userRepository.findByEmail(email).orElseThrow(EntityNotFoundException::new);
   }
 
   /**
    * Saves the provided User to repository.
    *
    * @param user the User entity to be persisted.
-   * @throws EntityExistsException if a user with same email already exists
    */
+  @Transactional
   public User save(User user) {
-    checkIfAlreadyExists(user);
-    return userRepository.save(user);
-  }
-
-  /**
-   * Retrieves a User with a specific email.
-   *
-   * @param user the User object to update
-   * @return the updated user
-   * @throws EntityNotFoundException if a user with given id is not found
-   */
-  public User update(User user) {
-    checkIfNotFound(user.getId());
     return userRepository.save(user);
   }
 
@@ -86,29 +73,11 @@ public class UserService {
    * @param id - the user id
    * @throws EntityNotFoundException if a user with given id is not found
    */
+  @Transactional
   public void delete(Long id) {
-    User user = userRepository.getOne(id);
+    var user = userRepository.getOne(id);
     user.setActive(false);
     userRepository.save(user);
-  }
-
-  private void checkIfAlreadyExists(User user) {
-    User existingUser = userRepository.findByEmail(user.getEmail());
-    if (existingUser != null) {
-      throw new EntityExistsException();
-    }
-  }
-
-  private void checkIfNotFound(Long id) {
-    if (!userRepository.existsById(id)) {
-      throw new EntityNotFoundException();
-    }
-  }
-
-  private void checkIfNotFound(String email) {
-    if (!userRepository.existsByEmail(email)) {
-      throw new EntityNotFoundException();
-    }
   }
 
 }
