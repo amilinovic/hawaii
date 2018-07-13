@@ -13,7 +13,7 @@ import lombok.ToString;
 
 @Entity
 @Data
-@ToString(exclude = {"users"})
+@ToString(exclude = "users")
 @EqualsAndHashCode(callSuper = false)
 public class LeaveProfile extends BaseEntity implements Serializable {
 
