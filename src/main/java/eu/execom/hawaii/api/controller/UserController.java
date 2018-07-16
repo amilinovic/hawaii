@@ -35,14 +35,14 @@ public class UserController {
 
   @GetMapping
   public ResponseEntity<List<UserDto>> getUsers() {
-    List<User> users = userService.getAll();
+    List<User> users = userService.findAll(true);
     List<UserDto> userDtos = users.stream().map(UserDto::new).collect(Collectors.toList());
     return new ResponseEntity<>(userDtos, HttpStatus.OK);
   }
 
   @GetMapping("/{email}")
   public ResponseEntity<UserDto> getUserByEmail(@PathVariable String email) {
-    User user = userService.getByEmail(email);
+    User user = userService.findByEmail(email);
     UserDto userDto = new UserDto(user);
     return new ResponseEntity<>(userDto, HttpStatus.OK);
   }

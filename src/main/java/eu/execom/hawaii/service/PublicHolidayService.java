@@ -2,8 +2,6 @@ package eu.execom.hawaii.service;
 
 import java.util.List;
 
-import javax.persistence.EntityNotFoundException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,7 +10,6 @@ import eu.execom.hawaii.repository.PublicHolidayRepository;
 
 /**
  * Public holiday management service.
- *
  */
 @Service
 public class PublicHolidayService {
@@ -29,7 +26,6 @@ public class PublicHolidayService {
    *
    * @param id the PublicHoliday id.
    * @return the PublicHoliday.
-   * @throws EntityNotFoundException if a publicHoliday with given id is not found.
    */
   public PublicHoliday getById(Long id) {
     return publicHolidayRepository.getOne(id);
@@ -40,8 +36,8 @@ public class PublicHolidayService {
    *
    * @return a list of publicHolidays.
    */
-  public List<PublicHoliday> getAll() {
-    return publicHolidayRepository.findAll();
+  public List<PublicHoliday> findAll(boolean active) {
+    return publicHolidayRepository.findAllByActive(active);
   }
 
   /**

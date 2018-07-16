@@ -37,7 +37,6 @@ public class LeaveProfileService {
    *
    * @param id Leave profile id.
    * @return Leave profile with provided id if exists.
-   * @throws EntityNotFoundException if a leave profile with given id is not found.
    */
   public LeaveProfile getById(Long id) {
     return leaveProfileRepository.getOne(id);

@@ -35,7 +35,7 @@ public class TeamController {
 
   @GetMapping
   public ResponseEntity<List<TeamDto>> getTeams() {
-    var teams = teamService.getAll();
+    var teams = teamService.findAll(true);
     var teamDtos = teams.stream().map(TeamDto::new).collect(Collectors.toList());
     return new ResponseEntity<>(teamDtos, HttpStatus.OK);
   }

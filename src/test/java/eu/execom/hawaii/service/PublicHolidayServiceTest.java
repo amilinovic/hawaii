@@ -60,10 +60,11 @@ public class PublicHolidayServiceTest {
   @Test
   public void shouldGetAllPublicHolidays() {
     // given
-    given(publicHolidayRepository.findAll()).willReturn(mockPublicHolidays);
+    var active = true;
+    given(publicHolidayRepository.findAllByActive(active)).willReturn(mockPublicHolidays);
 
     // when
-    List<PublicHoliday> publicHolidays = publicHolidayService.getAll();
+    List<PublicHoliday> publicHolidays = publicHolidayService.findAll(active);
 
     // then
     assertThat("Expect size to be two", publicHolidays.size(), is(2));

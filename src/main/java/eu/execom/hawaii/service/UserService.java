@@ -29,8 +29,8 @@ public class UserService {
    *
    * @return a list of all users
    */
-  public List<User> getAll() {
-    return userRepository.findAll();
+  public List<User> findAll(boolean active) {
+    return userRepository.findAllByActive(active);
   }
 
   /**
@@ -38,7 +38,6 @@ public class UserService {
    *
    * @param id User email
    * @return User with specified email if exists
-   * @throws EntityNotFoundException if a user with given id is not found
    */
   @Transactional(readOnly = true)
   public User getUserById(Long id) {
@@ -53,7 +52,7 @@ public class UserService {
    * @throws EntityNotFoundException if a user with given email is not found
    */
   @Transactional(readOnly = true)
-  public User getByEmail(String email) {
+  public User findByEmail(String email) {
     return userRepository.findByEmail(email).orElseThrow(EntityNotFoundException::new);
   }
 
@@ -71,7 +70,6 @@ public class UserService {
    * Logically deletes User.
    *
    * @param id - the user id
-   * @throws EntityNotFoundException if a user with given id is not found
    */
   @Transactional
   public void delete(Long id) {

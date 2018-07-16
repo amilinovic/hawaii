@@ -52,10 +52,11 @@ public class UserServiceTest {
   @Test
   public void shouldGetAllUsers() {
     // given
-    given(userRepository.findAll()).willReturn(initialUsers);
+    var active = true;
+    given(userRepository.findAllByActive(active)).willReturn(initialUsers);
 
     // when
-    List<User> users = userService.getAll();
+    List<User> users = userService.findAll(active);
 
     // then
     assertThat("Expect size to be two", users.size(), is(2));
@@ -87,7 +88,7 @@ public class UserServiceTest {
     given(userRepository.findByEmail(email)).willReturn(Optional.of(mockUser));
 
     // when
-    User user = userService.getByEmail(email);
+    User user = userService.findByEmail(email);
 
     // then
     assertThat("Expect email to be aria.stark@gmail.com", user.getEmail(), is(email));

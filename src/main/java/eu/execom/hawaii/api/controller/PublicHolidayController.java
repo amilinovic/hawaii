@@ -43,7 +43,7 @@ public class PublicHolidayController {
 
   @GetMapping
   public ResponseEntity<List<PublicHolidayDto>> getPublicHolidays() {
-    var publicHolidays = publicHolidayService.getAll();
+    var publicHolidays = publicHolidayService.findAll(true);
     var publicHolidayDtos = publicHolidays.stream().map(PublicHolidayDto::new).collect(Collectors.toList());
 
     return new ResponseEntity<>(publicHolidayDtos, HttpStatus.OK);

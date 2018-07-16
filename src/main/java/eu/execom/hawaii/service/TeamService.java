@@ -2,8 +2,6 @@ package eu.execom.hawaii.service;
 
 import java.util.List;
 
-import javax.persistence.EntityNotFoundException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,8 +26,8 @@ public class TeamService {
    *
    * @return a list of all teams.
    */
-  public List<Team> getAll() {
-    return teamRepository.findAll();
+  public List<Team> findAll(boolean active) {
+    return teamRepository.findAllByActive(active);
   }
 
   /**
@@ -37,7 +35,6 @@ public class TeamService {
    *
    * @param id Team id.
    * @return Team with provided id if exists.
-   * @throws EntityNotFoundException if a team with given id is not found.
    */
   public Team getById(Long id) {
     return teamRepository.getOne(id);

@@ -48,10 +48,11 @@ public class TeamServiceTest {
   @Test
   public void shouldGetAllTeams() {
     // given
-    given(teamRepository.findAll()).willReturn(mockteams);
+    var acitve = true;
+    given(teamRepository.findAllByActive(acitve)).willReturn(mockteams);
 
     // when
-    List<Team> teams = teamService.getAll();
+    List<Team> teams = teamService.findAll(acitve);
 
     // then
     assertThat("Expect size to be two", teams.size(), is(2));
