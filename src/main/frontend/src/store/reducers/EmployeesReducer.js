@@ -1,20 +1,16 @@
+import { handleActions } from 'redux-actions';
 import { RECEIVE_API_DATA } from '../actions/EmployeesActions';
 
 export const initialState = {
   error: null,
-  repos: null
+  repos: null,
+  fetching: ''
 };
 
 const actionHandlers = {
-  [RECEIVE_API_DATA](employeeInformation) {
-    return { fetching: 'done', employeeInformation };
-  }
+  [RECEIVE_API_DATA]: (state, action) => ({ ...action.payload, fetching: null })
 };
 
-export default (state = { fetching: '' }, { type, employeeInformation }) => {
-  const actionHandler = actionHandlers[type];
-  if (actionHandler) {
-    return actionHandler(employeeInformation);
-  }
-  return state;
-};
+const reducer = handleActions(actionHandlers, initialState);
+
+export default reducer;
