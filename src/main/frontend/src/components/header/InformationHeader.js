@@ -8,9 +8,9 @@ import { requestApiData } from '../../store/actions/EmployeesActions';
 import { getEmployee, getFetching } from '../../store/Selectors';
 
 class InformationHeader extends Component {
-  // componentDidMount() {
-  //   this.props.requestApiData();
-  // }
+  componentDidMount() {
+    this.props.requestApiData();
+  }
 
   render() {
     // TODO change mocked data with actual data

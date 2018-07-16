@@ -12,7 +12,6 @@ class TopHeader extends Component {
   }
 
   render() {
-    console.log(this.props);
     return (
       // TODO change mocked data with actual data
       <Container fluid>
