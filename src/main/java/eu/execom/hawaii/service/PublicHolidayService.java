@@ -32,7 +32,7 @@ public class PublicHolidayService {
    * @throws EntityNotFoundException if a publicHoliday with given id is not found.
    */
   public PublicHoliday getById(Long id) {
-    return publicHolidayRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+    return publicHolidayRepository.getOne(id);
   }
 
   /**

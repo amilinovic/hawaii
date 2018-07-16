@@ -40,7 +40,7 @@ public class TeamService {
    * @throws EntityNotFoundException if a team with given id is not found.
    */
   public Team getById(Long id) {
-    return teamRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+    return teamRepository.getOne(id);
   }
 
   /**

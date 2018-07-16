@@ -10,7 +10,6 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -47,14 +46,14 @@ public class PublicHolidayServiceTest {
   public void shouldGetPublicHolidayById() {
     // given
     var userId = 1L;
-    given(publicHolidayRepository.findById(userId)).willReturn(Optional.of(mockPublicHoliday));
+    given(publicHolidayRepository.getOne(userId)).willReturn(mockPublicHoliday);
 
     // when
     PublicHoliday publicHoliday = publicHolidayService.getById(userId);
 
     // then
     assertThat("Expect name to be New Year", publicHoliday.getName(), is("New year"));
-    verify(publicHolidayRepository).findById(anyLong());
+    verify(publicHolidayRepository).getOne(anyLong());
     verifyNoMoreInteractions(publicHolidayRepository);
   }
 
@@ -90,13 +89,13 @@ public class PublicHolidayServiceTest {
   public void shouldDeletePublicHoliday() {
     // given
     var publicHolidayId = 1L;
-    given(publicHolidayRepository.findById(publicHolidayId)).willReturn(Optional.of(mockPublicHoliday));
+    given(publicHolidayRepository.getOne(publicHolidayId)).willReturn(mockPublicHoliday);
 
     // when
     publicHolidayService.delete(publicHolidayId);
 
     // then
-    verify(publicHolidayRepository).findById(anyLong());
+    verify(publicHolidayRepository).getOne(anyLong());
     verify(publicHolidayRepository).save(ArgumentMatchers.any());
     verifyNoMoreInteractions(publicHolidayRepository);
   }
