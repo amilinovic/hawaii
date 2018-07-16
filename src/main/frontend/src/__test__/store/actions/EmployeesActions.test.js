@@ -19,7 +19,7 @@ describe('employees actions creators', () => {
     const action = receiveApiData(employeeInformation);
     expect(action).toEqual({
       type: 'RECEIVE_API_DATA',
-      employeeInformation: {
+      payload: {
         ...employeeInformation
       }
     });
