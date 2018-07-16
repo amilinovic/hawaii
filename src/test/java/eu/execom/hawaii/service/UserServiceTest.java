@@ -57,7 +57,7 @@ public class UserServiceTest {
     given(userRepository.findAllByActive(active)).willReturn(initialUsers);
 
     // when
-    List<User> users = userService.findAll(active);
+    List<User> users = userService.findAllByActive(active);
 
     // then
     assertThat("Expect size to be two", users.size(), is(2));
