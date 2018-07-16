@@ -3,6 +3,7 @@ package eu.execom.hawaii.service;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
@@ -62,7 +63,7 @@ public class UserServiceTest {
     assertThat("Expect size to be two", users.size(), is(2));
     assertThat("Expect name to be Aria Stark", users.get(0).getFullName(), is("Aria Stark"));
     assertThat("Expect name to be John Snow", users.get(1).getFullName(), is("John Snow"));
-    verify(userRepository).findAll();
+    verify(userRepository).findAllByActive(anyBoolean());
     verifyNoMoreInteractions(userRepository);
   }
 

@@ -2,6 +2,7 @@ package eu.execom.hawaii.service;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
@@ -68,7 +69,7 @@ public class PublicHolidayServiceTest {
 
     // then
     assertThat("Expect size to be two", publicHolidays.size(), is(2));
-    verify(publicHolidayRepository).findAll();
+    verify(publicHolidayRepository).findAllByActive(anyBoolean());
     verifyNoMoreInteractions(publicHolidayRepository);
   }
 
