@@ -24,7 +24,7 @@ public class AbsenceService {
   /**
    * Retrieves a list of all Absence types from repository.
    *
-   * @return a list of all Absence types
+   * @return a list of all Absence types.
    */
   public List<Absence> findAll() {
     return absenceRepository.findAll();
@@ -33,9 +33,9 @@ public class AbsenceService {
   /**
    * Retrieves an Absence with a specific id.
    *
-   * @param id Absence id
-   * @return Absence with provided id if exists
-   * @throws EntityNotFoundException if an Absence with given id is not found
+   * @param id Absence id.
+   * @return Absence with provided id if exists.
+   * @throws EntityNotFoundException if an Absence with given id is not found.
    */
   public Absence getById(Long id) {
     return absenceRepository.getOne(id);
@@ -53,8 +53,8 @@ public class AbsenceService {
   /**
    * Deletes Absence.
    *
-   * @param id - the Absence id
-   * @throws EntityNotFoundException if an Absence with given id is not found
+   * @param id - the Absence id.
+   * @throws EntityNotFoundException if an Absence with given id is not found.
    */
   public void delete(Long id) {
     if (!absenceRepository.existsById(id)) {
