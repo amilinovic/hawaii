@@ -65,7 +65,7 @@ public class PublicHolidayServiceTest {
     given(publicHolidayRepository.findAllByActive(active)).willReturn(mockPublicHolidays);
 
     // when
-    List<PublicHoliday> publicHolidays = publicHolidayService.findAll(active);
+    List<PublicHoliday> publicHolidays = publicHolidayService.findAllByActive(active);
 
     // then
     assertThat("Expect size to be two", publicHolidays.size(), is(2));

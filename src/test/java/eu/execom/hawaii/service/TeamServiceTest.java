@@ -52,7 +52,7 @@ public class TeamServiceTest {
     given(teamRepository.findAllByActive(acitve)).willReturn(mockTeams);
 
     // when
-    List<Team> teams = teamService.findAll(acitve);
+    List<Team> teams = teamService.findAllByActive(acitve);
 
     // then
     assertThat("Expect size to be two", teams.size(), is(2));

@@ -27,9 +27,10 @@ public class UserService {
   /**
    * Retrieves a list of all users from repository.
    *
-   * @return a list of all users
+   * @param active is it active.
+   * @return a list of all users.
    */
-  public List<User> findAll(boolean active) {
+  public List<User> findAllByActive(boolean active) {
     return userRepository.findAllByActive(active);
   }
 

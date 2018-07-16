@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import eu.execom.hawaii.dto.UserDto;
@@ -34,8 +35,8 @@ public class UserController {
   }
 
   @GetMapping
-  public ResponseEntity<List<UserDto>> getUsers() {
-    List<User> users = userService.findAll(true);
+  public ResponseEntity<List<UserDto>> getUsers(@RequestParam boolean active) {
+    List<User> users = userService.findAllByActive(active);
     List<UserDto> userDtos = users.stream().map(UserDto::new).collect(Collectors.toList());
     return new ResponseEntity<>(userDtos, HttpStatus.OK);
   }

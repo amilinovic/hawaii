@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import eu.execom.hawaii.dto.TeamDto;
@@ -34,8 +35,8 @@ public class TeamController {
   private static final ModelMapper MAPPER = new ModelMapper();
 
   @GetMapping
-  public ResponseEntity<List<TeamDto>> getTeams() {
-    var teams = teamService.findAll(true);
+  public ResponseEntity<List<TeamDto>> getTeams(@RequestParam boolean active) {
+    var teams = teamService.findAllByActive(active);
     var teamDtos = teams.stream().map(TeamDto::new).collect(Collectors.toList());
     return new ResponseEntity<>(teamDtos, HttpStatus.OK);
   }

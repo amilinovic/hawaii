@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import eu.execom.hawaii.dto.PublicHolidayDto;
@@ -42,8 +43,8 @@ public class PublicHolidayController {
   }
 
   @GetMapping
-  public ResponseEntity<List<PublicHolidayDto>> getPublicHolidays() {
-    var publicHolidays = publicHolidayService.findAll(true);
+  public ResponseEntity<List<PublicHolidayDto>> getPublicHolidays(@RequestParam boolean active) {
+    var publicHolidays = publicHolidayService.findAllByActive(active);
     var publicHolidayDtos = publicHolidays.stream().map(PublicHolidayDto::new).collect(Collectors.toList());
 
     return new ResponseEntity<>(publicHolidayDtos, HttpStatus.OK);

@@ -34,9 +34,10 @@ public class PublicHolidayService {
   /**
    * Retrieves all publicHolidays.
    *
+   * @param active is it active.
    * @return a list of publicHolidays.
    */
-  public List<PublicHoliday> findAll(boolean active) {
+  public List<PublicHoliday> findAllByActive(boolean active) {
     return publicHolidayRepository.findAllByActive(active);
   }
 

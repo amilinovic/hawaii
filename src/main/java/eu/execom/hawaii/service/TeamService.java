@@ -24,9 +24,10 @@ public class TeamService {
   /**
    * Retrieves a list of all teams from repository.
    *
+   * @param active is it active.
    * @return a list of all teams.
    */
-  public List<Team> findAll(boolean active) {
+  public List<Team> findAllByActive(boolean active) {
     return teamRepository.findAllByActive(active);
   }
 
