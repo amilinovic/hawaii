@@ -4,6 +4,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
@@ -12,7 +13,6 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -34,29 +34,30 @@ public class TeamServiceTest {
   private TeamService teamService;
 
   private Team mockTeam;
-  private List<Team> mockteams;
+  private List<Team> mockTeams;
 
   @Before
   public void setUp() {
-   mockTeam = EntityBuilder.team();
-   var mockTeam2 = EntityBuilder.team();
-   mockTeam2.setName("My team 2");
+    mockTeam = EntityBuilder.team();
+    var mockTeam2 = EntityBuilder.team();
+    mockTeam2.setName("My team 2");
 
-   mockteams = new ArrayList<>(Arrays.asList(mockTeam, mockTeam2));
+    mockTeams = new ArrayList<>(Arrays.asList(mockTeam, mockTeam2));
   }
 
   @Test
   public void shouldGetAllTeams() {
     // given
-    given(teamRepository.findAll()).willReturn(mockteams);
+    var acitve = true;
+    given(teamRepository.findAllByActive(acitve)).willReturn(mockTeams);
 
     // when
-    List<Team> teams = teamService.getAll();
+    List<Team> teams = teamService.findAllByActive(acitve);
 
     // then
     assertThat("Expect size to be two", teams.size(), is(2));
     assertThat("Expect name to be My team1", teams.get(0).getName(), is("My team1"));
-    verify(teamRepository).findAll();
+    verify(teamRepository).findAllByActive(anyBoolean());
     verifyNoMoreInteractions(teamRepository);
   }
 
@@ -64,14 +65,14 @@ public class TeamServiceTest {
   public void shouldGetTeamById() {
     // given
     var teamId = 1L;
-    given(teamRepository.findById(teamId)).willReturn(Optional.of(mockTeam));
+    given(teamRepository.getOne(teamId)).willReturn(mockTeam);
 
     // when
     var team = teamService.getById(teamId);
 
     // then
     assertThat("Expect name to be My team1", team.getName(), is("My team1"));
-    verify(teamRepository).findById(anyLong());
+    verify(teamRepository).getOne(anyLong());
     verifyNoMoreInteractions(teamRepository);
   }
 
@@ -94,13 +95,13 @@ public class TeamServiceTest {
   public void shouldDeleteTeam() {
     // given
     var teamId = 1L;
-    given(teamRepository.findById(teamId)).willReturn(Optional.of(mockTeam));
+    given(teamRepository.getOne(teamId)).willReturn(mockTeam);
 
     // when
     teamService.delete(teamId);
 
     // then
-    verify(teamRepository).findById(anyLong());
+    verify(teamRepository).getOne(anyLong());
     verify(teamRepository).save(any());
     verifyNoMoreInteractions(teamRepository);
   }

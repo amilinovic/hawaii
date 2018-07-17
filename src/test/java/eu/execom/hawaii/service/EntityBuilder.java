@@ -49,7 +49,6 @@ public class EntityBuilder {
     leaveProfile.setMaxCarriedOver(5);
     leaveProfile.setTraining(2);
     leaveProfile.setComment("No comment");
-    leaveProfile.setPublicHolidays(new ArrayList<>());
     leaveProfile.setUsers(new ArrayList<>());
 
     return leaveProfile;
@@ -83,7 +82,6 @@ public class EntityBuilder {
 
   static PublicHoliday publicholiday() {
     var publicHoliday = new PublicHoliday();
-    publicHoliday.setLeaveProfile(leaveProfile());
     publicHoliday.setActive(true);
     publicHoliday.setName("New year");
     publicHoliday.setDate(LocalDate.of(2018, 1, 1));

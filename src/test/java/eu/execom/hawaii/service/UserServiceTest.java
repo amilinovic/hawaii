@@ -3,6 +3,7 @@ package eu.execom.hawaii.service;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
@@ -52,16 +53,17 @@ public class UserServiceTest {
   @Test
   public void shouldGetAllUsers() {
     // given
-    given(userRepository.findAll()).willReturn(initialUsers);
+    var active = true;
+    given(userRepository.findAllByActive(active)).willReturn(initialUsers);
 
     // when
-    List<User> users = userService.getAll();
+    List<User> users = userService.findAllByActive(active);
 
     // then
     assertThat("Expect size to be two", users.size(), is(2));
     assertThat("Expect name to be Aria Stark", users.get(0).getFullName(), is("Aria Stark"));
     assertThat("Expect name to be John Snow", users.get(1).getFullName(), is("John Snow"));
-    verify(userRepository).findAll();
+    verify(userRepository).findAllByActive(anyBoolean());
     verifyNoMoreInteractions(userRepository);
   }
 
@@ -87,7 +89,7 @@ public class UserServiceTest {
     given(userRepository.findByEmail(email)).willReturn(Optional.of(mockUser));
 
     // when
-    User user = userService.getByEmail(email);
+    User user = userService.findByEmail(email);
 
     // then
     assertThat("Expect email to be aria.stark@gmail.com", user.getEmail(), is(email));
