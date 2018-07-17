@@ -5,7 +5,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @Configuration
@@ -18,14 +17,15 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
   protected void configure(HttpSecurity http) throws Exception {
     http.csrf().disable()
         .authorizeRequests()
-          .antMatchers("/authentication", "/swagger-ui.html", "/swagger-resources/**", "/v2/**", "/webjars/**").permitAll()
-          .anyRequest().authenticated()
+        .antMatchers("/", "/welcome", "/signin", "/authentication", "/swagger-ui.html", "/swagger-resources/**",
+            "/v2/**", "/webjars/**").permitAll()
+        .anyRequest().authenticated()
         .and()
-          .logout()
-          .invalidateHttpSession(true)
-          .deleteCookies("JSESSIONID")
-          .logoutSuccessUrl("http://localhost:3000/")
-          .permitAll();
+        .logout()
+        .invalidateHttpSession(true)
+        .deleteCookies("JSESSIONID")
+        .logoutSuccessUrl("http://localhost:3000/")
+        .permitAll();
   }
 
 }

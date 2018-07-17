@@ -29,7 +29,7 @@ export default class Login extends Component {
           });
         })
         .catch(err => {
-          alert(err.response.statusText);
+          alert(err);
         });
     };
     return (
