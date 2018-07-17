@@ -1,4 +1,4 @@
-import { getEmployee, getFetching } from '../../store/Selectors';
+import { getEmployee } from '../../store/Selectors';
 
 describe('Get Employee Selector', () => {
   it('should return state of employee', () => {
