@@ -15,9 +15,11 @@ describe('Employee Selector', () => {
   describe('Fetch Employee Selector', () => {
     it('should return fetch state of employee', () => {
       const state = {
-        employee: ''
+        employee: {
+          fetching: 123
+        }
       };
-      expect(getFetching(state)).toEqual();
+      expect(getFetching(state)).toEqual(123);
     });
   });
 });
