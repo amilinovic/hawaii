@@ -35,7 +35,7 @@ public class LeaveProfileController {
 
   @GetMapping
   public ResponseEntity<List<LeaveProfileDto>> getLeaveProfiles() {
-    var leaveProfiles = leaveProfileService.getAll();
+    var leaveProfiles = leaveProfileService.findAll();
     var leaveProfileDtos = leaveProfiles.stream().map(LeaveProfileDto::new).collect(Collectors.toList());
     return new ResponseEntity<>(leaveProfileDtos, HttpStatus.OK);
   }
