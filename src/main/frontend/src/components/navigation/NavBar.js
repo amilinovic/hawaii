@@ -5,7 +5,7 @@ import InformationHeader from '../header/InformationHeader';
 import LeaveHistory from '../../pages/LeaveHistory';
 import TeamCalendar from '../../pages/TeamCalendar';
 import ExecomCalendar from '../../pages/ExecomCalendar';
-import Sidebar from '../navigation/Sidebar';
+import Sidebar from './Sidebar';
 import TopHeader from '../header/TopHeader';
 
 export default class NavBar extends Component {
