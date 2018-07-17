@@ -22,7 +22,6 @@ export default class Login extends Component {
         .set('Authorization', idToken)
         .set('Accept', 'application/json')
         .then(res => {
-          console.log(res);
           this.setState({
             redirect: <Redirect exact from="/" to="/leave" />
           });
