@@ -11,7 +11,7 @@ describe('employees reducer', () => {
 
   it('should have default state', () => {
     const state = employeesReducer(undefined, {});
-    expect(state).toEqual({ fetching: '', error: null, repos: null });
+    expect(state).toEqual({ fetching: '', error: null });
   });
 
   it('should update employee data with api response', () => {
