@@ -3,7 +3,6 @@ import { RECEIVE_API_DATA } from '../actions/EmployeesActions';
 
 export const initialState = {
   error: null,
-  repos: null,
   fetching: ''
 };
 
