@@ -1,8 +1,16 @@
 import React, { Component } from 'react';
 import { Container, Row, Col } from 'reactstrap';
-import { UserImage } from '../common/UserImage';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { requestApiData } from '../../store/actions/EmployeesActions';
+import UserInfo from '../UserInfo';
+import { getEmployee, getFetching } from '../../store/Selectors';
 
-export default class TopHeader extends Component {
+class TopHeader extends Component {
+  componentDidMount() {
+    this.props.requestApiData();
+  }
+
   render() {
     return (
       // TODO change mocked data with actual data
@@ -21,13 +29,30 @@ export default class TopHeader extends Component {
             />
           </Col>
           <Col xs="3" className="justify-content-end d-none d-lg-inline-flex">
-            <div className="d-inline-flex align-items-center">
-              <UserImage />
-              <span>Nikola Kavezic</span>
-            </div>
+            {this.props.fetching === '' ? null : (
+              <UserInfo employeeInfo={this.props.employee.results[0]} />
+            )}
           </Col>
         </Row>
       </Container>
     );
   }
 }
+
+const mapStateToProps = state => ({
+  employee: getEmployee(state),
+  fetching: getFetching(state)
+});
+
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(
+    {
+      requestApiData
+    },
+    dispatch
+  );
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(TopHeader);
