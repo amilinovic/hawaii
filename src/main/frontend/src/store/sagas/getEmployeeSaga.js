@@ -17,6 +17,6 @@ export const getApiData = function*() {
   }
 };
 
-export default function* getEmployeesSaga() {
+export default function* getEmployeeSaga() {
   yield takeLatest(REQUEST_API_DATA, getApiData);
 }
