@@ -5,7 +5,7 @@ import {
   receiveApiData,
   errorReceivingApiData
 } from '../../../store/actions/EmployeesActions';
-import { getApiData } from '../../../store/sagas/sagas';
+import { getApiData } from '../../../store/sagas/getEmployeesSaga';
 import { fetchData } from '../../../store/services/user';
 
 describe('get users saga', () => {
