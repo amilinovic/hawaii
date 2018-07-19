@@ -67,7 +67,7 @@ public class RequestController {
 
   @GetMapping("/{id}")
   public ResponseEntity<RequestDto> getById(@PathVariable Long id) {
-    var request = requestService.getByid(id);
+    var request = requestService.getById(id);
     var requestDto = new RequestDto(request);
 
     return new ResponseEntity<>(requestDto, HttpStatus.OK);
