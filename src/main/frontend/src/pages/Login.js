@@ -17,8 +17,6 @@ export default class Login extends Component {
   render() {
     const responseGoogle = response => {
       const idToken = response.accessToken;
-      console.log(idToken);
-      console.log(response);
       request
         .get('/signin')
         .set('Authorization', idToken)
