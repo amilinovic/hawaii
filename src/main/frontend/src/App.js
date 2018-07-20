@@ -2,24 +2,16 @@ import React, { Component } from 'react';
 import { Switch, Route } from 'react-router-dom';
 import Login from './pages/Login';
 import NavBar from './components/navigation/NavBar';
-import store from './store/Store';
 import { ConnectedRouter } from 'react-router-redux';
 import { history } from './store/Store';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { requestAuthentication } from './store/actions/AuthenticateActions';
 import { getAuthentication } from './store/Selectors';
-import { push } from 'react-router-redux';
 
 class App extends Component {
   componentDidMount() {
     this.props.requestAuthentication();
-  }
-
-  componentDidUpdate() {
-    this.props.authentication === false
-      ? store.dispatch(push('/login'))
-      : store.dispatch(push('/leave'));
   }
 
   render() {
