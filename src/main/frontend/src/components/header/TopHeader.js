@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Container, Row, Col } from 'reactstrap';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { requestApiData } from '../../store/actions/EmployeesActions';
+import { requestApiData } from '../../store/actions/RandomUserApiActions';
 import UserInfo from '../UserInfo';
 import { getEmployee, getFetching } from '../../store/Selectors';
 

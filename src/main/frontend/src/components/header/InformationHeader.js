@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import UserInfoComponent from '../UserInfoExtended';
 import { ShadowRow } from '../common/ShadowRow';
-import { requestApiData } from '../../store/actions/EmployeesActions';
+import { requestApiData } from '../../store/actions/RandomUserApiActions';
 import { getEmployee, getFetching } from '../../store/Selectors';
 
 class InformationHeader extends Component {

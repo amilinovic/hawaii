@@ -1,42 +1,52 @@
 import React, { Component } from 'react';
-import { Switch, Route, BrowserRouter, Redirect } from 'react-router-dom';
-import { Provider } from 'react-redux';
+import { Switch, Route } from 'react-router-dom';
 import Login from './pages/Login';
 import NavBar from './components/navigation/NavBar';
 import store from './store/Store';
-import request from 'superagent';
+import { ConnectedRouter } from 'react-router-redux';
+import { history } from './store/Store';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { requestAuthentication } from './store/actions/AuthenticateActions';
+import { getAuthentication } from './store/Selectors';
+import { push } from 'react-router-redux';
 
-export default class App extends Component {
-  state = {
-    redirect: null
-  };
-
+class App extends Component {
   componentDidMount() {
-    request
-      .get('/authentication')
-      .then(res => {
-        this.setState({
-          redirect: <Redirect exact from="/" to="/leave" />
-        });
-      })
-      .catch(err => {
-        this.setState({
-          redirect: <Redirect exact from="/" to="/login" />
-        });
-      });
+    this.props.requestAuthentication();
+  }
+
+  componentDidUpdate() {
+    this.props.authentication === false
+      ? store.dispatch(push('/login'))
+      : store.dispatch(push('/leave'));
   }
 
   render() {
     return (
-      <Provider store={store}>
-        <BrowserRouter>
-          <Switch>
-            {this.state.redirect}
-            <Route path="/login" component={Login} />
-            <Route path="/" component={NavBar} />
-          </Switch>
-        </BrowserRouter>
-      </Provider>
+      <ConnectedRouter history={history}>
+        <Switch>
+          <Route path="/login" component={Login} />
+          <Route path="/" component={NavBar} />
+        </Switch>
+      </ConnectedRouter>
     );
   }
 }
+
+const mapStateToProps = state => ({
+  authentication: getAuthentication(state)
+});
+
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(
+    {
+      requestAuthentication
+    },
+    dispatch
+  );
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(App);

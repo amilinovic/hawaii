@@ -1,6 +1,6 @@
 import request from 'superagent';
 
-export const fetchData = async () => {
+export const randomUserApiRequest = async () => {
   try {
     const response = await request
       .get('https://randomuser.me/api/')

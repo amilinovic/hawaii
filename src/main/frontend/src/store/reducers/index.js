@@ -1,7 +1,13 @@
 import { combineReducers } from 'redux';
 
-import employee from './EmployeesReducer';
+import employee from './RandomUserApiReducer';
+import authorization from './AuthorizationReducer';
+import authentication from './AuthenticateReducer';
+import { routerReducer } from 'react-router-redux';
 
 export default combineReducers({
-  employee
+  authentication: authentication,
+  authorization: authorization,
+  employee: employee,
+  routerReducer: routerReducer
 });
