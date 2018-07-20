@@ -1,8 +1,13 @@
 package eu.execom.hawaii.api.controller;
 
-import eu.execom.hawaii.model.User;
-import eu.execom.hawaii.security.TokenStore;
-import eu.execom.hawaii.service.UserService;
+import static eu.execom.hawaii.security.AuthenticationFilter.AUTHENTICATION_TOKEN_KEY;
+
+import java.security.Principal;
+import java.util.Collection;
+import java.util.Collections;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -20,12 +25,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
-import java.security.Principal;
-import java.util.Collection;
-import java.util.Collections;
-
-import static eu.execom.hawaii.security.AuthenticationFilter.AUTHENTICATION_TOKEN_KEY;
+import eu.execom.hawaii.model.User;
+import eu.execom.hawaii.security.TokenStore;
+import eu.execom.hawaii.service.UserService;
 
 @RestController
 public class SignInController {

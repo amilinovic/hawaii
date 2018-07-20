@@ -1,11 +1,8 @@
 package eu.execom.hawaii.api.controller;
 
-import eu.execom.hawaii.dto.AbsenceDto;
-import eu.execom.hawaii.model.absence.Absence;
-import eu.execom.hawaii.model.absence.BonusDays;
-import eu.execom.hawaii.model.absence.Leave;
-import eu.execom.hawaii.model.absence.Sickness;
-import eu.execom.hawaii.service.AbsenceService;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,8 +16,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import eu.execom.hawaii.dto.AbsenceDto;
+import eu.execom.hawaii.model.Absence;
+import eu.execom.hawaii.service.AbsenceService;
 
 @RestController
 @RequestMapping("/leavetypes")
@@ -62,21 +60,7 @@ public class AbsenceController {
   }
 
   private AbsenceDto saveAbsenceDto(@RequestBody AbsenceDto absenceDto) {
-    Absence absence;
-    var type = absenceDto.getAbsenceType();
-    switch (type) {
-      case BONUS_DAYS:
-        absence = MAPPER.map(absenceDto, BonusDays.class);
-        break;
-      case LEAVE:
-        absence = MAPPER.map(absenceDto, Leave.class);
-        break;
-      case SICKNESS:
-        absence = MAPPER.map(absenceDto, Sickness.class);
-        break;
-      default:
-        throw new IllegalArgumentException();
-    }
+    var absence = MAPPER.map(absenceDto, Absence.class);
     absence = absenceService.save(absence);
     absenceDto = new AbsenceDto(absence);
     return absenceDto;

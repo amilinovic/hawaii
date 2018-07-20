@@ -1,11 +1,11 @@
 package eu.execom.hawaii.security;
 
-import eu.execom.hawaii.model.User;
-
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+
+import eu.execom.hawaii.model.User;
 
 public class TokenStore {
 

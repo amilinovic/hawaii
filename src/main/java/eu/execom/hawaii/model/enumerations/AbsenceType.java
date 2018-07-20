@@ -1,4 +1,4 @@
-package eu.execom.hawaii.model.absence;
+package eu.execom.hawaii.model.enumerations;
 
 public enum AbsenceType {
   BONUS_DAYS,
