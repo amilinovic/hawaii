@@ -20,6 +20,7 @@ public class Absence extends BaseEntity implements Serializable {
 
   private static final long serialVersionUID = -7375197378676775460L;
 
+  @NotNull
   @Enumerated(EnumType.STRING)
   private AbsenceType absenceType;
 
@@ -30,7 +31,7 @@ public class Absence extends BaseEntity implements Serializable {
 
   private boolean active;
 
-  private boolean deducted = false;
+  private boolean deducted;
 
   @OneToMany(mappedBy = "absence")
   private List<Request> leaveRequests;
