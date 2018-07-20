@@ -1,5 +1,7 @@
 package eu.execom.hawaii.api.controller;
 
+import static eu.execom.hawaii.security.AuthenticationFilter.AUTHENTICATION_TOKEN_KEY;
+
 import java.security.Principal;
 import java.util.Collection;
 import java.util.Collections;
@@ -7,6 +9,7 @@ import java.util.Collections;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -23,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import eu.execom.hawaii.model.User;
+import eu.execom.hawaii.security.TokenStore;
 import eu.execom.hawaii.service.UserService;
 
 @RestController
@@ -32,9 +36,12 @@ public class SignInController {
 
   private UserService userService;
 
+  private TokenStore tokenStore;
+
   @Autowired
-  public SignInController(UserService userService) {
+  public SignInController(UserService userService, TokenStore tokenStore) {
     this.userService = userService;
+    this.tokenStore = tokenStore;
   }
 
   @GetMapping(value = "/signin")
@@ -56,7 +63,13 @@ public class SignInController {
     Authentication authentication = new PreAuthenticatedAuthenticationToken(user, null, authorities);
     SecurityContextHolder.getContext().setAuthentication(authentication);
 
-    return new ResponseEntity<>(HttpStatus.OK);
+    String sessionToken = tokenStore.createToken(user);
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.add(AUTHENTICATION_TOKEN_KEY, sessionToken);
+    headers.add("role", user.getUserRole().name());
+
+    return new ResponseEntity<>(headers, HttpStatus.OK);
   }
 
   @GetMapping("/authentication")
