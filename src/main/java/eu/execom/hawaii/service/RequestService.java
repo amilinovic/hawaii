@@ -6,10 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import eu.execom.hawaii.exception.ApproverException;
+import eu.execom.hawaii.model.Allowance;
 import eu.execom.hawaii.model.Request;
 import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.enumerations.AbsenceType;
 import eu.execom.hawaii.model.enumerations.RequestStatus;
+import eu.execom.hawaii.repository.AllowanceRepository;
 import eu.execom.hawaii.repository.RequestRepository;
 import eu.execom.hawaii.repository.UserRepository;
 
@@ -18,11 +20,14 @@ public class RequestService {
 
   private RequestRepository requestRepository;
   private UserRepository userRepository;
+  private AllowanceRepository allowanceRepository;
 
   @Autowired
-  public RequestService(RequestRepository requestRepository, UserRepository userRepository) {
+  public RequestService(RequestRepository requestRepository, UserRepository userRepository,
+      AllowanceRepository allowanceRepository) {
     this.requestRepository = requestRepository;
     this.userRepository = userRepository;
+    this.allowanceRepository = allowanceRepository;
   }
 
   /**
@@ -91,6 +96,18 @@ public class RequestService {
   private void checkUserWithApprover(Request request) {
     if (request.getUser().getId().equals(request.getApprover().getId())) {
       throw new ApproverException();
+    }
+  }
+
+  public Request handleRequestStatus(Request request) {
+    checkIsApproved(request);
+    return requestRepository.save(request);
+  }
+
+  private void checkIsApproved(Request request) {
+    if (request.getRequestStatus().equals(RequestStatus.APPROVED)) {
+      Allowance allowance = allowanceRepository.findByUser(request.getUser());
+
     }
   }
 

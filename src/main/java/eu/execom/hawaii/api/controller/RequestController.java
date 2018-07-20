@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -77,6 +78,15 @@ public class RequestController {
   public ResponseEntity<RequestDto> createRequest(@RequestBody RequestDto requestDto) {
     var request = MAPPER.map(requestDto, Request.class);
     request = requestService.save(request);
+    var requestDtoResponse = new RequestDto(request);
+
+    return new ResponseEntity<>(requestDtoResponse, HttpStatus.OK);
+  }
+
+  @PutMapping
+  public ResponseEntity<RequestDto> handleRequestStatus(@RequestBody RequestDto requestDto) {
+    var request = MAPPER.map(requestDto, Request.class);
+    request = requestService.handleRequestStatus(request);
     var requestDtoResponse = new RequestDto(request);
 
     return new ResponseEntity<>(requestDtoResponse, HttpStatus.OK);
