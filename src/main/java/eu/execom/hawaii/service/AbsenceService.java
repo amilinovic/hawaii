@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import eu.execom.hawaii.model.Absence;
-import eu.execom.hawaii.model.enumerations.AbsenceType;
 import eu.execom.hawaii.repository.AbsenceRepository;
 
 /**
@@ -50,7 +49,6 @@ public class AbsenceService {
    * @param absence the Absence entity to be persisted.
    */
   public Absence save(Absence absence) {
-    checkIsAbsenceLeave(absence);
     return absenceRepository.save(absence);
   }
 
@@ -65,12 +63,6 @@ public class AbsenceService {
       throw new EntityNotFoundException();
     }
     absenceRepository.deleteById(id);
-  }
-
-  private void checkIsAbsenceLeave(Absence absence) {
-    if (absence.getAbsenceType().equals(AbsenceType.LEAVE)) {
-      absence.setDeducted(true);
-    }
   }
 
 }

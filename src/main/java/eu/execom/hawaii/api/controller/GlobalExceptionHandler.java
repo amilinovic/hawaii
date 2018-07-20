@@ -8,11 +8,9 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import eu.execom.hawaii.exception.ApproverException;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -40,13 +38,6 @@ public class GlobalExceptionHandler {
   @ResponseStatus(HttpStatus.FORBIDDEN) // 403
   @ExceptionHandler(AccessDeniedException.class)
   public void handleAccessDeniedException(HttpServletRequest request, Exception exception) {
-    logException(request, exception);
-  }
-
-  @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY) // 422
-  @ResponseBody
-  @ExceptionHandler(ApproverException.class)
-  public void handleApproverException(HttpServletRequest request, Exception exception) {
     logException(request, exception);
   }
 
