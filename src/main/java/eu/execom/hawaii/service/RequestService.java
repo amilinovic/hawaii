@@ -5,12 +5,10 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import eu.execom.hawaii.model.Allowance;
 import eu.execom.hawaii.model.Request;
 import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.enumerations.AbsenceType;
 import eu.execom.hawaii.model.enumerations.RequestStatus;
-import eu.execom.hawaii.repository.AllowanceRepository;
 import eu.execom.hawaii.repository.RequestRepository;
 import eu.execom.hawaii.repository.UserRepository;
 
@@ -19,14 +17,14 @@ public class RequestService {
 
   private RequestRepository requestRepository;
   private UserRepository userRepository;
-  private AllowanceRepository allowanceRepository;
+  private AllowanceService allowanceService;
 
   @Autowired
   public RequestService(RequestRepository requestRepository, UserRepository userRepository,
-      AllowanceRepository allowanceRepository) {
+      AllowanceService allowanceService) {
     this.requestRepository = requestRepository;
     this.userRepository = userRepository;
-    this.allowanceRepository = allowanceRepository;
+    this.allowanceService = allowanceService;
   }
 
   /**
@@ -97,10 +95,8 @@ public class RequestService {
   }
 
   private void checkIsApproved(Request request) {
-    if (request.getRequestStatus().equals(RequestStatus.APPROVED)) {
-      Allowance allowance = allowanceRepository.findByUser(request.getUser());
+    allowanceService.applyRequest(request);
 
-    }
   }
 
 }
