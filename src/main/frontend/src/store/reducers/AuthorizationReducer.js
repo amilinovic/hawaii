@@ -2,7 +2,7 @@ import { handleActions } from 'redux-actions';
 import { RECEIVE_AUTHORIZATION } from '../actions/AuthorizationActions';
 
 export const initialState = {
-  response: null
+  response: false
 };
 
 const actionHandlers = {

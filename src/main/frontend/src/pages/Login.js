@@ -15,7 +15,7 @@ var loginButtonStyle = {
 
 class Login extends Component {
   componentDidUpdate() {
-    if (this.props.authorization != null) {
+    if (this.props.authorization !== false) {
       store.dispatch(push('/leave'));
     }
   }
