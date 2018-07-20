@@ -1,15 +1,13 @@
 package eu.execom.hawaii.service;
 
-import java.util.List;
-
-import javax.persistence.EntityNotFoundException;
-
+import eu.execom.hawaii.model.User;
+import eu.execom.hawaii.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import eu.execom.hawaii.model.User;
-import eu.execom.hawaii.repository.UserRepository;
+import javax.persistence.EntityNotFoundException;
+import java.util.List;
 
 /**
  * User management service.

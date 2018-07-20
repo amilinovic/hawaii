@@ -1,12 +1,11 @@
 package eu.execom.hawaii.service;
 
-import java.util.List;
-
+import eu.execom.hawaii.model.PublicHoliday;
+import eu.execom.hawaii.repository.PublicHolidayRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import eu.execom.hawaii.model.PublicHoliday;
-import eu.execom.hawaii.repository.PublicHolidayRepository;
+import java.util.List;
 
 /**
  * Public holiday management service.

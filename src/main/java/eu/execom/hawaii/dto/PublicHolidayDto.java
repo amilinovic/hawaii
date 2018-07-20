@@ -1,9 +1,9 @@
 package eu.execom.hawaii.dto;
 
-import java.time.LocalDate;
-
 import eu.execom.hawaii.model.PublicHoliday;
 import lombok.Data;
+
+import java.time.LocalDate;
 
 @Data
 public class PublicHolidayDto {

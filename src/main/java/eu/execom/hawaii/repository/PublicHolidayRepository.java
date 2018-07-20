@@ -1,10 +1,9 @@
 package eu.execom.hawaii.repository;
 
-import java.util.List;
-
+import eu.execom.hawaii.model.PublicHoliday;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import eu.execom.hawaii.model.PublicHoliday;
+import java.util.List;
 
 public interface PublicHolidayRepository extends JpaRepository<PublicHoliday, Long> {
 

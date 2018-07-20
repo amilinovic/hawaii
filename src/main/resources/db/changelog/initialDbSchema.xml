@@ -2,7 +2,7 @@
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.2.xsd">
-  <changeSet author="admin" id="{initialId}-1">
+    <changeSet author="admin" id="{initialId}-1">
     <createTable tableName="absence">
       <column name="absence_type" type="VARCHAR(31)">
         <constraints nullable="false"/>
@@ -20,7 +20,7 @@
       <column name="deducted" type="BIT(1)"/>
     </createTable>
   </changeSet>
-  <changeSet author="admin" id="{initialId}-2">
+    <changeSet author="admin" id="{initialId}-2">
     <createTable tableName="allowance">
       <column autoIncrement="true" name="id" type="BIGINT(19)">
         <constraints primaryKey="true"/>
@@ -49,7 +49,7 @@
       <column name="user_id" type="BIGINT(19)"/>
     </createTable>
   </changeSet>
-  <changeSet author="admin" id="{initialId}-3">
+    <changeSet author="admin" id="{initialId}-3">
     <createTable tableName="day">
       <column autoIncrement="true" name="id" type="BIGINT(19)">
         <constraints primaryKey="true"/>
@@ -65,7 +65,7 @@
       </column>
     </createTable>
   </changeSet>
-  <changeSet author="admin" id="{initialId}-4">
+    <changeSet author="admin" id="{initialId}-4">
     <createTable tableName="leave_profile">
       <column autoIncrement="true" name="id" type="BIGINT(19)">
         <constraints primaryKey="true"/>
@@ -85,7 +85,7 @@
       </column>
     </createTable>
   </changeSet>
-  <changeSet author="admin" id="{initialId}-5">
+    <changeSet author="admin" id="{initialId}-5">
     <createTable tableName="public_holiday">
       <column autoIncrement="true" name="id" type="BIGINT(19)">
         <constraints primaryKey="true"/>
@@ -101,7 +101,7 @@
       </column>
     </createTable>
   </changeSet>
-  <changeSet author="admin" id="{initialId}-6">
+    <changeSet author="admin" id="{initialId}-6">
     <createTable tableName="request">
       <column autoIncrement="true" name="id" type="BIGINT(19)">
         <constraints primaryKey="true"/>
@@ -115,7 +115,7 @@
       <column name="user_id" type="BIGINT(19)"/>
     </createTable>
   </changeSet>
-  <changeSet author="admin" id="{initialId}-7">
+    <changeSet author="admin" id="{initialId}-7">
     <createTable tableName="team">
       <column autoIncrement="true" name="id" type="BIGINT(19)">
         <constraints primaryKey="true"/>
@@ -129,7 +129,7 @@
       </column>
     </createTable>
   </changeSet>
-  <changeSet author="admin" id="{initialId}-8">
+    <changeSet author="admin" id="{initialId}-8">
     <createTable tableName="team_approver">
       <column autoIncrement="true" name="id" type="BIGINT(19)">
         <constraints primaryKey="true"/>
@@ -138,7 +138,7 @@
       <column name="user_id" type="BIGINT(19)"/>
     </createTable>
   </changeSet>
-  <changeSet author="admin" id="{initialId}-9">
+    <changeSet author="admin" id="{initialId}-9">
     <createTable tableName="user">
       <column autoIncrement="true" name="id" type="BIGINT(19)">
         <constraints primaryKey="true"/>
@@ -160,34 +160,35 @@
       <column name="team_id" type="BIGINT(19)"/>
     </createTable>
   </changeSet>
-  <changeSet author="admin" id="{initialId}-10">
-    <addUniqueConstraint columnNames="email" constraintName="UK_ob8kqyqqgmefl0aco34akdtpe" deferrable="false" disabled="false" initiallyDeferred="false" tableName="user"/>
+    <changeSet author="admin" id="{initialId}-10">
+        <addUniqueConstraint columnNames="email" constraintName="UK_ob8kqyqqgmefl0aco34akdtpe" deferrable="false"
+                             disabled="false" initiallyDeferred="false" tableName="user"/>
   </changeSet>
-  <changeSet author="admin" id="{initialId}-11">
+    <changeSet author="admin" id="{initialId}-11">
     <addForeignKeyConstraint baseColumnNames="request_id" baseTableName="day" constraintName="FK2lcjlvcin4aiscf3t48rb83v" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="request"/>
   </changeSet>
-  <changeSet author="admin" id="{initialId}-12">
+    <changeSet author="admin" id="{initialId}-12">
     <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="team_approver" constraintName="FK3lmb6tqlylnwft013bgriva59" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="user"/>
   </changeSet>
-  <changeSet author="admin" id="{initialId}-13">
+    <changeSet author="admin" id="{initialId}-13">
     <addForeignKeyConstraint baseColumnNames="team_id" baseTableName="user" constraintName="FKbmqm8c8m2aw1vgrij7h0od0ok" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="team"/>
   </changeSet>
-  <changeSet author="admin" id="{initialId}-14">
+    <changeSet author="admin" id="{initialId}-14">
     <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="allowance" constraintName="FKdbmpb0qfs0o24kgxb9hpkegc" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="user"/>
   </changeSet>
-  <changeSet author="admin" id="{initialId}-15">
+    <changeSet author="admin" id="{initialId}-15">
     <addForeignKeyConstraint baseColumnNames="leave_profile_id" baseTableName="user" constraintName="FKjupaxjdd1kqx423x88fjl3eiy" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="leave_profile"/>
   </changeSet>
-  <changeSet author="admin" id="{initialId}-16">
+    <changeSet author="admin" id="{initialId}-16">
     <addForeignKeyConstraint baseColumnNames="team_id" baseTableName="team_approver" constraintName="FKme7j15hmgsaf96oxc40qf4kh8" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="team"/>
   </changeSet>
-  <changeSet author="admin" id="{initialId}-17">
+    <changeSet author="admin" id="{initialId}-17">
     <addForeignKeyConstraint baseColumnNames="absence_id" baseTableName="request" constraintName="FKoaypx6rwrdofwxvv0q4e1wn4t" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="absence"/>
   </changeSet>
-  <changeSet author="admin" id="{initialId}-18">
+    <changeSet author="admin" id="{initialId}-18">
     <addForeignKeyConstraint baseColumnNames="approver_id" baseTableName="request" constraintName="FKpbfv7wni1s3f06uoueey4m1he" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="user"/>
   </changeSet>
-  <changeSet author="admin" id="{initialId}-19">
+    <changeSet author="admin" id="{initialId}-19">
     <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="request" constraintName="FKqws2fdeknk90txm7qnm9bxd07" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="user"/>
   </changeSet>
 </databaseChangeLog>

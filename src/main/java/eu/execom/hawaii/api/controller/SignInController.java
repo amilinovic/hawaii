@@ -1,11 +1,5 @@
 package eu.execom.hawaii.api.controller;
 
-import java.security.Principal;
-import java.util.Collection;
-import java.util.Collections;
-
-import javax.servlet.http.HttpServletRequest;
-
 import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.security.TokenStore;
 import eu.execom.hawaii.service.UserService;
@@ -25,6 +19,11 @@ import org.springframework.social.google.api.plus.Person;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
+import java.security.Principal;
+import java.util.Collection;
+import java.util.Collections;
 
 import static eu.execom.hawaii.security.AuthenticationFilter.AUTHENTICATION_TOKEN_KEY;
 
