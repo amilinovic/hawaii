@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import eu.execom.hawaii.exception.ApproverException;
 import eu.execom.hawaii.model.Request;
 import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.enumerations.AbsenceType;
@@ -84,14 +83,7 @@ public class RequestService {
    * @return a saved request with id.
    */
   public Request save(Request request) {
-    checkUserWithApprover(request);
     return requestRepository.save(request);
-  }
-
-  private void checkUserWithApprover(Request request) {
-    if (request.getUser().getId().equals(request.getApprover().getId())) {
-      throw new ApproverException();
-    }
   }
 
 }
