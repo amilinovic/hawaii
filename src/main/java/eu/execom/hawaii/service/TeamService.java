@@ -1,11 +1,12 @@
 package eu.execom.hawaii.service;
 
-import eu.execom.hawaii.model.Team;
-import eu.execom.hawaii.repository.TeamRepository;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import eu.execom.hawaii.model.Team;
+import eu.execom.hawaii.repository.TeamRepository;
 
 /**
  * Team management service.

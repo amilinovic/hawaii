@@ -24,13 +24,6 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import eu.execom.hawaii.model.User;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-
-import static eu.execom.hawaii.security.AuthenticationFilter.AUTHENTICATION_TOKEN_KEY;
-
 @Configuration
 @EnableOAuth2Sso
 @EnableWebSecurity

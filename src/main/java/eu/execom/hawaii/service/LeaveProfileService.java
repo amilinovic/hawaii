@@ -1,12 +1,14 @@
 package eu.execom.hawaii.service;
 
-import eu.execom.hawaii.model.LeaveProfile;
-import eu.execom.hawaii.repository.LeaveProfileRepository;
+import java.util.List;
+
+import javax.persistence.EntityNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityNotFoundException;
-import java.util.List;
+import eu.execom.hawaii.model.LeaveProfile;
+import eu.execom.hawaii.repository.LeaveProfileRepository;
 
 /**
  * Leave profile management service.

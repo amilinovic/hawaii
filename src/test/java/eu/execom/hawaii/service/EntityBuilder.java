@@ -13,9 +13,6 @@ import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.enumerations.RequestStatus;
 import eu.execom.hawaii.model.enumerations.UserRole;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-
 public class EntityBuilder {
 
   static Team team() {

@@ -1,9 +1,10 @@
 package eu.execom.hawaii.repository;
 
-import eu.execom.hawaii.model.Team;
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
+import eu.execom.hawaii.model.Team;
 
 public interface TeamRepository extends JpaRepository<Team, Long> {
 

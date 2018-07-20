@@ -1,12 +1,13 @@
 package eu.execom.hawaii.model;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import java.io.Serializable;
+import java.time.LocalDate;
 
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
-import java.time.LocalDate;
+
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Entity
 @Data
