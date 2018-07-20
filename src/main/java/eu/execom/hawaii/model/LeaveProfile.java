@@ -1,18 +1,19 @@
 package eu.execom.hawaii.model;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import java.io.Serializable;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
-import java.util.List;
+
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @Entity
 @Data
-@ToString(exclude = {"publicHolidays", "users"})
+@ToString(exclude = "users")
 @EqualsAndHashCode(callSuper = false)
 public class LeaveProfile extends BaseEntity implements Serializable {
 
@@ -28,9 +29,6 @@ public class LeaveProfile extends BaseEntity implements Serializable {
   private int training;
 
   private String comment;
-
-  @OneToMany(mappedBy = "leaveProfile")
-  private List<PublicHoliday> publicHolidays;
 
   @OneToMany(mappedBy = "leaveProfile")
   private List<User> users;

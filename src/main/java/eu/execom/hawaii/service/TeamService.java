@@ -1,12 +1,12 @@
 package eu.execom.hawaii.service;
 
-import eu.execom.hawaii.model.Team;
-import eu.execom.hawaii.repository.TeamRepository;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityNotFoundException;
-import java.util.List;
+import eu.execom.hawaii.model.Team;
+import eu.execom.hawaii.repository.TeamRepository;
 
 /**
  * Team management service.
@@ -24,20 +24,21 @@ public class TeamService {
   /**
    * Retrieves a list of all teams from repository.
    *
-   * @return a list of all teams
+   * @param active is it active.
+   * @return a list of all teams.
    */
-  public List<Team> getAll() {
-    return teamRepository.findAll();
+  public List<Team> findAllByActive(boolean active) {
+    return teamRepository.findAllByActive(active);
   }
 
   /**
    * Retrieves a team with a specific id.
-   * @param id Team id
-   * @return Team with provided id if exists
-   * @throws EntityNotFoundException if a team with given id is not found
+   *
+   * @param id Team id.
+   * @return Team with provided id if exists.
    */
   public Team getById(Long id) {
-    return teamRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+    return teamRepository.getOne(id);
   }
 
   /**
@@ -52,8 +53,7 @@ public class TeamService {
   /**
    * Logically deletes Team.
    *
-   * @param id - the team id
-   * @throws EntityNotFoundException if a team with given id is not found
+   * @param id - the team id.
    */
   public void delete(Long id) {
     var team = getById(id);
