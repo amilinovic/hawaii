@@ -1,6 +1,7 @@
 package eu.execom.hawaii.service;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,12 +23,8 @@ public class AllowanceService {
     this.allowanceRepository = allowanceRepository;
   }
 
-  public Allowance getByUser(User user) {
+  Allowance getByUser(User user) {
     return allowanceRepository.findByUser(user);
-  }
-
-  public Allowance save(Allowance allowance) {
-    return allowanceRepository.save(allowance);
   }
 
   void applyRequest(Request request) {
@@ -50,27 +47,32 @@ public class AllowanceService {
   }
 
   private void deductAnnual(Allowance allowance, Request request) {
-    // Deduct annual from request days.
+    allowance.setAnnual(allowance.getAnnual() - calculateDays(request.getDays()));
+    allowanceRepository.save(allowance);
   }
 
   private void incrementSickness(Allowance allowance, Request request) {
-    // increment sickness from request days.
+    allowance.setSickness(allowance.getSickness() + calculateDays(request.getDays()));
+    allowanceRepository.save(allowance);
   }
 
   private void incrementBonus(Allowance allowance, Request request) {
-    // increment bonus from request days.
+    allowance.setBonus(allowance.getBonus() + calculateDays(request.getDays()));
+    allowanceRepository.save(allowance);
   }
 
   private int calculateDays(List<Day> days) {
-    int numberOfHours = 1;
-    days.stream().forEach(day -> increment(day, numberOfHours));
+    AtomicInteger numberOfHours = new AtomicInteger(0);
+    days.forEach(day -> increment(day, numberOfHours));
 
-    return numberOfHours;
+    return numberOfHours.get();
   }
 
-  private void increment(Day day, int hours) {
+  private void increment(Day day, AtomicInteger numberOfHours) {
     if (day.getDuration().equals(Duration.FULL_DAY)) {
-      hours = hours + 8;
+      numberOfHours.set(numberOfHours.get() + 8);
+    } else {
+      numberOfHours.set(numberOfHours.get() + 4);
     }
   }
 

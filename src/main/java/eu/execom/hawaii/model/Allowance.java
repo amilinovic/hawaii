@@ -8,6 +8,9 @@ import javax.persistence.ManyToOne;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+/**
+ * All integer field are represented in hour, beside year field.
+ */
 @Entity
 @Data
 @EqualsAndHashCode(callSuper = false)

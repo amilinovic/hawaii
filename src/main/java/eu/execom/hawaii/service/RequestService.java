@@ -91,12 +91,12 @@ public class RequestService {
 
   public Request handleRequestStatus(Request request) {
     checkIsApproved(request);
+
     return requestRepository.save(request);
   }
 
   private void checkIsApproved(Request request) {
     allowanceService.applyRequest(request);
-
   }
 
 }
