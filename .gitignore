@@ -54,3 +54,5 @@ yarn-error.log*
 **/application.log*
 
 **/*.png
+
+conf/*.json
