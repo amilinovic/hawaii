@@ -23,10 +23,21 @@ public class AllowanceService {
     this.allowanceRepository = allowanceRepository;
   }
 
+  /**
+   * Retrieves a Allowance by given user.
+   *
+   * @param user Allowance user.
+   * @return Allowance.
+   */
   Allowance getByUser(User user) {
     return allowanceRepository.findByUser(user);
   }
 
+  /**
+   * Apply request after approval on request user allowance.
+   *
+   * @param request the Request.
+   */
   void applyRequest(Request request) {
     var allowance = getByUser(request.getUser());
     var absence = request.getAbsence();
