@@ -95,7 +95,7 @@ public class RequestService {
    * @param request to be persisted.
    * @return saved request.
    */
-  public Request handleRequestStatus(Request request) {
+  public Request handleRequestStatusUpdate(Request request) {
     checkIsApproved(request);
 
     return requestRepository.save(request);
