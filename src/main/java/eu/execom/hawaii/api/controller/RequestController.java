@@ -16,9 +16,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import eu.execom.hawaii.dto.RequestDto;
+import eu.execom.hawaii.model.Day;
 import eu.execom.hawaii.model.Request;
 import eu.execom.hawaii.model.enumerations.AbsenceType;
 import eu.execom.hawaii.model.enumerations.RequestStatus;
+import eu.execom.hawaii.repository.DayRepository;
 import eu.execom.hawaii.service.RequestService;
 
 @RestController
@@ -28,10 +30,12 @@ public class RequestController {
   private static final ModelMapper MAPPER = new ModelMapper();
 
   private RequestService requestService;
+  private DayRepository dayRepository;
 
   @Autowired
-  public RequestController(RequestService requestService) {
+  public RequestController(RequestService requestService, DayRepository dayRepository) {
     this.requestService = requestService;
+    this.dayRepository = dayRepository;
   }
 
   @GetMapping("/user/{id}")
@@ -78,6 +82,11 @@ public class RequestController {
   public ResponseEntity<RequestDto> createRequest(@RequestBody RequestDto requestDto) {
     var request = MAPPER.map(requestDto, Request.class);
     request = requestService.save(request);
+
+    var days = request.getDays().stream().map(day -> MAPPER.map(day, Day.class)).collect(Collectors.toList());
+    days = dayRepository.saveAll(days);
+
+    request.setDays(days);
     var requestDtoResponse = new RequestDto(request);
 
     return new ResponseEntity<>(requestDtoResponse, HttpStatus.OK);
