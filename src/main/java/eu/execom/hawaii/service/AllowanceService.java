@@ -1,7 +1,6 @@
 package eu.execom.hawaii.service;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +16,7 @@ import eu.execom.hawaii.repository.AllowanceRepository;
 public class AllowanceService {
 
   private static final int HALF_DAY = 4;
+  private static final int FULL_DAY = 8;
 
   private AllowanceRepository allowanceRepository;
 
@@ -76,18 +76,11 @@ public class AllowanceService {
   }
 
   private int calculateHours(List<Day> days) {
-    AtomicInteger numberOfHours = new AtomicInteger(0);
-    days.forEach(day -> increment(day, numberOfHours));
-
-    return numberOfHours.get();
+    return days.stream().mapToInt(this::getHoursFromDay).sum();
   }
 
-  private void increment(Day day, AtomicInteger numberOfHours) {
-    var hoursToAdd = HALF_DAY;
-    if (Duration.FULL_DAY.equals(day.getDuration())) {
-      hoursToAdd += HALF_DAY;
-    }
-    numberOfHours.set(numberOfHours.get() + hoursToAdd);
+  private int getHoursFromDay(Day day) {
+    return Duration.FULL_DAY.equals(day.getDuration()) ? FULL_DAY : HALF_DAY;
   }
 
 }

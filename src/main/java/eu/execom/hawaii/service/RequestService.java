@@ -102,7 +102,7 @@ public class RequestService {
   }
 
   private void checkIsApproved(Request request) {
-    if (request.getRequestStatus().equals(RequestStatus.APPROVED)) {
+    if (RequestStatus.APPROVED.equals(request.getRequestStatus())) {
       allowanceService.applyRequest(request);
     }
   }
