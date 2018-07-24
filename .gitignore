@@ -55,4 +55,4 @@ yarn-error.log*
 
 **/*.png
 
-conf/*.json
+**/client_secret.json
