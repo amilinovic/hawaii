@@ -17,11 +17,14 @@ public class RequestService {
 
   private RequestRepository requestRepository;
   private UserRepository userRepository;
+  private AllowanceService allowanceService;
 
   @Autowired
-  public RequestService(RequestRepository requestRepository, UserRepository userRepository) {
+  public RequestService(RequestRepository requestRepository, UserRepository userRepository,
+      AllowanceService allowanceService) {
     this.requestRepository = requestRepository;
     this.userRepository = userRepository;
+    this.allowanceService = allowanceService;
   }
 
   /**
@@ -84,6 +87,24 @@ public class RequestService {
    */
   public Request save(Request request) {
     return requestRepository.save(request);
+  }
+
+  /**
+   * Saves changed request status.
+   *
+   * @param request to be persisted.
+   * @return saved request.
+   */
+  public Request handleRequestStatusUpdate(Request request) {
+    checkIsApproved(request);
+
+    return requestRepository.save(request);
+  }
+
+  private void checkIsApproved(Request request) {
+    if (RequestStatus.APPROVED.equals(request.getRequestStatus())) {
+      allowanceService.applyRequest(request);
+    }
   }
 
 }
