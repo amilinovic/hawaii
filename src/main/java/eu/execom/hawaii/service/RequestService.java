@@ -1,6 +1,9 @@
 package eu.execom.hawaii.service;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +28,18 @@ public class RequestService {
     this.requestRepository = requestRepository;
     this.userRepository = userRepository;
     this.allowanceService = allowanceService;
+  }
+
+  public List<Request> findAllByDates(LocalDate startDate, LocalDate endDate) {
+    List<Request> requests = requestRepository.findAllByRequestStatusNot(RequestStatus.CANCELED);
+    return requests.stream().filter(isBetween(startDate, endDate)).collect(Collectors.toList());
+  }
+
+  private Predicate<Request> isBetween(LocalDate startDate, LocalDate endDate) {
+    return request -> request.getDays().get(0).getDate().isAfter(startDate) && request.getDays()
+                                                                                      .get(request.getDays().size() - 1)
+                                                                                      .getDate()
+                                                                                      .isBefore(endDate);
   }
 
   /**

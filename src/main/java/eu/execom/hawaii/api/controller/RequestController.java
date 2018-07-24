@@ -1,5 +1,6 @@
 package eu.execom.hawaii.api.controller;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import eu.execom.hawaii.dto.RequestDto;
@@ -32,6 +34,15 @@ public class RequestController {
   @Autowired
   public RequestController(RequestService requestService) {
     this.requestService = requestService;
+  }
+
+  @GetMapping("/dates")
+  public ResponseEntity<List<RequestDto>> getRequestsByDates(@RequestParam LocalDate startDate,
+      @RequestParam LocalDate endDate) {
+    var requests = requestService.findAllByDates(startDate, endDate);
+    var requestDtos = requests.stream().map(RequestDto::new).collect(Collectors.toList());
+
+    return new ResponseEntity<>(requestDtos, HttpStatus.OK);
   }
 
   @GetMapping("/user/{id}")
