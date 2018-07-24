@@ -16,6 +16,8 @@ import eu.execom.hawaii.repository.AllowanceRepository;
 @Service
 public class AllowanceService {
 
+  private static final int HALF_DAY = 4;
+
   private AllowanceRepository allowanceRepository;
 
   @Autowired
@@ -41,38 +43,39 @@ public class AllowanceService {
   void applyRequest(Request request) {
     var allowance = getByUser(request.getUser());
     var absence = request.getAbsence();
+    var days = request.getDays();
 
     switch (absence.getAbsenceType()) {
       case LEAVE:
         if (absence.isDeducted()) {
-          deductAnnual(allowance, request);
+          deductAnnual(allowance, days);
         }
         break;
       case SICKNESS:
-        incrementSickness(allowance, request);
+        incrementSickness(allowance, days);
         break;
       case BONUS_DAYS:
-        incrementBonus(allowance, request);
+        incrementBonus(allowance, days);
         break;
     }
   }
 
-  private void deductAnnual(Allowance allowance, Request request) {
-    allowance.setAnnual(allowance.getAnnual() - calculateDays(request.getDays()));
+  private void deductAnnual(Allowance allowance, List<Day> days) {
+    allowance.setAnnual(allowance.getAnnual() - calculateHours(days));
     allowanceRepository.save(allowance);
   }
 
-  private void incrementSickness(Allowance allowance, Request request) {
-    allowance.setSickness(allowance.getSickness() + calculateDays(request.getDays()));
+  private void incrementSickness(Allowance allowance, List<Day> days) {
+    allowance.setSickness(allowance.getSickness() + calculateHours(days));
     allowanceRepository.save(allowance);
   }
 
-  private void incrementBonus(Allowance allowance, Request request) {
-    allowance.setBonus(allowance.getBonus() + calculateDays(request.getDays()));
+  private void incrementBonus(Allowance allowance, List<Day> days) {
+    allowance.setBonus(allowance.getBonus() + calculateHours(days));
     allowanceRepository.save(allowance);
   }
 
-  private int calculateDays(List<Day> days) {
+  private int calculateHours(List<Day> days) {
     AtomicInteger numberOfHours = new AtomicInteger(0);
     days.forEach(day -> increment(day, numberOfHours));
 
@@ -80,11 +83,11 @@ public class AllowanceService {
   }
 
   private void increment(Day day, AtomicInteger numberOfHours) {
-    if (day.getDuration().equals(Duration.FULL_DAY)) {
-      numberOfHours.set(numberOfHours.get() + 8);
-    } else {
-      numberOfHours.set(numberOfHours.get() + 4);
+    var hoursToAdd = HALF_DAY;
+    if (Duration.FULL_DAY.equals(day.getDuration())) {
+      hoursToAdd += HALF_DAY;
     }
+    numberOfHours.set(numberOfHours.get() + hoursToAdd);
   }
 
 }
