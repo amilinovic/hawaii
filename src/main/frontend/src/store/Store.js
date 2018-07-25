@@ -2,7 +2,7 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import createSagaMiddleware from 'redux-saga';
 import reducer from './reducers';
 import randomUserApiSaga from './sagas/randomUserApiSaga';
-import authorizationSaga from './sagas/authorizationSaga';
+import getTokenSaga from './sagas/getTokenSaga';
 import authenticateSaga from './sagas/authenticateSaga';
 import createHistory from 'history/createBrowserHistory';
 import { routerMiddleware } from 'react-router-redux';
@@ -21,5 +21,5 @@ export default createStore(
 );
 
 sagaMiddleware.run(randomUserApiSaga);
-sagaMiddleware.run(authorizationSaga);
+sagaMiddleware.run(getTokenSaga);
 sagaMiddleware.run(authenticateSaga);

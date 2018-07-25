@@ -3,7 +3,7 @@ import { NavigationLink } from '../components/common/NavigationLink';
 import { GoogleLogin } from 'react-google-login';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { requestAuthorization } from '../store/actions/AuthorizationActions';
+import { requestAuthorization } from '../store/actions/GetTokenActions';
 import { getRouter, getAuthorization } from '../store/Selectors';
 import store from '../store/Store';
 import { push } from 'react-router-redux';

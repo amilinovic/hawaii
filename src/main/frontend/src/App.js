@@ -7,7 +7,7 @@ import { history } from './store/Store';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { requestAuthentication } from './store/actions/AuthenticateActions';
-import { getAuthentication } from './store/Selectors';
+import { getAuthorization } from './store/Selectors';
 
 class App extends Component {
   componentDidMount() {
@@ -27,7 +27,7 @@ class App extends Component {
 }
 
 const mapStateToProps = state => ({
-  authentication: getAuthentication(state)
+  authentication: getAuthorization(state)
 });
 
 const mapDispatchToProps = dispatch =>

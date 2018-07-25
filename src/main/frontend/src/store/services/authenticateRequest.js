@@ -1,11 +1,18 @@
-import request from 'superagent';
-
-export const authenticateRequest = async () => {
+export const authenticateRequest = () => {
   try {
-    const response = await request.get('/authentication').then(() => {
-      return true;
-    });
-    return response;
+    const token = sessionStorage.getItem('token');
+    const role = sessionStorage.getItem('role');
+    if (token != null && role != null) {
+      return {
+        token: token,
+        role: role,
+        request: true
+      };
+    } else {
+      return {
+        request: false
+      };
+    }
   } catch (e) {
     // TODO error handling
     console.log(e);
