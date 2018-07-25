@@ -21,7 +21,6 @@ import eu.execom.hawaii.model.Day;
 import eu.execom.hawaii.model.Request;
 import eu.execom.hawaii.model.enumerations.AbsenceType;
 import eu.execom.hawaii.model.enumerations.RequestStatus;
-import eu.execom.hawaii.repository.DayRepository;
 import eu.execom.hawaii.service.AbsenceService;
 import eu.execom.hawaii.service.RequestService;
 
@@ -33,13 +32,11 @@ public class RequestController {
 
   private RequestService requestService;
   private AbsenceService absenceService;
-  private DayRepository dayRepository;
 
   @Autowired
-  public RequestController(RequestService requestService, AbsenceService absenceService, DayRepository dayRepository) {
+  public RequestController(RequestService requestService, AbsenceService absenceService) {
     this.requestService = requestService;
     this.absenceService = absenceService;
-    this.dayRepository = dayRepository;
   }
 
   @GetMapping("/user/{id}")
