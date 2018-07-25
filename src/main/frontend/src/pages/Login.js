@@ -3,19 +3,19 @@ import { NavigationLink } from '../components/common/NavigationLink';
 import { GoogleLogin } from 'react-google-login';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { requestAuthorization } from '../store/actions/GetTokenActions';
-import { getRouter, getAuthorization } from '../store/Selectors';
+import { requestToken } from '../store/actions/GetTokenActions';
+import { getAuthorization } from '../store/Selectors';
 import store from '../store/Store';
-import { push } from 'react-router-redux';
+import { push } from 'connected-react-router';
 
-var loginButtonStyle = {
+const loginButtonStyle = {
   padding: '0',
   cursor: 'pointer'
 };
 
 class Login extends Component {
   componentDidUpdate() {
-    if (this.props.authorization !== false) {
+    if (this.props.authorization) {
       store.dispatch(push('/leave'));
     }
   }
@@ -29,7 +29,8 @@ class Login extends Component {
           style={loginButtonStyle}
           disabledStyle
           clientId="91011414864-oscjl6qmm6qds4kuvvh1j991rgvker3h.apps.googleusercontent.com"
-          onSuccess={this.props.requestAuthorization}
+          onSuccess={this.props.requestToken}
+          // TODO error handling
           // onFailure={this.props.receiveGoogleData}
         >
           <NavigationLink>Log in</NavigationLink>
@@ -40,14 +41,13 @@ class Login extends Component {
 }
 
 const mapStateToProps = state => ({
-  router: getRouter(state),
   authorization: getAuthorization(state)
 });
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
-      requestAuthorization
+      requestToken
     },
     dispatch
   );

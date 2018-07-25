@@ -1,12 +1,10 @@
 import { handleActions } from 'redux-actions';
 import { RECEIVE_TOKEN } from '../actions/GetTokenActions';
 
-export const initialState = {
-  response: false
-};
+export const initialState = {};
 
 const actionHandlers = {
-  [RECEIVE_TOKEN]: (state, action) => ({ response: action.payload })
+  [RECEIVE_TOKEN]: (state, action) => action.payload
 };
 
 const reducer = handleActions(actionHandlers, initialState);

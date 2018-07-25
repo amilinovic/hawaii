@@ -2,16 +2,15 @@ import React, { Component } from 'react';
 import { Switch, Route } from 'react-router-dom';
 import Login from './pages/Login';
 import NavBar from './components/navigation/NavBar';
-import { ConnectedRouter } from 'react-router-redux';
+import { ConnectedRouter } from 'connected-react-router';
 import { history } from './store/Store';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { requestAuthentication } from './store/actions/AuthenticateActions';
-import { getAuthorization } from './store/Selectors';
+import { requestTokenFromStorage } from './store/actions/GetTokenFromSessionStorageActions';
 
 class App extends Component {
   componentDidMount() {
-    this.props.requestAuthentication();
+    this.props.requestTokenFromStorage();
   }
 
   render() {
@@ -26,19 +25,15 @@ class App extends Component {
   }
 }
 
-const mapStateToProps = state => ({
-  authentication: getAuthorization(state)
-});
-
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
-      requestAuthentication
+      requestTokenFromStorage
     },
     dispatch
   );
 
 export default connect(
-  mapStateToProps,
+  null,
   mapDispatchToProps
 )(App);

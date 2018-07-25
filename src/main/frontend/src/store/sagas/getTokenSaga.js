@@ -1,20 +1,18 @@
-import { call, put, all, takeEvery } from 'redux-saga/effects';
+import { call, put, takeEvery } from 'redux-saga/effects';
 import {
   REQUEST_TOKEN,
-  receiveAuthorization,
-  receiveAuthorizationError
+  receiveToken,
+  receiveTokenError
 } from '../actions/GetTokenActions';
 import { tokenRequest } from '../services/getTokenRequest';
 
 export const getTokenSagaRequest = function*(action) {
   try {
     const responseGoogle = yield call(tokenRequest, action.payload.accessToken);
-    yield put(receiveAuthorization(responseGoogle));
+    yield put(receiveToken(responseGoogle));
   } catch (error) {
-    yield put(receiveAuthorizationError(error));
+    yield put(receiveTokenError(error));
   }
 };
 
-export default function* getTokenSaga() {
-  yield all([takeEvery(REQUEST_TOKEN, getTokenSagaRequest)]);
-}
+export const getTokenSaga = [takeEvery(REQUEST_TOKEN, getTokenSagaRequest)];
