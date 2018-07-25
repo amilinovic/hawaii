@@ -83,15 +83,7 @@ public class RequestController {
 
   @PostMapping
   public ResponseEntity<RequestDto> createRequest(@RequestBody RequestDto requestDto) {
-    // Map and save request.
     var request = mapAndSaveRequest(requestDto);
-    var requestId = request.getId();
-
-    // Map and save request days.
-    requestDto.getDayDtos().forEach(dayDto -> dayDto.setRequestId(requestId));
-    var days = mapDays(requestDto.getDayDtos());
-    days = dayRepository.saveAll(days);
-    request.setDays(days);
 
     return new ResponseEntity<>(new RequestDto(request), HttpStatus.OK);
   }
@@ -112,7 +104,11 @@ public class RequestController {
 
   private Request mapAndSaveRequest(RequestDto requestDto) {
     var request = MAPPER.map(requestDto, Request.class);
-    return requestService.save(request);
+    var days = mapDays(requestDto.getDayDtos());
+    request.setDays(days);
+    request = requestService.save(request);
+
+    return request;
   }
 
   private List<Day> mapDays(List<DayDto> dayDtos) {
