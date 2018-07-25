@@ -15,12 +15,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import eu.execom.hawaii.dto.DayDto;
 import eu.execom.hawaii.dto.RequestDto;
 import eu.execom.hawaii.model.Day;
 import eu.execom.hawaii.model.Request;
 import eu.execom.hawaii.model.enumerations.AbsenceType;
 import eu.execom.hawaii.model.enumerations.RequestStatus;
 import eu.execom.hawaii.repository.DayRepository;
+import eu.execom.hawaii.service.AbsenceService;
 import eu.execom.hawaii.service.RequestService;
 
 @RestController
@@ -30,11 +32,13 @@ public class RequestController {
   private static final ModelMapper MAPPER = new ModelMapper();
 
   private RequestService requestService;
+  private AbsenceService absenceService;
   private DayRepository dayRepository;
 
   @Autowired
-  public RequestController(RequestService requestService, DayRepository dayRepository) {
+  public RequestController(RequestService requestService, AbsenceService absenceService, DayRepository dayRepository) {
     this.requestService = requestService;
+    this.absenceService = absenceService;
     this.dayRepository = dayRepository;
   }
 
@@ -73,32 +77,46 @@ public class RequestController {
   @GetMapping("/{id}")
   public ResponseEntity<RequestDto> getById(@PathVariable Long id) {
     var request = requestService.getById(id);
-    var requestDto = new RequestDto(request);
 
-    return new ResponseEntity<>(requestDto, HttpStatus.OK);
+    return new ResponseEntity<>(new RequestDto(request), HttpStatus.OK);
   }
 
   @PostMapping
   public ResponseEntity<RequestDto> createRequest(@RequestBody RequestDto requestDto) {
-    var request = MAPPER.map(requestDto, Request.class);
-    request = requestService.save(request);
+    // Map and save request.
+    var request = mapAndSaveRequest(requestDto);
+    var requestId = request.getId();
 
-    var days = request.getDays().stream().map(day -> MAPPER.map(day, Day.class)).collect(Collectors.toList());
+    // Map and save request days.
+    requestDto.getDayDtos().forEach(dayDto -> dayDto.setRequestId(requestId));
+    var days = mapDays(requestDto.getDayDtos());
     days = dayRepository.saveAll(days);
-
     request.setDays(days);
-    var requestDtoResponse = new RequestDto(request);
 
-    return new ResponseEntity<>(requestDtoResponse, HttpStatus.OK);
+    return new ResponseEntity<>(new RequestDto(request), HttpStatus.OK);
   }
 
   @PutMapping
   public ResponseEntity<RequestDto> handleRequestStatus(@RequestBody RequestDto requestDto) {
+    // Request
     var request = MAPPER.map(requestDto, Request.class);
+    // Request days
+    var days = mapDays(requestDto.getDayDtos());
+    request.setDays(days);
+    // Request absence
+    request.setAbsence(absenceService.getById(requestDto.getAbsenceId()));
     request = requestService.handleRequestStatusUpdate(request);
-    var requestDtoResponse = new RequestDto(request);
 
-    return new ResponseEntity<>(requestDtoResponse, HttpStatus.OK);
+    return new ResponseEntity<>(new RequestDto(request), HttpStatus.OK);
+  }
+
+  private Request mapAndSaveRequest(RequestDto requestDto) {
+    var request = MAPPER.map(requestDto, Request.class);
+    return requestService.save(request);
+  }
+
+  private List<Day> mapDays(List<DayDto> dayDtos) {
+    return dayDtos.stream().map(dayDto -> MAPPER.map(dayDto, Day.class)).collect(Collectors.toList());
   }
 
 }
