@@ -24,6 +24,15 @@ public class TeamService {
   /**
    * Retrieves a list of all teams from repository.
    *
+   * @return a list of all teams.
+   */
+  public List<Team> findAll() {
+    return teamRepository.findAll();
+  }
+
+  /**
+   * Retrieves a list of all teams from repository by given status.
+   *
    * @param active is it active.
    * @return a list of all teams.
    */

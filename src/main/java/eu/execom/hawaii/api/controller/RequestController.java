@@ -17,10 +17,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import eu.execom.hawaii.dto.DayDto;
 import eu.execom.hawaii.dto.RequestDto;
+import eu.execom.hawaii.model.Day;
 import eu.execom.hawaii.model.Request;
 import eu.execom.hawaii.model.enumerations.AbsenceType;
 import eu.execom.hawaii.model.enumerations.RequestStatus;
+import eu.execom.hawaii.service.AbsenceService;
 import eu.execom.hawaii.service.RequestService;
 
 @RestController
@@ -30,10 +33,12 @@ public class RequestController {
   private static final ModelMapper MAPPER = new ModelMapper();
 
   private RequestService requestService;
+  private AbsenceService absenceService;
 
   @Autowired
-  public RequestController(RequestService requestService) {
+  public RequestController(RequestService requestService, AbsenceService absenceService) {
     this.requestService = requestService;
+    this.absenceService = absenceService;
   }
 
   @GetMapping("/dates")
@@ -80,27 +85,42 @@ public class RequestController {
   @GetMapping("/{id}")
   public ResponseEntity<RequestDto> getById(@PathVariable Long id) {
     var request = requestService.getById(id);
-    var requestDto = new RequestDto(request);
 
-    return new ResponseEntity<>(requestDto, HttpStatus.OK);
+    return new ResponseEntity<>(new RequestDto(request), HttpStatus.OK);
   }
 
   @PostMapping
   public ResponseEntity<RequestDto> createRequest(@RequestBody RequestDto requestDto) {
-    var request = MAPPER.map(requestDto, Request.class);
-    request = requestService.save(request);
-    var requestDtoResponse = new RequestDto(request);
+    var request = mapAndSaveRequest(requestDto);
 
-    return new ResponseEntity<>(requestDtoResponse, HttpStatus.OK);
+    return new ResponseEntity<>(new RequestDto(request), HttpStatus.OK);
   }
 
   @PutMapping
   public ResponseEntity<RequestDto> handleRequestStatus(@RequestBody RequestDto requestDto) {
+    // Request
     var request = MAPPER.map(requestDto, Request.class);
+    // Request days
+    var days = mapDays(requestDto.getDayDtos());
+    request.setDays(days);
+    // Request absence
+    request.setAbsence(absenceService.getById(requestDto.getAbsenceId()));
     request = requestService.handleRequestStatusUpdate(request);
-    var requestDtoResponse = new RequestDto(request);
 
-    return new ResponseEntity<>(requestDtoResponse, HttpStatus.OK);
+    return new ResponseEntity<>(new RequestDto(request), HttpStatus.OK);
+  }
+
+  private Request mapAndSaveRequest(RequestDto requestDto) {
+    var request = MAPPER.map(requestDto, Request.class);
+    var days = mapDays(requestDto.getDayDtos());
+    request.setDays(days);
+    request = requestService.save(request);
+
+    return request;
+  }
+
+  private List<Day> mapDays(List<DayDto> dayDtos) {
+    return dayDtos.stream().map(dayDto -> MAPPER.map(dayDto, Day.class)).collect(Collectors.toList());
   }
 
 }
