@@ -55,4 +55,5 @@ yarn-error.log*
 
 **/*.png
 
-**/client_secret.json
+**/credentials.json
+**/service_account.json

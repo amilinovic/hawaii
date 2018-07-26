@@ -20,14 +20,18 @@ public class RequestService {
   private UserRepository userRepository;
   private DayRepository dayRepository;
   private AllowanceService allowanceService;
+  private AbsenceService absenceService;
+  private GoogleCalendarService googleCalendarService;
 
   @Autowired
   public RequestService(RequestRepository requestRepository, UserRepository userRepository, DayRepository dayRepository,
-      AllowanceService allowanceService) {
+      AllowanceService allowanceService, AbsenceService absenceService, GoogleCalendarService googleCalendarService) {
     this.requestRepository = requestRepository;
     this.userRepository = userRepository;
     this.dayRepository = dayRepository;
     this.allowanceService = allowanceService;
+    this.absenceService = absenceService;
+    this.googleCalendarService = googleCalendarService;
   }
 
   /**
@@ -102,15 +106,19 @@ public class RequestService {
    * @param request to be persisted.
    * @return saved request.
    */
-  public Request handleRequestStatusUpdate(Request request) {
+  public Request handleRequestStatusUpdate(Request request) throws Exception {
+    request.setDays(dayRepository.getDaysByRequest(request));
+    request.setAbsence(absenceService.getById(request.getAbsence().getId()));
+    request.setUser(userRepository.getOne(request.getUser().getId()));
     checkIsApproved(request);
 
     return requestRepository.save(request);
   }
 
-  private void checkIsApproved(Request request) {
+  private void checkIsApproved(Request request) throws Exception {
     if (RequestStatus.APPROVED.equals(request.getRequestStatus())) {
       allowanceService.applyRequest(request);
+      googleCalendarService.insertRequestToCalendar(request);
     }
   }
 
