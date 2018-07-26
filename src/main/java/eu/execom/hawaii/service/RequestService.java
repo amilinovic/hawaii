@@ -12,8 +12,10 @@ import eu.execom.hawaii.model.enumerations.RequestStatus;
 import eu.execom.hawaii.repository.DayRepository;
 import eu.execom.hawaii.repository.RequestRepository;
 import eu.execom.hawaii.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class RequestService {
 
   private RequestRepository requestRepository;
@@ -106,8 +108,7 @@ public class RequestService {
    * @param request to be persisted.
    * @return saved request.
    */
-  public Request handleRequestStatusUpdate(Request request) throws Exception {
-    request.setDays(dayRepository.getDaysByRequest(request));
+  public Request handleRequestStatusUpdate(Request request) {
     request.setAbsence(absenceService.getById(request.getAbsence().getId()));
     request.setUser(userRepository.getOne(request.getUser().getId()));
     checkIsApproved(request);
@@ -115,10 +116,14 @@ public class RequestService {
     return requestRepository.save(request);
   }
 
-  private void checkIsApproved(Request request) throws Exception {
+  private void checkIsApproved(Request request) {
     if (RequestStatus.APPROVED.equals(request.getRequestStatus())) {
       allowanceService.applyRequest(request);
-      googleCalendarService.insertRequestToCalendar(request);
+      try {
+        googleCalendarService.insertRequestToCalendar(request);
+      } catch (Exception e) {
+        log.error("Error creating Google calendar event: {}", e);
+      }
     }
   }
 

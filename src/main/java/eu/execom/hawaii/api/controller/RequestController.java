@@ -86,7 +86,7 @@ public class RequestController {
   }
 
   @PutMapping
-  public ResponseEntity<RequestDto> handleRequestStatus(@RequestBody RequestDto requestDto) throws Exception {
+  public ResponseEntity<RequestDto> handleRequestStatus(@RequestBody RequestDto requestDto) {
     // Request
     var request = MAPPER.map(requestDto, Request.class);
     // Request days
