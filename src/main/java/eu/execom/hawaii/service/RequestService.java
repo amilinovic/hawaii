@@ -9,6 +9,7 @@ import eu.execom.hawaii.model.Request;
 import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.enumerations.AbsenceType;
 import eu.execom.hawaii.model.enumerations.RequestStatus;
+import eu.execom.hawaii.repository.DayRepository;
 import eu.execom.hawaii.repository.RequestRepository;
 import eu.execom.hawaii.repository.UserRepository;
 
@@ -17,16 +18,16 @@ public class RequestService {
 
   private RequestRepository requestRepository;
   private UserRepository userRepository;
+  private DayRepository dayRepository;
   private AllowanceService allowanceService;
-  private GoogleCalendarService googleCalendarService;
 
   @Autowired
-  public RequestService(RequestRepository requestRepository, UserRepository userRepository,
-      AllowanceService allowanceService, GoogleCalendarService googleCalendarService) {
+  public RequestService(RequestRepository requestRepository, UserRepository userRepository, DayRepository dayRepository,
+      AllowanceService allowanceService) {
     this.requestRepository = requestRepository;
     this.userRepository = userRepository;
+    this.dayRepository = dayRepository;
     this.allowanceService = allowanceService;
-    this.googleCalendarService = googleCalendarService;
   }
 
   /**
@@ -84,11 +85,15 @@ public class RequestService {
   /**
    * Save the provided request to repository.
    *
-   * @param request the Request entity to be persisted.
+   * @param mappedRequest the Request entity to be persisted.
    * @return a saved request with id.
    */
-  public Request save(Request request) {
-    return requestRepository.save(request);
+  public Request save(Request mappedRequest) {
+    var request = requestRepository.save(mappedRequest);
+    request.getDays().forEach(day -> day.setRequest(request));
+    var days = dayRepository.saveAll(request.getDays());
+    request.setDays(days);
+    return request;
   }
 
   /**
@@ -97,16 +102,15 @@ public class RequestService {
    * @param request to be persisted.
    * @return saved request.
    */
-  public Request handleRequestStatusUpdate(Request request) throws Exception {
+  public Request handleRequestStatusUpdate(Request request) {
     checkIsApproved(request);
 
     return requestRepository.save(request);
   }
 
-  private void checkIsApproved(Request request) throws Exception {
+  private void checkIsApproved(Request request) {
     if (RequestStatus.APPROVED.equals(request.getRequestStatus())) {
       allowanceService.applyRequest(request);
-      googleCalendarService.insertRequestToCalendar(request);
     }
   }
 
