@@ -41,8 +41,9 @@ public class RequestService {
    * @param endDate   to date.
    * @return a list of requests.
    */
-  public List<Request> findAllByDates(LocalDate startDate, LocalDate endDate) {
-    List<Request> requests = requestRepository.findAllByRequestStatusNot(RequestStatus.CANCELED);
+  public List<Request> findAllByUserByDates(LocalDate startDate, LocalDate endDate, Long userId) {
+    User user = userRepository.getOne(userId);
+    List<Request> requests = requestRepository.findAllByUserAndRequestStatusNot(user, RequestStatus.CANCELED);
     return requests.stream()
                    .filter(isBetween(startDate, endDate))
                    .sorted(Comparator.comparing((Request req) -> req.getDays().get(0).getDate()).reversed())

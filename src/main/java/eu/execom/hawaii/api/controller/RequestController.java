@@ -42,11 +42,11 @@ public class RequestController {
     this.absenceService = absenceService;
   }
 
-  @GetMapping("/dates")
-  public ResponseEntity<List<RequestDto>> getRequestsByDates(
+  @GetMapping("/user/{id}/dates")
+  public ResponseEntity<List<RequestDto>> getRequestsByUserByDates(
       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
-    var requests = requestService.findAllByDates(startDate, endDate);
+      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate, @PathVariable Long id) {
+    var requests = requestService.findAllByUserByDates(startDate, endDate, id);
     var requestDtos = requests.stream().map(RequestDto::new).collect(Collectors.toList());
 
     return new ResponseEntity<>(requestDtos, HttpStatus.OK);
