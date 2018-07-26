@@ -1,6 +1,7 @@
 package eu.execom.hawaii.service;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -33,16 +34,29 @@ public class RequestService {
     this.allowanceService = allowanceService;
   }
 
+  /**
+   * Retrieves a list of request by given dates, ordered by latest.
+   *
+   * @param startDate from date.
+   * @param endDate   to date.
+   * @return a list of requests.
+   */
   public List<Request> findAllByDates(LocalDate startDate, LocalDate endDate) {
     List<Request> requests = requestRepository.findAllByRequestStatusNot(RequestStatus.CANCELED);
-    return requests.stream().filter(isBetween(startDate, endDate)).collect(Collectors.toList());
+    return requests.stream()
+                   .filter(isBetween(startDate, endDate))
+                   .sorted(Comparator.comparing((Request req) -> req.getDays().get(0).getDate()).reversed())
+                   .collect(Collectors.toList());
   }
 
   private Predicate<Request> isBetween(LocalDate startDate, LocalDate endDate) {
-    return request -> request.getDays().get(0).getDate().isAfter(startDate) && request.getDays()
-                                                                                      .get(request.getDays().size() - 1)
-                                                                                      .getDate()
-                                                                                      .isBefore(endDate);
+    return request -> checkDates(request, startDate, endDate);
+  }
+
+  private boolean checkDates(Request request, LocalDate startDate, LocalDate endDate) {
+    LocalDate requestDate = request.getDays().get(0).getDate();
+    return (requestDate.isAfter(startDate) || requestDate.isEqual(startDate)) && (requestDate.isBefore(endDate)
+        || requestDate.isEqual(endDate));
   }
 
   /**

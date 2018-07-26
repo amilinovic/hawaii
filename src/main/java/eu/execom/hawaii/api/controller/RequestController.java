@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,8 +43,9 @@ public class RequestController {
   }
 
   @GetMapping("/dates")
-  public ResponseEntity<List<RequestDto>> getRequestsByDates(@RequestParam LocalDate startDate,
-      @RequestParam LocalDate endDate) {
+  public ResponseEntity<List<RequestDto>> getRequestsByDates(
+      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
     var requests = requestService.findAllByDates(startDate, endDate);
     var requestDtos = requests.stream().map(RequestDto::new).collect(Collectors.toList());
 
