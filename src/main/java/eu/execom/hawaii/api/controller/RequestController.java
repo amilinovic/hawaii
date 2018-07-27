@@ -46,7 +46,7 @@ public class RequestController {
   public ResponseEntity<List<RequestDto>> getRequestsByUserByDates(
       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate, @PathVariable Long id) {
-    var requests = requestService.findAllByUserByDates(startDate, endDate, id);
+    var requests = requestService.findAllByUserWithinDates(startDate, endDate, id);
     var requestDtos = requests.stream().map(RequestDto::new).collect(Collectors.toList());
 
     return new ResponseEntity<>(requestDtos, HttpStatus.OK);

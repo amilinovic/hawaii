@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import eu.execom.hawaii.model.Day;
 import eu.execom.hawaii.model.Request;
 import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.enumerations.AbsenceType;
@@ -41,7 +42,7 @@ public class RequestService {
    * @param endDate   to date.
    * @return a list of requests.
    */
-  public List<Request> findAllByUserByDates(LocalDate startDate, LocalDate endDate, Long userId) {
+  public List<Request> findAllByUserWithinDates(LocalDate startDate, LocalDate endDate, Long userId) {
     User user = userRepository.getOne(userId);
     List<Request> requests = requestRepository.findAllByUserAndRequestStatusNot(user, RequestStatus.CANCELED);
     return requests.stream()
@@ -51,13 +52,13 @@ public class RequestService {
   }
 
   private Predicate<Request> isBetween(LocalDate startDate, LocalDate endDate) {
-    return request -> checkDates(request, startDate, endDate);
+    return request -> checkAnyDayWithinDates(request.getDays(), startDate, endDate);
   }
 
-  private boolean checkDates(Request request, LocalDate startDate, LocalDate endDate) {
-    LocalDate requestDate = request.getDays().get(0).getDate();
-    return (requestDate.isAfter(startDate) || requestDate.isEqual(startDate)) && (requestDate.isBefore(endDate)
-        || requestDate.isEqual(endDate));
+  private boolean checkAnyDayWithinDates(List<Day> days, LocalDate startDate, LocalDate endDate) {
+    return days.stream()
+               .anyMatch(day -> (day.getDate().isAfter(startDate) || day.getDate().isEqual(startDate)) && (
+                   day.getDate().isBefore(endDate) || day.getDate().isEqual(endDate)));
   }
 
   /**
