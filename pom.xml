@@ -24,6 +24,7 @@
     <java.version>10</java.version>
     <swagger.version>2.8.0</swagger.version>
     <google.api.version>1.23.0</google.api.version>
+    <google-api-services-calendar.version>v3-rev330-1.23.0</google-api-services-calendar.version>
   </properties>
 
   <dependencies>
@@ -74,7 +75,7 @@
     <dependency>
       <groupId>com.google.apis</groupId>
       <artifactId>google-api-services-calendar</artifactId>
-      <version>v3-rev330-1.23.0</version>
+      <version>${google-api-services-calendar.version}</version>
     </dependency>
     <dependency>
       <groupId>com.google.oauth-client</groupId>
