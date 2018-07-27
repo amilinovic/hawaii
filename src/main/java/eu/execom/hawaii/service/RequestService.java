@@ -9,8 +9,8 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import eu.execom.hawaii.model.Day;
 import eu.execom.hawaii.model.Absence;
+import eu.execom.hawaii.model.Day;
 import eu.execom.hawaii.model.Request;
 import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.enumerations.AbsenceType;
