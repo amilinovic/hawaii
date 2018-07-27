@@ -11,8 +11,6 @@ import eu.execom.hawaii.model.enumerations.RequestStatus;
 
 public interface RequestRepository extends JpaRepository<Request, Long> {
 
-  List<Request> findAllByUser(User user);
-
   List<Request> findAllByApprover(User approver);
 
   List<Request> findAllByRequestStatus(RequestStatus requestStatus);

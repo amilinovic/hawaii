@@ -39,19 +39,19 @@ public class RequestController {
     this.requestService = requestService;
   }
 
-  @GetMapping("/user/{id}/dates")
-  public ResponseEntity<List<RequestDto>> getRequestsByUserByDates(
-      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate, @PathVariable Long id) {
-    var requests = requestService.findAllByUserWithinDates(startDate, endDate, id);
+  @GetMapping("/user/{id}")
+  public ResponseEntity<List<RequestDto>> getRequestsByUserId(@PathVariable Long id) {
+    var requests = requestService.findAllByUser(id);
     var requestDtos = requests.stream().map(RequestDto::new).collect(Collectors.toList());
 
     return new ResponseEntity<>(requestDtos, HttpStatus.OK);
   }
 
-  @GetMapping("/user/{id}")
-  public ResponseEntity<List<RequestDto>> getRequestsByUserId(@PathVariable Long id) {
-    var requests = requestService.findAllByUser(id);
+  @GetMapping("/user/{id}/dates")
+  public ResponseEntity<List<RequestDto>> getRequestsByUserByDates(
+      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate, @PathVariable Long id) {
+    var requests = requestService.findAllByUserWithinDates(startDate, endDate, id);
     var requestDtos = requests.stream().map(RequestDto::new).collect(Collectors.toList());
 
     return new ResponseEntity<>(requestDtos, HttpStatus.OK);
