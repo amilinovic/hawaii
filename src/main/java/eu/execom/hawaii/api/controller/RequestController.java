@@ -1,10 +1,12 @@
 package eu.execom.hawaii.api.controller;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import eu.execom.hawaii.dto.DayDto;
@@ -34,6 +37,16 @@ public class RequestController {
   @Autowired
   public RequestController(RequestService requestService) {
     this.requestService = requestService;
+  }
+
+  @GetMapping("/user/{id}/dates")
+  public ResponseEntity<List<RequestDto>> getRequestsByUserByDates(
+      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate, @PathVariable Long id) {
+    var requests = requestService.findAllByUserWithinDates(startDate, endDate, id);
+    var requestDtos = requests.stream().map(RequestDto::new).collect(Collectors.toList());
+
+    return new ResponseEntity<>(requestDtos, HttpStatus.OK);
   }
 
   @GetMapping("/user/{id}")

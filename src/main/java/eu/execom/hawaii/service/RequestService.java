@@ -1,11 +1,16 @@
 package eu.execom.hawaii.service;
 
+import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import eu.execom.hawaii.model.Absence;
+import eu.execom.hawaii.model.Day;
 import eu.execom.hawaii.model.Request;
 import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.enumerations.AbsenceType;
@@ -37,6 +42,32 @@ public class RequestService {
     this.allowanceService = allowanceService;
     this.absenceRepository = absenceRepository;
     this.googleCalendarService = googleCalendarService;
+  }
+
+  /**
+   * Retrieves a list of request by given dates, ordered by latest.
+   *
+   * @param startDate from date.
+   * @param endDate   to date.
+   * @return a list of requests.
+   */
+  public List<Request> findAllByUserWithinDates(LocalDate startDate, LocalDate endDate, Long userId) {
+    User user = userRepository.getOne(userId);
+    List<Request> requests = requestRepository.findAllByUserAndRequestStatusNot(user, RequestStatus.CANCELED);
+    return requests.stream()
+                   .filter(isBetween(startDate, endDate))
+                   .sorted(Comparator.comparing((Request req) -> req.getDays().get(0).getDate()).reversed())
+                   .collect(Collectors.toList());
+  }
+
+  private Predicate<Request> isBetween(LocalDate startDate, LocalDate endDate) {
+    return request -> checkAnyDayWithinDates(request.getDays(), startDate, endDate);
+  }
+
+  private boolean checkAnyDayWithinDates(List<Day> days, LocalDate startDate, LocalDate endDate) {
+    return days.stream()
+               .anyMatch(day -> (day.getDate().isAfter(startDate) || day.getDate().isEqual(startDate)) && (
+                   day.getDate().isBefore(endDate) || day.getDate().isEqual(endDate)));
   }
 
   /**
