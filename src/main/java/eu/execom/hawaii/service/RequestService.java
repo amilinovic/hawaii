@@ -71,14 +71,14 @@ public class RequestService {
   }
 
   /**
-   * Retrieves a list of all requests by userId from repository.
+   * Retrieves a list of requests by userId and without canceled requests from repository.
    *
    * @param userId the User id.
    * @return a list of all requests for given user.
    */
   public List<Request> findAllByUser(Long userId) {
     User user = userRepository.getOne(userId);
-    return requestRepository.findAllByUser(user);
+    return requestRepository.findAllByUserAndRequestStatusNot(user, RequestStatus.CANCELED);
   }
 
   /**
