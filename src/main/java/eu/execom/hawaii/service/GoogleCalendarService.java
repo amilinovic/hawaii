@@ -53,21 +53,28 @@ public class GoogleCalendarService {
    */
   public void insertRequestToCalendar(Request request) throws Exception {
     var calendarId = CALENDAR_ID;
+
     var httpTransport = GoogleNetHttpTransport.newTrustedTransport();
     var email = request.getUser().getEmail();
-    var cred = GoogleCredential.fromStream(new FileInputStream(new ClassPathResource(CREDENTIALS_FILE_PATH).getFile()));
+    var serviceAccountCredentials = new ClassPathResource(CREDENTIALS_FILE_PATH).getFile();
+    var credentialsFromJson = GoogleCredential.fromStream(new FileInputStream(serviceAccountCredentials));
     var credential = new GoogleCredential.Builder().setTransport(httpTransport)
                                                    .setJsonFactory(JSON_FACTORY)
-                                                   .setServiceAccountProjectId(cred.getServiceAccountProjectId())
-                                                   .setServiceAccountId(cred.getServiceAccountId())
-                                                   .setServiceAccountPrivateKeyId(cred.getServiceAccountPrivateKeyId())
-                                                   .setServiceAccountPrivateKey(cred.getServiceAccountPrivateKey())
+                                                   .setServiceAccountProjectId(
+                                                       credentialsFromJson.getServiceAccountProjectId())
+                                                   .setServiceAccountId(credentialsFromJson.getServiceAccountId())
+                                                   .setServiceAccountPrivateKeyId(
+                                                       credentialsFromJson.getServiceAccountPrivateKeyId())
+                                                   .setServiceAccountPrivateKey(
+                                                       credentialsFromJson.getServiceAccountPrivateKey())
                                                    .setServiceAccountScopes(SCOPES)
-                                                   .setTokenServerEncodedUrl(cred.getTokenServerEncodedUrl())
+                                                   .setTokenServerEncodedUrl(
+                                                       credentialsFromJson.getTokenServerEncodedUrl())
                                                    .setServiceAccountUser(email)
                                                    .build();
     var service = new Calendar.Builder(httpTransport, JSON_FACTORY, credential).setApplicationName(APPLICATION_NAME)
                                                                                .build();
+
     request.getDays().stream().map(this::createEvent).forEach(insertEventToCalendar(calendarId, service));
   }
 

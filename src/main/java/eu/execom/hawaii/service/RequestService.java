@@ -5,10 +5,12 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import eu.execom.hawaii.model.Absence;
 import eu.execom.hawaii.model.Request;
 import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.enumerations.AbsenceType;
 import eu.execom.hawaii.model.enumerations.RequestStatus;
+import eu.execom.hawaii.repository.AbsenceRepository;
 import eu.execom.hawaii.repository.DayRepository;
 import eu.execom.hawaii.repository.RequestRepository;
 import eu.execom.hawaii.repository.UserRepository;
@@ -21,18 +23,19 @@ public class RequestService {
   private RequestRepository requestRepository;
   private UserRepository userRepository;
   private DayRepository dayRepository;
+  private AbsenceRepository absenceRepository;
   private AllowanceService allowanceService;
-  private AbsenceService absenceService;
   private GoogleCalendarService googleCalendarService;
 
   @Autowired
   public RequestService(RequestRepository requestRepository, UserRepository userRepository, DayRepository dayRepository,
-      AllowanceService allowanceService, AbsenceService absenceService, GoogleCalendarService googleCalendarService) {
+      AbsenceRepository absenceRepository, AllowanceService allowanceService,
+      GoogleCalendarService googleCalendarService) {
     this.requestRepository = requestRepository;
     this.userRepository = userRepository;
     this.dayRepository = dayRepository;
     this.allowanceService = allowanceService;
-    this.absenceService = absenceService;
+    this.absenceRepository = absenceRepository;
     this.googleCalendarService = googleCalendarService;
   }
 
@@ -103,20 +106,26 @@ public class RequestService {
   }
 
   /**
-   * Saves changed request status.
+   * Saves changed request status. If status is changed to APPROVED,
+   * applies leave days from the request to the user's allowance
+   * and creates an event in the user's Google calendar.
    *
    * @param request to be persisted.
    * @return saved request.
    */
   public Request handleRequestStatusUpdate(Request request) {
-    request.setAbsence(absenceService.getById(request.getAbsence().getId()));
-    request.setUser(userRepository.getOne(request.getUser().getId()));
-    checkIsApproved(request);
+    Absence absence = absenceRepository.getOne(request.getAbsence().getId());
+    request.setAbsence(absence);
+
+    User user = userRepository.getOne(request.getUser().getId());
+    request.setUser(user);
+
+    applyRequestIfApproved(request);
 
     return requestRepository.save(request);
   }
 
-  private void checkIsApproved(Request request) {
+  private void applyRequestIfApproved(Request request) {
     if (RequestStatus.APPROVED.equals(request.getRequestStatus())) {
       allowanceService.applyRequest(request);
       try {
