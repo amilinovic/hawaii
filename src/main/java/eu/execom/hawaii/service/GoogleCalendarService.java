@@ -2,8 +2,8 @@ package eu.execom.hawaii.service;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneOffset;
 import java.util.Collections;
@@ -106,7 +106,8 @@ public class GoogleCalendarService {
         end.setDateTime(getDateTime(date, AFTERNOON_TIME));
         break;
       default:
-        start.setDate(new DateTime(true, date.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli(), null));
+        var epochMilli = date.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli();
+        start.setDate(new DateTime(true, epochMilli, null));
         end = start;
     }
 
@@ -119,8 +120,7 @@ public class GoogleCalendarService {
   }
 
   private DateTime getDateTime(LocalDate date, LocalTime localTime) {
-    var offsetDateTime = date.atTime(localTime.atOffset(ZoneOffset.UTC));
-    var instant = Instant.from(offsetDateTime);
+    var instant = LocalDateTime.of(date, localTime).toInstant(ZoneOffset.UTC);
     return new DateTime(Date.from(instant), TimeZone.getDefault());
   }
 
