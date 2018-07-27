@@ -119,8 +119,9 @@ public class GoogleCalendarService {
   }
 
   private DateTime getDateTime(LocalDate date, LocalTime localTime) {
-    return new DateTime(Date.from(Instant.from(date.atTime(localTime.atOffset(ZoneOffset.UTC)))),
-        TimeZone.getDefault());
+    var offsetDateTime = date.atTime(localTime.atOffset(ZoneOffset.UTC));
+    var instant = Instant.from(offsetDateTime);
+    return new DateTime(Date.from(instant), TimeZone.getDefault());
   }
 
 }
