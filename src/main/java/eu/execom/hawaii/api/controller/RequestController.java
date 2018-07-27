@@ -24,7 +24,6 @@ import eu.execom.hawaii.model.Day;
 import eu.execom.hawaii.model.Request;
 import eu.execom.hawaii.model.enumerations.AbsenceType;
 import eu.execom.hawaii.model.enumerations.RequestStatus;
-import eu.execom.hawaii.service.AbsenceService;
 import eu.execom.hawaii.service.RequestService;
 
 @RestController
@@ -34,12 +33,10 @@ public class RequestController {
   private static final ModelMapper MAPPER = new ModelMapper();
 
   private RequestService requestService;
-  private AbsenceService absenceService;
 
   @Autowired
-  public RequestController(RequestService requestService, AbsenceService absenceService) {
+  public RequestController(RequestService requestService) {
     this.requestService = requestService;
-    this.absenceService = absenceService;
   }
 
   @GetMapping("/user/{id}/dates")
@@ -105,8 +102,6 @@ public class RequestController {
     // Request days
     var days = mapDays(requestDto.getDayDtos());
     request.setDays(days);
-    // Request absence
-    request.setAbsence(absenceService.getById(requestDto.getAbsenceId()));
     request = requestService.handleRequestStatusUpdate(request);
 
     return new ResponseEntity<>(new RequestDto(request), HttpStatus.OK);
