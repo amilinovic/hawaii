@@ -1,4 +1,8 @@
-import { getEmployee, getFetching } from '../../store/Selectors';
+import {
+  getEmployee,
+  getFetching,
+  getAuthorization
+} from '../../store/Selectors';
 
 describe('Employee Selector', () => {
   describe('Get Employee Selector', () => {
@@ -20,6 +24,21 @@ describe('Employee Selector', () => {
         }
       };
       expect(getFetching(state)).toEqual(123);
+    });
+  });
+});
+
+describe('Get Authorization Selector', () => {
+  it('should return authorization', () => {
+    const state = {
+      authorization: {
+        token: '2d153236-d103-4fa0-a3cb-8f26a14c1c45',
+        role: 'HR_MANAGER'
+      }
+    };
+    expect(getAuthorization(state)).toEqual({
+      token: '2d153236-d103-4fa0-a3cb-8f26a14c1c45',
+      role: 'HR_MANAGER'
     });
   });
 });

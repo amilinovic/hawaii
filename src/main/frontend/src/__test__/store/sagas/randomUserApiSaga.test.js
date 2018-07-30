@@ -4,9 +4,9 @@ import {
   requestApiData,
   receiveApiData,
   errorReceivingApiData
-} from '../../../store/actions/EmployeesActions';
-import { getApiData } from '../../../store/sagas/sagas';
-import { fetchData } from '../../../store/services/user';
+} from '../../../store/actions/RandomUserApiActions';
+import { getApiData } from '../../../store/sagas/randomUserApiSaga';
+import { randomUserApiRequest } from '../../../store/services/randomUserApiRequest';
 
 describe('get users saga', () => {
   it('should fetch users', () => {
@@ -18,7 +18,7 @@ describe('get users saga', () => {
     ];
     const iterator = getApiData();
 
-    expect(iterator.next().value).toEqual(call(fetchData));
+    expect(iterator.next().value).toEqual(call(randomUserApiRequest));
     expect(iterator.next(mockResults).value).toEqual(
       put(receiveApiData(mockResults))
     );
@@ -29,7 +29,7 @@ describe('get users saga', () => {
       const error = new Error('error fetching users');
       const iterator = getApiData(requestAction);
 
-      expect(iterator.next().value).toEqual(call(fetchData));
+      expect(iterator.next().value).toEqual(call(randomUserApiRequest));
       expect(iterator.throw(error).value).toEqual(
         put(errorReceivingApiData(error))
       );
