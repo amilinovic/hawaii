@@ -7,7 +7,7 @@ import {
 import { receiveToken } from '../actions/GetTokenActions';
 import { getTokenFromSessionStorage } from '../services/getTokenFromSessionStorage';
 
-export const authenticateSagaRequest = function*() {
+const authenticate = function*() {
   try {
     const authentication = yield call(getTokenFromSessionStorage);
     yield put(receiveToken(authentication));
@@ -19,5 +19,5 @@ export const authenticateSagaRequest = function*() {
 };
 
 export const authenticateSaga = [
-  takeEvery(REQUEST_TOKEN_FROM_STORAGE, authenticateSagaRequest)
+  takeEvery(REQUEST_TOKEN_FROM_STORAGE, authenticate)
 ];

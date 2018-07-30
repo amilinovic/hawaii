@@ -6,7 +6,7 @@ import {
 } from '../actions/GetTokenActions';
 import { tokenRequest } from '../services/getTokenRequest';
 
-export const getTokenSagaRequest = function*(action) {
+const getToken = function*(action) {
   try {
     const responseGoogle = yield call(tokenRequest, action.payload.accessToken);
     yield put(receiveToken(responseGoogle));
@@ -15,4 +15,4 @@ export const getTokenSagaRequest = function*(action) {
   }
 };
 
-export const getTokenSaga = [takeEvery(REQUEST_TOKEN, getTokenSagaRequest)];
+export const getTokenSaga = [takeEvery(REQUEST_TOKEN, getToken)];
