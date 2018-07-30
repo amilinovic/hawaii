@@ -2,6 +2,7 @@ package eu.execom.hawaii.service;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -9,6 +10,7 @@ import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.TimeZone;
 import java.util.function.Consumer;
 
@@ -45,37 +47,60 @@ public class GoogleCalendarService {
   private static final String CALENDAR_ID = "primary";
 
   /**
-   * Insert request to Google calendar.
+   * Handles adding and removing events from Google calendar.
    *
    * @param request Each day of the request is inserted individually either as an all-day event, or
    *                with start and end time depending on whether it is morning or afternoon only.
-   * @throws Exception
+   * @param apply true if request status is APPROVED, in which case a new event should be inserted into
+   *              the calendar and false if event is CANCELLED in which case the existing event should be
+   *              removed from the calendar.
    */
-  public void insertRequestToCalendar(Request request) throws Exception {
-    var calendarId = CALENDAR_ID;
+  void handleRequest(Request request, boolean apply) {
 
-    var httpTransport = GoogleNetHttpTransport.newTrustedTransport();
-    var email = request.getUser().getEmail();
-    var serviceAccountCredentials = new ClassPathResource(CREDENTIALS_FILE_PATH).getFile();
-    var credentialsFromJson = GoogleCredential.fromStream(new FileInputStream(serviceAccountCredentials));
-    var credential = new GoogleCredential.Builder().setTransport(httpTransport)
-                                                   .setJsonFactory(JSON_FACTORY)
-                                                   .setServiceAccountProjectId(
-                                                       credentialsFromJson.getServiceAccountProjectId())
-                                                   .setServiceAccountId(credentialsFromJson.getServiceAccountId())
-                                                   .setServiceAccountPrivateKeyId(
-                                                       credentialsFromJson.getServiceAccountPrivateKeyId())
-                                                   .setServiceAccountPrivateKey(
-                                                       credentialsFromJson.getServiceAccountPrivateKey())
-                                                   .setServiceAccountScopes(SCOPES)
-                                                   .setTokenServerEncodedUrl(
-                                                       credentialsFromJson.getTokenServerEncodedUrl())
-                                                   .setServiceAccountUser(email)
-                                                   .build();
-    var service = new Calendar.Builder(httpTransport, JSON_FACTORY, credential).setApplicationName(APPLICATION_NAME)
-                                                                               .build();
+    Consumer<Calendar> insertEvents = calendar -> request.getDays()
+                                                         .stream()
+                                                         .map(this::createEvent)
+                                                         .forEach(insertEventToCalendar(CALENDAR_ID, calendar));
 
-    request.getDays().stream().map(this::createEvent).forEach(insertEventToCalendar(calendarId, service));
+    Consumer<Calendar> removeEvents = calendar -> request.getDays()
+                                                         .stream()
+                                                         .map(Day::getId)
+                                                         .map(String::valueOf)
+                                                         .forEach(removeEventFromCalendar(CALENDAR_ID, calendar));
+
+    getCalendar(request).ifPresent(apply ? insertEvents : removeEvents);
+
+  }
+
+  private Optional<Calendar> getCalendar(Request request) {
+    Calendar calendar = null;
+    try {
+      var httpTransport = GoogleNetHttpTransport.newTrustedTransport();
+      var email = request.getUser().getEmail();
+      var serviceAccountCredentials = new ClassPathResource(CREDENTIALS_FILE_PATH).getFile();
+      var credentialsFromJson = GoogleCredential.fromStream(new FileInputStream(serviceAccountCredentials));
+      var credential = new GoogleCredential.Builder().setTransport(httpTransport)
+                                                     .setJsonFactory(JSON_FACTORY)
+                                                     .setServiceAccountProjectId(
+                                                         credentialsFromJson.getServiceAccountProjectId())
+                                                     .setServiceAccountId(credentialsFromJson.getServiceAccountId())
+                                                     .setServiceAccountPrivateKeyId(
+                                                         credentialsFromJson.getServiceAccountPrivateKeyId())
+                                                     .setServiceAccountPrivateKey(
+                                                         credentialsFromJson.getServiceAccountPrivateKey())
+                                                     .setServiceAccountScopes(SCOPES)
+                                                     .setTokenServerEncodedUrl(
+                                                         credentialsFromJson.getTokenServerEncodedUrl())
+                                                     .setServiceAccountUser(email)
+                                                     .build();
+      calendar = new Calendar.Builder(httpTransport, JSON_FACTORY, credential).setApplicationName(APPLICATION_NAME)
+                                                                              .build();
+    } catch (GeneralSecurityException e) {
+      log.error("Error creating NetHttpTransport. Exception raised: {}", e);
+    } catch (IOException e) {
+      log.error("Error reading credentials from file. Exception raised: {}", e);
+    }
+    return Optional.ofNullable(calendar);
   }
 
   private Consumer<Event> insertEventToCalendar(String calendarId, Calendar service) {
@@ -83,7 +108,17 @@ public class GoogleCalendarService {
       try {
         service.events().insert(calendarId, event).execute();
       } catch (IOException e) {
-        log.error("Error trying to contact Google calendar service: ", e);
+        log.error("Error adding event to Google calendar: ", e);
+      }
+    };
+  }
+
+  private Consumer<String> removeEventFromCalendar(String calendarId, Calendar service) {
+    return eventId -> {
+      try {
+        service.events().delete(calendarId, eventId).execute();
+      } catch (IOException e) {
+        log.error("Error removing event from Google calendar: ", e);
       }
     };
   }
@@ -114,7 +149,7 @@ public class GoogleCalendarService {
     event.setStart(start);
     event.setEnd(end);
     event.setSummary("Approved leave: " + day.getRequest().getReason());
-    event.setDescription(day.getRequest().getReason());
+    event.setId(String.valueOf(day.getId()));
 
     return event;
   }
