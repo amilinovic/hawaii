@@ -1,6 +1,5 @@
 package eu.execom.hawaii.service;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -13,6 +12,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.TimeZone;
 import java.util.function.Consumer;
+import java.util.function.Function;
+
+import javax.annotation.PostConstruct;
 
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
@@ -36,6 +38,7 @@ import lombok.extern.slf4j.Slf4j;
 public class GoogleCalendarService {
 
   private static final String APPLICATION_NAME = "hawaii";
+  private static final String EVENT_ID_PREFIX = "event";
   private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
 
   private static final List<String> SCOPES = Collections.singletonList(CalendarScopes.CALENDAR);
@@ -46,21 +49,13 @@ public class GoogleCalendarService {
   private static final LocalTime AFTERNOON_TIME = LocalTime.of(17, 0);
   private static final String CALENDAR_ID = "primary";
 
-  private static File serviceAccountCredentials;
+  private GoogleCredential googleCredential;
 
-  static {
+  @PostConstruct
+  public void init() {
     try {
-      serviceAccountCredentials = new ClassPathResource(CREDENTIALS_FILE_PATH).getFile();
-    } catch (IOException e) {
-      log.error("Error reading credentials from file. Exception raised: {}", e);
-    }
-  }
-
-  private static GoogleCredential credentialsFromJson;
-
-  static {
-    try {
-      credentialsFromJson = GoogleCredential.fromStream(new FileInputStream(serviceAccountCredentials));
+      var serviceAccountCredentials = new ClassPathResource(CREDENTIALS_FILE_PATH).getFile();
+      googleCredential = GoogleCredential.fromStream(new FileInputStream(serviceAccountCredentials));
     } catch (IOException e) {
       log.error("Error reading credentials from file. Exception raised: {}", e);
     }
@@ -69,16 +64,20 @@ public class GoogleCalendarService {
   /**
    * Handles adding and removing events from Google calendar.
    *
-   * @param request Each day of the request is inserted individually either as an all-day event, or
-   *                with start and end time depending on whether it is morning or afternoon only.
+   * @param request         Each day of the request is inserted individually either as an all-day event, or
+   *                        with start and end time depending on whether it is morning or afternoon only.
    * @param requestCanceled true if request status is CANCELLED in which case the existing event should be
    *                        removed from the calendar and false if event is APPROVED, in which case a new
    *                        event should be inserted into the calendar .
    */
   void handleRequest(Request request, boolean requestCanceled) {
 
-    Consumer<Calendar> insertEvents = calendar -> request.getDays()
-                                                         .stream()
+    Function<Day, Day> setRequest = day -> {
+      day.setRequest(request);
+      return day;
+    };
+
+    Consumer<Calendar> insertEvents = calendar -> request.getDays().stream().map(setRequest)
                                                          .map(this::createEvent)
                                                          .forEach(insertEventToCalendar(CALENDAR_ID, calendar));
 
@@ -100,15 +99,15 @@ public class GoogleCalendarService {
       var credential = new GoogleCredential.Builder().setTransport(httpTransport)
                                                      .setJsonFactory(JSON_FACTORY)
                                                      .setServiceAccountProjectId(
-                                                         credentialsFromJson.getServiceAccountProjectId())
-                                                     .setServiceAccountId(credentialsFromJson.getServiceAccountId())
+                                                         googleCredential.getServiceAccountProjectId())
+                                                     .setServiceAccountId(googleCredential.getServiceAccountId())
                                                      .setServiceAccountPrivateKeyId(
-                                                         credentialsFromJson.getServiceAccountPrivateKeyId())
+                                                         googleCredential.getServiceAccountPrivateKeyId())
                                                      .setServiceAccountPrivateKey(
-                                                         credentialsFromJson.getServiceAccountPrivateKey())
+                                                         googleCredential.getServiceAccountPrivateKey())
                                                      .setServiceAccountScopes(SCOPES)
                                                      .setTokenServerEncodedUrl(
-                                                         credentialsFromJson.getTokenServerEncodedUrl())
+                                                         googleCredential.getTokenServerEncodedUrl())
                                                      .setServiceAccountUser(email)
                                                      .build();
       calendar = new Calendar.Builder(httpTransport, JSON_FACTORY, credential).setApplicationName(APPLICATION_NAME)
@@ -132,7 +131,7 @@ public class GoogleCalendarService {
   private Consumer<String> removeEventFromCalendar(String calendarId, Calendar service) {
     return dayId -> {
       try {
-        String eventId = APPLICATION_NAME + dayId;
+        String eventId = EVENT_ID_PREFIX + dayId;
         service.events().delete(calendarId, eventId).execute();
       } catch (IOException e) {
         log.error("Error removing event from Google calendar: ", e);
@@ -165,9 +164,11 @@ public class GoogleCalendarService {
 
     event.setStart(start);
     event.setEnd(end);
-    event.setSummary("Approved leave: " + day.getRequest().getReason());
+
+    String summary = "Approved leave: " + day.getRequest().getUser().getFullName();
+    event.setSummary(summary);
     event.setDescription(day.getRequest().getReason());
-    event.setId(APPLICATION_NAME + String.valueOf(day.getId()));
+    event.setId(EVENT_ID_PREFIX + String.valueOf(day.getId()));
 
     return event;
   }
