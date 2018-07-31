@@ -51,8 +51,7 @@ public class AllowanceService {
 
     switch (absence.getAbsenceType()) {
       case DEDUCTED_LEAVE:
-          applyAnnual(allowance, hours);
-
+        applyAnnual(allowance, hours);
         break;
       case SICKNESS:
         applySickness(allowance, hours);
