@@ -59,8 +59,9 @@ public class TeamController {
   @PutMapping
   public ResponseEntity<TeamDto> updateTeam(@RequestBody TeamDto teamDto) {
     var team = MAPPER.map(teamDto, Team.class);
-    team = teamService.save(team);
+    team = teamService.update(team);
     var teamDtoResponse = new TeamDto(team);
+
     return new ResponseEntity<>(teamDtoResponse, HttpStatus.OK);
   }
 

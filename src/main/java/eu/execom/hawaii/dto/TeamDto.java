@@ -1,5 +1,6 @@
 package eu.execom.hawaii.dto;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,11 +23,11 @@ public class TeamDto {
     this.name = team.getName();
     this.emails = team.getEmails();
     this.active = team.isActive();
-    this.users = team.getUsers().stream().map(UserDto::new).collect(Collectors.toList());
-    this.teamApprovers = team.getTeamApprovers()
-                             .stream()
-                             .map(TeamApprover::getUser)
-                             .map(UserDto::new)
-                             .collect(Collectors.toList());
+    this.users = team.getUsers() == null ?
+        Collections.emptyList() :
+        team.getUsers().stream().map(UserDto::new).collect(Collectors.toList());
+    this.teamApprovers = team.getTeamApprovers() == null ?
+        Collections.emptyList() :
+        team.getTeamApprovers().stream().map(TeamApprover::getUser).map(UserDto::new).collect(Collectors.toList());
   }
 }
