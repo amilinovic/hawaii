@@ -77,7 +77,9 @@ public class GoogleCalendarService {
       return day;
     };
 
-    Consumer<Calendar> insertEvents = calendar -> request.getDays().stream().map(setRequest)
+    Consumer<Calendar> insertEvents = calendar -> request.getDays()
+                                                         .stream()
+                                                         .map(setRequest)
                                                          .map(this::createEvent)
                                                          .forEach(insertEventToCalendar(CALENDAR_ID, calendar));
 
