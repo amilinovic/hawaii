@@ -151,20 +151,22 @@ public class RequestService {
     User user = userRepository.getOne(request.getUser().getId());
     request.setUser(user);
 
-    applyRequestIfApproved(request);
+    if (shouldApplyRequest(request)) {
+      applyRequest(request);
+    }
 
     return requestRepository.save(request);
   }
 
-  private void applyRequestIfApproved(Request request) {
-    if (RequestStatus.APPROVED.equals(request.getRequestStatus())) {
-      allowanceService.applyRequest(request);
-      try {
-        googleCalendarService.insertRequestToCalendar(request);
-      } catch (Exception e) {
-        log.error("Error creating Google calendar event: {}", e);
-      }
-    }
+  private boolean shouldApplyRequest(Request request) {
+    return RequestStatus.APPROVED.equals(request.getRequestStatus()) || RequestStatus.CANCELED.equals(
+        request.getRequestStatus());
+  }
+
+  private void applyRequest(Request request) {
+    boolean requestCanceled = RequestStatus.CANCELED.equals(request.getRequestStatus());
+    allowanceService.applyRequest(request, requestCanceled);
+    googleCalendarService.handleRequest(request, requestCanceled);
   }
 
 }

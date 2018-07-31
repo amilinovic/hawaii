@@ -40,38 +40,45 @@ public class AllowanceService {
    *
    * @param request the Request.
    */
-  void applyRequest(Request request) {
+  void applyRequest(Request request, boolean requestCanceled) {
     var allowance = getByUser(request.getUser());
     var absence = request.getAbsence();
     var days = request.getDays();
+    var hours = calculateHours(days);
+    if (requestCanceled) {
+      hours = -hours;
+    }
 
     switch (absence.getAbsenceType()) {
       case LEAVE:
         if (absence.isDeducted()) {
-          deductAnnual(allowance, days);
+          applyAnnual(allowance, hours);
         }
         break;
       case SICKNESS:
-        incrementSickness(allowance, days);
+        applySickness(allowance, hours);
         break;
       case BONUS_DAYS:
-        incrementBonus(allowance, days);
+        applyBonus(allowance, hours);
         break;
     }
   }
 
-  private void deductAnnual(Allowance allowance, List<Day> days) {
-    allowance.setAnnual(allowance.getAnnual() - calculateHours(days));
+  private void applyAnnual(Allowance allowance, int hours) {
+    var calculatedAnnual = allowance.getAnnual() - hours;
+    allowance.setAnnual(calculatedAnnual);
     allowanceRepository.save(allowance);
   }
 
-  private void incrementSickness(Allowance allowance, List<Day> days) {
-    allowance.setSickness(allowance.getSickness() + calculateHours(days));
+  private void applySickness(Allowance allowance, int hours) {
+    int calculatedSickness = allowance.getSickness() + hours;
+    allowance.setSickness(calculatedSickness);
     allowanceRepository.save(allowance);
   }
 
-  private void incrementBonus(Allowance allowance, List<Day> days) {
-    allowance.setBonus(allowance.getBonus() + calculateHours(days));
+  private void applyBonus(Allowance allowance, int hours) {
+    int calculatedBonus = allowance.getBonus() + hours;
+    allowance.setBonus(calculatedBonus);
     allowanceRepository.save(allowance);
   }
 
