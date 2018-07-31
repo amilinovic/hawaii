@@ -46,16 +46,16 @@ public class AllowanceService {
     var days = request.getDays();
 
     switch (absence.getAbsenceType()) {
-      case LEAVE:
-        if (absence.isDeducted()) {
-          deductAnnual(allowance, days);
-        }
+      case DEDUCTED_LEAVE:
+        deductAnnual(allowance, days);
         break;
       case SICKNESS:
         incrementSickness(allowance, days);
         break;
       case BONUS_DAYS:
         incrementBonus(allowance, days);
+        break;
+      default:
         break;
     }
   }
