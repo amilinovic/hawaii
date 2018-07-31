@@ -6,7 +6,7 @@ import {
 } from '../actions/GetTokenActions';
 import { tokenRequest } from '../services/getTokenRequest';
 
-const getToken = function*(action) {
+export const getToken = function*(action) {
   try {
     const responseGoogle = yield call(tokenRequest, action.payload.accessToken);
     yield put(receiveToken(responseGoogle));
