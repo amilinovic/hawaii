@@ -164,9 +164,9 @@ public class RequestService {
   }
 
   private void applyRequest(Request request) {
-    boolean apply = RequestStatus.APPROVED.equals(request.getRequestStatus());
-    allowanceService.applyRequest(request, apply);
-    googleCalendarService.handleRequest(request, apply);
+    boolean requestCanceled = RequestStatus.CANCELED.equals(request.getRequestStatus());
+    allowanceService.applyRequest(request, requestCanceled);
+    googleCalendarService.handleRequest(request, requestCanceled);
   }
 
 }

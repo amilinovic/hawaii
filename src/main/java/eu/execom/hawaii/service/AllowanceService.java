@@ -40,12 +40,12 @@ public class AllowanceService {
    *
    * @param request the Request.
    */
-  void applyRequest(Request request, boolean apply) {
+  void applyRequest(Request request, boolean requestCanceled) {
     var allowance = getByUser(request.getUser());
     var absence = request.getAbsence();
     var days = request.getDays();
     var hours = calculateHours(days);
-    if (!apply) {
+    if (requestCanceled) {
       hours = -hours;
     }
 
