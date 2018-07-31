@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import eu.execom.hawaii.model.Team;
-import eu.execom.hawaii.repository.TeamApproverRepository;
 import eu.execom.hawaii.repository.TeamRepository;
 
 /**
@@ -17,12 +16,10 @@ import eu.execom.hawaii.repository.TeamRepository;
 public class TeamService {
 
   private TeamRepository teamRepository;
-  private TeamApproverRepository teamApproverRepository;
 
   @Autowired
-  public TeamService(TeamRepository teamRepository, TeamApproverRepository teamApproverRepository) {
+  public TeamService(TeamRepository teamRepository) {
     this.teamRepository = teamRepository;
-    this.teamApproverRepository = teamApproverRepository;
   }
 
   /**
@@ -58,27 +55,11 @@ public class TeamService {
    * Saves the provided Team to repository.
    *
    * @param team the Team entity to be persisted.
+   * @return saved Team.
    */
   @Transactional
   public Team save(Team team) {
     return teamRepository.save(team);
-  }
-
-  /**
-   * Updates the provided Team to repository.
-   *
-   * @param team the Team entity to be persisted.
-   */
-  @Transactional
-  public Team update(Team team) {
-    team.getUsers().forEach(user -> user.setTeam(team));
-    team.getTeamApprovers().forEach(teamApprover -> teamApprover.setTeam(team));
-    removeTeamApprovers(team);
-    return save(team);
-  }
-
-  private void removeTeamApprovers(Team team) {
-    teamApproverRepository.deleteTeamApproversByTeam(team);
   }
 
   /**

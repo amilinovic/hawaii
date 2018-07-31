@@ -1,12 +1,15 @@
 package eu.execom.hawaii.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.Email;
@@ -47,8 +50,8 @@ public class User extends BaseEntity implements Serializable {
 
   private boolean active;
 
-  @OneToMany(mappedBy = "user")
-  private List<TeamApprover> teamApprovers;
+  @ManyToMany(mappedBy = "teamApprovers", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+  private List<Team> teamApprovers = new ArrayList<>();
 
   @OneToMany(mappedBy = "user")
   private List<Request> requests;
