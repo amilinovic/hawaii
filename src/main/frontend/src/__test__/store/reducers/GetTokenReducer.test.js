@@ -1,26 +1,21 @@
 import getTokenReducer from '../../../store/reducers/GetTokenReducer';
-import { requestToken } from '../../../store/actions/GetTokenActions';
+import { RECEIVE_TOKEN } from '../../../store/actions/GetTokenActions';
 
-describe('Get Token Reducer', () => {
-  const mockTokenInformation = {
-    token: '2d153236-d103-4fa0-a3cb-8f26a14c1c45',
-    role: 'HR_MANAGER'
-  };
+describe('INITIAL_STATE', () => {
+  it('is correct', () => {
+    const action = { type: 'neka_akcija' };
+    const initialState = {};
 
-  it('should have default state', () => {
-    const state = getTokenReducer(undefined, {});
-    expect(state).toEqual({});
+    expect(getTokenReducer(undefined, action)).toEqual(initialState);
   });
 
-  it('should update token', () => {
-    const stateWithResults = {
-      type: 'RECEIVE_TOKEN',
-      token: mockTokenInformation
-    };
+  describe('GET_TOKEN', () => {
+    it('returns the correct state', () => {
+      const action = { type: RECEIVE_TOKEN, payload: 1 };
+      // console.log(action.payload)
+      const expectedState = 1;
 
-    const requestAction = requestToken();
-    const newState = getTokenReducer(stateWithResults, requestAction);
-
-    expect(newState.token).toBe(mockTokenInformation);
+      expect(getTokenReducer(undefined, action)).toEqual(expectedState);
+    });
   });
 });
