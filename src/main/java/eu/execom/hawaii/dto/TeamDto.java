@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import eu.execom.hawaii.model.Team;
-import eu.execom.hawaii.model.TeamApprover;
 import lombok.Data;
 
 @Data
@@ -23,10 +22,6 @@ public class TeamDto {
     this.emails = team.getEmails();
     this.active = team.isActive();
     this.users = team.getUsers().stream().map(UserDto::new).collect(Collectors.toList());
-    this.teamApprovers = team.getTeamApprovers()
-                             .stream()
-                             .map(TeamApprover::getUser)
-                             .map(UserDto::new)
-                             .collect(Collectors.toList());
+    this.teamApprovers = team.getTeamApprovers().stream().map(UserDto::new).collect(Collectors.toList());
   }
 }
