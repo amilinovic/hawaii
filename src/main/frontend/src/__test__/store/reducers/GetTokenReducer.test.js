@@ -12,7 +12,6 @@ describe('INITIAL_STATE', () => {
   describe('GET_TOKEN', () => {
     it('returns the correct state', () => {
       const action = { type: RECEIVE_TOKEN, payload: 1 };
-      // console.log(action.payload)
       const expectedState = 1;
 
       expect(getTokenReducer(undefined, action)).toEqual(expectedState);
