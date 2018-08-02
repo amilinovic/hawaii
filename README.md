@@ -17,6 +17,20 @@ What things you need to setup before starting server
 - Install Lombok plugin in IntelliJ
 - Install PlantUml plugin in IntelliJ
 
+##### Other
+
+- In order to connect with Google services, the application needs
+to be registered in the Google Cloud Platform API console and 
+provided with service account credentials. Credentials are stored in a
+JSON file that can be obtained from the API console.
+To create the credentials file, go to 
+```
+Google API console > Credentials > Create credentials > 
+Service account key > Choose JSON (default) > Create.
+```
+Save the generated file to the application's `src/main/resources` folder and rename it
+to `service_account.json`.
+
 #### Create MySQL database:
 ```sh
 Database name: hawaii
