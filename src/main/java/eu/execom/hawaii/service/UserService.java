@@ -91,7 +91,7 @@ public class UserService {
    * @param user new User.
    */
   @Transactional
-  public User createNewUserAllowance(User user) {
+  public User createAndSaveNewUser(User user) {
     var allowance = new Allowance();
     var leaveProfile = leaveProfileRepository.getOne(user.getLeaveProfile().getId());
 
