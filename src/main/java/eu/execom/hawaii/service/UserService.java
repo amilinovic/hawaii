@@ -86,12 +86,20 @@ public class UserService {
     userRepository.save(user);
   }
 
+  /**
+   * Assign allowance to new User based on users leave profile.
+   *
+   * @param user
+   */
   @Transactional
-  public void createAllowanceForNewUser(User user) {
+  public void createNewUserAllowance(User user) {
     var allowance = new Allowance();
+    var leaveProfile = leaveProfileRepository.getOne(user.getLeaveProfile().getId());
+
     allowance.setUser(user);
     allowance.setYear(LocalDate.now().getYear());
-    allowance.setAnnual(user.getLeaveProfile().getEntitlement());
+    allowance.setAnnual(leaveProfile.getEntitlement());
+
     user.setAllowances(new ArrayList<>(Arrays.asList(allowance)));
   }
 
