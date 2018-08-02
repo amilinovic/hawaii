@@ -1,5 +1,8 @@
 package eu.execom.hawaii.dto;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import eu.execom.hawaii.model.LeaveProfile;
 import lombok.Data;
 
@@ -12,6 +15,7 @@ public class LeaveProfileDto {
   private int maxCarriedOver;
   private int training;
   private String comment;
+  private List<UserDto> users;
 
   public LeaveProfileDto(LeaveProfile leaveProfile) {
     this.id = leaveProfile.getId();
@@ -20,6 +24,7 @@ public class LeaveProfileDto {
     this.maxCarriedOver = leaveProfile.getMaxCarriedOver();
     this.training = leaveProfile.getTraining();
     this.comment = leaveProfile.getComment();
+    this.users = leaveProfile.getUsers().stream().map(UserDto::new).collect(Collectors.toList());
   }
 
 }
