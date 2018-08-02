@@ -50,16 +50,16 @@ public class AllowanceService {
     }
 
     switch (absence.getAbsenceType()) {
-      case LEAVE:
-        if (absence.isDeducted()) {
-          applyAnnual(allowance, hours);
-        }
+      case DEDUCTED_LEAVE:
+        applyAnnual(allowance, hours);
         break;
       case SICKNESS:
         applySickness(allowance, hours);
         break;
       case BONUS_DAYS:
         applyBonus(allowance, hours);
+        break;
+      default:
         break;
     }
   }

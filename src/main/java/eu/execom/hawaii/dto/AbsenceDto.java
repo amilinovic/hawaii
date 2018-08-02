@@ -12,7 +12,6 @@ public class AbsenceDto {
   private String name;
   private String comment;
   private boolean active;
-  private boolean deducted;
 
   public AbsenceDto(Absence absence) {
     this.id = absence.getId();
@@ -20,7 +19,6 @@ public class AbsenceDto {
     this.comment = absence.getComment();
     this.active = absence.isActive();
     this.absenceType = absence.getAbsenceType();
-    this.deducted = absence.isDeducted();
   }
 
 }
