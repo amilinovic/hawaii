@@ -1,7 +1,6 @@
 package eu.execom.hawaii.service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -92,7 +91,7 @@ public class UserService {
    * @param user new User.
    */
   @Transactional
-  public void createNewUserAllowance(User user) {
+  public User createNewUserAllowance(User user) {
     var allowance = new Allowance();
     var leaveProfile = leaveProfileRepository.getOne(user.getLeaveProfile().getId());
 
@@ -100,7 +99,9 @@ public class UserService {
     allowance.setYear(LocalDate.now().getYear());
     allowance.setAnnual(leaveProfile.getEntitlement());
 
-    user.setAllowances(new ArrayList<>(Arrays.asList(allowance)));
+    user.setAllowances(Arrays.asList(allowance));
+
+    return save(user);
   }
 
 }
