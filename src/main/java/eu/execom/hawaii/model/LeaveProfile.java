@@ -31,7 +31,7 @@ public class LeaveProfile extends BaseEntity implements Serializable {
 
   private String comment;
 
-  @OneToMany(mappedBy = "leaveProfile", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "leaveProfile", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
   private List<User> users;
 
 }

@@ -89,7 +89,7 @@ public class UserService {
   /**
    * Assign allowance to new User based on users leave profile.
    *
-   * @param user
+   * @param user new User.
    */
   @Transactional
   public void createNewUserAllowance(User user) {
