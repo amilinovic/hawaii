@@ -19,6 +19,7 @@ describe('get users saga', () => {
     const iterator = getApiData();
 
     expect(iterator.next().value).toEqual(call(randomUserApiRequest));
+
     expect(iterator.next(mockResults).value).toEqual(
       put(receiveApiData(mockResults))
     );

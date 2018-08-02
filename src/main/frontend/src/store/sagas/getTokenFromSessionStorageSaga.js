@@ -7,9 +7,10 @@ import {
 import { receiveToken } from '../actions/GetTokenActions';
 import { getTokenFromSessionStorage } from '../services/getTokenFromSessionStorage';
 
-const authenticate = function*() {
+export const authenticate = function*() {
   try {
     const authentication = yield call(getTokenFromSessionStorage);
+    console.log(authentication);
     yield put(receiveToken(authentication));
     const redirect = authentication ? '/leave' : '/login';
     yield put(push(redirect));
