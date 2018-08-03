@@ -125,15 +125,13 @@ public class RequestService {
   /**
    * Save the provided request to repository.
    *
-   * @param mappedRequest the Request entity to be persisted.
+   * @param request the Request entity to be persisted.
    * @return a saved request with id.
    */
-  public Request save(Request mappedRequest) {
-    var request = requestRepository.save(mappedRequest);
+  public Request save(Request request) {
     request.getDays().forEach(day -> day.setRequest(request));
-    var days = dayRepository.saveAll(request.getDays());
-    request.setDays(days);
-    return request;
+
+    return requestRepository.save(request);
   }
 
   /**

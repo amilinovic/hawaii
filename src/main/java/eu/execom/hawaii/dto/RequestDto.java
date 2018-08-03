@@ -16,7 +16,7 @@ public class RequestDto {
   private Long absenceId;
   private RequestStatus requestStatus;
   private String reason;
-  private List<DayDto> dayDtos;
+  private List<DayDto> days;
 
   public RequestDto(Request request) {
     this.id = request.getId();
@@ -25,7 +25,7 @@ public class RequestDto {
     this.absenceId = request.getAbsence().getId();
     this.requestStatus = request.getRequestStatus();
     this.reason = request.getReason();
-    this.dayDtos = request.getDays().stream().map(DayDto::new).collect(Collectors.toList());
+    this.days = request.getDays().stream().map(DayDto::new).collect(Collectors.toList());
   }
 
 }
