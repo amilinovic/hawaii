@@ -138,32 +138,32 @@ public class GoogleCalendarService {
     return Optional.ofNullable(calendar);
   }
 
-  private Consumer<Event> insertEventToCalendar(String calendarId, Calendar service) {
+  private Consumer<Event> insertEventToCalendar(String calendarId, Calendar calendar) {
     return event -> {
       try {
-        service.events().insert(calendarId, event).execute();
+        calendar.events().insert(calendarId, event).execute();
       } catch (IOException e) {
         log.error("Error adding event to Google calendar: ", e);
       }
     };
   }
 
-  private Consumer<String> removeEventFromCalendar(String calendarId, Calendar service) {
+  private Consumer<String> removeEventFromCalendar(String calendarId, Calendar calendar) {
     return dayId -> {
       try {
         String eventId = EVENT_ID_PREFIX + dayId;
-        service.events().delete(calendarId, eventId).execute();
+        calendar.events().delete(calendarId, eventId).execute();
       } catch (IOException e) {
         log.error("Error removing event from Google calendar: ", e);
       }
     };
   }
 
-  private Consumer<String> updateEventOnApproval(String calendarId, Calendar service) {
+  private Consumer<String> updateEventOnApproval(String calendarId, Calendar calendar) {
     return dayId -> {
       try {
         var eventId = EVENT_ID_PREFIX + dayId;
-        var event = service.events().get(calendarId, eventId).execute();
+        var event = calendar.events().get(calendarId, eventId).execute();
 
         var oldSummary = event.getSummary();
         var newSummary = "Approved" + oldSummary.substring(7, oldSummary.length());
@@ -171,7 +171,7 @@ public class GoogleCalendarService {
         event.setSummary(newSummary);
         event.setColorId(GREEN_COLOR_ID);
 
-        service.events().patch(calendarId, eventId, event).execute();
+        calendar.events().patch(calendarId, eventId, event).execute();
       } catch (IOException e) {
         log.error("Error updating event from Google calendar: ", e);
       }
