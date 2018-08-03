@@ -153,7 +153,7 @@ public class GoogleCalendarService {
   private Consumer<String> removeEventFromCalendar(String calendarId, Calendar calendar) {
     return dayId -> {
       try {
-        String eventId = EVENT_ID_PREFIX + dayId;
+        var eventId = EVENT_ID_PREFIX + dayId;
         calendar.events().delete(calendarId, eventId).execute();
       } catch (IOException e) {
         log.error("Error removing event from Google calendar: ", e);
@@ -204,8 +204,8 @@ public class GoogleCalendarService {
     event.setStart(start);
     event.setEnd(end);
 
-    Request request = day.getRequest();
-    String summary = getSummary(request);
+    var request = day.getRequest();
+    var summary = getSummary(request);
     event.setSummary(summary);
     event.setDescription(request.getReason());
     event.setId(EVENT_ID_PREFIX + String.valueOf(day.getId()));
@@ -215,7 +215,7 @@ public class GoogleCalendarService {
   }
 
   private String getSummary(Request request) {
-    String status = request.getRequestStatus().name().toLowerCase();
+    var status = request.getRequestStatus().name().toLowerCase();
     @NotNull String fullName = request.getUser().getFullName();
     return StringUtils.capitalize(status) + " leave: " + fullName;
   }
