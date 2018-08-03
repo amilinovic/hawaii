@@ -128,7 +128,6 @@ public class RequestService {
   public Request save(Request request) {
     request.getDays().forEach(day -> day.setRequest(request));
 
-
     User user = userRepository.getOne(request.getUser().getId());
     request.setUser(user);
     googleCalendarService.handleCreatedRequest(request);

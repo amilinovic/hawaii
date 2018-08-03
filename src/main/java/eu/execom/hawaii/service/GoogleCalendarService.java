@@ -16,7 +16,6 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 import javax.annotation.PostConstruct;
-import javax.validation.constraints.NotNull;
 
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
@@ -167,8 +166,8 @@ public class GoogleCalendarService {
         var eventId = EVENT_ID_PREFIX + dayId;
         var event = calendar.events().get(calendarId, eventId).execute();
 
-        var newSummary = getSummary(request);
-        event.setSummary(newSummary);
+        var summary = getSummary(request);
+        event.setSummary(summary);
         event.setColorId(GREEN_COLOR_ID);
 
         calendar.events().patch(calendarId, eventId, event).execute();
@@ -216,7 +215,7 @@ public class GoogleCalendarService {
 
   private String getSummary(Request request) {
     var status = request.getRequestStatus().name().toLowerCase();
-    @NotNull String fullName = request.getUser().getFullName();
+    var fullName = request.getUser().getFullName();
     return StringUtils.capitalize(status) + " leave: " + fullName;
   }
 
