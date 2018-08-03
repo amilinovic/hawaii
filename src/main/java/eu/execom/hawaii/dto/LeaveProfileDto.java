@@ -1,5 +1,6 @@
 package eu.execom.hawaii.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,7 +16,7 @@ public class LeaveProfileDto {
   private int maxCarriedOver;
   private int training;
   private String comment;
-  private List<UserDto> users;
+  private List<UserDto> users = new ArrayList<>();
 
   public LeaveProfileDto(LeaveProfile leaveProfile) {
     this.id = leaveProfile.getId();

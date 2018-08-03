@@ -18,9 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import eu.execom.hawaii.dto.DayDto;
 import eu.execom.hawaii.dto.RequestDto;
-import eu.execom.hawaii.model.Day;
 import eu.execom.hawaii.model.Request;
 import eu.execom.hawaii.model.enumerations.AbsenceType;
 import eu.execom.hawaii.model.enumerations.RequestStatus;
@@ -90,34 +88,18 @@ public class RequestController {
 
   @PostMapping
   public ResponseEntity<RequestDto> createRequest(@RequestBody RequestDto requestDto) {
-    var request = mapAndSaveRequest(requestDto);
+    var request = MAPPER.map(requestDto, Request.class);
+    request = requestService.save(request);
 
     return new ResponseEntity<>(new RequestDto(request), HttpStatus.OK);
   }
 
   @PutMapping
   public ResponseEntity<RequestDto> handleRequestStatus(@RequestBody RequestDto requestDto) {
-    // Request
     var request = MAPPER.map(requestDto, Request.class);
-    // Request days
-    var days = mapDays(requestDto.getDayDtos());
-    request.setDays(days);
     request = requestService.handleRequestStatusUpdate(request);
 
     return new ResponseEntity<>(new RequestDto(request), HttpStatus.OK);
-  }
-
-  private Request mapAndSaveRequest(RequestDto requestDto) {
-    var request = MAPPER.map(requestDto, Request.class);
-    var days = mapDays(requestDto.getDayDtos());
-    request.setDays(days);
-    request = requestService.save(request);
-
-    return request;
-  }
-
-  private List<Day> mapDays(List<DayDto> dayDtos) {
-    return dayDtos.stream().map(dayDto -> MAPPER.map(dayDto, Day.class)).collect(Collectors.toList());
   }
 
 }

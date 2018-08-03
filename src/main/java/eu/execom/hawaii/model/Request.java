@@ -3,6 +3,7 @@ package eu.execom.hawaii.model;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -43,7 +44,8 @@ public class Request extends BaseEntity implements Serializable {
 
   private String reason;
 
-  @OneToMany(mappedBy = "request")
+  @NotNull
+  @OneToMany(mappedBy = "request", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
   private List<Day> days;
 
 }
