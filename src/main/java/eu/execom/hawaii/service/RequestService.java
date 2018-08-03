@@ -133,6 +133,11 @@ public class RequestService {
     request.getDays().forEach(day -> day.setRequest(request));
     var days = dayRepository.saveAll(request.getDays());
     request.setDays(days);
+
+    User user = userRepository.getOne(request.getUser().getId());
+    request.setUser(user);
+    googleCalendarService.handleCreatedRequest(request);
+
     return request;
   }
 
@@ -166,7 +171,7 @@ public class RequestService {
   private void applyRequest(Request request) {
     boolean requestCanceled = RequestStatus.CANCELED.equals(request.getRequestStatus());
     allowanceService.applyRequest(request, requestCanceled);
-    googleCalendarService.handleRequest(request, requestCanceled);
+    googleCalendarService.handleRequestUpdate(request, requestCanceled);
   }
 
 }
