@@ -44,6 +44,7 @@ public class Request extends BaseEntity implements Serializable {
 
   private String reason;
 
+  @NotNull
   @OneToMany(mappedBy = "request", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
   private List<Day> days;
 

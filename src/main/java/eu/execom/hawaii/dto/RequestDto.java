@@ -3,6 +3,8 @@ package eu.execom.hawaii.dto;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.validation.constraints.NotNull;
+
 import eu.execom.hawaii.model.Request;
 import eu.execom.hawaii.model.enumerations.RequestStatus;
 import lombok.Data;
@@ -16,6 +18,7 @@ public class RequestDto {
   private Long absenceId;
   private RequestStatus requestStatus;
   private String reason;
+  @NotNull
   private List<DayDto> days;
 
   public RequestDto(Request request) {
