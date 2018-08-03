@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import { NavigationLink } from '../components/common/NavigationLink';
+import { NavigationLink } from '../components/common/navigationLink';
 import { GoogleLogin } from 'react-google-login';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { requestToken } from '../store/actions/GetTokenActions';
-import { getAuthorization } from '../store/Selectors';
+import { requestToken } from '../store/actions/getTokenActions';
+import { getAuthorization } from '../store/selectors';
 import store from '../store/Store';
 import { push } from 'connected-react-router';
 

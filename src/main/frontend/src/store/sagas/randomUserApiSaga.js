@@ -3,7 +3,7 @@ import {
   REQUEST_API_DATA,
   receiveApiData,
   errorReceivingApiData
-} from '../actions/RandomUserApiActions';
+} from '../actions/randomUserApiActions';
 import { randomUserApiRequest } from '../services/randomUserApiRequest';
 
 export const getApiData = function*() {

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
-import { NavigationLink } from '../common/NavigationLink';
+import { NavigationLink } from '../common/navigationLink';
 
 const Aside = styled.aside`
   background-color: #3e3e48;

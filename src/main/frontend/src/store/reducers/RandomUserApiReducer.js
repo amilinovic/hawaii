@@ -1,5 +1,5 @@
 import { handleActions } from 'redux-actions';
-import { RECEIVE_API_DATA } from '../actions/RandomUserApiActions';
+import { RECEIVE_API_DATA } from '../actions/randomUserApiActions';
 
 export const initialState = {
   error: null,

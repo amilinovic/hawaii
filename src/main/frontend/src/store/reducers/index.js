@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux';
 
-import employee from './RandomUserApiReducer';
-import authorization from './GetTokenReducer';
+import employee from './randomUserApiReducer';
+import authorization from './getTokenReducer';
 
 export default combineReducers({
   authorization,

@@ -3,7 +3,7 @@ import {
   REQUEST_TOKEN,
   receiveToken,
   receiveTokenError
-} from '../actions/GetTokenActions';
+} from '../actions/getTokenActions';
 import { tokenRequest } from '../services/getTokenRequest';
 
 export const getToken = function*(action) {

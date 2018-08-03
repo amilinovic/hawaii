@@ -1,5 +1,5 @@
 import { handleActions } from 'redux-actions';
-import { RECEIVE_TOKEN } from '../actions/GetTokenActions';
+import { RECEIVE_TOKEN } from '../actions/getTokenActions';
 
 export const initialState = {};
 

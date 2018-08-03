@@ -3,11 +3,11 @@ import { call, put } from 'redux-saga/effects';
 import {
   receiveToken,
   receiveTokenError
-} from '../../../store/actions/GetTokenActions';
+} from '../../../store/actions/getTokenActions';
 import { getToken } from '../../../store/sagas/getTokenSaga';
 import { tokenRequest } from '../../../store/services/getTokenRequest';
 
-describe('Get Token saga', () => {
+describe('getTokenSaga', () => {
   it('should get token', () => {
     const accessToken = {
       token: '2d153236-d103-4fa0-a3cb-8f26a14c1c45',

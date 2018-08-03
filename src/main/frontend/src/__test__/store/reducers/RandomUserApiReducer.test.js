@@ -1,5 +1,5 @@
-import employeesReducer from '../../../store/reducers/RandomUserApiReducer';
-import { requestApiData } from '../../../store/actions/RandomUserApiActions';
+import employeesReducer from '../../../store/reducers/randomUserApiReducer';
+import { requestApiData } from '../../../store/actions/randomUserApiActions';
 
 describe('employees reducer', () => {
   const mockEmployeesInformation = [

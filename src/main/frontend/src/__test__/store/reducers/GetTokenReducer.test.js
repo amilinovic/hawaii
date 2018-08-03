@@ -1,15 +1,15 @@
-import getTokenReducer from '../../../store/reducers/GetTokenReducer';
-import { RECEIVE_TOKEN } from '../../../store/actions/GetTokenActions';
+import getTokenReducer from '../../../store/reducers/getTokenReducer';
+import { RECEIVE_TOKEN } from '../../../store/actions/getTokenActions';
 
-describe('GetToken Reducer test', () => {
-  it('should return initial state', () => {
+describe('getTokenReducer', () => {
+  it('should have initial state', () => {
     const action = {};
     const initialState = {};
 
     expect(getTokenReducer(undefined, action)).toEqual(initialState);
   });
 
-  it('should return token', () => {
+  it('should update token', () => {
     const action = { type: RECEIVE_TOKEN, payload: 1 };
     const expectedState = 1;
 

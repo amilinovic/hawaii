@@ -4,7 +4,7 @@ import {
   requestApiData,
   receiveApiData,
   errorReceivingApiData
-} from '../../../store/actions/RandomUserApiActions';
+} from '../../../store/actions/randomUserApiActions';
 import { getApiData } from '../../../store/sagas/randomUserApiSaga';
 import { randomUserApiRequest } from '../../../store/services/randomUserApiRequest';
 

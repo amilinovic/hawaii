@@ -2,7 +2,7 @@ import {
   getEmployee,
   getFetching,
   getAuthorization
-} from '../../store/Selectors';
+} from '../../store/selectors';
 
 describe('Employee Selector', () => {
   describe('Get Employee Selector', () => {

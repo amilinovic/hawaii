@@ -6,7 +6,7 @@ import { ConnectedRouter } from 'connected-react-router';
 import { history } from './store/Store';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { requestTokenFromStorage } from './store/actions/GetTokenFromSessionStorageActions';
+import { requestTokenFromStorage } from './store/actions/getTokenFromSessionStorageActions';
 
 class App extends Component {
   componentDidMount() {
