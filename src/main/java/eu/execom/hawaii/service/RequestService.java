@@ -16,7 +16,6 @@ import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.enumerations.AbsenceType;
 import eu.execom.hawaii.model.enumerations.RequestStatus;
 import eu.execom.hawaii.repository.AbsenceRepository;
-import eu.execom.hawaii.repository.DayRepository;
 import eu.execom.hawaii.repository.RequestRepository;
 import eu.execom.hawaii.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -27,18 +26,16 @@ public class RequestService {
 
   private RequestRepository requestRepository;
   private UserRepository userRepository;
-  private DayRepository dayRepository;
   private AbsenceRepository absenceRepository;
   private AllowanceService allowanceService;
   private GoogleCalendarService googleCalendarService;
 
   @Autowired
-  public RequestService(RequestRepository requestRepository, UserRepository userRepository, DayRepository dayRepository,
+  public RequestService(RequestRepository requestRepository, UserRepository userRepository,
       AbsenceRepository absenceRepository, AllowanceService allowanceService,
       GoogleCalendarService googleCalendarService) {
     this.requestRepository = requestRepository;
     this.userRepository = userRepository;
-    this.dayRepository = dayRepository;
     this.allowanceService = allowanceService;
     this.absenceRepository = absenceRepository;
     this.googleCalendarService = googleCalendarService;
