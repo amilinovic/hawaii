@@ -13,11 +13,13 @@ import java.util.Optional;
 import java.util.TimeZone;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 import javax.annotation.PostConstruct;
 
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
@@ -48,6 +50,8 @@ public class GoogleCalendarService {
   private static final LocalTime MID_DAY = LocalTime.of(13, 0);
   private static final LocalTime AFTERNOON_TIME = LocalTime.of(17, 0);
   private static final String CALENDAR_ID = "primary";
+  private static final String YELLOW_COLOR_ID = "5";
+  private static final String GREEN_COLOR_ID = "2";
 
   private GoogleCredential googleCredential;
 
@@ -62,15 +66,12 @@ public class GoogleCalendarService {
   }
 
   /**
-   * Handles adding and removing events from Google calendar.
+   * Creates an event for each day of the request and inserts it into Google Calendar.
    *
-   * @param request         Each day of the request is inserted individually either as an all-day event, or
-   *                        with start and end time depending on whether it is morning or afternoon only.
-   * @param requestCanceled true if request status is CANCELLED in which case the existing event should be
-   *                        removed from the calendar and false if event is APPROVED, in which case a new
-   *                        event should be inserted into the calendar .
+   * @param request Each day of the request is inserted individually either as an all-day event, or
+   *                with start and end time depending on whether it is morning or afternoon only.
    */
-  void handleRequest(Request request, boolean requestCanceled) {
+  void handleCreatedRequest(Request request) {
 
     Function<Day, Day> setRequest = day -> {
       day.setRequest(request);
@@ -83,14 +84,32 @@ public class GoogleCalendarService {
                                                          .map(this::createEvent)
                                                          .forEach(insertEventToCalendar(CALENDAR_ID, calendar));
 
-    Consumer<Calendar> removeEvents = calendar -> request.getDays()
-                                                         .stream()
-                                                         .map(Day::getId)
-                                                         .map(String::valueOf)
-                                                         .forEach(removeEventFromCalendar(CALENDAR_ID, calendar));
+    getCalendar(request).ifPresent(insertEvents);
 
-    getCalendar(request).ifPresent(requestCanceled ? removeEvents : insertEvents);
+  }
 
+  /**
+   * Handles update of the request status from PENDING to APPROVED or CANCELED.
+   *
+   * @param request         the request being updated.
+   * @param requestCanceled true if request status is CANCELED in which case the existing event should be
+   *                        removed from the calendar and false if event is APPROVED, in which case the
+   *                        existing event should be updated with a new description and event color.
+   */
+  void handleRequestUpdate(Request request, boolean requestCanceled) {
+
+    Consumer<Calendar> updateEvents = calendar -> getDayIdStream(request).forEach(
+        updateEventOnApproval(CALENDAR_ID, calendar, request));
+
+    Consumer<Calendar> removeEvents = calendar -> getDayIdStream(request).forEach(
+        removeEventFromCalendar(CALENDAR_ID, calendar));
+
+    getCalendar(request).ifPresent(requestCanceled ? removeEvents : updateEvents);
+
+  }
+
+  private Stream<String> getDayIdStream(Request request) {
+    return request.getDays().stream().map(Day::getId).map(String::valueOf);
   }
 
   private Optional<Calendar> getCalendar(Request request) {
@@ -120,23 +139,40 @@ public class GoogleCalendarService {
     return Optional.ofNullable(calendar);
   }
 
-  private Consumer<Event> insertEventToCalendar(String calendarId, Calendar service) {
+  private Consumer<Event> insertEventToCalendar(String calendarId, Calendar calendar) {
     return event -> {
       try {
-        service.events().insert(calendarId, event).execute();
+        calendar.events().insert(calendarId, event).execute();
       } catch (IOException e) {
         log.error("Error adding event to Google calendar: ", e);
       }
     };
   }
 
-  private Consumer<String> removeEventFromCalendar(String calendarId, Calendar service) {
+  private Consumer<String> removeEventFromCalendar(String calendarId, Calendar calendar) {
     return dayId -> {
       try {
-        String eventId = EVENT_ID_PREFIX + dayId;
-        service.events().delete(calendarId, eventId).execute();
+        var eventId = EVENT_ID_PREFIX + dayId;
+        calendar.events().delete(calendarId, eventId).execute();
       } catch (IOException e) {
         log.error("Error removing event from Google calendar: ", e);
+      }
+    };
+  }
+
+  private Consumer<String> updateEventOnApproval(String calendarId, Calendar calendar, Request request) {
+    return dayId -> {
+      try {
+        var eventId = EVENT_ID_PREFIX + dayId;
+        var event = calendar.events().get(calendarId, eventId).execute();
+
+        var summary = getSummary(request);
+        event.setSummary(summary);
+        event.setColorId(GREEN_COLOR_ID);
+
+        calendar.events().patch(calendarId, eventId, event).execute();
+      } catch (IOException e) {
+        log.error("Error updating event from Google calendar: ", e);
       }
     };
   }
@@ -167,12 +203,20 @@ public class GoogleCalendarService {
     event.setStart(start);
     event.setEnd(end);
 
-    String summary = "Approved leave: " + day.getRequest().getUser().getFullName();
+    var request = day.getRequest();
+    var summary = getSummary(request);
     event.setSummary(summary);
-    event.setDescription(day.getRequest().getReason());
+    event.setDescription(request.getReason());
     event.setId(EVENT_ID_PREFIX + String.valueOf(day.getId()));
+    event.setColorId(YELLOW_COLOR_ID);
 
     return event;
+  }
+
+  private String getSummary(Request request) {
+    var status = request.getRequestStatus().name().toLowerCase();
+    var fullName = request.getUser().getFullName();
+    return StringUtils.capitalize(status) + " leave: " + fullName;
   }
 
   private DateTime getDateTime(LocalDate date, LocalTime localTime) {
