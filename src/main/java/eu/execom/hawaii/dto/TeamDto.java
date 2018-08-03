@@ -1,5 +1,6 @@
 package eu.execom.hawaii.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -13,8 +14,8 @@ public class TeamDto {
   private String name;
   private String emails;
   private boolean active;
-  private List<UserDto> users;
-  private List<UserDto> teamApprovers;
+  private List<UserDto> users = new ArrayList<>();
+  private List<UserDto> teamApprovers = new ArrayList<>();
 
   public TeamDto(Team team) {
     this.id = team.getId();

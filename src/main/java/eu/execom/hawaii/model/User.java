@@ -1,7 +1,6 @@
 package eu.execom.hawaii.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -53,7 +52,7 @@ public class User extends BaseEntity implements Serializable {
   private int yearsOfService;
 
   @ManyToMany(mappedBy = "teamApprovers", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-  private List<Team> teamApprovers = new ArrayList<>();
+  private List<Team> teamApprovers;
 
   @OneToMany(mappedBy = "user")
   private List<Request> requests;
