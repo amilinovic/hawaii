@@ -42,6 +42,9 @@
       <column name="taken" type="INT(10)">
         <constraints nullable="false"/>
       </column>
+      <column name="training" type="INT(10)">
+        <constraints nullable="false"/>
+      </column>
       <column name="year" type="INT(10)">
         <constraints nullable="false"/>
       </column>
