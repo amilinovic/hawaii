@@ -23,6 +23,8 @@ public class AbsenceDto {
 
   public AbsenceDto(Absence absence) {
     this.id = absence.getId();
+    this.absenceType = absence.getAbsenceType();
+    this.absenceSubtype = absence.getAbsenceSubType();
     this.name = absence.getName();
     this.comment = absence.getComment();
     this.active = absence.isActive();
