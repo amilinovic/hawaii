@@ -71,7 +71,7 @@ public class EntityBuilder {
     allowance.setUser(user);
     allowance.setYear(2018);
     allowance.setAnnual(20);
-    allowance.setTaken(5);
+    allowance.setTakenAnnual(5);
     allowance.setSickness(3);
     allowance.setBonus(2);
     allowance.setCarriedOver(5);
