@@ -26,7 +26,7 @@ public class Absence extends BaseEntity implements Serializable {
   private AbsenceType absenceType;
 
   @Enumerated(EnumType.STRING)
-  private AbsenceSubtype absenceSubType;
+  private AbsenceSubtype absenceSubtype;
 
   @NotNull
   private String name;

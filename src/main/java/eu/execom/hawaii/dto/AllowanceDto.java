@@ -12,9 +12,10 @@ public class AllowanceDto {
   private int takenAnnual;
   private int sickness;
   private int bonus;
-  private int takenBonus;
   private int carriedOver;
   private int manualAdjust;
+  private int training;
+  private int takenTraining;
 
   public AllowanceDto(Allowance allowance) {
     this.userId = allowance.getUser().getId();
@@ -23,9 +24,10 @@ public class AllowanceDto {
     this.takenAnnual = allowance.getTakenAnnual();
     this.sickness = allowance.getSickness();
     this.bonus = allowance.getBonus();
-    this.takenBonus = allowance.getTakenBonus();
     this.carriedOver = allowance.getCarriedOver();
     this.manualAdjust = allowance.getManualAdjust();
+    this.training = allowance.getTraining();
+    this.takenTraining = allowance.getTakenTraining();
   }
 
 }

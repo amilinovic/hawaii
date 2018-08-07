@@ -31,12 +31,11 @@ public class Allowance extends BaseEntity implements Serializable {
 
   private int bonus;
 
-  private int takenBonus;
-
   private int carriedOver;
 
   private int manualAdjust;
 
   private int training;
 
+  private int takenTraining;
 }
