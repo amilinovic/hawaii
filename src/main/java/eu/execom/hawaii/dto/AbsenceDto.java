@@ -18,7 +18,6 @@ public class AbsenceDto {
   private String name;
   private String comment;
   private boolean active;
-  private boolean deducted;
   private String iconUrl;
   private List<RequestDto> leaveRequests = new ArrayList<>();
 
@@ -27,7 +26,6 @@ public class AbsenceDto {
     this.name = absence.getName();
     this.comment = absence.getComment();
     this.active = absence.isActive();
-    this.deducted = absence.isDeducted();
     this.iconUrl = absence.getIconUrl();
     this.absenceType = absence.getAbsenceType();
     this.leaveRequests = absence.getLeaveRequests().stream().map(RequestDto::new).collect(Collectors.toList());

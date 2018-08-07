@@ -35,8 +35,6 @@ public class Absence extends BaseEntity implements Serializable {
 
   private boolean active;
 
-  private boolean deducted;
-
   private String iconUrl;
 
   @OneToMany(mappedBy = "absence")
