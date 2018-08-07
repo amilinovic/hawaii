@@ -7,7 +7,7 @@
       <column autoIncrement="true" name="id" type="BIGINT(19)">
         <constraints primaryKey="true"/>
       </column>
-      <column name="absence_sub_type" type="VARCHAR(255)"/>
+      <column name="absence_subtype" type="VARCHAR(255)"/>
       <column name="absence_type" type="VARCHAR(255)">
         <constraints nullable="false"/>
       </column>
@@ -44,7 +44,7 @@
       <column name="taken_annual" type="INT(10)">
         <constraints nullable="false"/>
       </column>
-      <column name="taken_bonus" type="INT(10)">
+      <column name="taken_training" type="INT(10)">
         <constraints nullable="false"/>
       </column>
       <column name="training" type="INT(10)">
@@ -118,7 +118,6 @@
         <constraints nullable="false"/>
       </column>
       <column name="absence_id" type="BIGINT(19)"/>
-      <column name="approver_id" type="BIGINT(19)"/>
       <column name="user_id" type="BIGINT(19)"/>
     </createTable>
   </changeSet>
@@ -196,9 +195,6 @@
     <addForeignKeyConstraint baseColumnNames="absence_id" baseTableName="request" constraintName="FKoaypx6rwrdofwxvv0q4e1wn4t" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="absence"/>
   </changeSet>
   <changeSet author="admin" id="{initialId}-18">
-    <addForeignKeyConstraint baseColumnNames="approver_id" baseTableName="request" constraintName="FKpbfv7wni1s3f06uoueey4m1he" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="user"/>
-  </changeSet>
-  <changeSet author="admin" id="{initialId}-19">
     <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="request" constraintName="FKqws2fdeknk90txm7qnm9bxd07" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="user"/>
   </changeSet>
 </databaseChangeLog>
