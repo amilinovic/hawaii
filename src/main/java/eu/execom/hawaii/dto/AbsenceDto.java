@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import eu.execom.hawaii.model.Absence;
+import eu.execom.hawaii.model.enumerations.AbsenceSubtype;
 import eu.execom.hawaii.model.enumerations.AbsenceType;
 import lombok.Data;
 
@@ -13,9 +14,12 @@ public class AbsenceDto {
 
   private Long id;
   private AbsenceType absenceType;
+  private AbsenceSubtype absenceSubtype;
   private String name;
   private String comment;
   private boolean active;
+  private boolean deducted;
+  private String iconUrl;
   private List<RequestDto> leaveRequests = new ArrayList<>();
 
   public AbsenceDto(Absence absence) {
@@ -23,6 +27,8 @@ public class AbsenceDto {
     this.name = absence.getName();
     this.comment = absence.getComment();
     this.active = absence.isActive();
+    this.deducted = absence.isDeducted();
+    this.iconUrl = absence.getIconUrl();
     this.absenceType = absence.getAbsenceType();
     this.leaveRequests = absence.getLeaveRequests().stream().map(RequestDto::new).collect(Collectors.toList());
   }

@@ -50,9 +50,17 @@ public class AllowanceService {
     }
 
     switch (absence.getAbsenceType()) {
-      case DEDUCTED_LEAVE:
-        applyAnnual(allowance, hours);
-        break;
+      case LEAVE:
+        switch (absence.getAbsenceSubType()) {
+          case ANNUAL:
+            applyAnnual(allowance, hours);
+            break;
+          case TRAINING:
+            applyTraining(allowance, hours);
+            break;
+          default:
+            break;
+        }
       case SICKNESS:
         applySickness(allowance, hours);
         break;
@@ -65,8 +73,14 @@ public class AllowanceService {
   }
 
   private void applyAnnual(Allowance allowance, int hours) {
-    var calculatedAnnual = allowance.getAnnual() - hours;
-    allowance.setAnnual(calculatedAnnual);
+    var calculatedAnnual = allowance.getTakenAnnual() + hours;
+    allowance.setTakenAnnual(calculatedAnnual);
+    allowanceRepository.save(allowance);
+  }
+
+  private void applyTraining(Allowance allowance, int hours) {
+    var calculatedTraining = allowance.getTakenBonus() + hours;
+    allowance.setTakenBonus(calculatedTraining);
     allowanceRepository.save(allowance);
   }
 
