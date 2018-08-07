@@ -57,7 +57,6 @@ public class EntityBuilder {
   static Request request(Absence absence) {
     var request = new Request();
     request.setUser(user(team()));
-    request.setApprover(user(team()));
     request.setAbsence(absence);
     request.setRequestStatus(RequestStatus.APPROVED);
     request.setReason("My request reason");
