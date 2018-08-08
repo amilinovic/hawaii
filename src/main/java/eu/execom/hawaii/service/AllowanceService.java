@@ -49,9 +49,11 @@ public class AllowanceService {
       hours = -hours;
     }
 
-    switch (absence.getAbsenceType()) {
+    var absenceType = absence.getAbsenceType();
+    var absenceSubtype = absence.getAbsenceSubtype();
+    switch (absenceType) {
       case DEDUCTED_LEAVE:
-        switch (absence.getAbsenceSubtype()) {
+        switch (absenceSubtype) {
           case ANNUAL:
             applyAnnual(allowance, hours);
             break;
@@ -59,8 +61,10 @@ public class AllowanceService {
             applyTraining(allowance, hours);
             break;
           default:
-            break;
+            throw new IllegalArgumentException("Unsupported absence subtype: " + absenceSubtype);
         }
+        break;
+      case NON_DEDUCTED_LEAVE:
         break;
       case SICKNESS:
         applySickness(allowance, hours);
@@ -69,7 +73,7 @@ public class AllowanceService {
         applyBonus(allowance, hours);
         break;
       default:
-        break;
+        throw new IllegalArgumentException("Unsupported absence type: " + absenceType);
     }
   }
 
