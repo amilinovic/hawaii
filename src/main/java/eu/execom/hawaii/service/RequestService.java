@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import eu.execom.hawaii.exceptions.NotAuthorizedApprovalExeception;
 import eu.execom.hawaii.model.Absence;
 import eu.execom.hawaii.model.Day;
 import eu.execom.hawaii.model.Request;
@@ -132,18 +133,27 @@ public class RequestService {
    * @param request to be persisted.
    * @return saved request.
    */
-  public Request handleRequestStatusUpdate(Request request) {
+  public Request handleRequestStatusUpdate(Request request, User approver) {
     Absence absence = absenceRepository.getOne(request.getAbsence().getId());
     request.setAbsence(absence);
 
     User user = userRepository.getOne(request.getUser().getId());
     request.setUser(user);
 
+    checkIsApproverUserTeamApprover(approver, user);
+
     if (shouldApplyRequest(request)) {
       applyRequest(request);
     }
 
     return requestRepository.save(request);
+  }
+
+  private void checkIsApproverUserTeamApprover(User approver, User requestUser) {
+    if (requestUser.getTeam().getTeamApprovers().stream().noneMatch(teamApprover -> teamApprover.getId().equals(approver.getId()))) {
+      log.error("Approver not authorized to approve this request for user with email: " + requestUser.getEmail());
+      throw new NotAuthorizedApprovalExeception();
+    }
   }
 
   private boolean shouldApplyRequest(Request request) {

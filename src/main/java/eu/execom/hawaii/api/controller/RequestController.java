@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,6 +24,7 @@ import eu.execom.hawaii.model.Request;
 import eu.execom.hawaii.model.enumerations.AbsenceType;
 import eu.execom.hawaii.model.enumerations.RequestStatus;
 import eu.execom.hawaii.service.RequestService;
+import eu.execom.hawaii.service.UserService;
 
 @RestController
 @RequestMapping("/requests")
@@ -31,10 +33,12 @@ public class RequestController {
   private static final ModelMapper MAPPER = new ModelMapper();
 
   private RequestService requestService;
+  private UserService userService;
 
   @Autowired
-  public RequestController(RequestService requestService) {
+  public RequestController(RequestService requestService, UserService userService) {
     this.requestService = requestService;
+    this.userService = userService;
   }
 
   @GetMapping("/user/{id}")
@@ -87,9 +91,12 @@ public class RequestController {
   }
 
   @PutMapping
-  public ResponseEntity<RequestDto> handleRequestStatus(@RequestBody RequestDto requestDto) {
+  public ResponseEntity<RequestDto> handleRequestStatus(@RequestHeader(value = "Authorization") String token,
+      @RequestBody RequestDto requestDto) {
+    var approver = userService.getUserByToken(token);
+
     var request = MAPPER.map(requestDto, Request.class);
-    request = requestService.handleRequestStatusUpdate(request);
+    request = requestService.handleRequestStatusUpdate(request, approver);
 
     return new ResponseEntity<>(new RequestDto(request), HttpStatus.OK);
   }
