@@ -98,6 +98,7 @@ public class UserService {
     allowance.setUser(user);
     allowance.setYear(LocalDate.now().getYear());
     allowance.setAnnual(leaveProfile.getEntitlement());
+    allowance.setTraining(leaveProfile.getTraining());
 
     user.setAllowances(Arrays.asList(allowance));
 

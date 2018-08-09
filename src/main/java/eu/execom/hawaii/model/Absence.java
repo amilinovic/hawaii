@@ -9,6 +9,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 
+import eu.execom.hawaii.model.enumerations.AbsenceSubtype;
 import eu.execom.hawaii.model.enumerations.AbsenceType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -24,12 +25,17 @@ public class Absence extends BaseEntity implements Serializable {
   @Enumerated(EnumType.STRING)
   private AbsenceType absenceType;
 
+  @Enumerated(EnumType.STRING)
+  private AbsenceSubtype absenceSubtype;
+
   @NotNull
   private String name;
 
   private String comment;
 
   private boolean active;
+
+  private String iconUrl;
 
   @OneToMany(mappedBy = "absence")
   private List<Request> leaveRequests;

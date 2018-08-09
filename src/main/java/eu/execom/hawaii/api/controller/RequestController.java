@@ -55,14 +55,6 @@ public class RequestController {
     return new ResponseEntity<>(requestDtos, HttpStatus.OK);
   }
 
-  @GetMapping("/approver/{id}")
-  public ResponseEntity<List<RequestDto>> getRequestsByApproverId(@PathVariable Long id) {
-    var requests = requestService.findAllByApprover(id);
-    var requestDtos = requests.stream().map(RequestDto::new).collect(Collectors.toList());
-
-    return new ResponseEntity<>(requestDtos, HttpStatus.OK);
-  }
-
   @GetMapping("/requeststatus/{status}")
   public ResponseEntity<List<RequestDto>> getRequestsByRequestStatus(@PathVariable RequestStatus status) {
     var requests = requestService.findAllByRequestStatus(status);

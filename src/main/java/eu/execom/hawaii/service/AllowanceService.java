@@ -49,9 +49,25 @@ public class AllowanceService {
       hours = -hours;
     }
 
-    switch (absence.getAbsenceType()) {
+    var absenceType = absence.getAbsenceType();
+    var absenceSubtype = absence.getAbsenceSubtype();
+    switch (absenceType) {
       case DEDUCTED_LEAVE:
-        applyAnnual(allowance, hours);
+        if (absenceSubtype == null) {
+          throw new IllegalArgumentException("Absence subtype cannot be null.");
+        }
+        switch (absenceSubtype) {
+          case ANNUAL:
+            applyAnnual(allowance, hours);
+            break;
+          case TRAINING:
+            applyTraining(allowance, hours);
+            break;
+          default:
+            throw new IllegalArgumentException("Unsupported absence subtype: " + absenceSubtype);
+        }
+        break;
+      case NON_DEDUCTED_LEAVE:
         break;
       case SICKNESS:
         applySickness(allowance, hours);
@@ -60,13 +76,19 @@ public class AllowanceService {
         applyBonus(allowance, hours);
         break;
       default:
-        break;
+        throw new IllegalArgumentException("Unsupported absence type: " + absenceType);
     }
   }
 
   private void applyAnnual(Allowance allowance, int hours) {
-    var calculatedAnnual = allowance.getAnnual() - hours;
-    allowance.setAnnual(calculatedAnnual);
+    var calculatedAnnual = allowance.getTakenAnnual() + hours;
+    allowance.setTakenAnnual(calculatedAnnual);
+    allowanceRepository.save(allowance);
+  }
+
+  private void applyTraining(Allowance allowance, int hours) {
+    var calculatedTraining = allowance.getTakenTraining() + hours;
+    allowance.setTakenTraining(calculatedTraining);
     allowanceRepository.save(allowance);
   }
 

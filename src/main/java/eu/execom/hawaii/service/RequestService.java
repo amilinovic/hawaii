@@ -79,17 +79,6 @@ public class RequestService {
   }
 
   /**
-   * Retrieves a list of all requests by approverId from repository.
-   *
-   * @param approverId the User id.
-   * @return a list of all requests for given user(approver).
-   */
-  public List<Request> findAllByApprover(Long approverId) {
-    User approver = userRepository.getOne(approverId);
-    return requestRepository.findAllByApprover(approver);
-  }
-
-  /**
    * Retrieves a list of all requests by status of request from repository.
    *
    * @param requestStatus status of request.
