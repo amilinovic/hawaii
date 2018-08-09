@@ -5,11 +5,15 @@ import java.util.ArrayList;
 
 import eu.execom.hawaii.model.Absence;
 import eu.execom.hawaii.model.Allowance;
+import eu.execom.hawaii.model.Day;
 import eu.execom.hawaii.model.LeaveProfile;
 import eu.execom.hawaii.model.PublicHoliday;
 import eu.execom.hawaii.model.Request;
 import eu.execom.hawaii.model.Team;
 import eu.execom.hawaii.model.User;
+import eu.execom.hawaii.model.enumerations.AbsenceSubtype;
+import eu.execom.hawaii.model.enumerations.AbsenceType;
+import eu.execom.hawaii.model.enumerations.Duration;
 import eu.execom.hawaii.model.enumerations.RequestStatus;
 import eu.execom.hawaii.model.enumerations.UserRole;
 
@@ -58,7 +62,7 @@ public class EntityBuilder {
     var request = new Request();
     request.setUser(user(team()));
     request.setAbsence(absence);
-    request.setRequestStatus(RequestStatus.APPROVED);
+    request.setRequestStatus(RequestStatus.PENDING);
     request.setReason("My request reason");
     request.setDays(new ArrayList<>());
 
@@ -69,12 +73,14 @@ public class EntityBuilder {
     var allowance = new Allowance();
     allowance.setUser(user);
     allowance.setYear(2018);
-    allowance.setAnnual(20);
-    allowance.setTakenAnnual(5);
-    allowance.setSickness(3);
-    allowance.setBonus(2);
-    allowance.setCarriedOver(5);
-    allowance.setManualAdjust(2);
+    allowance.setAnnual(160);
+    allowance.setTakenAnnual(40);
+    allowance.setSickness(16);
+    allowance.setBonus(16);
+    allowance.setCarriedOver(40);
+    allowance.setManualAdjust(0);
+    allowance.setTraining(16);
+    allowance.setTakenTraining(0);
 
     return allowance;
   }
@@ -86,6 +92,28 @@ public class EntityBuilder {
     publicHoliday.setDate(LocalDate.of(2018, 1, 1));
 
     return publicHoliday;
+  }
+
+  static Absence absence() {
+    var absence = new Absence();
+    absence.setAbsenceType(AbsenceType.DEDUCTED_LEAVE);
+    absence.setAbsenceSubtype(AbsenceSubtype.ANNUAL);
+    absence.setName("Annual leave");
+    absence.setComment("Description");
+    absence.setActive(true);
+    absence.setIconUrl("icons/vacation.svg");
+    absence.setLeaveRequests(new ArrayList<>());
+
+    return absence;
+  }
+
+  static Day day(LocalDate date) {
+    var day = new Day();
+    day.setRequest(new Request());
+    day.setDate(date);
+    day.setDuration(Duration.FULL_DAY);
+
+    return day;
   }
 
 }
