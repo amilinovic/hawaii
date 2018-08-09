@@ -9,7 +9,6 @@ import eu.execom.hawaii.model.Allowance;
 import eu.execom.hawaii.model.Day;
 import eu.execom.hawaii.model.Request;
 import eu.execom.hawaii.model.User;
-import eu.execom.hawaii.model.enumerations.AbsenceSubtype;
 import eu.execom.hawaii.model.enumerations.Duration;
 import eu.execom.hawaii.repository.AllowanceRepository;
 
@@ -54,12 +53,18 @@ public class AllowanceService {
     var absenceSubtype = absence.getAbsenceSubtype();
     switch (absenceType) {
       case DEDUCTED_LEAVE:
-        if (AbsenceSubtype.ANNUAL.equals(absenceSubtype)) {
-          applyAnnual(allowance, hours);
-        } else if (AbsenceSubtype.TRAINING.equals(absenceSubtype)) {
-          applyTraining(allowance, hours);
-        } else {
-          throw new IllegalArgumentException("Unsupported absence subtype: " + absenceSubtype);
+        if (absenceSubtype == null) {
+          throw new IllegalArgumentException("Absence subtype cannot be null.");
+        }
+        switch (absenceSubtype) {
+          case ANNUAL:
+            applyAnnual(allowance, hours);
+            break;
+          case TRAINING:
+            applyTraining(allowance, hours);
+            break;
+          default:
+            throw new IllegalArgumentException("Unsupported absence subtype: " + absenceSubtype);
         }
         break;
       case NON_DEDUCTED_LEAVE:

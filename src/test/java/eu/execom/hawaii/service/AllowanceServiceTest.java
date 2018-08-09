@@ -25,10 +25,10 @@ import eu.execom.hawaii.repository.AllowanceRepository;
 public class AllowanceServiceTest {
 
   @Mock
-  AllowanceRepository allowanceRepository;
+  private AllowanceRepository allowanceRepository;
 
   @InjectMocks
-  AllowanceService allowanceService;
+  private AllowanceService allowanceService;
 
   private User mockUser;
   private Allowance mockAllowance;
