@@ -44,7 +44,7 @@ public class GlobalExceptionHandler {
 
   @ResponseStatus(HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE) // 416
   @ExceptionHandler(InsufficientHoursException.class)
-  public void handleInsufficientDaysException(HttpServletRequest request, Exception exception) {
+  public void handleInsufficientHoursException(HttpServletRequest request, Exception exception) {
     logException(request, exception);
   }
 
