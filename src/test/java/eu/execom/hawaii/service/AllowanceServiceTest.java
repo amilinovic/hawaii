@@ -17,8 +17,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import eu.execom.hawaii.exceptions.InsufficientHoursException;
 import eu.execom.hawaii.model.Allowance;
 import eu.execom.hawaii.model.User;
+import eu.execom.hawaii.model.enumerations.AbsenceSubtype;
 import eu.execom.hawaii.repository.AllowanceRepository;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -78,14 +80,33 @@ public class AllowanceServiceTest {
     var absence = EntityBuilder.absence();
     absence.setAbsenceSubtype(null);
 
-    var request = EntityBuilder.request(EntityBuilder.absence());
+    var request = EntityBuilder.request(absence);
     var dayOne = EntityBuilder.day(LocalDate.of(2018, 11, 25));
     request.setDays(Arrays.asList(dayOne));
-    request.setAbsence(absence);
 
     given(allowanceRepository.findByUser(mockUser)).willReturn(mockAllowance);
 
     // when
+    allowanceService.applyRequest(request, false);
+
+  }
+
+  @Test(expected = InsufficientHoursException.class)
+  public void shouldFailToApplyRequestDueInsufficientHours() {
+    //given
+    var absence = EntityBuilder.absence();
+    absence.setAbsenceSubtype(AbsenceSubtype.TRAINING);
+
+    var request = EntityBuilder.request(absence);
+    var dayone = EntityBuilder.day(LocalDate.of(2018, 11, 20));
+    var dayTwo = EntityBuilder.day(LocalDate.of(2018, 11, 21));
+    var dayThree = EntityBuilder.day(LocalDate.of(2018, 11, 22));
+
+    request.setDays(Arrays.asList(dayone, dayTwo, dayThree));
+
+    given(allowanceRepository.findByUser(mockUser)).willReturn(mockAllowance);
+
+    //when
     allowanceService.applyRequest(request, false);
 
   }

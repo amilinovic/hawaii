@@ -5,13 +5,16 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import eu.execom.hawaii.exceptions.InsufficientHoursException;
 import eu.execom.hawaii.model.Allowance;
 import eu.execom.hawaii.model.Day;
 import eu.execom.hawaii.model.Request;
 import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.enumerations.Duration;
 import eu.execom.hawaii.repository.AllowanceRepository;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 public class AllowanceService {
 
@@ -80,14 +83,28 @@ public class AllowanceService {
     }
   }
 
-  private void applyAnnual(Allowance allowance, int hours) {
-    var calculatedAnnual = allowance.getTakenAnnual() + hours;
+  private void applyAnnual(Allowance allowance, int requestedHours) {
+    var userEmail = allowance.getUser().getEmail();
+    int remainingHours = calculateRemainingAnnualHours(allowance);
+    if (requestedHours > remainingHours) {
+      log.error("Insufficient hours: available {}, requested {}, for user with email {}", remainingHours, requestedHours,
+          userEmail);
+      throw new InsufficientHoursException();
+    }
+    var calculatedAnnual = allowance.getTakenAnnual() + requestedHours;
     allowance.setTakenAnnual(calculatedAnnual);
     allowanceRepository.save(allowance);
   }
 
-  private void applyTraining(Allowance allowance, int hours) {
-    var calculatedTraining = allowance.getTakenTraining() + hours;
+  private void applyTraining(Allowance allowance, int requestedHours) {
+    var userEmail = allowance.getUser().getEmail();
+    int remainingHours = calculateRemainingTrainingHours(allowance);
+    if (requestedHours > remainingHours) {
+      log.error("Insufficient hours: available {}, requested {}, for user with email {}", remainingHours, requestedHours,
+          userEmail);
+      throw new InsufficientHoursException();
+    }
+    var calculatedTraining = allowance.getTakenTraining() + requestedHours;
     allowance.setTakenTraining(calculatedTraining);
     allowanceRepository.save(allowance);
   }
@@ -110,6 +127,18 @@ public class AllowanceService {
 
   private int getHoursFromDay(Day day) {
     return Duration.FULL_DAY.equals(day.getDuration()) ? FULL_DAY : HALF_DAY;
+  }
+
+  private int calculateRemainingAnnualHours(Allowance allowance) {
+    int totalHours =
+        allowance.getAnnual() + allowance.getBonus() + allowance.getCarriedOver() + allowance.getManualAdjust();
+    int takenAnnual = allowance.getTakenAnnual();
+
+    return totalHours - takenAnnual;
+  }
+
+  private int calculateRemainingTrainingHours(Allowance allowance) {
+    return allowance.getTraining() - allowance.getTakenTraining();
   }
 
 }
