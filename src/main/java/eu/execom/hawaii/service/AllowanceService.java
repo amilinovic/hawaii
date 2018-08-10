@@ -84,9 +84,11 @@ public class AllowanceService {
   }
 
   private void applyAnnual(Allowance allowance, int requestedHours) {
+    var userEmail = allowance.getUser().getEmail();
     int remainingHours = calculateRemainingAnnualHours(allowance);
     if (requestedHours > remainingHours) {
-      log.error("Insufficient hours: available {}, requested {}", remainingHours, requestedHours);
+      log.error("Insufficient hours: available {}, requested {}, for user with email {}", remainingHours, requestedHours,
+          userEmail);
       throw new InsufficientHoursException();
     }
     var calculatedAnnual = allowance.getTakenAnnual() + requestedHours;
@@ -95,9 +97,11 @@ public class AllowanceService {
   }
 
   private void applyTraining(Allowance allowance, int requestedHours) {
+    var userEmail = allowance.getUser().getEmail();
     int remainingHours = calculateRemainingTrainingHours(allowance);
     if (requestedHours > remainingHours) {
-      log.error("Insufficient hours: available {}, requested {}", remainingHours, requestedHours);
+      log.error("Insufficient hours: available {}, requested {}, for user with email {}", remainingHours, requestedHours,
+          userEmail);
       throw new InsufficientHoursException();
     }
     var calculatedTraining = allowance.getTakenTraining() + requestedHours;
@@ -126,7 +130,8 @@ public class AllowanceService {
   }
 
   private int calculateRemainingAnnualHours(Allowance allowance) {
-    int totalHours = allowance.getAnnual() + allowance.getBonus() + allowance.getCarriedOver() + allowance.getManualAdjust();
+    int totalHours =
+        allowance.getAnnual() + allowance.getBonus() + allowance.getCarriedOver() + allowance.getManualAdjust();
     int takenAnnual = allowance.getTakenAnnual();
 
     return totalHours - takenAnnual;
