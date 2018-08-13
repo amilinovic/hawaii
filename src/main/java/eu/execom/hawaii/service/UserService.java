@@ -7,9 +7,6 @@ import java.util.List;
 import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.social.google.api.Google;
-import org.springframework.social.google.api.impl.GoogleTemplate;
-import org.springframework.social.google.api.plus.Person;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,15 +51,6 @@ public class UserService {
     return userRepository.getOne(id);
   }
 
-  @Transactional(readOnly = true)
-  public User getUserByToken(String token) {
-    Google google = new GoogleTemplate(token);
-    Person profile = google.plusOperations().getGoogleProfile();
-    String email = profile.getAccountEmail();
-
-    return findByEmail(email);
-  }
-
   /**
    * Retrieves a User with a specific email.
    *
@@ -70,7 +58,7 @@ public class UserService {
    * @return User with specified email if exists
    * @throws EntityNotFoundException if a user with given email is not found
    */
-
+  @Transactional(readOnly = true)
   public User findByEmail(String email) {
     return userRepository.findByEmail(email).orElseThrow(EntityNotFoundException::new);
   }
