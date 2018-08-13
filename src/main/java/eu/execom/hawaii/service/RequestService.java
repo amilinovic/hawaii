@@ -140,9 +140,8 @@ public class RequestService {
     User user = userRepository.getOne(request.getUser().getId());
     request.setUser(user);
 
-    checkIsApproverUserTeamApprover(approver, user);
-
     if (shouldApplyRequest(request)) {
+      checkIsApproverUserTeamApprover(approver, user);
       applyRequest(request);
     }
 
@@ -151,14 +150,20 @@ public class RequestService {
 
   private void checkIsApproverUserTeamApprover(User approver, User requestUser) {
     if (requestUser.getTeam().getTeamApprovers().stream().noneMatch(teamApprover -> teamApprover.getId().equals(approver.getId()))) {
-      log.error("Approver not authorized to approve this request for user with email: " + requestUser.getEmail());
+      log.error("Approver not authorized to approve this request for user with email: {}", requestUser.getEmail());
       throw new NotAuthorizedApprovalExeception();
     }
   }
 
   private boolean shouldApplyRequest(Request request) {
-    return RequestStatus.APPROVED.equals(request.getRequestStatus()) || RequestStatus.CANCELED.equals(
-        request.getRequestStatus());
+    var isRequestExistingAsApproved = false;
+    if (request.getId() != null) {
+      var existingRequest = requestRepository.getOne(request.getId());
+      isRequestExistingAsApproved = request.getRequestStatus().equals(existingRequest.getRequestStatus());
+    }
+    var isRequestApproved = RequestStatus.APPROVED.equals(request.getRequestStatus());
+    var isRequestCanceled = RequestStatus.CANCELED.equals(request.getRequestStatus());
+    return isRequestApproved || (isRequestCanceled && isRequestExistingAsApproved);
   }
 
   private void applyRequest(Request request) {
