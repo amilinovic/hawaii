@@ -149,7 +149,10 @@ public class RequestService {
   }
 
   private void checkIsApproverUserTeamApprover(User approver, User requestUser) {
-    if (requestUser.getTeam().getTeamApprovers().stream().noneMatch(teamApprover -> teamApprover.getId().equals(approver.getId()))) {
+    if (requestUser.getTeam()
+                   .getTeamApprovers()
+                   .stream()
+                   .noneMatch(teamApprover -> teamApprover.getId().equals(approver.getId()))) {
       log.error("Approver not authorized to approve this request for user with email: {}", requestUser.getEmail());
       throw new NotAuthorizedApprovalExeception();
     }
