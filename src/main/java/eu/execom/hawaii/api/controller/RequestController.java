@@ -106,10 +106,11 @@ public class RequestController {
 
   private User getUserFromPrincipal(Principal principal) {
     OAuth2Authentication auth = (OAuth2Authentication) principal;
-    UsernamePasswordAuthenticationToken userApprover = (UsernamePasswordAuthenticationToken) auth.getUserAuthentication();
-    LinkedHashMap userDetails = (LinkedHashMap) userApprover.getDetails();
+    UsernamePasswordAuthenticationToken authUser = (UsernamePasswordAuthenticationToken) auth.getUserAuthentication();
+    LinkedHashMap userDetails = (LinkedHashMap) authUser.getDetails();
+    String userEmail = (String) userDetails.get("email");
 
-    return userService.findByEmail((String) userDetails.get("email"));
+    return userService.findByEmail(userEmail);
   }
 
 }

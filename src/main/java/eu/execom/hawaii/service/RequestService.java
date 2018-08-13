@@ -140,6 +140,7 @@ public class RequestService {
     User user = userRepository.getOne(request.getUser().getId());
     request.setUser(user);
 
+    // TODO separate request approval from cancellation with issue number #73.
     if (shouldApplyRequest(request)) {
       checkIsApproverUserTeamApprover(approver, user);
       applyRequest(request);
