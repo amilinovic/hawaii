@@ -29,16 +29,18 @@ public class RequestService {
   private AbsenceRepository absenceRepository;
   private AllowanceService allowanceService;
   private GoogleCalendarService googleCalendarService;
+  private EmailService emailService;
 
   @Autowired
   public RequestService(RequestRepository requestRepository, UserRepository userRepository,
       AbsenceRepository absenceRepository, AllowanceService allowanceService,
-      GoogleCalendarService googleCalendarService) {
+      GoogleCalendarService googleCalendarService, EmailService emailService) {
     this.requestRepository = requestRepository;
     this.userRepository = userRepository;
     this.allowanceService = allowanceService;
     this.absenceRepository = absenceRepository;
     this.googleCalendarService = googleCalendarService;
+    this.emailService = emailService;
   }
 
   /**
@@ -120,6 +122,7 @@ public class RequestService {
     User user = userRepository.getOne(request.getUser().getId());
     request.setUser(user);
     googleCalendarService.handleCreatedRequest(request);
+    emailService.createEmailAndSendForApproval(request);
 
     return requestRepository.save(request);
   }
@@ -154,6 +157,7 @@ public class RequestService {
   private void applyRequest(Request request) {
     boolean requestCanceled = RequestStatus.CANCELED.equals(request.getRequestStatus());
     allowanceService.applyRequest(request, requestCanceled);
+    emailService.createApprovedEmailAndSend(request);
     googleCalendarService.handleRequestUpdate(request, requestCanceled);
   }
 
