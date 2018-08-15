@@ -245,7 +245,8 @@ public class RequestServiceTest {
     Request savedRequest = requestService.save(requestOne);
 
     // then
-    assertThat("Expect to request user email be aria.stark@gmail.com", savedRequest.getUser().getEmail(), is("aria.stark@gmail.com"));
+    assertThat("Expect to request user email be aria.stark@gmail.com", savedRequest.getUser().getEmail(),
+        is("aria.stark@gmail.com"));
     verify(userRepository).getOne(anyLong());
     verify(requestRepository).save(any());
     verify(googleCalendarService).handleCreatedRequest(any());
