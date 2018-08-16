@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import eu.execom.hawaii.exceptions.NotAuthorizedApprovalExeception;
 import eu.execom.hawaii.model.Absence;
 import eu.execom.hawaii.model.Day;
 import eu.execom.hawaii.model.Request;
@@ -132,23 +133,41 @@ public class RequestService {
    * @param request to be persisted.
    * @return saved request.
    */
-  public Request handleRequestStatusUpdate(Request request) {
+  public Request handleRequestStatusUpdate(Request request, User approver) {
     Absence absence = absenceRepository.getOne(request.getAbsence().getId());
     request.setAbsence(absence);
 
     User user = userRepository.getOne(request.getUser().getId());
     request.setUser(user);
 
+    // TODO separate request approval from cancellation with issue number #73.
     if (shouldApplyRequest(request)) {
+      checkIsApproverUserTeamApprover(approver, user);
       applyRequest(request);
     }
 
     return requestRepository.save(request);
   }
 
+  private void checkIsApproverUserTeamApprover(User approver, User requestUser) {
+    if (requestUser.getTeam()
+                   .getTeamApprovers()
+                   .stream()
+                   .noneMatch(teamApprover -> teamApprover.getId().equals(approver.getId()))) {
+      log.error("Approver not authorized to approve this request for user with email: {}", requestUser.getEmail());
+      throw new NotAuthorizedApprovalExeception();
+    }
+  }
+
   private boolean shouldApplyRequest(Request request) {
-    return RequestStatus.APPROVED.equals(request.getRequestStatus()) || RequestStatus.CANCELED.equals(
-        request.getRequestStatus());
+    var isRequestExistingAsApproved = false;
+    if (request.getId() != null) {
+      var existingRequest = requestRepository.getOne(request.getId());
+      isRequestExistingAsApproved = request.getRequestStatus().equals(existingRequest.getRequestStatus());
+    }
+    var isRequestApproved = RequestStatus.APPROVED.equals(request.getRequestStatus());
+    var isRequestCanceled = RequestStatus.CANCELED.equals(request.getRequestStatus());
+    return isRequestApproved || (isRequestCanceled && isRequestExistingAsApproved);
   }
 
   private void applyRequest(Request request) {

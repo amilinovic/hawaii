@@ -2,6 +2,7 @@ package eu.execom.hawaii.service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 
 import eu.execom.hawaii.model.Absence;
 import eu.execom.hawaii.model.Allowance;
@@ -46,6 +47,23 @@ public class EntityBuilder {
     return user;
   }
 
+  static User approver() {
+    var approver = new User();
+    approver.setId(3L);
+    approver.setTeam(new Team());
+    approver.setLeaveProfile(leaveProfile());
+    approver.setFullName("Bruce Wayne");
+    approver.setEmail("bruce.wayne@execom.eu");
+    approver.setUserRole(UserRole.HR_MANAGER);
+    approver.setJobTitle("Developer");
+    approver.setActive(true);
+    approver.setTeamApprovers(new ArrayList<>());
+    approver.setRequests(new ArrayList<>());
+    approver.setAllowances(new ArrayList<>());
+
+    return approver;
+  }
+
   static LeaveProfile leaveProfile() {
     var leaveProfile = new LeaveProfile();
     leaveProfile.setName("Default");
@@ -58,13 +76,14 @@ public class EntityBuilder {
     return leaveProfile;
   }
 
-  static Request request(Absence absence) {
+  static Request request(Absence absence, List<Day> days) {
     var request = new Request();
     request.setUser(user(team()));
+    request.getUser().setId(1L);
     request.setAbsence(absence);
     request.setRequestStatus(RequestStatus.PENDING);
     request.setReason("My request reason");
-    request.setDays(new ArrayList<>());
+    request.setDays(days);
 
     return request;
   }
@@ -94,14 +113,28 @@ public class EntityBuilder {
     return publicHoliday;
   }
 
-  static Absence absence() {
+  static Absence absenceAnnual() {
     var absence = new Absence();
+    absence.setId(1L);
     absence.setAbsenceType(AbsenceType.DEDUCTED_LEAVE);
     absence.setAbsenceSubtype(AbsenceSubtype.ANNUAL);
     absence.setName("Annual leave");
     absence.setComment("Description");
     absence.setActive(true);
-    absence.setIconUrl("icons/vacation.svg");
+    absence.setIconUrl("icons/vacation.png");
+    absence.setLeaveRequests(new ArrayList<>());
+
+    return absence;
+  }
+
+  static Absence absenceTraining() {
+    var absence = new Absence();
+    absence.setAbsenceType(AbsenceType.DEDUCTED_LEAVE);
+    absence.setAbsenceSubtype(AbsenceSubtype.TRAINING);
+    absence.setName("Training");
+    absence.setComment("Description");
+    absence.setActive(true);
+    absence.setIconUrl("icons/training.png");
     absence.setLeaveRequests(new ArrayList<>());
 
     return absence;
