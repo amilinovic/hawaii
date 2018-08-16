@@ -10,7 +10,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -71,7 +70,7 @@ public class RequestServiceTest {
 
     requestOne = EntityBuilder.request(absenceAnnual, Arrays.asList(dayOne));
     requestTwo = EntityBuilder.request(absenceTraining, Arrays.asList(dayTwo, dayThree));
-    mockRequests = new ArrayList<>(Arrays.asList(requestOne, requestTwo));
+    mockRequests = Arrays.asList(requestOne, requestTwo);
 
     allMocks = new Object[] {allowanceService, googleCalendarService, requestRepository, userRepository,
         absenceRepository};
