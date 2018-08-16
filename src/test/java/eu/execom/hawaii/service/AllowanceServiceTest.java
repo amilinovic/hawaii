@@ -58,10 +58,9 @@ public class AllowanceServiceTest {
   @Test
   public void shouldApplyRequest() {
     // given
-    var request = EntityBuilder.request(EntityBuilder.absence());
     var dayOne = EntityBuilder.day(LocalDate.of(2018, 11, 25));
     var dayTwo = EntityBuilder.day(LocalDate.of(2018, 11, 28));
-    request.setDays(Arrays.asList(dayOne, dayTwo));
+    var request = EntityBuilder.request(EntityBuilder.absenceAnnual(), Arrays.asList(dayOne, dayTwo));
 
     given(allowanceRepository.findByUser(mockUser)).willReturn(mockAllowance);
 
@@ -77,12 +76,11 @@ public class AllowanceServiceTest {
   @Test(expected = IllegalArgumentException.class)
   public void shouldFailToApplyRequest() {
     // given
-    var absence = EntityBuilder.absence();
+    var absence = EntityBuilder.absenceAnnual();
     absence.setAbsenceSubtype(null);
 
-    var request = EntityBuilder.request(absence);
     var dayOne = EntityBuilder.day(LocalDate.of(2018, 11, 25));
-    request.setDays(Arrays.asList(dayOne));
+    var request = EntityBuilder.request(absence, Arrays.asList(dayOne));
 
     given(allowanceRepository.findByUser(mockUser)).willReturn(mockAllowance);
 
@@ -94,15 +92,13 @@ public class AllowanceServiceTest {
   @Test(expected = InsufficientHoursException.class)
   public void shouldFailToApplyRequestDueInsufficientHours() {
     //given
-    var absence = EntityBuilder.absence();
+    var absence = EntityBuilder.absenceAnnual();
     absence.setAbsenceSubtype(AbsenceSubtype.TRAINING);
 
-    var request = EntityBuilder.request(absence);
-    var dayone = EntityBuilder.day(LocalDate.of(2018, 11, 20));
+    var dayOne = EntityBuilder.day(LocalDate.of(2018, 11, 20));
     var dayTwo = EntityBuilder.day(LocalDate.of(2018, 11, 21));
     var dayThree = EntityBuilder.day(LocalDate.of(2018, 11, 22));
-
-    request.setDays(Arrays.asList(dayone, dayTwo, dayThree));
+    var request = EntityBuilder.request(absence, Arrays.asList(dayOne, dayTwo, dayThree));
 
     given(allowanceRepository.findByUser(mockUser)).willReturn(mockAllowance);
 
