@@ -37,6 +37,24 @@ public class EmailFormatter {
       + "--------------------------------------------------------\n"
       + "This is a notification email from the Hawaii HR system. Please do net reply directly to this email.";
 
+  public static String getTeamNotificationSicknessText(String userFullName, String teamName, LocalDate startDate,
+      LocalDate endDate, int numberOfDays, String reason) {
+    return String.format(TEAM_NOTIFICATION_SICKNESS_TEXT, userFullName, teamName, userFullName, startDate, endDate,
+        numberOfDays, reason);
+  }
+
+  public static final String TEAM_NOTIFICATION_ANNUAL_SUBJECT = "Annual Leave Notification";
+  private static final String TEAM_NOTIFICATION_ANNUAL_TEXT = "The following leave request has been approved for %s.\n"
+      + "%s day/s on requested dates %s - %s.\n"
+      + "You are receiving this notification because you are listed as a Notifier for the %s team.\n"
+      + "To be removed from this list, please contact your Hawaii Administrator.\n\n"
+      + "--------------------------------------------------------\n"
+      + "This is a notification email from the Hawaii HR system. Please do net reply directly to this email.";
+
+  public static String getTeamNotificationAnnualText(String userFullName, int numberOfDays, LocalDate startDate,
+      LocalDate endDate, String teamName) {
+    return String.format(TEAM_NOTIFICATION_ANNUAL_TEXT, userFullName, numberOfDays, startDate, endDate, teamName);
+  }
 
   private static final String LEAVE_REQUEST_NOTIFICATION_SUBJECT = "Leave Request %s";
   private static final String LEAVE_REQUEST_NOTIFICATION_TEXT = "Hi, %s\n"
@@ -51,11 +69,10 @@ public class EmailFormatter {
     return String.format(LEAVE_REQUEST_NOTIFICATION_SUBJECT, status);
   }
 
-  public static String getLeaveRequestApprovedSubject(String userFullName, String status, String absenceName,
+  public static String getLeaveRequestNotificationText(String userFullName, String status, String absenceName,
       LocalDate startDate, LocalDate endDate, int numberOfDays, String reason) {
     return String.format(LEAVE_REQUEST_NOTIFICATION_TEXT, userFullName, status, absenceName, startDate, endDate,
         numberOfDays, reason);
   }
-
 
 }

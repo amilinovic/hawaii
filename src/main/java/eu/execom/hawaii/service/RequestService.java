@@ -117,13 +117,20 @@ public class RequestService {
    * @param request the Request entity to be persisted.
    * @return a saved request with id.
    */
-  public Request save(Request request) {
+  public Request create(Request request) {
     request.getDays().forEach(day -> day.setRequest(request));
 
     User user = userRepository.getOne(request.getUser().getId());
     request.setUser(user);
     googleCalendarService.handleCreatedRequest(request);
-    emailService.createEmailAndSendForApproval(request);
+
+    if (AbsenceType.SICKNESS.equals(request.getAbsence().getAbsenceType())) {
+      request.setRequestStatus(RequestStatus.APPROVED);
+      emailService.createSicknessEmailForTeammatesAndSend(request);
+    } else {
+      request.setRequestStatus(RequestStatus.PENDING);
+      emailService.createEmailAndSendForApproval(request);
+    }
 
     return requestRepository.save(request);
   }
@@ -176,7 +183,8 @@ public class RequestService {
   private void applyRequest(Request request) {
     boolean requestCanceled = RequestStatus.CANCELED.equals(request.getRequestStatus());
     allowanceService.applyRequest(request, requestCanceled);
-    emailService.createApprovedEmailAndSend(request);
+    emailService.createStatusNotificationEmailAndSend(request);
+    emailService.createAnnualEmailForTeammatesAndSend(request);
     googleCalendarService.handleRequestUpdate(request, requestCanceled);
   }
 
