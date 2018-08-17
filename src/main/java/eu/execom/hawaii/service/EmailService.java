@@ -29,24 +29,10 @@ public class EmailService {
   }
 
   /**
-   * Send email.
+   * Create email on request creation and sends for approval to team approvers.
    *
-   * @param email given Email for send.
+   * @param request the Request.
    */
-  private void sendEmail(Email email) {
-    SimpleMailMessage message = new SimpleMailMessage();
-    var listSize = email.getTo().size();
-    message.setTo(email.getTo().toArray(new String[listSize]));
-    message.setSubject(email.getSubject());
-    message.setText(email.getText());
-
-    try {
-      emailSender.send(message);
-    } catch (MailException exception) {
-      log.error("Error on sending email to: {}", email.getTo());
-    }
-  }
-
   void createEmailAndSendForApproval(Request request) {
     List<String> approversEmail = request.getUser()
                                          .getTeam()
@@ -68,6 +54,11 @@ public class EmailService {
     sendEmail(new Email(approversEmail, subject, text));
   }
 
+  /**
+   * Create email after team approver action on given request and sends to request user.
+   *
+   * @param request the Request.
+   */
   void createStatusNotificationEmailAndSend(Request request) {
     List<String> userEmail = Collections.singletonList(request.getUser().getEmail());
     String subject = EmailFormatter.getLeaveRequestNotificationSubject(request.getRequestStatus().toString());
@@ -84,6 +75,11 @@ public class EmailService {
     sendEmail(new Email(userEmail, subject, text));
   }
 
+  /**
+   * Create email on user submitting sickness request and sends to user teammates.
+   *
+   * @param request the Request.
+   */
   void createSicknessEmailForTeammatesAndSend(Request request) {
     List<String> teammatesEmails = request.getUser()
                                           .getTeam()
@@ -104,6 +100,11 @@ public class EmailService {
     sendEmail(new Email(teammatesEmails, subject, text));
   }
 
+  /**
+   * Create email on user approved annual leave request and sends to user teammates.
+   *
+   * @param request the Request.
+   */
   void createAnnualEmailForTeammatesAndSend(Request request) {
     List<String> teammatesEmails = request.getUser()
                                           .getTeam()
@@ -122,4 +123,19 @@ public class EmailService {
 
     sendEmail(new Email(teammatesEmails, subject, text));
   }
+
+  private void sendEmail(Email email) {
+    SimpleMailMessage message = new SimpleMailMessage();
+    var listSize = email.getTo().size();
+    message.setTo(email.getTo().toArray(new String[listSize]));
+    message.setSubject(email.getSubject());
+    message.setText(email.getText());
+
+    try {
+      emailSender.send(message);
+    } catch (MailException exception) {
+      log.error("Error on sending email to: {}", email.getTo());
+    }
+  }
+
 }

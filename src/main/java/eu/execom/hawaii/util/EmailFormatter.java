@@ -4,10 +4,10 @@ import java.time.LocalDate;
 
 public class EmailFormatter {
 
+  private EmailFormatter() {}
+
   private static final String FOOTER_MESSAGE = "--------------------------------------------------------\n"
       + "This is a notification email from the Hawaii HR system. Please do net reply directly to this email.";
-
-  private EmailFormatter() {}
 
   public static final String REQUEST_CREATED_SUBJECT = "Leave Request requires your Approval";
   private static final String REQUEST_CREATED_TEXT = "The following Leave Request has been submitted by %s:\n\n"
