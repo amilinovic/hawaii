@@ -57,12 +57,12 @@ public class EmailService {
 
     String subject = EmailFormatter.REQUEST_CREATED_SUBJECT;
 
-    String requestUserName = request.getUser().getFullName();
-    String requestAbsenceName = request.getAbsence().getName();
+    String userName = request.getUser().getFullName();
+    String absenceName = request.getAbsence().getName();
     int numberOfRequestedDays = request.getDays().size();
     LocalDate startDate = request.getDays().get(0).getDate();
     LocalDate endDate = request.getDays().get(numberOfRequestedDays - 1).getDate();
-    String text = EmailFormatter.getRequestCreatedText(requestUserName, requestAbsenceName, startDate, endDate,
+    String text = EmailFormatter.getRequestCreatedText(userName, absenceName, startDate, endDate,
         numberOfRequestedDays, request.getReason());
 
     sendEmail(new Email(approversEmail, subject, text));

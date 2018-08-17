@@ -4,6 +4,11 @@ import java.time.LocalDate;
 
 public class EmailFormatter {
 
+  private static final String FOOTER_MESSAGE = "--------------------------------------------------------\n"
+      + "This is a notification email from the Hawaii HR system. Please do net reply directly to this email.";
+
+  private EmailFormatter() {}
+
   public static final String REQUEST_CREATED_SUBJECT = "Leave Request requires your Approval";
   private static final String REQUEST_CREATED_TEXT = "The following Leave Request has been submitted by %s:\n\n"
       + "Please login to the Hawaii system to Approve or Reject the request.\n\n"
@@ -15,8 +20,7 @@ public class EmailFormatter {
       + "Reason for leave: %s\n\n"
       + "Approval\n"
       + "Your approval for this request is required.\n"
-      + "--------------------------------------------------------\n"
-      + "This is a notification email from the Hawaii HR system. Please do net reply directly to this email.";
+      + FOOTER_MESSAGE;
 
   public static String getRequestCreatedText(String userFullName, String absenceName, LocalDate startDate,
       LocalDate endDate, int numberOfDays, String reason) {
@@ -34,8 +38,7 @@ public class EmailFormatter {
       + "Requested dates: %s - %s\n"
       + "Number of days: %d\n"
       + "Reason for Sickness: %s\n\n"
-      + "--------------------------------------------------------\n"
-      + "This is a notification email from the Hawaii HR system. Please do net reply directly to this email.";
+      + FOOTER_MESSAGE;
 
   public static String getTeamNotificationSicknessText(String userFullName, String teamName, LocalDate startDate,
       LocalDate endDate, int numberOfDays, String reason) {
@@ -48,8 +51,7 @@ public class EmailFormatter {
       + "%s day/s on requested dates %s - %s.\n"
       + "You are receiving this notification because you are listed as a Notifier for the %s team.\n"
       + "To be removed from this list, please contact your Hawaii Administrator.\n\n"
-      + "--------------------------------------------------------\n"
-      + "This is a notification email from the Hawaii HR system. Please do net reply directly to this email.";
+      + FOOTER_MESSAGE;
 
   public static String getTeamNotificationAnnualText(String userFullName, int numberOfDays, LocalDate startDate,
       LocalDate endDate, String teamName) {
@@ -63,7 +65,8 @@ public class EmailFormatter {
       + "Leave type: %s\n"
       + "Requested dates: %s-%s\n"
       + "Number of days: %d\n"
-      + "Reason for leave: %s";
+      + "Reason for leave: %s\n"
+      + FOOTER_MESSAGE;
 
   public static String getLeaveRequestNotificationSubject(String status) {
     return String.format(LEAVE_REQUEST_NOTIFICATION_SUBJECT, status);
