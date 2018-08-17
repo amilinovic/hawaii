@@ -40,6 +40,8 @@ public class RequestServiceTest {
   @Mock
   private GoogleCalendarService googleCalendarService;
   @Mock
+  private EmailService emailService;
+  @Mock
   private RequestRepository requestRepository;
   @Mock
   private UserRepository userRepository;
@@ -72,7 +74,7 @@ public class RequestServiceTest {
     requestTwo = EntityBuilder.request(absenceTraining, Arrays.asList(dayTwo, dayThree));
     mockRequests = Arrays.asList(requestOne, requestTwo);
 
-    allMocks = new Object[] {allowanceService, googleCalendarService, requestRepository, userRepository,
+    allMocks = new Object[] {allowanceService, googleCalendarService, emailService, requestRepository, userRepository,
         absenceRepository};
   }
 
@@ -231,7 +233,7 @@ public class RequestServiceTest {
   }
 
   @Test
-  public void shouldSaveRequest() {
+  public void shouldCreateRequest() {
     // given
     var user = EntityBuilder.user(EntityBuilder.team());
     user.setId(1L);
@@ -241,7 +243,7 @@ public class RequestServiceTest {
     given(requestRepository.save(requestOne)).willReturn(request);
 
     // when
-    Request savedRequest = requestService.save(requestOne);
+    Request savedRequest = requestService.create(requestOne);
 
     // then
     assertThat("Expect to request user email be aria.stark@gmail.com", savedRequest.getUser().getEmail(),
@@ -249,16 +251,17 @@ public class RequestServiceTest {
     verify(userRepository).getOne(anyLong());
     verify(requestRepository).save(any());
     verify(googleCalendarService).handleCreatedRequest(any());
+    verify(emailService).createEmailAndSendForApproval(any());
     verifyNoMoreInteractions(allMocks);
   }
 
   @Test(expected = EntityNotFoundException.class)
-  public void shouldFailToFindUserForSaveRequest() {
+  public void shouldFailToFindUserForCreateRequest() {
     // given
     given(userRepository.getOne(1L)).willThrow(new EntityNotFoundException());
 
     // when
-    requestService.save(requestOne);
+    requestService.create(requestOne);
 
     // then
 

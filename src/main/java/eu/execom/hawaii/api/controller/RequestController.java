@@ -89,7 +89,7 @@ public class RequestController {
   @PostMapping
   public ResponseEntity<RequestDto> createRequest(@RequestBody RequestDto requestDto) {
     var request = MAPPER.map(requestDto, Request.class);
-    request = requestService.save(request);
+    request = requestService.create(request);
 
     return new ResponseEntity<>(new RequestDto(request), HttpStatus.OK);
   }
