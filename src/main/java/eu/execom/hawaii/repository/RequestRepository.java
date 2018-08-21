@@ -15,6 +15,6 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
 
   List<Request> findAllByAbsence_AbsenceType(AbsenceType absenceType);
 
-  List<Request> findAllByUserAndRequestStatusNot(User user, RequestStatus requestStatus);
+  List<Request> findAllByUser(User user);
 
 }

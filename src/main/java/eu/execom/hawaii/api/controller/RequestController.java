@@ -4,6 +4,7 @@ import java.security.Principal;
 import java.time.LocalDate;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import eu.execom.hawaii.dto.RequestDto;
 import eu.execom.hawaii.model.Request;
+import eu.execom.hawaii.model.Team;
 import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.enumerations.AbsenceType;
 import eu.execom.hawaii.model.enumerations.RequestStatus;
@@ -43,6 +45,30 @@ public class RequestController {
   public RequestController(RequestService requestService, UserService userService) {
     this.requestService = requestService;
     this.userService = userService;
+  }
+
+  @GetMapping("/approval")
+  public ResponseEntity<List<RequestDto>> getAllRequestsForApproval(Principal principal) {
+    User authUser = getUserFromPrincipal(principal);
+    List<Request> requests = getRequestsForApprover(authUser.getApproverTeams());
+    var requestDtos = requests.stream().map(RequestDto::new).collect(Collectors.toList());
+
+    return new ResponseEntity<>(requestDtos, HttpStatus.OK);
+  }
+
+  private List<Request> getRequestsForApprover(List<Team> approverTeams) {
+    return approverTeams.stream()
+                        .map(Team::getUsers)
+                        .flatMap(List::stream)
+                        .map(User::getRequests)
+                        .flatMap(List::stream)
+                        .filter(checkStatus())
+                        .collect(Collectors.toList());
+  }
+
+  private Predicate<Request> checkStatus() {
+    return request -> RequestStatus.PENDING.equals(request.getRequestStatus())
+        || RequestStatus.CANCELATION_PENDING.equals(request.getRequestStatus());
   }
 
   @GetMapping("/user/{id}")
