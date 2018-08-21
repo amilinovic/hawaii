@@ -143,7 +143,7 @@ public class RequestService {
    * @param request to be persisted.
    * @return saved request.
    */
-  public Request handleRequestStatusUpdate(Request request, User approver) {
+  public Request handleRequestStatusUpdate(Request request, User authUser) {
     Absence absence = absenceRepository.getOne(request.getAbsence().getId());
     request.setAbsence(absence);
 
@@ -152,14 +152,14 @@ public class RequestService {
 
     // TODO separate request approval from cancellation with issue number #73.
     if (shouldApplyRequest(request)) {
-      checkIsApproverUserTeamApprover(approver, user);
+      checkIsUserRequestApprover(authUser, user);
       applyRequest(request);
     }
 
     return requestRepository.save(request);
   }
 
-  private void checkIsApproverUserTeamApprover(User approver, User requestUser) {
+  private void checkIsUserRequestApprover(User approver, User requestUser) {
     if (requestUser.getTeam()
                    .getTeamApprovers()
                    .stream()

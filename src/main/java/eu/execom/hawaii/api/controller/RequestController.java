@@ -96,10 +96,10 @@ public class RequestController {
 
   @PutMapping
   public ResponseEntity<RequestDto> handleRequestStatus(Principal principal, @RequestBody RequestDto requestDto) {
-    var approver = getUserFromPrincipal(principal);
+    var authUser = getUserFromPrincipal(principal);
 
     var request = MAPPER.map(requestDto, Request.class);
-    request = requestService.handleRequestStatusUpdate(request, approver);
+    request = requestService.handleRequestStatusUpdate(request, authUser);
 
     return new ResponseEntity<>(new RequestDto(request), HttpStatus.OK);
   }
