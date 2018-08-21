@@ -12,7 +12,23 @@ import { getTokenFromSessionStorage } from '../../../store/services/getTokenFrom
 
 describe('getTokenFromSessionStorageSaga', () => {
   it('should redirect to leave if token exists', () => {
-    const tokenFromSession = '2d153236-d103-4fa0-a3cb-8f26a14c1c45';
+    const SessionStorageMock = {
+      getItem(key) {
+        return this[key] || null;
+      },
+
+      setItem(key, value) {
+        this[key] = value;
+      }
+    };
+
+    global.sessionStorage = Object.assign({}, SessionStorageMock);
+
+    global.sessionStorage.setItem('token', '123456');
+    global.sessionStorage.setItem('role', 'testRole');
+
+    console.log(global.sessionStorage.getItem('token'));
+    console.log(global.sessionStorage.getItem('role'));
 
     const actionType = {
       type: RECEIVE_TOKEN
@@ -20,14 +36,15 @@ describe('getTokenFromSessionStorageSaga', () => {
 
     const iterator = authenticate();
 
-    const redirect = tokenFromSession ? '/leave' : '/login';
-
+    // const redirect = sessionStorageMock.getItem ? '/leave' : '/login';
+    // console.log(redirect);
+    // console.log(getTokenFromSessionStorage)
     expect(iterator.next().value).toEqual(call(getTokenFromSessionStorage));
     expect(iterator.next().value).toEqual(put(actionType));
-    expect(iterator.next().value).toEqual(put(push(redirect)));
+    expect(iterator.next().value).toEqual(put(push('/leave')));
 
-    expect(iterator.next(redirect).value).toEqual(
-      put(requestTokenFromStorage(redirect))
+    expect(iterator.next(global.sessionStorage).value).toEqual(
+      put(requestTokenFromStorage(global.sessionStorage.getItem))
     );
 
     expect(iterator.next().done).toBe(true);
