@@ -30,16 +30,18 @@ public class RequestService {
   private AbsenceRepository absenceRepository;
   private AllowanceService allowanceService;
   private GoogleCalendarService googleCalendarService;
+  private EmailService emailService;
 
   @Autowired
   public RequestService(RequestRepository requestRepository, UserRepository userRepository,
       AbsenceRepository absenceRepository, AllowanceService allowanceService,
-      GoogleCalendarService googleCalendarService) {
+      GoogleCalendarService googleCalendarService, EmailService emailService) {
     this.requestRepository = requestRepository;
     this.userRepository = userRepository;
     this.allowanceService = allowanceService;
     this.absenceRepository = absenceRepository;
     this.googleCalendarService = googleCalendarService;
+    this.emailService = emailService;
   }
 
   /**
@@ -115,12 +117,20 @@ public class RequestService {
    * @param request the Request entity to be persisted.
    * @return a saved request with id.
    */
-  public Request save(Request request) {
+  public Request create(Request request) {
     request.getDays().forEach(day -> day.setRequest(request));
 
     User user = userRepository.getOne(request.getUser().getId());
     request.setUser(user);
     googleCalendarService.handleCreatedRequest(request);
+
+    if (AbsenceType.SICKNESS.equals(request.getAbsence().getAbsenceType())) {
+      request.setRequestStatus(RequestStatus.APPROVED);
+      emailService.createSicknessEmailForTeammatesAndSend(request);
+    } else {
+      request.setRequestStatus(RequestStatus.PENDING);
+      emailService.createEmailAndSendForApproval(request);
+    }
 
     return requestRepository.save(request);
   }
@@ -173,6 +183,8 @@ public class RequestService {
   private void applyRequest(Request request) {
     boolean requestCanceled = RequestStatus.CANCELED.equals(request.getRequestStatus());
     allowanceService.applyRequest(request, requestCanceled);
+    emailService.createStatusNotificationEmailAndSend(request);
+    emailService.createAnnualEmailForTeammatesAndSend(request);
     googleCalendarService.handleRequestUpdate(request, requestCanceled);
   }
 
