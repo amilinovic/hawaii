@@ -1,24 +1,34 @@
 package eu.execom.hawaii.api.controller;
 
+import java.security.Principal;
+import java.time.LocalDate;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import eu.execom.hawaii.dto.RequestDto;
 import eu.execom.hawaii.model.Request;
+import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.enumerations.AbsenceType;
 import eu.execom.hawaii.model.enumerations.RequestStatus;
 import eu.execom.hawaii.service.RequestService;
+import eu.execom.hawaii.service.UserService;
 
 @RestController
 @RequestMapping("/requests")
@@ -27,10 +37,12 @@ public class RequestController {
   private static final ModelMapper MAPPER = new ModelMapper();
 
   private RequestService requestService;
+  private UserService userService;
 
   @Autowired
-  public RequestController(RequestService requestService) {
+  public RequestController(RequestService requestService, UserService userService) {
     this.requestService = requestService;
+    this.userService = userService;
   }
 
   @GetMapping("/user/{id}")
@@ -41,9 +53,11 @@ public class RequestController {
     return new ResponseEntity<>(requestDtos, HttpStatus.OK);
   }
 
-  @GetMapping("/approver/{id}")
-  public ResponseEntity<List<RequestDto>> getRequestsByApproverId(@PathVariable Long id) {
-    var requests = requestService.findAllByApprover(id);
+  @GetMapping("/user/{id}/dates")
+  public ResponseEntity<List<RequestDto>> getRequestsByUserByDates(
+      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate, @PathVariable Long id) {
+    var requests = requestService.findAllByUserWithinDates(startDate, endDate, id);
     var requestDtos = requests.stream().map(RequestDto::new).collect(Collectors.toList());
 
     return new ResponseEntity<>(requestDtos, HttpStatus.OK);
@@ -68,18 +82,35 @@ public class RequestController {
   @GetMapping("/{id}")
   public ResponseEntity<RequestDto> getById(@PathVariable Long id) {
     var request = requestService.getById(id);
-    var requestDto = new RequestDto(request);
 
-    return new ResponseEntity<>(requestDto, HttpStatus.OK);
+    return new ResponseEntity<>(new RequestDto(request), HttpStatus.OK);
   }
 
   @PostMapping
   public ResponseEntity<RequestDto> createRequest(@RequestBody RequestDto requestDto) {
     var request = MAPPER.map(requestDto, Request.class);
-    request = requestService.save(request);
-    var requestDtoResponse = new RequestDto(request);
+    request = requestService.create(request);
 
-    return new ResponseEntity<>(requestDtoResponse, HttpStatus.OK);
+    return new ResponseEntity<>(new RequestDto(request), HttpStatus.OK);
+  }
+
+  @PutMapping
+  public ResponseEntity<RequestDto> handleRequestStatus(Principal principal, @RequestBody RequestDto requestDto) {
+    var approver = getUserFromPrincipal(principal);
+
+    var request = MAPPER.map(requestDto, Request.class);
+    request = requestService.handleRequestStatusUpdate(request, approver);
+
+    return new ResponseEntity<>(new RequestDto(request), HttpStatus.OK);
+  }
+
+  private User getUserFromPrincipal(Principal principal) {
+    OAuth2Authentication auth = (OAuth2Authentication) principal;
+    UsernamePasswordAuthenticationToken authUser = (UsernamePasswordAuthenticationToken) auth.getUserAuthentication();
+    LinkedHashMap userDetails = (LinkedHashMap) authUser.getDetails();
+    String userEmail = (String) userDetails.get("email");
+
+    return userService.findByEmail(userEmail);
   }
 
 }

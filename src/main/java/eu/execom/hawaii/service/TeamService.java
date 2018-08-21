@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import eu.execom.hawaii.model.Team;
 import eu.execom.hawaii.repository.TeamRepository;
@@ -23,6 +24,15 @@ public class TeamService {
 
   /**
    * Retrieves a list of all teams from repository.
+   *
+   * @return a list of all teams.
+   */
+  public List<Team> findAll() {
+    return teamRepository.findAll();
+  }
+
+  /**
+   * Retrieves a list of all teams from repository by given status.
    *
    * @param active is it active.
    * @return a list of all teams.
@@ -45,7 +55,9 @@ public class TeamService {
    * Saves the provided Team to repository.
    *
    * @param team the Team entity to be persisted.
+   * @return saved Team.
    */
+  @Transactional
   public Team save(Team team) {
     return teamRepository.save(team);
   }
@@ -55,6 +67,7 @@ public class TeamService {
    *
    * @param id - the team id.
    */
+  @Transactional
   public void delete(Long id) {
     var team = getById(id);
     team.setActive(false);

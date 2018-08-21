@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import eu.execom.hawaii.exceptions.InsufficientHoursException;
+import eu.execom.hawaii.exceptions.NotAuthorizedApprovalExeception;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -38,6 +40,18 @@ public class GlobalExceptionHandler {
   @ResponseStatus(HttpStatus.FORBIDDEN) // 403
   @ExceptionHandler(AccessDeniedException.class)
   public void handleAccessDeniedException(HttpServletRequest request, Exception exception) {
+    logException(request, exception);
+  }
+
+  @ResponseStatus(HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE) // 416
+  @ExceptionHandler(InsufficientHoursException.class)
+  public void handleInsufficientHoursException(HttpServletRequest request, Exception exception) {
+    logException(request, exception);
+  }
+
+  @ResponseStatus(HttpStatus.UNAUTHORIZED) // 401
+  @ExceptionHandler(NotAuthorizedApprovalExeception.class)
+  public void handleNotAuthorizedApprovalException(HttpServletRequest request, Exception exception) {
     logException(request, exception);
   }
 

@@ -1,5 +1,7 @@
 package eu.execom.hawaii.service;
 
+import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.persistence.EntityNotFoundException;
@@ -8,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import eu.execom.hawaii.model.Allowance;
 import eu.execom.hawaii.model.User;
+import eu.execom.hawaii.repository.LeaveProfileRepository;
 import eu.execom.hawaii.repository.UserRepository;
 
 /**
@@ -18,10 +22,12 @@ import eu.execom.hawaii.repository.UserRepository;
 public class UserService {
 
   private UserRepository userRepository;
+  private LeaveProfileRepository leaveProfileRepository;
 
   @Autowired
-  public UserService(UserRepository userRepository) {
+  public UserService(UserRepository userRepository, LeaveProfileRepository leaveProfileRepository) {
     this.userRepository = userRepository;
+    this.leaveProfileRepository = leaveProfileRepository;
   }
 
   /**
@@ -77,6 +83,26 @@ public class UserService {
     var user = userRepository.getOne(id);
     user.setActive(false);
     userRepository.save(user);
+  }
+
+  /**
+   * Assign allowance to new User based on users leave profile.
+   *
+   * @param user new User.
+   */
+  @Transactional
+  public User createAndSaveNewUser(User user) {
+    var allowance = new Allowance();
+    var leaveProfile = leaveProfileRepository.getOne(user.getLeaveProfile().getId());
+
+    allowance.setUser(user);
+    allowance.setYear(LocalDate.now().getYear());
+    allowance.setAnnual(leaveProfile.getEntitlement());
+    allowance.setTraining(leaveProfile.getTraining());
+
+    user.setAllowances(Arrays.asList(allowance));
+
+    return save(user);
   }
 
 }

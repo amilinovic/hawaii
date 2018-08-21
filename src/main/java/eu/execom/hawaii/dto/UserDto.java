@@ -1,5 +1,8 @@
 package eu.execom.hawaii.dto;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.enumerations.UserRole;
 import lombok.Data;
@@ -15,6 +18,8 @@ public class UserDto {
   private UserRole userRole;
   private String jobTitle;
   private boolean active;
+  private int yearsOfService;
+  private List<AllowanceDto> allowances;
 
   public UserDto(User user) {
     this.id = user.getId();
@@ -25,6 +30,8 @@ public class UserDto {
     this.userRole = user.getUserRole();
     this.jobTitle = user.getJobTitle();
     this.active = user.isActive();
+    this.yearsOfService = user.getYearsOfService();
+    this.allowances = user.getAllowances().stream().map(AllowanceDto::new).collect(Collectors.toList());
   }
 
 }

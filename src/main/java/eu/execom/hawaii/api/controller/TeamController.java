@@ -35,8 +35,8 @@ public class TeamController {
   private static final ModelMapper MAPPER = new ModelMapper();
 
   @GetMapping
-  public ResponseEntity<List<TeamDto>> getTeams(@RequestParam boolean active) {
-    var teams = teamService.findAllByActive(active);
+  public ResponseEntity<List<TeamDto>> getTeams(@RequestParam(required = false) Boolean active) {
+    var teams = getTeamsByStatus(active);
     var teamDtos = teams.stream().map(TeamDto::new).collect(Collectors.toList());
     return new ResponseEntity<>(teamDtos, HttpStatus.OK);
   }
@@ -61,6 +61,7 @@ public class TeamController {
     var team = MAPPER.map(teamDto, Team.class);
     team = teamService.save(team);
     var teamDtoResponse = new TeamDto(team);
+
     return new ResponseEntity<>(teamDtoResponse, HttpStatus.OK);
   }
 
@@ -68,6 +69,10 @@ public class TeamController {
   public ResponseEntity deleteTeam(@PathVariable Long id) {
     teamService.delete(id);
     return new ResponseEntity(HttpStatus.NO_CONTENT);
+  }
+
+  private List<Team> getTeamsByStatus(Boolean active) {
+    return active == null ? teamService.findAll() : teamService.findAllByActive(active);
   }
 
 }

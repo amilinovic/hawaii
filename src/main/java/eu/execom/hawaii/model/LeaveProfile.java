@@ -3,6 +3,7 @@ package eu.execom.hawaii.model;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
@@ -30,7 +31,7 @@ public class LeaveProfile extends BaseEntity implements Serializable {
 
   private String comment;
 
-  @OneToMany(mappedBy = "leaveProfile")
+  @OneToMany(mappedBy = "leaveProfile", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
   private List<User> users;
 
 }

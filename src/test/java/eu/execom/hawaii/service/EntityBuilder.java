@@ -2,14 +2,19 @@ package eu.execom.hawaii.service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 
 import eu.execom.hawaii.model.Absence;
 import eu.execom.hawaii.model.Allowance;
+import eu.execom.hawaii.model.Day;
 import eu.execom.hawaii.model.LeaveProfile;
 import eu.execom.hawaii.model.PublicHoliday;
 import eu.execom.hawaii.model.Request;
 import eu.execom.hawaii.model.Team;
 import eu.execom.hawaii.model.User;
+import eu.execom.hawaii.model.enumerations.AbsenceSubtype;
+import eu.execom.hawaii.model.enumerations.AbsenceType;
+import eu.execom.hawaii.model.enumerations.Duration;
 import eu.execom.hawaii.model.enumerations.RequestStatus;
 import eu.execom.hawaii.model.enumerations.UserRole;
 
@@ -42,6 +47,23 @@ public class EntityBuilder {
     return user;
   }
 
+  static User approver() {
+    var approver = new User();
+    approver.setId(3L);
+    approver.setTeam(new Team());
+    approver.setLeaveProfile(leaveProfile());
+    approver.setFullName("Bruce Wayne");
+    approver.setEmail("bruce.wayne@execom.eu");
+    approver.setUserRole(UserRole.HR_MANAGER);
+    approver.setJobTitle("Developer");
+    approver.setActive(true);
+    approver.setTeamApprovers(new ArrayList<>());
+    approver.setRequests(new ArrayList<>());
+    approver.setAllowances(new ArrayList<>());
+
+    return approver;
+  }
+
   static LeaveProfile leaveProfile() {
     var leaveProfile = new LeaveProfile();
     leaveProfile.setName("Default");
@@ -54,14 +76,14 @@ public class EntityBuilder {
     return leaveProfile;
   }
 
-  static Request request(Absence absence) {
+  static Request request(Absence absence, List<Day> days) {
     var request = new Request();
     request.setUser(user(team()));
-    request.setApprover(user(team()));
+    request.getUser().setId(1L);
     request.setAbsence(absence);
-    request.setRequestStatus(RequestStatus.APPROVED);
+    request.setRequestStatus(RequestStatus.PENDING);
     request.setReason("My request reason");
-    request.setDays(new ArrayList<>());
+    request.setDays(days);
 
     return request;
   }
@@ -70,12 +92,14 @@ public class EntityBuilder {
     var allowance = new Allowance();
     allowance.setUser(user);
     allowance.setYear(2018);
-    allowance.setAnnual(20);
-    allowance.setTaken(5);
-    allowance.setSickness(3);
-    allowance.setBonus(2);
-    allowance.setCarriedOver(5);
-    allowance.setManualAdjust(2);
+    allowance.setAnnual(160);
+    allowance.setTakenAnnual(40);
+    allowance.setSickness(16);
+    allowance.setBonus(16);
+    allowance.setCarriedOver(40);
+    allowance.setManualAdjust(0);
+    allowance.setTraining(16);
+    allowance.setTakenTraining(0);
 
     return allowance;
   }
@@ -87,6 +111,42 @@ public class EntityBuilder {
     publicHoliday.setDate(LocalDate.of(2018, 1, 1));
 
     return publicHoliday;
+  }
+
+  static Absence absenceAnnual() {
+    var absence = new Absence();
+    absence.setId(1L);
+    absence.setAbsenceType(AbsenceType.DEDUCTED_LEAVE);
+    absence.setAbsenceSubtype(AbsenceSubtype.ANNUAL);
+    absence.setName("Annual leave");
+    absence.setComment("Description");
+    absence.setActive(true);
+    absence.setIconUrl("icons/vacation.png");
+    absence.setLeaveRequests(new ArrayList<>());
+
+    return absence;
+  }
+
+  static Absence absenceTraining() {
+    var absence = new Absence();
+    absence.setAbsenceType(AbsenceType.DEDUCTED_LEAVE);
+    absence.setAbsenceSubtype(AbsenceSubtype.TRAINING);
+    absence.setName("Training");
+    absence.setComment("Description");
+    absence.setActive(true);
+    absence.setIconUrl("icons/training.png");
+    absence.setLeaveRequests(new ArrayList<>());
+
+    return absence;
+  }
+
+  static Day day(LocalDate date) {
+    var day = new Day();
+    day.setRequest(new Request());
+    day.setDate(date);
+    day.setDuration(Duration.FULL_DAY);
+
+    return day;
   }
 
 }

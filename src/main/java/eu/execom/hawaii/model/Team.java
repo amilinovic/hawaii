@@ -1,14 +1,19 @@
 package eu.execom.hawaii.model;
 
+import java.io.Serializable;
+import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import javax.validation.constraints.NotNull;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import javax.validation.constraints.NotNull;
-import java.io.Serializable;
-import java.util.List;
 
 @Entity
 @Data
@@ -25,10 +30,11 @@ public class Team extends BaseEntity implements Serializable {
 
   private boolean active;
 
-  @OneToMany(mappedBy = "team")
+  @OneToMany(mappedBy = "team", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
   private List<User> users;
 
-  @OneToMany(mappedBy = "team")
-  private List<TeamApprover> teamApprovers;
+  @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+  @JoinTable(name = "team_approver", joinColumns = @JoinColumn(name = "team_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
+  private List<User> teamApprovers;
 
 }
