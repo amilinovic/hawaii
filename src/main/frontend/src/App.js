@@ -3,7 +3,7 @@ import { Switch, Route } from 'react-router-dom';
 import Login from './pages/Login';
 import NavBar from './components/navigation/NavBar';
 import { ConnectedRouter } from 'connected-react-router';
-import { history } from './store/Store';
+import { history } from './store/store';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { requestTokenFromStorage } from './store/actions/getTokenFromSessionStorageActions';

@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { requestToken } from '../store/actions/getTokenActions';
 import { getAuthorization } from '../store/selectors';
-import store from '../store/Store';
+import store from '../store/store';
 import { push } from 'connected-react-router';
 
 const loginButtonStyle = {
