@@ -11,7 +11,7 @@ import { authenticate } from '../../../store/sagas/getTokenFromSessionStorageSag
 import { getTokenFromSessionStorage } from '../../../store/services/getTokenFromSessionStorage';
 
 describe('getTokenFromSessionStorageSaga', () => {
-  it("should redirect to login if token don't exists", () => {
+  it('should redirect to leave if token exists', () => {
     const tokenFromSession = '2d153236-d103-4fa0-a3cb-8f26a14c1c45';
 
     const actionType = {
