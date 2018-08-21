@@ -62,11 +62,11 @@ public class RequestController {
                         .flatMap(List::stream)
                         .map(User::getRequests)
                         .flatMap(List::stream)
-                        .filter(checkStatus())
+                        .filter(pendingRequests())
                         .collect(Collectors.toList());
   }
 
-  private Predicate<Request> checkStatus() {
+  private Predicate<Request> pendingRequests() {
     return request -> RequestStatus.PENDING.equals(request.getRequestStatus())
         || RequestStatus.CANCELATION_PENDING.equals(request.getRequestStatus());
   }
