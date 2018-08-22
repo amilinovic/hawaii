@@ -38,6 +38,12 @@
       <column name="manual_adjust" type="INT(10)">
         <constraints nullable="false"/>
       </column>
+      <column name="pending_annual" type="INT(10)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="pending_training" type="INT(10)">
+        <constraints nullable="false"/>
+      </column>
       <column name="sickness" type="INT(10)">
         <constraints nullable="false"/>
       </column>

@@ -53,7 +53,7 @@ public class RequestService {
    */
   public List<Request> findAllByUserWithinDates(LocalDate startDate, LocalDate endDate, Long userId) {
     User user = userRepository.getOne(userId);
-    List<Request> requests = requestRepository.findAllByUserAndRequestStatusNot(user, RequestStatus.CANCELED);
+    List<Request> requests = requestRepository.findAllByUser(user);
     return requests.stream()
                    .filter(isBetween(startDate, endDate))
                    .sorted(Comparator.comparing((Request req) -> req.getDays().get(0).getDate()).reversed())
@@ -71,14 +71,14 @@ public class RequestService {
   }
 
   /**
-   * Retrieves a list of requests by userId and without canceled requests from repository.
+   * Retrieves a list of requests by userId from repository.
    *
    * @param userId the User id.
    * @return a list of all requests for given user.
    */
   public List<Request> findAllByUser(Long userId) {
     User user = userRepository.getOne(userId);
-    return requestRepository.findAllByUserAndRequestStatusNot(user, RequestStatus.CANCELED);
+    return requestRepository.findAllByUser(user);
   }
 
   /**
