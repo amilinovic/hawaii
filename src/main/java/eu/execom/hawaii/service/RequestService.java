@@ -152,17 +152,17 @@ public class RequestService {
 
     switch (request.getRequestStatus()) {
       case APPROVED:
-        if (!checkIsUserRequestApprover(authUser, user)) {
+        if (!isUserRequestApprover(authUser, user)) {
           log.error("Approver not authorized to approve this request for user with email: {}", user.getEmail());
           throw new NotAuthorizedApprovalExeception();
         }
         applyRequest(request, false);
         break;
       case CANCELED:
-        if (checkIsUserRequestApprover(authUser, user) && (isExistAsApproved(request.getId())
+        if (isUserRequestApprover(authUser, user) && (isExistAsApproved(request.getId())
             || isExistAsCancellationPending(request.getId()))) {
           applyRequest(request, true);
-        } else if (!checkIsUserRequestApprover(authUser, user) && isExistAsApproved(request.getId())) {
+        } else if (!isUserRequestApprover(authUser, user) && isExistAsApproved(request.getId())) {
           request.setRequestStatus(RequestStatus.CANCELLATION_PENDING);
           emailService.createEmailAndSendForApproval(request);
         }
@@ -175,7 +175,7 @@ public class RequestService {
     return requestRepository.save(request);
   }
 
-  private boolean checkIsUserRequestApprover(User approver, User requestUser) {
+  private boolean isUserRequestApprover(User approver, User requestUser) {
     return requestUser.getTeam()
                       .getTeamApprovers()
                       .stream()
