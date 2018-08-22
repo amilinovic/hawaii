@@ -11,11 +11,14 @@ export const authenticate = function*() {
   try {
     const authentication = yield call(getTokenFromSessionStorage);
     yield put(receiveToken(authentication));
-    const redirect = authentication ? '/leave' : '/login';
-    yield put(push(redirect));
+    yield* redirect(authentication);
   } catch (error) {
     yield put(receiveTokenFromStorageError(error));
   }
+};
+
+export const redirect = function*(authentication) {
+  yield put(push(authentication ? '/leave' : '/login'));
 };
 
 export const authenticateSaga = [
