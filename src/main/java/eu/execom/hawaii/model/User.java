@@ -52,7 +52,7 @@ public class User extends BaseEntity implements Serializable {
   private int yearsOfService;
 
   @ManyToMany(mappedBy = "teamApprovers", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-  private List<Team> teamApprovers;
+  private List<Team> approverTeams;
 
   @OneToMany(mappedBy = "user")
   private List<Request> requests;

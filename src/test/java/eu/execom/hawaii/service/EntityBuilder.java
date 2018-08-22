@@ -40,7 +40,7 @@ public class EntityBuilder {
     user.setUserRole(UserRole.HR_MANAGER);
     user.setJobTitle("Developer");
     user.setActive(true);
-    user.setTeamApprovers(new ArrayList<>());
+    user.setApproverTeams(new ArrayList<>());
     user.setRequests(new ArrayList<>());
     user.setAllowances(new ArrayList<>());
 
@@ -57,7 +57,7 @@ public class EntityBuilder {
     approver.setUserRole(UserRole.HR_MANAGER);
     approver.setJobTitle("Developer");
     approver.setActive(true);
-    approver.setTeamApprovers(new ArrayList<>());
+    approver.setApproverTeams(new ArrayList<>());
     approver.setRequests(new ArrayList<>());
     approver.setAllowances(new ArrayList<>());
 
