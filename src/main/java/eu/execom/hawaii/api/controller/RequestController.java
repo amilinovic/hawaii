@@ -68,7 +68,7 @@ public class RequestController {
 
   private Predicate<Request> pendingRequests() {
     return request -> RequestStatus.PENDING.equals(request.getRequestStatus())
-        || RequestStatus.CANCELATION_PENDING.equals(request.getRequestStatus());
+        || RequestStatus.CANCELLATION_PENDING.equals(request.getRequestStatus());
   }
 
   @GetMapping("/user/{id}")
