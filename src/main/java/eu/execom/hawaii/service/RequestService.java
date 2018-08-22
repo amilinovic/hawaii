@@ -159,10 +159,10 @@ public class RequestService {
         applyRequest(request, false);
         break;
       case CANCELED:
-        if (isUserRequestApprover(authUser, user) && (isExistAsApproved(request.getId())
-            || isExistAsCancellationPending(request.getId()))) {
+        if (isUserRequestApprover(authUser, user) && (isApproved(request.getId())
+            || isCancellationPending(request.getId()))) {
           applyRequest(request, true);
-        } else if (!isUserRequestApprover(authUser, user) && isExistAsApproved(request.getId())) {
+        } else if (!isUserRequestApprover(authUser, user) && isApproved(request.getId())) {
           request.setRequestStatus(RequestStatus.CANCELLATION_PENDING);
           emailService.createEmailAndSendForApproval(request);
         }
@@ -182,13 +182,13 @@ public class RequestService {
                       .anyMatch(teamApprover -> teamApprover.getId().equals(approver.getId()));
   }
 
-  private boolean isExistAsApproved(Long requestId) {
+  private boolean isApproved(Long requestId) {
     var existingRequest = getById(requestId);
 
     return RequestStatus.APPROVED.equals(existingRequest.getRequestStatus());
   }
 
-  private boolean isExistAsCancellationPending(Long requestId) {
+  private boolean isCancellationPending(Long requestId) {
     var existingRequest = getById(requestId);
 
     return RequestStatus.CANCELLATION_PENDING.equals(existingRequest.getRequestStatus());
