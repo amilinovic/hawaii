@@ -136,52 +136,71 @@ public class RequestService {
   }
 
   /**
-   * Saves changed request status. If status is changed to APPROVED,
+   * Saves changed request status. If status is changed to APPROVED/CANCELED,
    * applies leave days from the request to the user's allowance
    * and creates an event in the user's Google calendar.
    *
    * @param request to be persisted.
    * @return saved request.
    */
-  public Request handleRequestStatusUpdate(Request request, User approver) {
+  public Request handleRequestStatusUpdate(Request request, User authUser) {
     Absence absence = absenceRepository.getOne(request.getAbsence().getId());
     request.setAbsence(absence);
 
     User user = userRepository.getOne(request.getUser().getId());
     request.setUser(user);
 
-    // TODO separate request approval from cancellation with issue number #73.
-    if (shouldApplyRequest(request)) {
-      checkIsApproverUserTeamApprover(approver, user);
-      applyRequest(request);
+    boolean userCanApproveRequest = isUserRequestApprover(authUser, user);
+    boolean requestIsApproved = isApproved(request);
+    boolean requestHasPendingCancellation = isCancellationPending(request);
+
+    switch (request.getRequestStatus()) {
+      case APPROVED:
+        if (!userCanApproveRequest) {
+          log.error("Approver not authorized to approve this request for user with email: {}", user.getEmail());
+          throw new NotAuthorizedApprovalExeception();
+        }
+        applyRequest(request, false);
+        break;
+      case CANCELED:
+        if (userCanApproveRequest && (requestIsApproved || requestHasPendingCancellation)) {
+          applyRequest(request, true);
+        } else if (!userCanApproveRequest && requestIsApproved) {
+          request.setRequestStatus(RequestStatus.CANCELLATION_PENDING);
+          emailService.createEmailAndSendForApproval(request);
+        }
+        break;
+      default:
+        log.info("Request with status {} will be saved without changing allowance for user with email {}",
+            request.getRequestStatus(), request.getUser().getEmail());
+        break;
     }
 
     return requestRepository.save(request);
   }
 
-  private void checkIsApproverUserTeamApprover(User approver, User requestUser) {
-    if (requestUser.getTeam()
-                   .getTeamApprovers()
-                   .stream()
-                   .noneMatch(teamApprover -> teamApprover.getId().equals(approver.getId()))) {
-      log.error("Approver not authorized to approve this request for user with email: {}", requestUser.getEmail());
-      throw new NotAuthorizedApprovalExeception();
-    }
+  private boolean isUserRequestApprover(User approver, User requestUser) {
+    return requestUser.getTeam()
+                      .getTeamApprovers()
+                      .stream()
+                      .anyMatch(teamApprover -> teamApprover.getId().equals(approver.getId()));
   }
 
-  private boolean shouldApplyRequest(Request request) {
-    var isRequestExistingAsApproved = false;
-    if (request.getId() != null) {
-      var existingRequest = requestRepository.getOne(request.getId());
-      isRequestExistingAsApproved = request.getRequestStatus().equals(existingRequest.getRequestStatus());
-    }
-    var isRequestApproved = RequestStatus.APPROVED.equals(request.getRequestStatus());
-    var isRequestCanceled = RequestStatus.CANCELED.equals(request.getRequestStatus());
-    return isRequestApproved || (isRequestCanceled && isRequestExistingAsApproved);
+  private boolean isApproved(Request request) {
+    var requestId = request.getId();
+    var existingRequest = getById(requestId);
+
+    return RequestStatus.APPROVED.equals(existingRequest.getRequestStatus());
   }
 
-  private void applyRequest(Request request) {
-    boolean requestCanceled = RequestStatus.CANCELED.equals(request.getRequestStatus());
+  private boolean isCancellationPending(Request request) {
+    var requestId = request.getId();
+    var existingRequest = getById(requestId);
+
+    return RequestStatus.CANCELLATION_PENDING.equals(existingRequest.getRequestStatus());
+  }
+
+  private void applyRequest(Request request, boolean requestCanceled) {
     allowanceService.applyRequest(request, requestCanceled);
     emailService.createStatusNotificationEmailAndSend(request);
     emailService.createAnnualEmailForTeammatesAndSend(request);

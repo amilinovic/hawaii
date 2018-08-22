@@ -21,7 +21,7 @@ import lombok.ToString;
 
 @Entity
 @Data
-@ToString(exclude = {"teamApprovers", "requests", "allowances"})
+@ToString(exclude = {"approverTeams", "requests", "allowances"})
 @EqualsAndHashCode(callSuper = false)
 public class User extends BaseEntity implements Serializable {
 
