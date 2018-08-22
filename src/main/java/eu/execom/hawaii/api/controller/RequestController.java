@@ -68,7 +68,7 @@ public class RequestController {
 
   private Predicate<Request> pendingRequests() {
     return request -> RequestStatus.PENDING.equals(request.getRequestStatus())
-        || RequestStatus.CANCELATION_PENDING.equals(request.getRequestStatus());
+        || RequestStatus.CANCELLATION_PENDING.equals(request.getRequestStatus());
   }
 
   @GetMapping("/user/{id}")
@@ -122,10 +122,10 @@ public class RequestController {
 
   @PutMapping
   public ResponseEntity<RequestDto> handleRequestStatus(Principal principal, @RequestBody RequestDto requestDto) {
-    var approver = getUserFromPrincipal(principal);
+    var authUser = getUserFromPrincipal(principal);
 
     var request = MAPPER.map(requestDto, Request.class);
-    request = requestService.handleRequestStatusUpdate(request, approver);
+    request = requestService.handleRequestStatusUpdate(request, authUser);
 
     return new ResponseEntity<>(new RequestDto(request), HttpStatus.OK);
   }
