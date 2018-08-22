@@ -150,19 +150,22 @@ public class RequestService {
     User user = userRepository.getOne(request.getUser().getId());
     request.setUser(user);
 
+    boolean userCanApproveRequest = isUserRequestApprover(authUser, user);
+    boolean requestIsApproved = isApproved(request);
+    boolean requestHasPendingCancellation = isCancellationPending(request);
+
     switch (request.getRequestStatus()) {
       case APPROVED:
-        if (!isUserRequestApprover(authUser, user)) {
+        if (!userCanApproveRequest) {
           log.error("Approver not authorized to approve this request for user with email: {}", user.getEmail());
           throw new NotAuthorizedApprovalExeception();
         }
         applyRequest(request, false);
         break;
       case CANCELED:
-        if (isUserRequestApprover(authUser, user) && (isApproved(request.getId())
-            || isCancellationPending(request.getId()))) {
+        if (userCanApproveRequest && (requestIsApproved || requestHasPendingCancellation)) {
           applyRequest(request, true);
-        } else if (!isUserRequestApprover(authUser, user) && isApproved(request.getId())) {
+        } else if (!userCanApproveRequest && requestIsApproved) {
           request.setRequestStatus(RequestStatus.CANCELLATION_PENDING);
           emailService.createEmailAndSendForApproval(request);
         }
@@ -170,6 +173,7 @@ public class RequestService {
       default:
         log.info("Request with status {} will be saved without changing allowance for user with email {}",
             request.getRequestStatus(), request.getUser().getEmail());
+        break;
     }
 
     return requestRepository.save(request);
@@ -182,13 +186,15 @@ public class RequestService {
                       .anyMatch(teamApprover -> teamApprover.getId().equals(approver.getId()));
   }
 
-  private boolean isApproved(Long requestId) {
+  private boolean isApproved(Request request) {
+    var requestId = request.getId();
     var existingRequest = getById(requestId);
 
     return RequestStatus.APPROVED.equals(existingRequest.getRequestStatus());
   }
 
-  private boolean isCancellationPending(Long requestId) {
+  private boolean isCancellationPending(Request request) {
+    var requestId = request.getId();
     var existingRequest = getById(requestId);
 
     return RequestStatus.CANCELLATION_PENDING.equals(existingRequest.getRequestStatus());
