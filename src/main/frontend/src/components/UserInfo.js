@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { UserImage } from './common/UserImage';
+import { UserImage } from './common/userImage';
 
 export default class UserInfo extends Component {
   render() {

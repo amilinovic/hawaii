@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { Switch, Route } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 import Leave from '../../pages/Leave';
 import InformationHeader from '../header/InformationHeader';
 import LeaveHistory from '../../pages/LeaveHistory';

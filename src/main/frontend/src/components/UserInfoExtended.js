@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Col } from 'reactstrap';
-import { UserImage } from './common/UserImage';
+import { UserImage } from './common/userImage';
 
 export default class UserInfoComponent extends Component {
   render() {
