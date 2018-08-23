@@ -10,10 +10,7 @@ describe('getTokenAndRoleFromSessionStorageSaga', () => {
     }
   };
   beforeEach(() => {
-    console.log(global.sessionStorage);
     global.sessionStorage = Object.assign({}, sessionStorageMock);
-    // global.sessionStorage = sessionStorageMock;
-    console.log(global.sessionStorage);
   });
 
   afterEach(() => {
