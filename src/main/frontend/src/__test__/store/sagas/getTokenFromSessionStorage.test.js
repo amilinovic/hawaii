@@ -1,15 +1,15 @@
 import { getTokenFromSessionStorage } from '../../../store/services/getTokenFromSessionStorage';
 
 describe('getTokenAndRoleFromSessionStorageSaga', () => {
-  const sessionStorageMock = {
-    getItem(key) {
-      return this[key] || null;
-    },
-    setItem(key, value) {
-      this[key] = value;
-    }
-  };
   beforeEach(() => {
+    const sessionStorageMock = {
+      getItem(key) {
+        return this[key] || null;
+      },
+      setItem(key, value) {
+        this[key] = value;
+      }
+    };
     global.sessionStorage = sessionStorageMock;
   });
   afterEach(() => {
