@@ -1,7 +1,3 @@
-import {
-  REQUEST_TOKEN_FROM_STORAGE,
-  requestTokenFromStorage
-} from '../../../store/actions/getTokenFromSessionStorageActions';
 import { getTokenFromSessionStorage } from '../../../store/services/getTokenFromSessionStorage';
 
 describe('getTokenAndRoleFromSessionStorageSaga', () => {
