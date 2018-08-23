@@ -22,4 +22,40 @@ describe('getTokenAndRoleFromSessionStorageSaga', () => {
       role: global.sessionStorage.role
     });
   });
+
+  it("should return null if role don't exists", () => {
+    const SessionStorageMock = {
+      getItem(key) {
+        return this[key] || null;
+      },
+
+      setItem(key, value) {
+        this[key] = value;
+      }
+    };
+
+    global.sessionStorage = Object.assign({}, SessionStorageMock);
+
+    global.sessionStorage.setItem('token', '123456');
+
+    expect(getTokenFromSessionStorage()).toEqual(null);
+  });
+
+  it("should return null if token don't exists", () => {
+    const SessionStorageMock = {
+      getItem(key) {
+        return this[key] || null;
+      },
+
+      setItem(key, value) {
+        this[key] = value;
+      }
+    };
+
+    global.sessionStorage = Object.assign({}, SessionStorageMock);
+
+    global.sessionStorage.setItem('role', 'testRole');
+
+    expect(getTokenFromSessionStorage()).toEqual(null);
+  });
 });
