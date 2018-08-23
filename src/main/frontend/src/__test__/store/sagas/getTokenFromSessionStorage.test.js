@@ -10,7 +10,7 @@ describe('getTokenAndRoleFromSessionStorageSaga', () => {
     }
   };
   beforeEach(() => {
-    global.sessionStorage = Object.assign({}, sessionStorageMock);
+    global.sessionStorage = sessionStorageMock;
   });
 
   afterEach(() => {
@@ -29,10 +29,12 @@ describe('getTokenAndRoleFromSessionStorageSaga', () => {
 
   it("should return null if role don't exists", () => {
     global.sessionStorage.setItem('token', '123456');
+    global.sessionStorage.setItem('role', null);
     expect(getTokenFromSessionStorage()).toEqual(null);
   });
 
   it("should return null if token don't exists", () => {
+    global.sessionStorage.setItem('token', null);
     global.sessionStorage.setItem('role', 'testRole');
     expect(getTokenFromSessionStorage()).toEqual(null);
   });
