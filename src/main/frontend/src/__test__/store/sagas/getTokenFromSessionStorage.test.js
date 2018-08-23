@@ -1,35 +1,42 @@
-import { call, put } from 'redux-saga/effects';
-import { push } from 'connected-react-router';
-
-import { RECEIVE_TOKEN } from '../../../store/actions/getTokenActions';
-import {
-  authenticate,
-  redirect
-} from '../../../store/sagas/getTokenFromSessionStorageSaga';
 import { getTokenFromSessionStorage } from '../../../store/services/getTokenFromSessionStorage';
 
-describe('getTokenFromSessionStorageSaga', () => {
-  it('should redirect to leave if token exists', () => {
-    const actionType = {
-      type: RECEIVE_TOKEN
-    };
+describe('getTokenAndRoleFromSessionStorageSaga', () => {
+  const sessionStorageMock = {
+    getItem(key) {
+      return this[key] || null;
+    },
+    setItem(key, value) {
+      this[key] = value;
+    }
+  };
+  beforeEach(() => {
+    console.log(global.sessionStorage);
+    global.sessionStorage = Object.assign({}, sessionStorageMock);
+    // global.sessionStorage = sessionStorageMock;
+    console.log(global.sessionStorage);
+  });
 
-    const iterator = authenticate();
+  afterEach(() => {
+    global.sessionStorage = undefined;
+  });
 
-    expect(iterator.next().value).toEqual(call(getTokenFromSessionStorage));
+  it('should get token and role if token and role exists', () => {
+    global.sessionStorage.setItem('token', '123456');
+    global.sessionStorage.setItem('role', 'testRole');
 
-    const iteratorStep = iterator.next();
-    expect(iteratorStep.value).toEqual(put(actionType));
-    expect(iteratorStep.done).toBe(false);
+    expect(getTokenFromSessionStorage()).toEqual({
+      token: global.sessionStorage.token,
+      role: global.sessionStorage.role
+    });
+  });
 
-    const redirectIteratorLogin = redirect();
+  it("should return null if role don't exists", () => {
+    global.sessionStorage.setItem('token', '123456');
+    expect(getTokenFromSessionStorage()).toEqual(null);
+  });
 
-    expect(redirectIteratorLogin.next().value).toEqual(put(push('/login')));
-    expect(redirectIteratorLogin.next().done).toEqual(true);
-
-    const redirectIteratorLeave = redirect('truthy value');
-
-    expect(redirectIteratorLeave.next().value).toEqual(put(push('/leave')));
-    expect(redirectIteratorLeave.next().done).toEqual(true);
+  it("should return null if token don't exists", () => {
+    global.sessionStorage.setItem('role', 'testRole');
+    expect(getTokenFromSessionStorage()).toEqual(null);
   });
 });
