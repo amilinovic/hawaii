@@ -21,7 +21,7 @@ import lombok.ToString;
 
 @Entity
 @Data
-@ToString(exclude = {"teamApprovers", "requests", "allowances"})
+@ToString(exclude = {"approverTeams", "requests", "allowances"})
 @EqualsAndHashCode(callSuper = false)
 public class User extends BaseEntity implements Serializable {
 
@@ -52,7 +52,7 @@ public class User extends BaseEntity implements Serializable {
   private int yearsOfService;
 
   @ManyToMany(mappedBy = "teamApprovers", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-  private List<Team> teamApprovers;
+  private List<Team> approverTeams;
 
   @OneToMany(mappedBy = "user")
   private List<Request> requests;

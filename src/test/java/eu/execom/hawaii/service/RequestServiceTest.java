@@ -82,7 +82,7 @@ public class RequestServiceTest {
   public void shouldFindAllByUserWithinDates() {
     // given
     given(userRepository.getOne(1L)).willReturn(mockUser);
-    given(requestRepository.findAllByUserAndRequestStatusNot(mockUser, RequestStatus.CANCELED)).willReturn(
+    given(requestRepository.findAllByUser(mockUser)).willReturn(
         mockRequests);
     var startDate = LocalDate.of(2018, 11, 18);
     var endDate = LocalDate.of(2018, 11, 20);
@@ -94,7 +94,7 @@ public class RequestServiceTest {
     assertThat("Expect to list size be one ", requests.size(), is(1));
     assertThat("Expect to request date be 2018-11-20", requests.get(0).getDays().get(0).getDate(), is(endDate));
     verify(userRepository).getOne(anyLong());
-    verify(requestRepository).findAllByUserAndRequestStatusNot(any(), any());
+    verify(requestRepository).findAllByUser(any());
     verifyNoMoreInteractions(allMocks);
   }
 
@@ -102,8 +102,7 @@ public class RequestServiceTest {
   public void shouldFailToFindAnyRequestByUserWithinDates() {
     // given
     given(userRepository.getOne(1L)).willReturn(mockUser);
-    given(requestRepository.findAllByUserAndRequestStatusNot(mockUser, RequestStatus.CANCELED)).willReturn(
-        mockRequests);
+    given(requestRepository.findAllByUser(mockUser)).willReturn(mockRequests);
     var startDate = LocalDate.of(2018, 11, 18);
     var endDate = LocalDate.of(2018, 11, 18);
 
@@ -113,7 +112,7 @@ public class RequestServiceTest {
     // then
     assertThat("Expect to list size be one ", requests.isEmpty(), is(true));
     verify(userRepository).getOne(anyLong());
-    verify(requestRepository).findAllByUserAndRequestStatusNot(any(), any());
+    verify(requestRepository).findAllByUser(any());
     verifyNoMoreInteractions(allMocks);
   }
 
@@ -121,8 +120,7 @@ public class RequestServiceTest {
   public void shouldFindAllByUser() {
     // given
     given(userRepository.getOne(1L)).willReturn(mockUser);
-    given(requestRepository.findAllByUserAndRequestStatusNot(mockUser, RequestStatus.CANCELED)).willReturn(
-        mockRequests);
+    given(requestRepository.findAllByUser(mockUser)).willReturn(mockRequests);
 
     // when
     List<Request> requests = requestService.findAllByUser(1L);
@@ -130,7 +128,7 @@ public class RequestServiceTest {
     // then
     assertThat("Expect to list size be two", requests.size(), is(2));
     verify(userRepository).getOne(anyLong());
-    verify(requestRepository).findAllByUserAndRequestStatusNot(any(), any());
+    verify(requestRepository).findAllByUser(any());
     verifyNoMoreInteractions(allMocks);
   }
 
@@ -138,8 +136,7 @@ public class RequestServiceTest {
   public void shouldFailToFindAllByUser() {
     // given
     given(userRepository.getOne(2L)).willReturn(mockUser);
-    given(requestRepository.findAllByUserAndRequestStatusNot(mockUser, RequestStatus.CANCELED)).willThrow(
-        new EntityNotFoundException());
+    given(requestRepository.findAllByUser(mockUser)).willThrow(new EntityNotFoundException());
 
     // when
     requestService.findAllByUser(2L);

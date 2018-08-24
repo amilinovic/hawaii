@@ -3,9 +3,9 @@ import { Container, Row, Col } from 'reactstrap';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import UserInfoComponent from '../UserInfoExtended';
-import { ShadowRow } from '../common/ShadowRow';
-import { requestApiData } from '../../store/actions/EmployeesActions';
-import { getEmployee, getFetching } from '../../store/Selectors';
+import { ShadowRow } from '../common/shadowRow';
+import { requestApiData } from '../../store/actions/randomUserApiActions';
+import { getEmployee, getFetching } from '../../store/selectors';
 
 class InformationHeader extends Component {
   componentDidMount() {
