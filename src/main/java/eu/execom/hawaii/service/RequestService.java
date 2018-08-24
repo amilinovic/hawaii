@@ -174,10 +174,11 @@ public class RequestService {
         } else if (!userIsRequestApprover && requestIsApproved) {
           request.setRequestStatus(RequestStatus.CANCELLATION_PENDING);
           emailService.createEmailAndSendForApproval(request);
+        } else if (!userIsRequestApprover && requestHasPendingCancellation) {
+          log.error("User not authorized to cancel this request for user with email: {}", user.getEmail());
+          throw new NotAuthorizedApprovalExeception();
         } else if (requestIsPending) {
           allowanceService.applyPendingRequest(request, true);
-        } else {
-          applyRequest(request, false);
         }
         break;
       case REJECTED:
@@ -225,7 +226,9 @@ public class RequestService {
   private void applyRequest(Request request, boolean requestCanceled) {
     allowanceService.applyRequest(request, requestCanceled);
     emailService.createStatusNotificationEmailAndSend(request);
-    emailService.createAnnualEmailForTeammatesAndSend(request);
+    if (!requestCanceled) {
+      emailService.createAnnualEmailForTeammatesAndSend(request);
+    }
     googleCalendarService.handleRequestUpdate(request, requestCanceled);
   }
 

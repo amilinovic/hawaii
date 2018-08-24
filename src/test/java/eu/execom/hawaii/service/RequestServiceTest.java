@@ -84,8 +84,7 @@ public class RequestServiceTest {
   public void shouldFindAllByUserWithinDates() {
     // given
     given(userRepository.getOne(1L)).willReturn(mockUser);
-    given(requestRepository.findAllByUser(mockUser)).willReturn(
-        mockRequests);
+    given(requestRepository.findAllByUser(mockUser)).willReturn(mockRequests);
     var startDate = LocalDate.of(2018, 11, 18);
     var endDate = LocalDate.of(2018, 11, 20);
 
@@ -267,7 +266,7 @@ public class RequestServiceTest {
   }
 
   @Test
-  public void shouldHandleRequestStatusUpdate() {
+  public void shouldHandleRequestStatusUpdateRejected() {
     // given
     var approver = EntityBuilder.approver();
     approver.setId(2L);
@@ -277,28 +276,59 @@ public class RequestServiceTest {
 
     var request = EntityBuilder.request(absenceAnnual, List.of(dayOne));
     request.setUser(mockUser);
-    request.setId(1L);
     request.setRequestStatus(RequestStatus.REJECTED);
 
     var databaseRequest = EntityBuilder.request(absenceAnnual, List.of(dayOne));
 
-    given(requestRepository.getOne(1L)).willReturn(databaseRequest);
     given(absenceRepository.getOne(1L)).willReturn(absenceAnnual);
     given(userRepository.getOne(1L)).willReturn(user);
+    given(requestRepository.getOne(1L)).willReturn(databaseRequest);
     given(requestRepository.save(request)).willReturn(request);
 
     // when
     Request savedRequest = requestService.handleRequestStatusUpdate(request, approver);
 
     // then
-    assertThat("Expect to saved request have", savedRequest.getRequestStatus(), is(RequestStatus.REJECTED));
+    assertThat("Expect to saved request have status", savedRequest.getRequestStatus(), is(RequestStatus.REJECTED));
     assertNotNull("Expect to days exist", savedRequest.getDays());
     assertNotNull("Expect to user exist", savedRequest.getUser());
     assertNotNull("Expect to absence exist", savedRequest.getAbsence());
     verify(absenceRepository).getOne(anyLong());
     verify(userRepository).getOne(anyLong());
-    verify(allowanceService).applyPendingRequest(any(), anyBoolean());
     verify(requestRepository, times(3)).getOne(anyLong());
+    verify(allowanceService).applyPendingRequest(any(), anyBoolean());
+    verify(requestRepository).save(any());
+    verifyNoMoreInteractions(allMocks);
+  }
+
+  @Test
+  public void shouldHandleRequestStatusUpdateCancellationPending() {
+    // given
+    var approver = EntityBuilder.approver();
+    approver.setId(2L);
+
+    var request = EntityBuilder.request(absenceAnnual, List.of(dayOne));
+    request.setRequestStatus(RequestStatus.CANCELED);
+    var databaseRequest = EntityBuilder.request(absenceAnnual, List.of(dayOne));
+    databaseRequest.setRequestStatus(RequestStatus.APPROVED);
+    var changedRequest = EntityBuilder.request(absenceAnnual, List.of(dayOne));
+    changedRequest.setRequestStatus(RequestStatus.CANCELLATION_PENDING);
+
+    given(absenceRepository.getOne(1L)).willReturn(absenceAnnual);
+    given(userRepository.getOne(1L)).willReturn(request.getUser());
+    given(requestRepository.getOne(1L)).willReturn(databaseRequest);
+    given(requestRepository.save(changedRequest)).willReturn(changedRequest);
+
+    // when
+    Request savedRequest = requestService.handleRequestStatusUpdate(request, approver);
+
+    // then
+    assertThat("Expect to saved request have status", savedRequest.getRequestStatus(),
+        is(RequestStatus.CANCELLATION_PENDING));
+    verify(absenceRepository).getOne(anyLong());
+    verify(userRepository).getOne(anyLong());
+    verify(requestRepository, times(3)).getOne(anyLong());
+    verify(emailService).createEmailAndSendForApproval(any());
     verify(requestRepository).save(any());
     verifyNoMoreInteractions(allMocks);
   }
