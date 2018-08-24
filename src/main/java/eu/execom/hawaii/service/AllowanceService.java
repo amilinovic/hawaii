@@ -44,16 +44,16 @@ public class AllowanceService {
   /**
    * Apply pending request on request user allowance.
    *
-   * @param request
-   * @param requestCanceled
+   * @param request the Request.
+   * @param pendingCanceled indicate should be pending removed.
    */
   @Transactional
-  public void applyPendingRequest(Request request, boolean requestCanceled) {
+  public void applyPendingRequest(Request request, boolean pendingCanceled) {
     var allowance = getByUser(request.getUser());
     var absence = request.getAbsence();
     var days = request.getDays();
     var hours = calculateHours(days);
-    if (requestCanceled) {
+    if (pendingCanceled) {
       hours = -hours;
     }
 
