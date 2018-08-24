@@ -48,7 +48,7 @@ public class AllowanceService {
    * @param requestCanceled
    */
   @Transactional
-  void applyPendingRequest(Request request, boolean requestCanceled) {
+  public void applyPendingRequest(Request request, boolean requestCanceled) {
     var allowance = getByUser(request.getUser());
     var absence = request.getAbsence();
     var days = request.getDays();
@@ -93,7 +93,7 @@ public class AllowanceService {
    * @param request the Request.
    */
   @Transactional
-  void applyRequest(Request request, boolean requestCanceled) {
+  public void applyRequest(Request request, boolean requestCanceled) {
     var allowance = getByUser(request.getUser());
     var absence = request.getAbsence();
     var days = request.getDays();
