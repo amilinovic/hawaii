@@ -1,22 +1,39 @@
 import React, { Component } from 'react';
-import { Switch, Route, BrowserRouter, Redirect } from 'react-router-dom';
-import { Provider } from 'react-redux';
+import { Switch, Route } from 'react-router-dom';
 import Login from './pages/Login';
 import NavBar from './components/navigation/NavBar';
-import store from './store/Store';
+import { ConnectedRouter } from 'connected-react-router';
+import { history } from './store/store';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { requestTokenFromStorage } from './store/actions/getTokenFromSessionStorageActions';
 
-export default class App extends Component {
+class App extends Component {
+  componentDidMount() {
+    this.props.requestTokenFromStorage();
+  }
+
   render() {
     return (
-      <Provider store={store}>
-        <BrowserRouter>
-          <Switch>
-            <Redirect exact from="/" to="/leave" />
-            <Route path="/login" component={Login} />
-            <Route path="/" component={NavBar} />
-          </Switch>
-        </BrowserRouter>
-      </Provider>
+      <ConnectedRouter history={history}>
+        <Switch>
+          <Route path="/login" component={Login} />
+          <Route path="/" component={NavBar} />
+        </Switch>
+      </ConnectedRouter>
     );
   }
 }
+
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(
+    {
+      requestTokenFromStorage
+    },
+    dispatch
+  );
+
+export default connect(
+  null,
+  mapDispatchToProps
+)(App);
