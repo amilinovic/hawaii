@@ -112,7 +112,9 @@ public class RequestService {
   }
 
   /**
-   * Save the provided request to repository.
+   * Save the provided request to repository, with setting initial status
+   * of request depending of absence type SICKNESS or any other.
+   * Also applies leave days from request to pending field on user's allowance.
    *
    * @param request the Request entity to be persisted.
    * @return a saved request with id.
@@ -126,9 +128,11 @@ public class RequestService {
 
     if (AbsenceType.SICKNESS.equals(request.getAbsence().getAbsenceType())) {
       request.setRequestStatus(RequestStatus.APPROVED);
+      allowanceService.applyRequest(request, false);
       emailService.createSicknessEmailForTeammatesAndSend(request);
     } else {
       request.setRequestStatus(RequestStatus.PENDING);
+      allowanceService.applyPendingRequest(request, false);
       emailService.createEmailAndSendForApproval(request);
     }
 
@@ -136,7 +140,7 @@ public class RequestService {
   }
 
   /**
-   * Saves changed request status. If status is changed to APPROVED/CANCELED,
+   * Saves changed request status. If status is changed to APPROVED/CANCELED/REJECTED,
    * applies leave days from the request to the user's allowance
    * and creates an event in the user's Google calendar.
    *
@@ -150,30 +154,41 @@ public class RequestService {
     User user = userRepository.getOne(request.getUser().getId());
     request.setUser(user);
 
-    boolean userCanApproveRequest = isUserRequestApprover(authUser, user);
+    boolean userIsRequestApprover = isUserRequestApprover(authUser, user);
     boolean requestIsApproved = isApproved(request);
     boolean requestHasPendingCancellation = isCancellationPending(request);
+    boolean requestIsPending = isPending(request);
 
     switch (request.getRequestStatus()) {
       case APPROVED:
-        if (!userCanApproveRequest) {
+        if (!userIsRequestApprover) {
           log.error("Approver not authorized to approve this request for user with email: {}", user.getEmail());
           throw new NotAuthorizedApprovalExeception();
         }
+        allowanceService.applyPendingRequest(request, true);
         applyRequest(request, false);
         break;
       case CANCELED:
-        if (userCanApproveRequest && (requestIsApproved || requestHasPendingCancellation)) {
+        if (userIsRequestApprover && (requestIsApproved || requestHasPendingCancellation)) {
           applyRequest(request, true);
-        } else if (!userCanApproveRequest && requestIsApproved) {
+        } else if (!userIsRequestApprover && requestIsApproved) {
           request.setRequestStatus(RequestStatus.CANCELLATION_PENDING);
           emailService.createEmailAndSendForApproval(request);
+        } else if (requestIsPending) {
+          allowanceService.applyPendingRequest(request, true);
+        } else {
+          applyRequest(request, false);
         }
         break;
-      default:
-        log.info("Request with status {} will be saved without changing allowance for user with email {}",
-            request.getRequestStatus(), request.getUser().getEmail());
+      case REJECTED:
+        if (!userIsRequestApprover) {
+          log.error("Approver not authorized to reject this request for user with email: {}", user.getEmail());
+          throw new NotAuthorizedApprovalExeception();
+        }
+        allowanceService.applyPendingRequest(request, true);
         break;
+      default:
+        throw new IllegalArgumentException("Unsupported request status: " + request.getRequestStatus());
     }
 
     return requestRepository.save(request);
@@ -198,6 +213,13 @@ public class RequestService {
     var existingRequest = getById(requestId);
 
     return RequestStatus.CANCELLATION_PENDING.equals(existingRequest.getRequestStatus());
+  }
+
+  private boolean isPending(Request request) {
+    var requestId = request.getId();
+    var existingRequest = getById(requestId);
+
+    return RequestStatus.PENDING.equals(existingRequest.getRequestStatus());
   }
 
   private void applyRequest(Request request, boolean requestCanceled) {
