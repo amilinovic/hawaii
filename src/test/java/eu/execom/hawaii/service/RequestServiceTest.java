@@ -333,6 +333,42 @@ public class RequestServiceTest {
     verifyNoMoreInteractions(allMocks);
   }
 
+  @Test
+  public void shouldHandleRequestStatusUpdateApproved() {
+    // given
+    var approver = EntityBuilder.approver();
+    approver.setId(2L);
+    var request = EntityBuilder.request(absenceAnnual, List.of(dayOne));
+    request.getUser().getTeam().getTeamApprovers().add(approver);
+    request.setRequestStatus(RequestStatus.APPROVED);
+    var databaseRequest = EntityBuilder.request(absenceAnnual, List.of(dayOne));
+    databaseRequest.setRequestStatus(RequestStatus.PENDING);
+
+    given(absenceRepository.getOne(1L)).willReturn(absenceAnnual);
+    given(userRepository.getOne(1L)).willReturn(request.getUser());
+    given(requestRepository.getOne(1L)).willReturn(databaseRequest);
+    given(requestRepository.save(request)).willReturn(request);
+
+    // when
+    Request savedRequest = requestService.handleRequestStatusUpdate(request, approver);
+
+    // then
+    assertThat("Expect to saved request have status", savedRequest.getRequestStatus(),
+        is(RequestStatus.APPROVED));
+    verify(absenceRepository).getOne(anyLong());
+    verify(userRepository).getOne(anyLong());
+    verify(requestRepository, times(3)).getOne(anyLong());
+    verify(allowanceService).applyPendingRequest(any(), anyBoolean());
+    verify(allowanceService).applyRequest(any(), anyBoolean());
+    verify(emailService).createStatusNotificationEmailAndSend(any());
+    verify(emailService).createAnnualEmailForTeammatesAndSend(any());
+    verify(googleCalendarService).handleRequestUpdate(any(), anyBoolean());
+    verify(requestRepository).save(any());
+    verifyNoMoreInteractions(allMocks);
+  }
+
+
+
   @Test(expected = EntityNotFoundException.class)
   public void shouldFailToHandleRequestStatusUpdate() {
     // given
