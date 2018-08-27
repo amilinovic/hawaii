@@ -2,7 +2,9 @@ package eu.execom.hawaii.service;
 
 import java.time.LocalDate;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -17,6 +19,7 @@ import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.enumerations.AbsenceType;
 import eu.execom.hawaii.model.enumerations.RequestStatus;
 import eu.execom.hawaii.repository.AbsenceRepository;
+import eu.execom.hawaii.repository.DayRepository;
 import eu.execom.hawaii.repository.RequestRepository;
 import eu.execom.hawaii.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -28,16 +31,18 @@ public class RequestService {
   private RequestRepository requestRepository;
   private UserRepository userRepository;
   private AbsenceRepository absenceRepository;
+  private DayRepository dayRepository;
   private AllowanceService allowanceService;
   private GoogleCalendarService googleCalendarService;
   private EmailService emailService;
 
   @Autowired
   public RequestService(RequestRepository requestRepository, UserRepository userRepository,
-      AbsenceRepository absenceRepository, AllowanceService allowanceService,
+      AbsenceRepository absenceRepository, DayRepository dayRepository, AllowanceService allowanceService,
       GoogleCalendarService googleCalendarService, EmailService emailService) {
     this.requestRepository = requestRepository;
     this.userRepository = userRepository;
+    this.dayRepository = dayRepository;
     this.allowanceService = allowanceService;
     this.absenceRepository = absenceRepository;
     this.googleCalendarService = googleCalendarService;
@@ -109,6 +114,24 @@ public class RequestService {
    */
   public Request getById(Long id) {
     return requestRepository.getOne(id);
+  }
+
+  /**
+   * Retrieves a first and last requests year.
+   *
+   * @return a Map of first and last year.
+   */
+  public Map<String, Integer> getFirstAndLastRequestsYear() {
+    Map<String, Integer> firstAndLastDate = new LinkedHashMap<>();
+    var firstDayRequest = dayRepository.findFirstByOrderByDateAsc();
+    var lastDayRequest = dayRepository.findFirstByOrderByDateDesc();
+    var firstYear = firstDayRequest.getDate().getYear();
+    var lastYear = lastDayRequest.getDate().getYear();
+
+    firstAndLastDate.put("first", firstYear);
+    firstAndLastDate.put("last", lastYear);
+
+    return firstAndLastDate;
   }
 
   /**
