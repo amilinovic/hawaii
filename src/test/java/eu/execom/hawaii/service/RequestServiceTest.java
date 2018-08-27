@@ -353,8 +353,7 @@ public class RequestServiceTest {
     Request savedRequest = requestService.handleRequestStatusUpdate(request, approver);
 
     // then
-    assertThat("Expect to saved request have status", savedRequest.getRequestStatus(),
-        is(RequestStatus.APPROVED));
+    assertThat("Expect to saved request have status", savedRequest.getRequestStatus(), is(RequestStatus.APPROVED));
     verify(absenceRepository).getOne(anyLong());
     verify(userRepository).getOne(anyLong());
     verify(requestRepository, times(3)).getOne(anyLong());
@@ -366,8 +365,6 @@ public class RequestServiceTest {
     verify(requestRepository).save(any());
     verifyNoMoreInteractions(allMocks);
   }
-
-
 
   @Test(expected = EntityNotFoundException.class)
   public void shouldFailToHandleRequestStatusUpdate() {
