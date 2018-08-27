@@ -121,7 +121,7 @@ public class RequestService {
    *
    * @return a Map of first and last year.
    */
-  public Map<String, Integer> getFirstAndLastRequestYear() {
+  public Map<String, Integer> getFirstAndLastRequestsYear() {
     Map<String, Integer> firstAndLastDate = new LinkedHashMap<>();
     var firstDayRequest = dayRepository.findFirstByOrderByDateAsc();
     var lastDayRequest = dayRepository.findFirstByOrderByDateDesc();
