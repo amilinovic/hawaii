@@ -33,6 +33,7 @@ public class EntityBuilder {
 
   static User user(Team team) {
     var user = new User();
+    user.setId(1L);
     user.setTeam(team);
     user.setLeaveProfile(leaveProfile());
     user.setFullName("Aria Stark");
@@ -50,7 +51,7 @@ public class EntityBuilder {
   static User approver() {
     var approver = new User();
     approver.setId(3L);
-    approver.setTeam(new Team());
+    approver.setTeam(team());
     approver.setLeaveProfile(leaveProfile());
     approver.setFullName("Bruce Wayne");
     approver.setEmail("bruce.wayne@execom.eu");
@@ -78,6 +79,7 @@ public class EntityBuilder {
 
   static Request request(Absence absence, List<Day> days) {
     var request = new Request();
+    request.setId(1L);
     request.setUser(user(team()));
     request.getUser().setId(1L);
     request.setAbsence(absence);
