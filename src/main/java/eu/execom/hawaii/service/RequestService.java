@@ -117,9 +117,9 @@ public class RequestService {
   }
 
   /**
-   * Retrieves a Map of first and last requests date.
+   * Retrieves a first and last requests year.
    *
-   * @return
+   * @return a Map of first and last year.
    */
   public Map<String, Integer> getFirstAndLastRequestYear() {
     Map<String, Integer> firstAndLastDate = new LinkedHashMap<>();
