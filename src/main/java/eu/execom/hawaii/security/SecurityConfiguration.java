@@ -38,7 +38,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
           .antMatchers("/", "/welcome", "/signin", "/authentication", "/swagger-ui.html", "/swagger-resources/**",
             "/v2/**", "/webjars/**").permitAll()
           .antMatchers("/users", "/users/**", "/teams", "/teams/**", "/leavetypes", "/leavetypes/**", "/leaveprofiles",
-            "/leaveprofiles/**").hasAuthority("HR_MANAGER")
+            "/leaveprofiles/**, /requests/**").hasAuthority("HR_MANAGER")
           .anyRequest().authenticated()
         .and()
           .logout()
