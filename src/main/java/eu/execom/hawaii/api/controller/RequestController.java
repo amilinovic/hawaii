@@ -2,6 +2,7 @@ package eu.execom.hawaii.api.controller;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -62,6 +63,12 @@ public class RequestController {
   private Predicate<Request> pendingRequests() {
     return request -> RequestStatus.PENDING.equals(request.getRequestStatus())
         || RequestStatus.CANCELLATION_PENDING.equals(request.getRequestStatus());
+  }
+
+  @GetMapping("/years/range")
+  public ResponseEntity<Map<String, Integer>> getFirstAndLastRequestsYear() {
+    var firstAndLastRequestDates = requestService.getFirstAndLastRequestsYear();
+    return new ResponseEntity<>(firstAndLastRequestDates, HttpStatus.OK);
   }
 
   @GetMapping("/user/{id}")
