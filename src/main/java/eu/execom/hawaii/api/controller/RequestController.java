@@ -73,7 +73,7 @@ public class RequestController {
   }
 
   @GetMapping("/years/range")
-  public ResponseEntity<Map<String, Integer>> getFirstAndLastRequestDate() {
+  public ResponseEntity<Map<String, Integer>> getFirstAndLastRequestYear() {
     var firstAndLastRequestDates = requestService.getFirstAndLastRequestYear();
     return new ResponseEntity<>(firstAndLastRequestDates, HttpStatus.OK);
   }
