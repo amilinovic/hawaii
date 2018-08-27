@@ -6,4 +6,8 @@ import eu.execom.hawaii.model.Day;
 
 public interface DayRepository extends JpaRepository<Day, Long> {
 
+  Day findFirstByOrderByDateAsc();
+
+  Day findFirstByOrderByDateDesc();
+
 }
