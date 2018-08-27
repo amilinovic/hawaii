@@ -64,11 +64,9 @@ public class AllowanceService {
     if (isAbsenceTypeDeductible && isAbsenceTypeAnnual) {
       checkRemainingAnnualHours(allowance, hours);
       applyPendingAnnual(allowance, hours);
-      allowanceRepository.save(allowance);
     } else if (isAbsenceTypeDeductible && isAbsenceTypeTraining) {
       checkRemainingTrainingHours(allowance, hours);
       applyPendingTraining(allowance, hours);
-      allowanceRepository.save(allowance);
     }
 
   }
