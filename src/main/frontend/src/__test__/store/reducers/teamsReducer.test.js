@@ -1,5 +1,5 @@
 import teamsReducer from '../../../store/reducers/teamsReducer';
-import { requestTeams } from '../../../store/actions/teamsActions';
+import { RECEIVE_TEAMS } from '../../../store/actions/teamsActions';
 
 describe('Teams reducer', () => {
   const mockTeamsInformation = {
@@ -7,20 +7,19 @@ describe('Teams reducer', () => {
     mails: 'test@mail.com'
   };
 
-  it('should have default state', () => {
-    const state = teamsReducer(undefined, {});
-    expect(state).toEqual({ teams: null });
+  it('should have initial state', () => {
+    const initialState = teamsReducer(undefined, []);
+    expect(initialState).toEqual([]);
   });
 
   it('should update teams data with api response', () => {
-    const stateWithResults = {
-      type: 'RECEIVE_TEAMS',
-      teams: mockTeamsInformation
+    const action = {
+      type: RECEIVE_TEAMS,
+      payload: mockTeamsInformation
     };
 
-    const requestAction = requestTeams();
-    const newState = teamsReducer(stateWithResults, requestAction);
+    const state = [mockTeamsInformation];
 
-    expect(newState.teams).toBe(mockTeamsInformation);
+    expect(teamsReducer(undefined, action)).toEqual(state);
   });
 });

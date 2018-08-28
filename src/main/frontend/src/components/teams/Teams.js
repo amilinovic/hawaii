@@ -12,15 +12,11 @@ class Teams extends Component {
   }
 
   render() {
-    const { teams } = this.props.teams;
-
     let teamItems;
 
-    if (teams !== null) {
-      teamItems = Object.keys(this.props.teams).map(key => {
-        return <TeamItem key={key} team={this.props.teams[key]} />;
-      });
-    }
+    teamItems = Object.keys(this.props.teams).map(key => {
+      return <TeamItem key={key} team={this.props.teams[key]} />;
+    });
 
     return (
       <div className="container-fluid">

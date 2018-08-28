@@ -1,12 +1,10 @@
 import { handleActions } from 'redux-actions';
 import { receiveTeams } from '../actions/teamsActions';
 
-export const initialState = {
-  teams: null
-};
+export const initialState = [];
 
 const actionHandlers = {
-  [receiveTeams]: (state, action) => ({ ...action.payload })
+  [receiveTeams]: (state, action) => [action.payload]
 };
 
 const reducer = handleActions(actionHandlers, initialState);

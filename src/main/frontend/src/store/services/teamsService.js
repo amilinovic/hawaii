@@ -1,14 +1,13 @@
 import request from 'superagent';
 
-export const getTeamsApi = () => {
+export const getTeamsApi = async () => {
   try {
-    const response = request
+    return await request
       .get('/teams')
       .then(res => res.body)
       .catch(err => {
         console.log(err);
       });
-    return response;
   } catch (e) {
     // TODO error handling
     console.log(e);
