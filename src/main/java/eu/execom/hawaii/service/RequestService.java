@@ -2,7 +2,9 @@ package eu.execom.hawaii.service;
 
 import java.time.LocalDate;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -17,6 +19,7 @@ import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.enumerations.AbsenceType;
 import eu.execom.hawaii.model.enumerations.RequestStatus;
 import eu.execom.hawaii.repository.AbsenceRepository;
+import eu.execom.hawaii.repository.DayRepository;
 import eu.execom.hawaii.repository.RequestRepository;
 import eu.execom.hawaii.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -28,16 +31,18 @@ public class RequestService {
   private RequestRepository requestRepository;
   private UserRepository userRepository;
   private AbsenceRepository absenceRepository;
+  private DayRepository dayRepository;
   private AllowanceService allowanceService;
   private GoogleCalendarService googleCalendarService;
   private EmailService emailService;
 
   @Autowired
   public RequestService(RequestRepository requestRepository, UserRepository userRepository,
-      AbsenceRepository absenceRepository, AllowanceService allowanceService,
+      AbsenceRepository absenceRepository, DayRepository dayRepository, AllowanceService allowanceService,
       GoogleCalendarService googleCalendarService, EmailService emailService) {
     this.requestRepository = requestRepository;
     this.userRepository = userRepository;
+    this.dayRepository = dayRepository;
     this.allowanceService = allowanceService;
     this.absenceRepository = absenceRepository;
     this.googleCalendarService = googleCalendarService;
@@ -112,7 +117,27 @@ public class RequestService {
   }
 
   /**
-   * Save the provided request to repository.
+   * Retrieves a first and last requests year.
+   *
+   * @return a Map of first and last year.
+   */
+  public Map<String, Integer> getFirstAndLastRequestsYear() {
+    Map<String, Integer> firstAndLastDate = new LinkedHashMap<>();
+    var firstDayRequest = dayRepository.findFirstByOrderByDateAsc();
+    var lastDayRequest = dayRepository.findFirstByOrderByDateDesc();
+    var firstYear = firstDayRequest.getDate().getYear();
+    var lastYear = lastDayRequest.getDate().getYear();
+
+    firstAndLastDate.put("first", firstYear);
+    firstAndLastDate.put("last", lastYear);
+
+    return firstAndLastDate;
+  }
+
+  /**
+   * Save the provided request to repository, with setting initial status
+   * of request depending of absence type SICKNESS or any other.
+   * Also applies leave days from request to pending field on user's allowance.
    *
    * @param request the Request entity to be persisted.
    * @return a saved request with id.
@@ -126,9 +151,11 @@ public class RequestService {
 
     if (AbsenceType.SICKNESS.equals(request.getAbsence().getAbsenceType())) {
       request.setRequestStatus(RequestStatus.APPROVED);
+      allowanceService.applyRequest(request, false);
       emailService.createSicknessEmailForTeammatesAndSend(request);
     } else {
       request.setRequestStatus(RequestStatus.PENDING);
+      allowanceService.applyPendingRequest(request, false);
       emailService.createEmailAndSendForApproval(request);
     }
 
@@ -136,7 +163,7 @@ public class RequestService {
   }
 
   /**
-   * Saves changed request status. If status is changed to APPROVED/CANCELED,
+   * Saves changed request status. If status is changed to APPROVED/CANCELED/REJECTED,
    * applies leave days from the request to the user's allowance
    * and creates an event in the user's Google calendar.
    *
@@ -150,30 +177,42 @@ public class RequestService {
     User user = userRepository.getOne(request.getUser().getId());
     request.setUser(user);
 
-    boolean userCanApproveRequest = isUserRequestApprover(authUser, user);
+    boolean userIsRequestApprover = isUserRequestApprover(authUser, user);
     boolean requestIsApproved = isApproved(request);
     boolean requestHasPendingCancellation = isCancellationPending(request);
+    boolean requestIsPending = isPending(request);
 
     switch (request.getRequestStatus()) {
       case APPROVED:
-        if (!userCanApproveRequest) {
+        if (!userIsRequestApprover) {
           log.error("Approver not authorized to approve this request for user with email: {}", user.getEmail());
           throw new NotAuthorizedApprovalExeception();
         }
+        allowanceService.applyPendingRequest(request, true);
         applyRequest(request, false);
         break;
       case CANCELED:
-        if (userCanApproveRequest && (requestIsApproved || requestHasPendingCancellation)) {
+        if (userIsRequestApprover && (requestIsApproved || requestHasPendingCancellation)) {
           applyRequest(request, true);
-        } else if (!userCanApproveRequest && requestIsApproved) {
+        } else if (!userIsRequestApprover && requestIsApproved) {
           request.setRequestStatus(RequestStatus.CANCELLATION_PENDING);
           emailService.createEmailAndSendForApproval(request);
+        } else if (!userIsRequestApprover && requestHasPendingCancellation) {
+          log.error("User not authorized to cancel this request for user with email: {}", user.getEmail());
+          throw new NotAuthorizedApprovalExeception();
+        } else if (requestIsPending) {
+          allowanceService.applyPendingRequest(request, true);
         }
         break;
-      default:
-        log.info("Request with status {} will be saved without changing allowance for user with email {}",
-            request.getRequestStatus(), request.getUser().getEmail());
+      case REJECTED:
+        if (!userIsRequestApprover) {
+          log.error("Approver not authorized to reject this request for user with email: {}", user.getEmail());
+          throw new NotAuthorizedApprovalExeception();
+        }
+        allowanceService.applyPendingRequest(request, true);
         break;
+      default:
+        throw new IllegalArgumentException("Unsupported request status: " + request.getRequestStatus());
     }
 
     return requestRepository.save(request);
@@ -200,10 +239,19 @@ public class RequestService {
     return RequestStatus.CANCELLATION_PENDING.equals(existingRequest.getRequestStatus());
   }
 
+  private boolean isPending(Request request) {
+    var requestId = request.getId();
+    var existingRequest = getById(requestId);
+
+    return RequestStatus.PENDING.equals(existingRequest.getRequestStatus());
+  }
+
   private void applyRequest(Request request, boolean requestCanceled) {
     allowanceService.applyRequest(request, requestCanceled);
     emailService.createStatusNotificationEmailAndSend(request);
-    emailService.createAnnualEmailForTeammatesAndSend(request);
+    if (!requestCanceled) {
+      emailService.createAnnualEmailForTeammatesAndSend(request);
+    }
     googleCalendarService.handleRequestUpdate(request, requestCanceled);
   }
 
