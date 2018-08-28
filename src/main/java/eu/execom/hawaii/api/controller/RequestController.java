@@ -28,6 +28,7 @@ import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.enumerations.AbsenceType;
 import eu.execom.hawaii.model.enumerations.RequestStatus;
 import eu.execom.hawaii.service.RequestService;
+import springfox.documentation.annotations.ApiIgnore;
 
 @RestController
 @RequestMapping("/requests")
@@ -43,7 +44,7 @@ public class RequestController {
   }
 
   @GetMapping("/approval")
-  public ResponseEntity<List<RequestDto>> getAllRequestsForApproval(@AuthenticationPrincipal User authUser) {
+  public ResponseEntity<List<RequestDto>> getAllRequestsForApproval(@ApiIgnore @AuthenticationPrincipal User authUser) {
     List<Request> requests = getRequestsForApprover(authUser.getApproverTeams());
     var requestDtos = requests.stream().map(RequestDto::new).collect(Collectors.toList());
 
@@ -121,7 +122,7 @@ public class RequestController {
   }
 
   @PutMapping
-  public ResponseEntity<RequestDto> handleRequestStatus(@AuthenticationPrincipal User authUser,
+  public ResponseEntity<RequestDto> handleRequestStatus(@ApiIgnore @AuthenticationPrincipal User authUser,
       @RequestBody RequestDto requestDto) {
     var request = MAPPER.map(requestDto, Request.class);
     request = requestService.handleRequestStatusUpdate(request, authUser);
