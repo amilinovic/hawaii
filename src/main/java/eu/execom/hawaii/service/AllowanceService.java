@@ -1,6 +1,10 @@
 package eu.execom.hawaii.service;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +19,7 @@ import eu.execom.hawaii.model.enumerations.AbsenceSubtype;
 import eu.execom.hawaii.model.enumerations.AbsenceType;
 import eu.execom.hawaii.model.enumerations.Duration;
 import eu.execom.hawaii.repository.AllowanceRepository;
+import eu.execom.hawaii.repository.PublicHolidayRepository;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -25,10 +30,12 @@ public class AllowanceService {
   private static final int FULL_DAY = 8;
 
   private AllowanceRepository allowanceRepository;
+  private PublicHolidayRepository publicHolidayRepository;
 
   @Autowired
-  public AllowanceService(AllowanceRepository allowanceRepository) {
+  public AllowanceService(AllowanceRepository allowanceRepository, PublicHolidayRepository publicHolidayRepository) {
     this.allowanceRepository = allowanceRepository;
+    this.publicHolidayRepository = publicHolidayRepository;
   }
 
   /**
@@ -44,15 +51,15 @@ public class AllowanceService {
   /**
    * Apply pending request on request user allowance.
    *
-   * @param request the Request.
+   * @param request         the Request.
    * @param pendingCanceled indicate should be pending removed.
    */
   @Transactional
   public void applyPendingRequest(Request request, boolean pendingCanceled) {
     var allowance = getByUser(request.getUser());
     var absence = request.getAbsence();
-    var days = request.getDays();
-    var hours = calculateHours(days);
+    var workingDays = getOnlyWorkingDays(request.getDays());
+    var hours = calculateHours(workingDays);
     if (pendingCanceled) {
       hours = -hours;
     }
@@ -94,8 +101,8 @@ public class AllowanceService {
   public void applyRequest(Request request, boolean requestCanceled) {
     var allowance = getByUser(request.getUser());
     var absence = request.getAbsence();
-    var days = request.getDays();
-    var hours = calculateHours(days);
+    var workingDays = getOnlyWorkingDays(request.getDays());
+    var hours = calculateHours(workingDays);
     if (requestCanceled) {
       hours = -hours;
     }
@@ -155,6 +162,32 @@ public class AllowanceService {
     int calculatedBonus = allowance.getBonus() + hours;
     allowance.setBonus(calculatedBonus);
     allowanceRepository.save(allowance);
+  }
+
+  private List<Day> getOnlyWorkingDays(List<Day> days) {
+    var workingDaysWithoutWeekend = days.stream()
+                                        .filter(day -> !(DayOfWeek.SATURDAY.equals(day.getDate().getDayOfWeek())
+                                            || DayOfWeek.SUNDAY.equals(day.getDate().getDayOfWeek())))
+                                        .collect(Collectors.toList());
+    LinkedHashSet requestYears = workingDaysWithoutWeekend.stream()
+                                                          .map(Day::getDate)
+                                                          .map(LocalDate::getYear)
+                                                          .collect(Collectors.toCollection(LinkedHashSet::new));
+
+    int from = (int) requestYears.stream().findFirst().get();
+    int to = (int) requestYears.stream().reduce((Object a, Object b) -> b).get();
+
+    var publicHolidays = publicHolidayRepository.findAllByDateIsBetween(LocalDate.of(from, 01, 01),
+        LocalDate.of(to, 12, 31));
+
+    var workingDaysOnly = workingDaysWithoutWeekend.stream()
+                                                   .filter(day -> publicHolidays.stream()
+                                                                                .noneMatch(
+                                                                                    publicHoliday -> publicHoliday.getDate()
+                                                                                                                  .equals(
+                                                                                                                      day.getDate())))
+                                                   .collect(Collectors.toList());
+    return workingDaysOnly;
   }
 
   private int calculateHours(List<Day> days) {
