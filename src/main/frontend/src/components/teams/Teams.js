@@ -12,9 +12,7 @@ class Teams extends Component {
   }
 
   render() {
-    let teamItems;
-
-    teamItems = Object.keys(this.props.teams).map(key => {
+    const teamItems = Object.keys(this.props.teams).map(key => {
       return <TeamItem key={key} team={this.props.teams[key]} />;
     });
 

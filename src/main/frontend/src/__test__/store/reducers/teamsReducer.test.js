@@ -2,13 +2,15 @@ import teamsReducer from '../../../store/reducers/teamsReducer';
 import { RECEIVE_TEAMS } from '../../../store/actions/teamsActions';
 
 describe('Teams reducer', () => {
-  const mockTeamsInformation = {
-    name: 'TestTeam',
-    mails: 'test@mail.com'
-  };
+  const mockTeamsInformation = [
+    {
+      name: 'TestTeam',
+      mails: 'test@mail.com'
+    }
+  ];
 
   it('should have initial state', () => {
-    const initialState = teamsReducer(undefined, []);
+    const initialState = teamsReducer(undefined, {});
     expect(initialState).toEqual([]);
   });
 
@@ -18,8 +20,6 @@ describe('Teams reducer', () => {
       payload: mockTeamsInformation
     };
 
-    const state = [mockTeamsInformation];
-
-    expect(teamsReducer(undefined, action)).toEqual(state);
+    expect(teamsReducer(undefined, action)).toEqual(mockTeamsInformation);
   });
 });
