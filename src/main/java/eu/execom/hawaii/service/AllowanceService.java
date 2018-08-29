@@ -1,6 +1,12 @@
 package eu.execom.hawaii.service;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,12 +15,14 @@ import org.springframework.transaction.annotation.Transactional;
 import eu.execom.hawaii.exceptions.InsufficientHoursException;
 import eu.execom.hawaii.model.Allowance;
 import eu.execom.hawaii.model.Day;
+import eu.execom.hawaii.model.PublicHoliday;
 import eu.execom.hawaii.model.Request;
 import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.enumerations.AbsenceSubtype;
 import eu.execom.hawaii.model.enumerations.AbsenceType;
 import eu.execom.hawaii.model.enumerations.Duration;
 import eu.execom.hawaii.repository.AllowanceRepository;
+import eu.execom.hawaii.repository.PublicHolidayRepository;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -25,10 +33,12 @@ public class AllowanceService {
   private static final int FULL_DAY = 8;
 
   private AllowanceRepository allowanceRepository;
+  private PublicHolidayRepository publicHolidayRepository;
 
   @Autowired
-  public AllowanceService(AllowanceRepository allowanceRepository) {
+  public AllowanceService(AllowanceRepository allowanceRepository, PublicHolidayRepository publicHolidayRepository) {
     this.allowanceRepository = allowanceRepository;
+    this.publicHolidayRepository = publicHolidayRepository;
   }
 
   /**
@@ -44,15 +54,15 @@ public class AllowanceService {
   /**
    * Apply pending request on request user allowance.
    *
-   * @param request the Request.
+   * @param request         the Request.
    * @param pendingCanceled indicate should be pending removed.
    */
   @Transactional
   public void applyPendingRequest(Request request, boolean pendingCanceled) {
     var allowance = getByUser(request.getUser());
     var absence = request.getAbsence();
-    var days = request.getDays();
-    var hours = calculateHours(days);
+    var workingDays = getWorkingDaysOnly(request.getDays());
+    var hours = calculateHours(workingDays);
     if (pendingCanceled) {
       hours = -hours;
     }
@@ -94,8 +104,8 @@ public class AllowanceService {
   public void applyRequest(Request request, boolean requestCanceled) {
     var allowance = getByUser(request.getUser());
     var absence = request.getAbsence();
-    var days = request.getDays();
-    var hours = calculateHours(days);
+    var workingDays = getWorkingDaysOnly(request.getDays());
+    var hours = calculateHours(workingDays);
     if (requestCanceled) {
       hours = -hours;
     }
@@ -155,6 +165,43 @@ public class AllowanceService {
     int calculatedBonus = allowance.getBonus() + hours;
     allowance.setBonus(calculatedBonus);
     allowanceRepository.save(allowance);
+  }
+
+  private List<Day> getWorkingDaysOnly(List<Day> days) {
+    var workingDaysWithoutWeekend = getWorkingDaysWithoutWeekend(days);
+
+    Set<Integer> requestYears = workingDaysWithoutWeekend.stream()
+                                                         .map(Day::getDate)
+                                                         .map(LocalDate::getYear)
+                                                         .collect(Collectors.toCollection(LinkedHashSet::new));
+
+    var yearFrom = requestYears.stream().findFirst().get();
+    var yearTo = requestYears.stream().reduce(( a, b) -> b).get();
+    var startYearFrom = LocalDate.of(yearFrom, 01, 01);
+    var endYearTo = LocalDate.of(yearTo, 12, 31);
+    var publicHolidays = publicHolidayRepository.findAllByDateIsBetween(startYearFrom, endYearTo);
+
+    var workingDaysOnly = getWorkingDaysWithoutPublicHolidays(workingDaysWithoutWeekend, publicHolidays);
+
+    return workingDaysOnly;
+  }
+
+  private List<Day> getWorkingDaysWithoutPublicHolidays(List<Day> workingDaysWithoutWeekend,
+      List<PublicHoliday> publicHolidays) {
+    return workingDaysWithoutWeekend.stream().filter(isWorkday(publicHolidays)).collect(Collectors.toList());
+  }
+
+  private Predicate<Day> isWorkday(List<PublicHoliday> publicHolidays) {
+    return day -> publicHolidays.stream().noneMatch(publicHoliday -> publicHoliday.getDate().equals(day.getDate()));
+  }
+
+  private List<Day> getWorkingDaysWithoutWeekend(List<Day> days) {
+    return days.stream().filter(isWorkday()).collect(Collectors.toList());
+  }
+
+  private Predicate<Day> isWorkday() {
+    return day -> !(DayOfWeek.SATURDAY.equals(day.getDate().getDayOfWeek()) || DayOfWeek.SUNDAY.equals(
+        day.getDate().getDayOfWeek()));
   }
 
   private int calculateHours(List<Day> days) {
