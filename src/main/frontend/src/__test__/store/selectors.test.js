@@ -44,10 +44,7 @@ describe('Get Authorization Selector', () => {
 describe('Get Teams Selector', () => {
   it('should return all teams', () => {
     const state = {
-      teams: {
-        name: 'TestTeam',
-        mails: 'test@mail.com'
-      }
+      teams: [{ name: 'TestTeam', mails: 'test@mail.com' }]
     };
     expect(getTeams(state)).toEqual(state.teams);
   });
