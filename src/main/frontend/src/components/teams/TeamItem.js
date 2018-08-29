@@ -3,7 +3,9 @@ import { NavLink } from 'react-router-dom';
 
 class TeamItem extends Component {
   render() {
-    const { id, name, emails } = this.props.team;
+    const {
+      team: { id, name, emails }
+    } = this.props;
     return (
       <tr>
         <td>
