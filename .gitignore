@@ -53,7 +53,5 @@ yarn-debug.log*
 yarn-error.log*
 **/application.log*
 
-**/*.png
-
 **/credentials.json
 **/service_account.json
