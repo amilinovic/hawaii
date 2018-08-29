@@ -188,18 +188,18 @@ public class AllowanceService {
 
   private List<Day> getWorkingDaysWithoutPublicHolidays(List<Day> workingDaysWithoutWeekend,
       List<PublicHoliday> publicHolidays) {
-    return workingDaysWithoutWeekend.stream().filter(isNotPublicHoliday(publicHolidays)).collect(Collectors.toList());
+    return workingDaysWithoutWeekend.stream().filter(isWorkday(publicHolidays)).collect(Collectors.toList());
   }
 
-  private Predicate<Day> isNotPublicHoliday(List<PublicHoliday> publicHolidays) {
+  private Predicate<Day> isWorkday(List<PublicHoliday> publicHolidays) {
     return day -> publicHolidays.stream().noneMatch(publicHoliday -> publicHoliday.getDate().equals(day.getDate()));
   }
 
   private List<Day> getWorkingDaysWithoutWeekend(List<Day> days) {
-    return days.stream().filter(isNotWeekendDay()).collect(Collectors.toList());
+    return days.stream().filter(isWorkday()).collect(Collectors.toList());
   }
 
-  private Predicate<Day> isNotWeekendDay() {
+  private Predicate<Day> isWorkday() {
     return day -> !(DayOfWeek.SATURDAY.equals(day.getDate().getDayOfWeek()) || DayOfWeek.SUNDAY.equals(
         day.getDate().getDayOfWeek()));
   }
