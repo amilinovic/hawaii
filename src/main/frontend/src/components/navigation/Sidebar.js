@@ -14,6 +14,7 @@ const navLinks = [
   { url: '/leave-history', name: 'Leave history' },
   { url: '/team-calendar', name: 'Team calendar' },
   { url: '/execom-calendar', name: 'Execom calendar' },
+  { url: '/teams', name: 'Teams' },
   { url: '/login', name: 'Log out' }
 ].map(navLink => (
   <NavLink key={navLink.url} to={navLink.url}>
