@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import eu.execom.hawaii.exceptions.InsufficientHoursException;
 import eu.execom.hawaii.model.Allowance;
 import eu.execom.hawaii.model.Day;
+import eu.execom.hawaii.model.PublicHoliday;
 import eu.execom.hawaii.model.Request;
 import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.enumerations.AbsenceSubtype;
@@ -58,7 +59,7 @@ public class AllowanceService {
   public void applyPendingRequest(Request request, boolean pendingCanceled) {
     var allowance = getByUser(request.getUser());
     var absence = request.getAbsence();
-    var workingDays = getOnlyWorkingDays(request.getDays());
+    var workingDays = getWorkingDaysOnly(request.getDays());
     var hours = calculateHours(workingDays);
     if (pendingCanceled) {
       hours = -hours;
@@ -101,7 +102,7 @@ public class AllowanceService {
   public void applyRequest(Request request, boolean requestCanceled) {
     var allowance = getByUser(request.getUser());
     var absence = request.getAbsence();
-    var workingDays = getOnlyWorkingDays(request.getDays());
+    var workingDays = getWorkingDaysOnly(request.getDays());
     var hours = calculateHours(workingDays);
     if (requestCanceled) {
       hours = -hours;
@@ -164,30 +165,38 @@ public class AllowanceService {
     allowanceRepository.save(allowance);
   }
 
-  private List<Day> getOnlyWorkingDays(List<Day> days) {
-    var workingDaysWithoutWeekend = days.stream()
-                                        .filter(day -> !(DayOfWeek.SATURDAY.equals(day.getDate().getDayOfWeek())
-                                            || DayOfWeek.SUNDAY.equals(day.getDate().getDayOfWeek())))
-                                        .collect(Collectors.toList());
+  private List<Day> getWorkingDaysOnly(List<Day> days) {
+    var workingDaysWithoutWeekend = getWorkingDaysWithoutWeekend(days);
+
     LinkedHashSet requestYears = workingDaysWithoutWeekend.stream()
                                                           .map(Day::getDate)
                                                           .map(LocalDate::getYear)
                                                           .collect(Collectors.toCollection(LinkedHashSet::new));
 
-    int from = (int) requestYears.stream().findFirst().get();
-    int to = (int) requestYears.stream().reduce((Object a, Object b) -> b).get();
+    int yearFrom = (int) requestYears.stream().findFirst().get();
+    int yearTo = (int) requestYears.stream().reduce((Object a, Object b) -> b).get();
+    var publicHolidays = publicHolidayRepository.findAllByDateIsBetween(LocalDate.of(yearFrom, 01, 01),
+        LocalDate.of(yearTo, 12, 31));
 
-    var publicHolidays = publicHolidayRepository.findAllByDateIsBetween(LocalDate.of(from, 01, 01),
-        LocalDate.of(to, 12, 31));
+    var workingDaysOnly = getWorkingDaysWithoutPublicHoliday(workingDaysWithoutWeekend, publicHolidays);
 
-    var workingDaysOnly = workingDaysWithoutWeekend.stream()
-                                                   .filter(day -> publicHolidays.stream()
-                                                                                .noneMatch(
-                                                                                    publicHoliday -> publicHoliday.getDate()
-                                                                                                                  .equals(
-                                                                                                                      day.getDate())))
-                                                   .collect(Collectors.toList());
     return workingDaysOnly;
+  }
+
+  private List<Day> getWorkingDaysWithoutPublicHoliday(List<Day> workingDaysWithoutWeekend,
+      List<PublicHoliday> publicHolidays) {
+    return workingDaysWithoutWeekend.stream()
+                                    .filter(day -> publicHolidays.stream()
+                                                                 .noneMatch(publicHoliday ->
+                                                                     publicHoliday.getDate().equals(day.getDate())))
+                                    .collect(Collectors.toList());
+  }
+
+  private List<Day> getWorkingDaysWithoutWeekend(List<Day> days) {
+    return days.stream()
+               .filter(day -> !(DayOfWeek.SATURDAY.equals(day.getDate().getDayOfWeek()) || DayOfWeek.SUNDAY.equals(
+                   day.getDate().getDayOfWeek())))
+               .collect(Collectors.toList());
   }
 
   private int calculateHours(List<Day> days) {
