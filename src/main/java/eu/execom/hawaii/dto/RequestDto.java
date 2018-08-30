@@ -13,7 +13,7 @@ import lombok.Data;
 public class RequestDto {
 
   private Long id;
-  private Long userId;
+  private UserDto user;
   private AbsenceDto absence;
   private RequestStatus requestStatus;
   private String reason;
@@ -22,7 +22,7 @@ public class RequestDto {
 
   public RequestDto(Request request) {
     this.id = request.getId();
-    this.userId = request.getUser().getId();
+    this.user = new UserDto(request.getUser());
     this.absence = new AbsenceDto(request.getAbsence());
     this.requestStatus = request.getRequestStatus();
     this.reason = request.getReason();

@@ -34,7 +34,8 @@ public class EmailService {
    *
    * @param request the Request.
    */
-  void createEmailAndSendForApproval(Request request) {
+  @Async
+  public void createEmailAndSendForApproval(Request request) {
     List<String> approversEmail = request.getUser()
                                          .getTeam()
                                          .getTeamApprovers()
@@ -60,7 +61,8 @@ public class EmailService {
    *
    * @param request the Request.
    */
-  void createStatusNotificationEmailAndSend(Request request) {
+  @Async
+  public void createStatusNotificationEmailAndSend(Request request) {
     List<String> userEmail = Collections.singletonList(request.getUser().getEmail());
     String subject = EmailFormatter.getLeaveRequestNotificationSubject(request.getRequestStatus().toString());
     String userName = request.getUser().getFullName();
@@ -81,7 +83,8 @@ public class EmailService {
    *
    * @param request the Request.
    */
-  void createSicknessEmailForTeammatesAndSend(Request request) {
+  @Async
+  public void createSicknessEmailForTeammatesAndSend(Request request) {
     List<String> teammatesEmails = request.getUser()
                                           .getTeam()
                                           .getUsers()
@@ -106,7 +109,8 @@ public class EmailService {
    *
    * @param request the Request.
    */
-  void createAnnualEmailForTeammatesAndSend(Request request) {
+  @Async
+  public void createAnnualEmailForTeammatesAndSend(Request request) {
     List<String> teammatesEmails = request.getUser()
                                           .getTeam()
                                           .getUsers()
@@ -125,8 +129,7 @@ public class EmailService {
     sendEmail(new Email(teammatesEmails, subject, text));
   }
 
-  @Async
-  void sendEmail(Email email) {
+  private void sendEmail(Email email) {
     SimpleMailMessage message = new SimpleMailMessage();
     var listSize = email.getTo().size();
     message.setTo(email.getTo().toArray(new String[listSize]));

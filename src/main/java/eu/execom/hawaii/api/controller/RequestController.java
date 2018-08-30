@@ -84,6 +84,14 @@ public class RequestController {
     return new ResponseEntity<>(requestDtos, HttpStatus.OK);
   }
 
+  @GetMapping("/user")
+  public ResponseEntity<List<RequestDto>> getMyRequests(@ApiIgnore @AuthenticationPrincipal User authUser) {
+    var requests = requestService.findAllByUser(authUser.getId());
+    var requestDtos = requests.stream().map(RequestDto::new).collect(Collectors.toList());
+
+    return new ResponseEntity<>(requestDtos, HttpStatus.OK);
+  }
+
   @GetMapping("/user/{id}/dates")
   public ResponseEntity<List<RequestDto>> getRequestsByUserByDates(
       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
