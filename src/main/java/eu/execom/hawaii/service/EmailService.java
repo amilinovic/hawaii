@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import eu.execom.hawaii.model.Email;
@@ -124,7 +125,8 @@ public class EmailService {
     sendEmail(new Email(teammatesEmails, subject, text));
   }
 
-  private void sendEmail(Email email) {
+  @Async
+  void sendEmail(Email email) {
     SimpleMailMessage message = new SimpleMailMessage();
     var listSize = email.getTo().size();
     message.setTo(email.getTo().toArray(new String[listSize]));
