@@ -1,7 +1,8 @@
 import {
   getEmployee,
   getFetching,
-  getAuthorization
+  getAuthorization,
+  getTeams
 } from '../../store/selectors';
 
 describe('Employee Selector', () => {
@@ -37,5 +38,14 @@ describe('Get Authorization Selector', () => {
       }
     };
     expect(getAuthorization(state)).toEqual(state.authorization);
+  });
+});
+
+describe('Get Teams Selector', () => {
+  it('should return all teams', () => {
+    const state = {
+      teams: [{ name: 'TestTeam', mails: 'test@mail.com' }]
+    };
+    expect(getTeams(state)).toEqual(state.teams);
   });
 });
