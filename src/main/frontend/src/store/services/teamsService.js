@@ -15,11 +15,13 @@ export const getTeamsApi = async () => {
   return false;
 };
 
-export const createTeamApi = async () => {
+export const createTeamApi = async (createdTeamData, history) => {
   try {
     return await request
       .post('/teams')
       .set('Content-Type', 'application/json')
+      .send(createdTeamData)
+      .then(res => history.push('/teams'))
       .catch(err => {
         console.log(err);
       });

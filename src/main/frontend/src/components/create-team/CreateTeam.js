@@ -1,60 +1,101 @@
 import React, { Component } from 'react';
-import { connect } from 'react';
-
-import TextFieldGroup from '../common/textFieldGroup';
+import Button from '../common/button';
+import Input from '../common/input';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
+import { creatingTeam } from '../../store/actions/teamsActions';
 
 class CreateTeam extends Component {
   state = {
-    active: true,
-    emails: '',
-    name: ''
+    newTeam: {
+      name: '',
+      emails: ''
+    }
   };
 
-  onSubmit = e => {
+  handleEmails = e => {
+    let value = e.target.value;
+    let name = e.target.name;
+    this.setState(prevState => ({
+      newTeam: {
+        ...prevState.newTeam,
+        [name]: value
+      }
+    }));
+  };
+
+  handleName = e => {
+    let value = e.target.value;
+    let name = e.target.name;
+    this.setState(prevState => ({
+      newTeam: {
+        ...prevState.newTeam,
+        [name]: value
+      }
+    }));
+  };
+
+  handleFormSubmit = e => {
     e.preventDefault();
-    console.log('submit');
+    let createdTeamData = this.state.newTeam;
+    creatingTeam(createdTeamData, this.props.history);
   };
 
-  onChange = e => {
+  handleClearForm = e => {
+    e.preventDefault();
     this.setState({
-      [e.target.name]: e.target.value
+      newTeam: {
+        name: '',
+        emails: ''
+      }
     });
-    console.log('change');
   };
 
   render() {
     return (
-      <div className="container">
-        <div className="row">
-          <div className="col-md-8 m-auto">
-            <form className="form-group" onSubmit={this.onSubmit}>
-              <TextFieldGroup
-                placeholder="Team Name"
-                name="name"
-                value={this.state.name}
-                onChange={this.onChange}
-              />
-              <TextFieldGroup
-                placeholder="Emails"
-                name="emails"
-                value={this.state.emails}
-                onChange={this.onChange}
-              />
-              <input
-                type="submit"
-                value="Submit"
-                className="btn btn-info btn-block mt-4"
-              />
-            </form>
-          </div>
-        </div>
-      </div>
+      <form className="container-fluid" onSubmit={this.handleFormSubmit}>
+        <Input
+          type={'text'}
+          title={'Name'}
+          name={'name'}
+          value={this.state.newTeam.name}
+          placeholder={'Enter name'}
+          onChange={this.handleName}
+        />
+        <Input
+          type={'text'}
+          name={'emails'}
+          title={'Emails'}
+          value={this.state.newTeam.emails}
+          placeholder={'Emails'}
+          onChange={this.handleEmails}
+        />
+        <Button
+          action={this.handleFormSubmit}
+          type={'primary'}
+          title={'Submit'}
+        />{' '}
+        {/*Submit */}
+        <Button
+          action={this.handleClearForm}
+          type={'secondary'}
+          title={'Clear'}
+        />{' '}
+        {/* Clear the form */}
+      </form>
     );
   }
 }
 
-// const mapStateToProps = state => ({
-//   team: getTeam(state)
-// })
+const mapStateToProps = state => ({
+  team: state.team
+});
 
-export default CreateTeam;
+const mapDispatchToProps = dispatch =>
+  bindActionCreators({ creatingTeam }, dispatch);
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withRouter(CreateTeam));

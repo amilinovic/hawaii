@@ -9,7 +9,7 @@ class TeamItem extends Component {
     return (
       <tr>
         <td>
-          <NavLink to={`teams/${id}`}>{name}</NavLink>
+          <NavLink to={`edit-team/${id}`}>{name}</NavLink>
         </td>
         <td>test members</td>
         <td>{emails}</td>
