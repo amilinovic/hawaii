@@ -9,6 +9,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -22,12 +23,16 @@ import eu.execom.hawaii.model.Allowance;
 import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.enumerations.AbsenceSubtype;
 import eu.execom.hawaii.repository.AllowanceRepository;
+import eu.execom.hawaii.repository.PublicHolidayRepository;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AllowanceServiceTest {
 
   @Mock
   private AllowanceRepository allowanceRepository;
+
+  @Mock
+  private PublicHolidayRepository publicHolidayRepository;
 
   @InjectMocks
   private AllowanceService allowanceService;
@@ -62,7 +67,12 @@ public class AllowanceServiceTest {
     var dayTwo = EntityBuilder.day(LocalDate.of(2018, 11, 28));
     var request = EntityBuilder.request(EntityBuilder.absenceAnnual(), Arrays.asList(dayOne, dayTwo));
 
+    var startYearFrom = LocalDate.of(2018, 01, 01);
+    var endYearTo = LocalDate.of(2018, 12, 31);
+
     given(allowanceRepository.findByUser(mockUser)).willReturn(mockAllowance);
+    given(publicHolidayRepository.findAllByDateIsBetween(startYearFrom, endYearTo)).willReturn(
+        List.of(EntityBuilder.publicholiday()));
 
     // when
     allowanceService.applyRequest(request, false);

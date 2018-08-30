@@ -110,7 +110,7 @@ public class EntityBuilder {
     var publicHoliday = new PublicHoliday();
     publicHoliday.setActive(true);
     publicHoliday.setName("New year");
-    publicHoliday.setDate(LocalDate.of(2018, 1, 1));
+    publicHoliday.setDate(LocalDate.of(2018, 1, 5));
 
     return publicHoliday;
   }
