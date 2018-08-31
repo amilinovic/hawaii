@@ -85,7 +85,7 @@ public class RequestController {
   }
 
   @GetMapping("/user")
-  public ResponseEntity<List<RequestDto>> getMyRequests(@ApiIgnore @AuthenticationPrincipal User authUser) {
+  public ResponseEntity<List<RequestDto>> geUserRequests(@ApiIgnore @AuthenticationPrincipal User authUser) {
     var requests = requestService.findAllByUser(authUser.getId());
     var requestDtos = requests.stream().map(RequestDto::new).collect(Collectors.toList());
 
