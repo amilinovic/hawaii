@@ -78,7 +78,7 @@ public class EmailService {
     Map<String, Object> templateData = Map.of(USER_NAME, userName, ABSENCE_NAME, absenceName, START_DATE, startDate,
         END_DATE, endDate, NUMBER_OF_REQUESTED_DAYS, numberOfRequestedDays, REASON, reason);
 
-    sendEmail(new Email(approversEmail, subject, templateData), "createRequestEmail");
+    sendEmail(new Email(approversEmail, subject, templateData), "createRequestEmail.ftl");
   }
 
   /**
@@ -100,7 +100,7 @@ public class EmailService {
     Map<String, Object> templateData = Map.of(USER_NAME, userName, STATUS, status, ABSENCE_NAME, absenceName,
         START_DATE, startDate, END_DATE, endDate, NUMBER_OF_REQUESTED_DAYS, numberOfRequestedDays, REASON, reason);
 
-    sendEmail(new Email(userEmail, subject, templateData), "requestNotificationEmail");
+    sendEmail(new Email(userEmail, subject, templateData), "requestNotificationEmail.ftl");
   }
 
   /**
@@ -128,7 +128,7 @@ public class EmailService {
     Map<String, Object> templateData = Map.of(USER_NAME, userName, TEAM_NAME, teamName, START_DATE, startDate,
         END_DATE, endDate, NUMBER_OF_REQUESTED_DAYS, numberOfRequestedDays, REASON, reason);
 
-    sendEmail(new Email(teammatesEmails, subject, templateData), "teammatesSicknessEmail");
+    sendEmail(new Email(teammatesEmails, subject, templateData), "teammatesSicknessEmail.ftl");
   }
 
   /**
@@ -155,7 +155,7 @@ public class EmailService {
     Map<String, Object> templateData = Map.of(USER_NAME, userName, NUMBER_OF_REQUESTED_DAYS, numberOfRequestedDays,
         START_DATE, startDate, END_DATE, endDate, TEAM_NAME, teamName);
 
-    sendEmail(new Email(teammatesEmails, subject, templateData), "teammatesAnnualEmail");
+    sendEmail(new Email(teammatesEmails, subject, templateData), "teammatesAnnualEmail.ftl");
   }
 
   private Predicate<String> isTeammateEmail(String requestUserEmail) {
