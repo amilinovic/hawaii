@@ -34,6 +34,14 @@ import lombok.extern.slf4j.Slf4j;
 public class EmailService {
 
   private static final String EMPTY_STRING = "";
+  private static final String USER_NAME = "userName";
+  private static final String ABSENCE_NAME = "absenceName";
+  private static final String START_DATE = "startDate";
+  private static final String END_DATE = "endDate";
+  private static final String NUMBER_OF_REQUESTED_DAYS = "numberOfRequestedDays";
+  private static final String REASON = "reason";
+  public static final String TEAM_NAME = "teamName";
+  public static final String STATUS = "status";
 
   private JavaMailSender emailSender;
 
@@ -67,8 +75,8 @@ public class EmailService {
     LocalDate startDate = request.getDays().get(0).getDate();
     LocalDate endDate = request.getDays().get(numberOfRequestedDays - 1).getDate();
     var reason = request.getReason();
-    Map<String, Object> templateData = Map.of("userName", userName, "absenceName", absenceName, "startDate", startDate,
-        "endDate", endDate, "numberOfRequestedDays", numberOfRequestedDays, "reason", reason);
+    Map<String, Object> templateData = Map.of(USER_NAME, userName, ABSENCE_NAME, absenceName, START_DATE, startDate,
+        END_DATE, endDate, NUMBER_OF_REQUESTED_DAYS, numberOfRequestedDays, REASON, reason);
 
     sendEmail(new Email(approversEmail, subject, templateData), "createRequestEmail");
   }
@@ -89,8 +97,8 @@ public class EmailService {
     LocalDate startDate = request.getDays().get(0).getDate();
     LocalDate endDate = request.getDays().get(numberOfRequestedDays - 1).getDate();
     String reason = request.getReason();
-    Map<String, Object> templateData = Map.of("userName", userName, "status", status, "absenceName", absenceName,
-        "startDate", startDate, "endDate", endDate, "numberOfRequestedDays", numberOfRequestedDays, "reason", reason);
+    Map<String, Object> templateData = Map.of(USER_NAME, userName, STATUS, status, ABSENCE_NAME, absenceName,
+        START_DATE, startDate, END_DATE, endDate, NUMBER_OF_REQUESTED_DAYS, numberOfRequestedDays, REASON, reason);
 
     sendEmail(new Email(userEmail, subject, templateData), "requestNotificationEmail");
   }
@@ -117,8 +125,8 @@ public class EmailService {
     LocalDate startDate = request.getDays().get(0).getDate();
     LocalDate endDate = request.getDays().get(numberOfRequestedDays - 1).getDate();
     String reason = request.getAbsence().getName();
-    Map<String, Object> templateData = Map.of("userName", userName, "teamName", teamName, "startDate", startDate,
-        "endDate", endDate, "numberOfRequestedDays", numberOfRequestedDays, "reason", reason);
+    Map<String, Object> templateData = Map.of(USER_NAME, userName, TEAM_NAME, teamName, START_DATE, startDate,
+        END_DATE, endDate, NUMBER_OF_REQUESTED_DAYS, numberOfRequestedDays, REASON, reason);
 
     sendEmail(new Email(teammatesEmails, subject, templateData), "teammatesSicknessEmail");
   }
@@ -144,8 +152,8 @@ public class EmailService {
     LocalDate startDate = request.getDays().get(0).getDate();
     LocalDate endDate = request.getDays().get(numberOfRequestedDays - 1).getDate();
     String teamName = request.getUser().getTeam().getName();
-    Map<String, Object> templateData = Map.of("userName", userName, "numberOfRequestedDays", numberOfRequestedDays,
-        "startDate", startDate, "endDate", endDate, "teamName", teamName);
+    Map<String, Object> templateData = Map.of(USER_NAME, userName, NUMBER_OF_REQUESTED_DAYS, numberOfRequestedDays,
+        START_DATE, startDate, END_DATE, endDate, TEAM_NAME, teamName);
 
     sendEmail(new Email(teammatesEmails, subject, templateData), "teammatesAnnualEmail");
   }
