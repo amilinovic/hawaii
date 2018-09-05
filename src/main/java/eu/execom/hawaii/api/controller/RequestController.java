@@ -116,7 +116,7 @@ public class RequestController {
   @GetMapping("/team/{teamId}/month")
   public ResponseEntity<List<RequestDto>> getTeamRequestsByMonth(@PathVariable Long teamId,
       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-    var requests = requestService.findAllByTeamByMonth(teamId, date);
+    var requests = requestService.findAllByTeamByMonthOfYear(teamId, date);
     var requestDtos = requests.stream().map(RequestDto::new).collect(Collectors.toList());
 
     return new ResponseEntity<>(requestDtos, HttpStatus.OK);

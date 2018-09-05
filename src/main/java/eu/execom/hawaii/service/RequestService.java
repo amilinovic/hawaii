@@ -97,7 +97,7 @@ public class RequestService {
    * @param requestedDate the LocalDate.
    * @return a list of all requests for given team.
    */
-  public List<Request> findAllByTeamByMonth(Long teamId, LocalDate requestedDate) {
+  public List<Request> findAllByTeamByMonthOfYear(Long teamId, LocalDate requestedDate) {
     var startDate = requestedDate.withDayOfMonth(1);
     var endDate = requestedDate.withDayOfMonth(requestedDate.lengthOfMonth());
     Team team = teamRepository.getOne(teamId);
