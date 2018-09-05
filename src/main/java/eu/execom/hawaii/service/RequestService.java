@@ -15,12 +15,14 @@ import eu.execom.hawaii.exceptions.NotAuthorizedApprovalExeception;
 import eu.execom.hawaii.model.Absence;
 import eu.execom.hawaii.model.Day;
 import eu.execom.hawaii.model.Request;
+import eu.execom.hawaii.model.Team;
 import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.enumerations.AbsenceType;
 import eu.execom.hawaii.model.enumerations.RequestStatus;
 import eu.execom.hawaii.repository.AbsenceRepository;
 import eu.execom.hawaii.repository.DayRepository;
 import eu.execom.hawaii.repository.RequestRepository;
+import eu.execom.hawaii.repository.TeamRepository;
 import eu.execom.hawaii.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 
@@ -32,17 +34,19 @@ public class RequestService {
   private UserRepository userRepository;
   private AbsenceRepository absenceRepository;
   private DayRepository dayRepository;
+  private TeamRepository teamRepository;
   private AllowanceService allowanceService;
   private GoogleCalendarService googleCalendarService;
   private EmailService emailService;
 
   @Autowired
   public RequestService(RequestRepository requestRepository, UserRepository userRepository,
-      AbsenceRepository absenceRepository, DayRepository dayRepository, AllowanceService allowanceService,
-      GoogleCalendarService googleCalendarService, EmailService emailService) {
+      AbsenceRepository absenceRepository, DayRepository dayRepository, TeamRepository teamRepository,
+      AllowanceService allowanceService, GoogleCalendarService googleCalendarService, EmailService emailService) {
     this.requestRepository = requestRepository;
     this.userRepository = userRepository;
     this.dayRepository = dayRepository;
+    this.teamRepository = teamRepository;
     this.allowanceService = allowanceService;
     this.absenceRepository = absenceRepository;
     this.googleCalendarService = googleCalendarService;
@@ -84,6 +88,24 @@ public class RequestService {
   public List<Request> findAllByUser(Long userId) {
     User user = userRepository.getOne(userId);
     return requestRepository.findAllByUser(user);
+  }
+
+  /**
+   * Retrieves a list of requests for all users from requested team and requested month.
+   *
+   * @param teamId        the Team id.
+   * @param requestedDate the LocalDate.
+   * @return a list of all requests for given team.
+   */
+  public List<Request> findAllByTeamByMonth(Long teamId, LocalDate requestedDate) {
+    var startDate = requestedDate.withDayOfMonth(1);
+    var endDate = requestedDate.withDayOfMonth(requestedDate.lengthOfMonth());
+    Team team = teamRepository.getOne(teamId);
+    List<User> teamUsers = team.getUsers();
+    return teamUsers.stream()
+                    .map(user -> findAllByUserWithinDates(startDate, endDate, user.getId()))
+                    .flatMap(List::stream)
+                    .collect(Collectors.toList());
   }
 
   /**
