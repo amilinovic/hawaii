@@ -104,7 +104,7 @@ public class UserService {
     if (userAllowances.isEmpty()) {
       var currentYearAllowance = createAllowance(user, year, leaveProfile);
       var nextYearAllowance = createAllowance(user, year + 1, leaveProfile);
-      user.setAllowances(List.of(currentYearAllowance, nextYearAllowance));
+      userAllowances.addAll(List.of(currentYearAllowance, nextYearAllowance));
 
     } else {
       var allowance = createAllowance(user, year, leaveProfile);
