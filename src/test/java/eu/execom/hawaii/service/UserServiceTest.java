@@ -183,7 +183,7 @@ public class UserServiceTest {
     var allowanceOne = EntityBuilder.allowance(user);
     var allowanceTwo = EntityBuilder.allowance(user);
     allowanceTwo.setYear(2019);
-    user.setAllowances(new ArrayList<>(List.of(allowanceOne, allowanceTwo)));
+    user.setAllowances(List.of(allowanceOne, allowanceTwo));
 
     var leaveProfile = EntityBuilder.leaveProfile();
     given(leaveProfileRepository.getOne(1L)).willReturn(leaveProfile);
