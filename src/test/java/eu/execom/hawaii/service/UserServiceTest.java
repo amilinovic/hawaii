@@ -4,7 +4,6 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
@@ -119,26 +118,6 @@ public class UserServiceTest {
   }
 
   @Test
-  public void shouldSaveUsers() {
-    // given
-    var team = EntityBuilder.team();
-    var userOne = EntityBuilder.user(team);
-    var userTwo = EntityBuilder.user(team);
-    userTwo.setId(2L);
-    var users = List.of(userOne, userTwo);
-
-    given(userRepository.saveAll(users)).willReturn(users);
-
-    // when
-    List<User> savedUsers = userService.saveAll(users);
-
-    // then
-    assertThat("Expect to number of users be 2", savedUsers.size(), is(2));
-    verify(userRepository).saveAll(anyList());
-    verifyNoMoreInteractions(allMocks);
-  }
-
-  @Test
   public void shouldDeleteUser() {
     // given
     var userId = 1L;
@@ -156,16 +135,19 @@ public class UserServiceTest {
   @Test
   public void shouldCreateAllowanceForNewUser() {
     // given
+    var user = EntityBuilder.user(EntityBuilder.team());
     var leaveProfile = EntityBuilder.leaveProfile();
     given(leaveProfileRepository.getOne(1L)).willReturn(leaveProfile);
+    given(userRepository.save(user)).willReturn(user);
 
     // when
-    User user = userService.createAllowanceForUser(mockUser, 2018);
+    User userWithAllowance = userService.createAllowanceForUser(user, 2018);
 
     // then
-    assertThat("Expect to have two allowance created", user.getAllowances().size(), is(2));
-    assertThat("Expect to second allowance be for 2019 year", user.getAllowances().get(1).getYear(), is(2019));
+    assertThat("Expect to have two allowance created", userWithAllowance.getAllowances().size(), is(2));
+    assertThat("Expect to second allowance be for 2019 year", userWithAllowance.getAllowances().get(1).getYear(), is(2019));
     verify(leaveProfileRepository).getOne(anyLong());
+    verify(userRepository).save(any());
     verifyNoMoreInteractions(allMocks);
   }
 
@@ -180,6 +162,7 @@ public class UserServiceTest {
 
     var leaveProfile = EntityBuilder.leaveProfile();
     given(leaveProfileRepository.getOne(1L)).willReturn(leaveProfile);
+    given(userRepository.save(user)).willReturn(user);
 
     // when
     User userWithAllowance = userService.createAllowanceForUser(user, 2020);
@@ -189,6 +172,7 @@ public class UserServiceTest {
     assertThat("Expect to third allowance be for 2020 year", userWithAllowance.getAllowances().get(2).getYear(),
         is(2020));
     verify(leaveProfileRepository).getOne(anyLong());
+    verify(userRepository).save(any());
     verifyNoMoreInteractions(allMocks);
   }
 

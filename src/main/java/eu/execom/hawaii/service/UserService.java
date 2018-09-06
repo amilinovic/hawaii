@@ -75,16 +75,6 @@ public class UserService {
   }
 
   /**
-   * Saves all users.
-   *
-   * @param users the List of user to be persisted.
-   */
-  @Transactional
-  public List<User> saveAll(List<User> users) {
-    return userRepository.saveAll(users);
-  }
-
-  /**
    * Logically deletes User.
    *
    * @param id - the user id
@@ -110,16 +100,21 @@ public class UserService {
       var nextYearAllowance = createAllowance(user, year + 1, leaveProfile);
       user.setAllowances(List.of(currentYearAllowance, nextYearAllowance));
 
-    } else if (userAllowances.stream().anyMatch(allowance -> year == allowance.getYear())) {
-      log.error("User: {}, already have allowance for given year: {}", user.getEmail(), year);
-
-    } else {
-      var nextYearAllowance = createAllowance(user, year, leaveProfile);
-      userAllowances.add(nextYearAllowance);
-      user.setAllowances(userAllowances);
+      return save(user);
     }
 
-    return user;
+    var isUserAlreadyHasAllowanceForGivenYear = userAllowances.stream().anyMatch(allowance -> year == allowance.getYear());
+    if (isUserAlreadyHasAllowanceForGivenYear) {
+      log.error("User: {}, already has allowance for given year: {}", user.getEmail(), year);
+
+      return user;
+    }
+
+    var nextYearAllowance = createAllowance(user, year, leaveProfile);
+    userAllowances.add(nextYearAllowance);
+    user.setAllowances(userAllowances);
+
+    return save(user);
   }
 
   private Allowance createAllowance(User user, int year, LeaveProfile leaveProfile) {

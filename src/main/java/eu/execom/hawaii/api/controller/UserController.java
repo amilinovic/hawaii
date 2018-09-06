@@ -54,7 +54,6 @@ public class UserController {
   public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto) {
     User user = MAPPER.map(userDto, User.class);
     user = userService.createAllowanceForUser(user, LocalDate.now().getYear());
-    user = userService.save(user);
 
     return new ResponseEntity<>(new UserDto(user), HttpStatus.CREATED);
   }
@@ -74,7 +73,6 @@ public class UserController {
     var latestUserAllowance = userAllowances.get(userAllowances.size() - 1);
     var latestYear = latestUserAllowance.getYear();
     user = userService.createAllowanceForUser(user, latestYear + 1);
-    user = userService.save(user);
 
     return new ResponseEntity<>(new UserDto(user), HttpStatus.OK);
   }
@@ -86,10 +84,7 @@ public class UserController {
                                       .map(user -> userService.createAllowanceForUser(user, year))
                                       .collect(Collectors.toList());
 
-    List<UserDto> userDtos = userService.saveAll(usersAllowances)
-                                        .stream()
-                                        .map(UserDto::new)
-                                        .collect(Collectors.toList());
+    List<UserDto> userDtos = usersAllowances.stream().map(UserDto::new).collect(Collectors.toList());
 
     return new ResponseEntity<>(userDtos, HttpStatus.OK);
   }
