@@ -109,7 +109,6 @@ public class UserService {
     } else {
       var allowance = createAllowance(user, year, leaveProfile);
       userAllowances.add(allowance);
-      user.setAllowances(userAllowances);
     }
 
     return save(user);
