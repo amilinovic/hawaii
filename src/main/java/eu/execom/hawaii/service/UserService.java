@@ -77,7 +77,7 @@ public class UserService {
   /**
    * Saves all users.
    *
-   * @param users the Users to be persisted.
+   * @param users the List of user to be persisted.
    */
   @Transactional
   public List<User> saveAll(List<User> users) {
