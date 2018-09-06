@@ -3,12 +3,14 @@ import { getTokenSaga } from './getTokenSaga';
 import { all } from 'redux-saga/effects';
 import { authenticateSaga } from './getTokenFromSessionStorageSaga';
 import { teamsSaga } from './teamsSaga';
+import { fetchEmployeesSaga } from './employeesSaga';
 
 export default function* saga() {
   yield all([
     ...randomUserApiSaga,
     ...getTokenSaga,
     ...authenticateSaga,
-    ...teamsSaga
+    ...teamsSaga,
+    ...fetchEmployeesSaga
   ]);
 }
