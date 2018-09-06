@@ -43,6 +43,7 @@ public class EntityBuilder {
     user.setActive(true);
     user.setApproverTeams(new ArrayList<>());
     user.setRequests(new ArrayList<>());
+    user.setAllowances(new ArrayList<>());
 
     return user;
   }

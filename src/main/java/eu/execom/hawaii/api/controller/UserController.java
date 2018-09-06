@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import eu.execom.hawaii.dto.UserDto;
+import eu.execom.hawaii.model.Allowance;
 import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.service.UserService;
 
@@ -70,21 +71,20 @@ public class UserController {
   public ResponseEntity<UserDto> createAllowanceForUserForNextYear(@PathVariable Long userId) {
     User user = userService.getUserById(userId);
     var userAllowances = user.getAllowances();
-    var latestUserAllowance = userAllowances.get(userAllowances.size() - 1);
-    var latestYear = latestUserAllowance.getYear();
+    int latestYear = userAllowances.stream().map(Allowance::getYear).reduce((a, b) -> b).orElse(0);
     user = userService.createAllowanceForUser(user, latestYear + 1);
 
     return new ResponseEntity<>(new UserDto(user), HttpStatus.OK);
   }
 
   @PutMapping("/allowances/{year}")
-  public ResponseEntity<List<UserDto>> createAllowanceForUsersForNextYear(@PathVariable int year) {
+  public ResponseEntity<List<UserDto>> createAllowanceForAllUsersForYear(@PathVariable int year) {
     List<User> users = userService.findAllByActive(true);
-    List<User> usersAllowances = users.stream()
-                                      .map(user -> userService.createAllowanceForUser(user, year))
-                                      .collect(Collectors.toList());
 
-    List<UserDto> userDtos = usersAllowances.stream().map(UserDto::new).collect(Collectors.toList());
+    List<UserDto> userDtos = users.stream()
+                                  .map(user -> userService.createAllowanceForUser(user, year))
+                                  .map(UserDto::new)
+                                  .collect(Collectors.toList());
 
     return new ResponseEntity<>(userDtos, HttpStatus.OK);
   }

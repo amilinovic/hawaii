@@ -94,24 +94,23 @@ public class UserService {
     var leaveProfile = leaveProfileRepository.getOne(user.getLeaveProfile().getId());
     var userAllowances = user.getAllowances();
 
-    if (userAllowances == null) {
-      var currentYearAllowance = createAllowance(user, year, leaveProfile);
-      var nextYearAllowance = createAllowance(user, year + 1, leaveProfile);
-      user.setAllowances(List.of(currentYearAllowance, nextYearAllowance));
-
-      return save(user);
-    }
-
-    var isUserAlreadyHasAllowanceForGivenYear = userAllowances.stream().anyMatch(allowance -> year == allowance.getYear());
-    if (isUserAlreadyHasAllowanceForGivenYear) {
-      log.error("User: {}, already has allowance for given year: {}", user.getEmail(), year);
+    var userHasAllowanceForGivenYear = userAllowances.stream().anyMatch(allowance -> year == allowance.getYear());
+    if (userHasAllowanceForGivenYear) {
+      log.warn("User: {}, already has allowance for given year: {}", user.getEmail(), year);
 
       return user;
     }
 
-    var nextYearAllowance = createAllowance(user, year, leaveProfile);
-    userAllowances.add(nextYearAllowance);
-    user.setAllowances(userAllowances);
+    if (userAllowances.isEmpty()) {
+      var currentYearAllowance = createAllowance(user, year, leaveProfile);
+      var nextYearAllowance = createAllowance(user, year + 1, leaveProfile);
+      user.setAllowances(List.of(currentYearAllowance, nextYearAllowance));
+
+    } else {
+      var allowance = createAllowance(user, year, leaveProfile);
+      userAllowances.add(allowance);
+      user.setAllowances(userAllowances);
+    }
 
     return save(user);
   }
