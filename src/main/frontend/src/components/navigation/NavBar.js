@@ -8,7 +8,6 @@ import ExecomCalendar from '../../pages/ExecomCalendar';
 import Sidebar from './Sidebar';
 import TopHeader from '../header/TopHeader';
 import Teams from '../teams/Teams';
-import CreateTeam from '../create-team/CreateTeam';
 import Dashboard from '../dashboard/Dashboard';
 
 export default class NavBar extends Component {
