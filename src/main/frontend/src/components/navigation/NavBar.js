@@ -8,6 +8,8 @@ import ExecomCalendar from '../../pages/ExecomCalendar';
 import Sidebar from './Sidebar';
 import TopHeader from '../header/TopHeader';
 import Teams from '../teams/Teams';
+import CreateTeam from '../create-team/CreateTeam';
+import Dashboard from '../dashboard/Dashboard';
 
 export default class NavBar extends Component {
   render() {
@@ -23,6 +25,7 @@ export default class NavBar extends Component {
               <Route path="/leave-history" component={LeaveHistory} />
               <Route path="/team-calendar" component={TeamCalendar} />
               <Route path="/execom-calendar" component={ExecomCalendar} />
+              <Route path="/dashboard" component={Dashboard} />
               <Route path="/teams" component={Teams} />
             </Switch>
           </div>
