@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import Teams from '../teams/Teams';
-
 import Tabs from '../tabs/Tabs';
+import Teams from '../teams/Teams';
+import Employees from '../employees/Employees';
 
 class Dashboard extends Component {
   render() {
@@ -10,7 +10,9 @@ class Dashboard extends Component {
         <div label="Teams">
           <Teams />
         </div>
-        <div label="Employees">Employees</div>
+        <div label="Employees">
+          <Employees />
+        </div>
       </Tabs>
     );
   }
