@@ -69,7 +69,6 @@ public class UserService {
    *
    * @param user the User entity to be persisted.
    */
-  @Transactional
   public User save(User user) {
     return userRepository.save(user);
   }
