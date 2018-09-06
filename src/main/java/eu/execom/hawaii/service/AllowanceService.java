@@ -175,8 +175,8 @@ public class AllowanceService {
                                                          .map(LocalDate::getYear)
                                                          .collect(Collectors.toCollection(LinkedHashSet::new));
 
-    var yearFrom = requestYears.stream().findFirst().get();
-    var yearTo = requestYears.stream().reduce(( a, b) -> b).get();
+    var yearFrom = requestYears.stream().findFirst().orElse(0);
+    var yearTo = requestYears.stream().reduce((a, b) -> b).orElse(0);
     var startYearFrom = LocalDate.of(yearFrom, 01, 01);
     var endYearTo = LocalDate.of(yearTo, 12, 31);
     var publicHolidays = publicHolidayRepository.findAllByDateIsBetween(startYearFrom, endYearTo);

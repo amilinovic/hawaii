@@ -32,6 +32,7 @@ import eu.execom.hawaii.model.enumerations.AbsenceType;
 import eu.execom.hawaii.model.enumerations.RequestStatus;
 import eu.execom.hawaii.repository.AbsenceRepository;
 import eu.execom.hawaii.repository.RequestRepository;
+import eu.execom.hawaii.repository.TeamRepository;
 import eu.execom.hawaii.repository.UserRepository;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -49,6 +50,8 @@ public class RequestServiceTest {
   private UserRepository userRepository;
   @Mock
   private AbsenceRepository absenceRepository;
+  @Mock
+  private TeamRepository teamRepository;
   @InjectMocks
   private RequestService requestService;
 
@@ -77,7 +80,7 @@ public class RequestServiceTest {
     mockRequests = Arrays.asList(requestOne, requestTwo);
 
     allMocks = new Object[] {allowanceService, googleCalendarService, emailService, requestRepository, userRepository,
-        absenceRepository};
+        absenceRepository, teamRepository};
   }
 
   @Test
@@ -376,6 +379,64 @@ public class RequestServiceTest {
 
     // then
 
+  }
+
+  @Test
+  public void shouldFindAllByTeamByMonthOfYear() {
+    // given
+    var team = EntityBuilder.team();
+    team.setId(1L);
+    var userOne = EntityBuilder.user(team);
+    userOne.setRequests(List.of(requestOne));
+    var userTwo = EntityBuilder.user(team);
+    userTwo.setId(2L);
+    userTwo.setRequests(List.of(requestTwo));
+    team.setUsers(List.of(userOne, userTwo));
+
+    given(teamRepository.getOne(1L)).willReturn(team);
+    given(userRepository.getOne(1L)).willReturn(userOne);
+    given(userRepository.getOne(2L)).willReturn(userTwo);
+    given(requestRepository.findAllByUser(userOne)).willReturn(List.of(requestOne));
+    given(requestRepository.findAllByUser(userTwo)).willReturn(List.of(requestTwo));
+
+    // when
+    List<Request> requests = requestService.findAllByTeamByMonthOfYear(1L, LocalDate.of(2018, 11, 25));
+
+    // then
+    assertThat("Expect to size of requests be two", requests.size(), is(2));
+    verify(teamRepository).getOne(anyLong());
+    verify(userRepository, times(2)).getOne(anyLong());
+    verify(requestRepository, times(2)).findAllByUser(any());
+    verifyNoMoreInteractions(allMocks);
+  }
+
+  @Test
+  public void shouldFailToFindAnyRequestByTeamByMonthOfYear() {
+    // given
+    var team = EntityBuilder.team();
+    team.setId(1L);
+    var userOne = EntityBuilder.user(team);
+    userOne.setRequests(List.of(requestOne));
+    var userTwo = EntityBuilder.user(team);
+    userTwo.setId(2L);
+    userTwo.setRequests(List.of(requestTwo));
+    team.setUsers(List.of(userOne, userTwo));
+
+    given(teamRepository.getOne(1L)).willReturn(team);
+    given(userRepository.getOne(1L)).willReturn(userOne);
+    given(userRepository.getOne(2L)).willReturn(userTwo);
+    given(requestRepository.findAllByUser(userOne)).willReturn(List.of(requestOne));
+    given(requestRepository.findAllByUser(userTwo)).willReturn(List.of(requestTwo));
+
+    // when
+    List<Request> requests = requestService.findAllByTeamByMonthOfYear(1L, LocalDate.of(2018, 1, 25));
+
+    // then
+    assertThat("Expect to list of request be empty", requests.isEmpty(), is(true));
+    verify(teamRepository).getOne(anyLong());
+    verify(userRepository, times(2)).getOne(anyLong());
+    verify(requestRepository, times(2)).findAllByUser(any());
+    verifyNoMoreInteractions(allMocks);
   }
 
 }

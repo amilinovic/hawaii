@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import eu.execom.hawaii.model.Email;
@@ -33,7 +34,8 @@ public class EmailService {
    *
    * @param request the Request.
    */
-  void createEmailAndSendForApproval(Request request) {
+  @Async
+  public void createEmailAndSendForApproval(Request request) {
     List<String> approversEmail = request.getUser()
                                          .getTeam()
                                          .getTeamApprovers()
@@ -59,7 +61,8 @@ public class EmailService {
    *
    * @param request the Request.
    */
-  void createStatusNotificationEmailAndSend(Request request) {
+  @Async
+  public void createStatusNotificationEmailAndSend(Request request) {
     List<String> userEmail = Collections.singletonList(request.getUser().getEmail());
     String subject = EmailFormatter.getLeaveRequestNotificationSubject(request.getRequestStatus().toString());
     String userName = request.getUser().getFullName();
@@ -80,7 +83,8 @@ public class EmailService {
    *
    * @param request the Request.
    */
-  void createSicknessEmailForTeammatesAndSend(Request request) {
+  @Async
+  public void createSicknessEmailForTeammatesAndSend(Request request) {
     List<String> teammatesEmails = request.getUser()
                                           .getTeam()
                                           .getUsers()
@@ -105,7 +109,8 @@ public class EmailService {
    *
    * @param request the Request.
    */
-  void createAnnualEmailForTeammatesAndSend(Request request) {
+  @Async
+  public void createAnnualEmailForTeammatesAndSend(Request request) {
     List<String> teammatesEmails = request.getUser()
                                           .getTeam()
                                           .getUsers()
