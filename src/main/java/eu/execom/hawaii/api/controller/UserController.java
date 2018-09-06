@@ -53,7 +53,7 @@ public class UserController {
   @PostMapping
   public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto) {
     User user = MAPPER.map(userDto, User.class);
-    user = userService.createUserAllowance(user, LocalDate.now().getYear());
+    user = userService.createAllowanceForUser(user, LocalDate.now().getYear());
     user = userService.save(user);
 
     return new ResponseEntity<>(new UserDto(user), HttpStatus.CREATED);
@@ -68,22 +68,22 @@ public class UserController {
   }
 
   @PutMapping("/{userId}/allowance")
-  public ResponseEntity<UserDto> createUserAllowanceForNextYear(@PathVariable Long userId) {
+  public ResponseEntity<UserDto> createAllowanceForUserForNextYear(@PathVariable Long userId) {
     User user = userService.getUserById(userId);
     var userAllowances = user.getAllowances();
     var latestUserAllowance = userAllowances.get(userAllowances.size() - 1);
     var latestYear = latestUserAllowance.getYear();
-    user = userService.createUserAllowance(user, latestYear + 1);
+    user = userService.createAllowanceForUser(user, latestYear + 1);
     user = userService.save(user);
 
     return new ResponseEntity<>(new UserDto(user), HttpStatus.OK);
   }
 
   @PutMapping("/allowances/{year}")
-  public ResponseEntity<List<UserDto>> createUsersAllowanceForNextYear(@PathVariable int year) {
+  public ResponseEntity<List<UserDto>> createAllowanceForUsersForNextYear(@PathVariable int year) {
     List<User> users = userService.findAllByActive(true);
     List<User> usersAllowances = users.stream()
-                                      .map(user -> userService.createUserAllowance(user, year))
+                                      .map(user -> userService.createAllowanceForUser(user, year))
                                       .collect(Collectors.toList());
 
     List<UserDto> userDtos = userService.saveAll(usersAllowances)

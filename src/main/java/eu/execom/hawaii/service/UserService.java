@@ -101,7 +101,7 @@ public class UserService {
    *
    * @param user new User.
    */
-  public User createUserAllowance(User user, int year) {
+  public User createAllowanceForUser(User user, int year) {
     var leaveProfile = leaveProfileRepository.getOne(user.getLeaveProfile().getId());
     var userAllowances = user.getAllowances();
 

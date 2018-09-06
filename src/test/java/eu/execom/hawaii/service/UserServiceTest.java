@@ -4,6 +4,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
@@ -23,6 +24,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import eu.execom.hawaii.model.User;
+import eu.execom.hawaii.repository.LeaveProfileRepository;
 import eu.execom.hawaii.repository.UserRepository;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -31,11 +33,15 @@ public class UserServiceTest {
   @Mock
   private UserRepository userRepository;
 
+  @Mock
+  private LeaveProfileRepository leaveProfileRepository;
+
   @InjectMocks
   private UserService userService;
 
   private User mockUser;
   private List<User> initialUsers;
+  private Object[] allMocks;
 
   @Before
   public void setUp() {
@@ -48,6 +54,7 @@ public class UserServiceTest {
     mockUser2.setFullName("John Snow");
 
     initialUsers = new ArrayList<>(Arrays.asList(mockUser, mockUser2));
+    allMocks = new Object[] {userRepository, leaveProfileRepository};
   }
 
   @Test
@@ -94,7 +101,7 @@ public class UserServiceTest {
     // then
     assertThat("Expect email to be aria.stark@gmail.com", user.getEmail(), is(email));
     verify(userRepository).findByEmail(anyString());
-    verifyNoMoreInteractions(userRepository);
+    verifyNoMoreInteractions(allMocks);
   }
 
   @Test
@@ -108,7 +115,27 @@ public class UserServiceTest {
     // then
     assertThat("Expect name match to Aria Stark", savedUser.getFullName(), is(mockUser.getFullName()));
     verify(userRepository).save(any());
-    verifyNoMoreInteractions(userRepository);
+    verifyNoMoreInteractions(allMocks);
+  }
+
+  @Test
+  public void shouldSaveUsers() {
+    // given
+    var team = EntityBuilder.team();
+    var userOne = EntityBuilder.user(team);
+    var userTwo = EntityBuilder.user(team);
+    userTwo.setId(2L);
+    var users = List.of(userOne, userTwo);
+
+    given(userRepository.saveAll(users)).willReturn(users);
+
+    // when
+    List<User> savedUsers = userService.saveAll(users);
+
+    // then
+    assertThat("Expect to number of users be 2", savedUsers.size(), is(2));
+    verify(userRepository).saveAll(anyList());
+    verifyNoMoreInteractions(allMocks);
   }
 
   @Test
@@ -123,7 +150,69 @@ public class UserServiceTest {
     // then
     verify(userRepository).getOne(anyLong());
     verify(userRepository).save(any());
-    verifyNoMoreInteractions(userRepository);
+    verifyNoMoreInteractions(allMocks);
+  }
+
+  @Test
+  public void shouldCreateAllowanceForNewUser() {
+    // given
+    var leaveProfile = EntityBuilder.leaveProfile();
+    given(leaveProfileRepository.getOne(1L)).willReturn(leaveProfile);
+
+    // when
+    User user = userService.createAllowanceForUser(mockUser, 2018);
+
+    // then
+    assertThat("Expect to have two allowance created", user.getAllowances().size(), is(2));
+    assertThat("Expect to second allowance be for 2019 year", user.getAllowances().get(1).getYear(), is(2019));
+    verify(leaveProfileRepository).getOne(anyLong());
+    verifyNoMoreInteractions(allMocks);
+  }
+
+  @Test
+  public void shouldCreateAllowanceUserForNextYear() {
+    // given
+    var user = EntityBuilder.user(EntityBuilder.team());
+    var allowanceOne = EntityBuilder.allowance(user);
+    var allowanceTwo = EntityBuilder.allowance(user);
+    allowanceTwo.setYear(2019);
+    user.setAllowances(new ArrayList<>(List.of(allowanceOne, allowanceTwo)));
+
+    var leaveProfile = EntityBuilder.leaveProfile();
+    given(leaveProfileRepository.getOne(1L)).willReturn(leaveProfile);
+
+    // when
+    User userWithAllowance = userService.createAllowanceForUser(user, 2020);
+
+    // then
+    assertThat("Expect to have three allowance created", userWithAllowance.getAllowances().size(), is(3));
+    assertThat("Expect to third allowance be for 2020 year", userWithAllowance.getAllowances().get(2).getYear(),
+        is(2020));
+    verify(leaveProfileRepository).getOne(anyLong());
+    verifyNoMoreInteractions(allMocks);
+  }
+
+  @Test
+  public void shouldSkipCreationNewAllowanceForUserWithExistingYearAllowance() {
+    // given
+    var user = EntityBuilder.user(EntityBuilder.team());
+    var allowanceOne = EntityBuilder.allowance(user);
+    var allowanceTwo = EntityBuilder.allowance(user);
+    allowanceTwo.setYear(2019);
+    user.setAllowances(new ArrayList<>(List.of(allowanceOne, allowanceTwo)));
+
+    var leaveProfile = EntityBuilder.leaveProfile();
+    given(leaveProfileRepository.getOne(1L)).willReturn(leaveProfile);
+
+    // when
+    User userWithAllowance = userService.createAllowanceForUser(user, 2019);
+
+    // then
+    assertThat("Expect to have three allowance created", userWithAllowance.getAllowances().size(), is(2));
+    assertThat("Expect to third allowance be for 2020 year", userWithAllowance.getAllowances().get(1).getYear(),
+        is(2019));
+    verify(leaveProfileRepository).getOne(anyLong());
+    verifyNoMoreInteractions(allMocks);
   }
 
 }
