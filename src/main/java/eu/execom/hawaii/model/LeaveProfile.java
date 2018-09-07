@@ -27,6 +27,8 @@ public class LeaveProfile extends BaseEntity implements Serializable {
 
   private int maxCarriedOver;
 
+  private int maxBonusDays;
+
   private int training;
 
   private String comment;
