@@ -1,5 +1,6 @@
 package eu.execom.hawaii.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,7 +20,7 @@ public class UserDto {
   private String jobTitle;
   private boolean active;
   private int yearsOfService;
-  private List<AllowanceDto> allowances;
+  private List<AllowanceDto> allowances = new ArrayList<>();
 
   public UserDto(User user) {
     this.id = user.getId();
