@@ -23,7 +23,7 @@ import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import eu.execom.hawaii.model.Email;
 import eu.execom.hawaii.model.Request;
 import eu.execom.hawaii.model.User;
-import eu.execom.hawaii.util.EmailFormatter;
+import eu.execom.hawaii.util.EmailSubjectProvider;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -67,7 +67,7 @@ public class EmailService {
                                          .map(User::getEmail)
                                          .collect(Collectors.toList());
 
-    String subject = EmailFormatter.REQUEST_CREATED_SUBJECT;
+    String subject = EmailSubjectProvider.REQUEST_CREATED_SUBJECT;
 
     String userName = request.getUser().getFullName();
     String absenceName = request.getAbsence().getName();
@@ -89,7 +89,7 @@ public class EmailService {
   @Async
   public void createStatusNotificationEmailAndSend(Request request) {
     List<String> userEmail = Collections.singletonList(request.getUser().getEmail());
-    String subject = EmailFormatter.getLeaveRequestNotificationSubject(request.getRequestStatus().toString());
+    String subject = EmailSubjectProvider.getLeaveRequestNotificationSubject(request.getRequestStatus().toString());
     String userName = request.getUser().getFullName();
     String status = request.getRequestStatus().toString();
     String absenceName = request.getAbsence().getName();
@@ -118,7 +118,7 @@ public class EmailService {
                                           .map(User::getEmail)
                                           .filter(isTeammateEmail(userEmail))
                                           .collect(Collectors.toList());
-    String subject = EmailFormatter.TEAM_NOTIFICATION_SICKNESS_SUBJECT;
+    String subject = EmailSubjectProvider.TEAM_NOTIFICATION_SICKNESS_SUBJECT;
     String userName = request.getUser().getFullName();
     String teamName = request.getUser().getTeam().getName();
     int numberOfRequestedDays = request.getDays().size();
@@ -146,7 +146,7 @@ public class EmailService {
                                           .map(User::getEmail)
                                           .filter(isTeammateEmail(userEmail))
                                           .collect(Collectors.toList());
-    String subject = EmailFormatter.TEAM_NOTIFICATION_ANNUAL_SUBJECT;
+    String subject = EmailSubjectProvider.TEAM_NOTIFICATION_ANNUAL_SUBJECT;
     String userName = request.getUser().getFullName();
     int numberOfRequestedDays = request.getDays().size();
     LocalDate startDate = request.getDays().get(0).getDate();

@@ -1,8 +1,8 @@
 package eu.execom.hawaii.util;
 
-public class EmailFormatter {
+public final class EmailSubjectProvider {
 
-  private EmailFormatter() {
+  private EmailSubjectProvider() {
   }
 
   public static final String REQUEST_CREATED_SUBJECT = "Leave Request requires your Approval";
