@@ -1,5 +1,6 @@
 package eu.execom.hawaii.api.controller;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import eu.execom.hawaii.dto.UserDto;
+import eu.execom.hawaii.model.Allowance;
 import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.service.UserService;
 
@@ -38,35 +40,59 @@ public class UserController {
   public ResponseEntity<List<UserDto>> getUsers(@RequestParam boolean active) {
     List<User> users = userService.findAllByActive(active);
     List<UserDto> userDtos = users.stream().map(UserDto::new).collect(Collectors.toList());
+
     return new ResponseEntity<>(userDtos, HttpStatus.OK);
   }
 
   @GetMapping("/{email}")
   public ResponseEntity<UserDto> getUserByEmail(@PathVariable String email) {
     User user = userService.findByEmail(email);
-    UserDto userDto = new UserDto(user);
-    return new ResponseEntity<>(userDto, HttpStatus.OK);
+
+    return new ResponseEntity<>(new UserDto(user), HttpStatus.OK);
   }
 
   @PostMapping
   public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto) {
     User user = MAPPER.map(userDto, User.class);
-    user = userService.createAndSaveNewUser(user);
-    UserDto userDtoResponse = new UserDto(user);
-    return new ResponseEntity<>(userDtoResponse, HttpStatus.CREATED);
+    user = userService.createAllowanceForUser(user, LocalDate.now().getYear());
+
+    return new ResponseEntity<>(new UserDto(user), HttpStatus.CREATED);
   }
 
   @PutMapping
   public ResponseEntity<UserDto> updateUser(@RequestBody UserDto userDto) {
     User user = MAPPER.map(userDto, User.class);
     user = userService.save(user);
-    UserDto userDtoResponse = new UserDto(user);
-    return new ResponseEntity<>(userDtoResponse, HttpStatus.OK);
+
+    return new ResponseEntity<>(new UserDto(user), HttpStatus.OK);
+  }
+
+  @PutMapping("/{userId}/allowance")
+  public ResponseEntity<UserDto> createAllowanceForUserForNextYear(@PathVariable Long userId) {
+    User user = userService.getUserById(userId);
+    var userAllowances = user.getAllowances();
+    int latestYear = userAllowances.stream().map(Allowance::getYear).reduce((a, b) -> b).orElse(0);
+    user = userService.createAllowanceForUser(user, latestYear + 1);
+
+    return new ResponseEntity<>(new UserDto(user), HttpStatus.OK);
+  }
+
+  @PutMapping("/allowances/{year}")
+  public ResponseEntity<List<UserDto>> createAllowanceForAllUsersForYear(@PathVariable int year) {
+    List<User> users = userService.findAllByActive(true);
+
+    List<UserDto> userDtos = users.stream()
+                                  .map(user -> userService.createAllowanceForUser(user, year))
+                                  .map(UserDto::new)
+                                  .collect(Collectors.toList());
+
+    return new ResponseEntity<>(userDtos, HttpStatus.OK);
   }
 
   @DeleteMapping("/{id}")
   public ResponseEntity deleteUser(@PathVariable Long id) {
     userService.delete(id);
+
     return new ResponseEntity(HttpStatus.NO_CONTENT);
   }
 
