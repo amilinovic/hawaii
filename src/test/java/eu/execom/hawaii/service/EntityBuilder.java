@@ -67,10 +67,11 @@ public class EntityBuilder {
 
   static LeaveProfile leaveProfile() {
     var leaveProfile = new LeaveProfile();
+    leaveProfile.setId(1L);
     leaveProfile.setName("Default");
-    leaveProfile.setEntitlement(5);
-    leaveProfile.setMaxCarriedOver(5);
-    leaveProfile.setTraining(2);
+    leaveProfile.setEntitlement(160);
+    leaveProfile.setMaxCarriedOver(40);
+    leaveProfile.setTraining(16);
     leaveProfile.setComment("No comment");
     leaveProfile.setUsers(new ArrayList<>());
 
@@ -92,12 +93,13 @@ public class EntityBuilder {
 
   static Allowance allowance(User user) {
     var allowance = new Allowance();
+    allowance.setId(1L);
     allowance.setUser(user);
     allowance.setYear(2018);
     allowance.setAnnual(160);
-    allowance.setTakenAnnual(40);
-    allowance.setSickness(16);
-    allowance.setBonus(16);
+    allowance.setTakenAnnual(0);
+    allowance.setSickness(0);
+    allowance.setBonus(0);
     allowance.setCarriedOver(40);
     allowance.setManualAdjust(0);
     allowance.setTraining(16);

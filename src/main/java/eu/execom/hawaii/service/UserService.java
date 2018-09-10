@@ -1,7 +1,5 @@
 package eu.execom.hawaii.service;
 
-import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.persistence.EntityNotFoundException;
@@ -11,13 +9,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import eu.execom.hawaii.model.Allowance;
+import eu.execom.hawaii.model.LeaveProfile;
 import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.repository.LeaveProfileRepository;
 import eu.execom.hawaii.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * User management service.
  */
+@Slf4j
 @Service
 public class UserService {
 
@@ -68,7 +69,6 @@ public class UserService {
    *
    * @param user the User entity to be persisted.
    */
-  @Transactional
   public User save(User user) {
     return userRepository.save(user);
   }
@@ -86,23 +86,42 @@ public class UserService {
   }
 
   /**
-   * Assign allowance to new User based on users leave profile.
+   * Assign new allowance to User based on users leave profile.
    *
    * @param user new User.
    */
-  @Transactional
-  public User createAndSaveNewUser(User user) {
-    var allowance = new Allowance();
+  public User createAllowanceForUser(User user, int year) {
     var leaveProfile = leaveProfileRepository.getOne(user.getLeaveProfile().getId());
+    var userAllowances = user.getAllowances();
 
+    var userHasAllowanceForGivenYear = userAllowances.stream().anyMatch(allowance -> year == allowance.getYear());
+    if (userHasAllowanceForGivenYear) {
+      log.warn("User: {}, already has allowance for given year: {}", user.getEmail(), year);
+
+      return user;
+    }
+
+    if (userAllowances.isEmpty()) {
+      var currentYearAllowance = createAllowance(user, year, leaveProfile);
+      var nextYearAllowance = createAllowance(user, year + 1, leaveProfile);
+      userAllowances.addAll(List.of(currentYearAllowance, nextYearAllowance));
+
+    } else {
+      var allowance = createAllowance(user, year, leaveProfile);
+      userAllowances.add(allowance);
+    }
+
+    return save(user);
+  }
+
+  private Allowance createAllowance(User user, int year, LeaveProfile leaveProfile) {
+    Allowance allowance = new Allowance();
     allowance.setUser(user);
-    allowance.setYear(LocalDate.now().getYear());
+    allowance.setYear(year);
     allowance.setAnnual(leaveProfile.getEntitlement());
     allowance.setTraining(leaveProfile.getTraining());
 
-    user.setAllowances(Arrays.asList(allowance));
-
-    return save(user);
+    return allowance;
   }
 
 }
