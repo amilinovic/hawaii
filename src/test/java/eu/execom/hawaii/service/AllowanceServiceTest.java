@@ -3,7 +3,10 @@ package eu.execom.hawaii.service;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
@@ -49,14 +52,14 @@ public class AllowanceServiceTest {
   @Test
   public void shouldGetAllowanceByUser() {
     // given
-    given(allowanceRepository.findByUser(mockUser)).willReturn(mockAllowance);
+    given(allowanceRepository.findByUserIdAndYear(mockUser.getId(), 2018)).willReturn(mockAllowance);
 
     // when
-    Allowance allowance = allowanceService.getByUser(mockUser);
+    Allowance allowance = allowanceService.getByUserByYear(mockUser.getId(), 2018);
 
     // then
     assertThat("", allowance.getYear(), is(2018));
-    verify(allowanceRepository).findByUser(any());
+    verify(allowanceRepository).findByUserIdAndYear(anyLong(), anyInt());
     verifyNoMoreInteractions(allowanceRepository);
   }
 
@@ -69,8 +72,12 @@ public class AllowanceServiceTest {
 
     var startYearFrom = LocalDate.of(2018, 01, 01);
     var endYearTo = LocalDate.of(2018, 12, 31);
+    var mockAllowanceTwo = EntityBuilder.allowance(mockUser);
+    mockAllowanceTwo.setId(2L);
+    mockAllowanceTwo.setYear(2019);
 
-    given(allowanceRepository.findByUser(mockUser)).willReturn(mockAllowance);
+    given(allowanceRepository.findByUserIdAndYear(mockUser.getId(), 2018)).willReturn(mockAllowance);
+    given(allowanceRepository.findByUserIdAndYear(mockUser.getId(), 2019)).willReturn(mockAllowanceTwo);
     given(publicHolidayRepository.findAllByDateIsBetween(startYearFrom, endYearTo)).willReturn(
         List.of(EntityBuilder.publicholiday()));
 
@@ -78,7 +85,7 @@ public class AllowanceServiceTest {
     allowanceService.applyRequest(request, false);
 
     // then
-    verify(allowanceRepository).findByUser(any());
+    verify(allowanceRepository, times(2)).findByUserIdAndYear(anyLong(), anyInt());
     verify(allowanceRepository).save(any());
     verifyNoMoreInteractions(allowanceRepository);
   }
@@ -92,7 +99,7 @@ public class AllowanceServiceTest {
     var dayOne = EntityBuilder.day(LocalDate.of(2018, 11, 25));
     var request = EntityBuilder.request(absence, Arrays.asList(dayOne));
 
-    given(allowanceRepository.findByUser(mockUser)).willReturn(mockAllowance);
+    given(allowanceRepository.findByUserIdAndYear(mockUser.getId(), 2018)).willReturn(mockAllowance);
 
     // when
     allowanceService.applyRequest(request, false);
@@ -110,7 +117,7 @@ public class AllowanceServiceTest {
     var dayThree = EntityBuilder.day(LocalDate.of(2018, 11, 22));
     var request = EntityBuilder.request(absence, Arrays.asList(dayOne, dayTwo, dayThree));
 
-    given(allowanceRepository.findByUser(mockUser)).willReturn(mockAllowance);
+    given(allowanceRepository.findByUserIdAndYear(mockUser.getId(), 2018)).willReturn(mockAllowance);
 
     //when
     allowanceService.applyRequest(request, false);

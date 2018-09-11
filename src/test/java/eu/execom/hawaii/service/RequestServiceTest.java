@@ -252,7 +252,7 @@ public class RequestServiceTest {
     verify(requestRepository).save(any());
     verify(googleCalendarService).handleCreatedRequest(any());
     verify(emailService).createEmailAndSendForApproval(any());
-    verify(allowanceService).createPendingRequest(any());
+    verify(allowanceService).applyPendingRequest(any(), anyBoolean());
     verifyNoMoreInteractions(allMocks);
   }
 
@@ -299,7 +299,7 @@ public class RequestServiceTest {
     verify(absenceRepository).getOne(anyLong());
     verify(userRepository).getOne(anyLong());
     verify(requestRepository, times(3)).getOne(anyLong());
-    verify(allowanceService).cancelPendingRequest(any());
+    verify(allowanceService).applyPendingRequest(any(), anyBoolean());
     verify(requestRepository).save(any());
     verifyNoMoreInteractions(allMocks);
   }
@@ -360,7 +360,7 @@ public class RequestServiceTest {
     verify(absenceRepository).getOne(anyLong());
     verify(userRepository).getOne(anyLong());
     verify(requestRepository, times(3)).getOne(anyLong());
-    verify(allowanceService).cancelPendingRequest(any());
+    verify(allowanceService).applyPendingRequest(any(), anyBoolean());
     verify(allowanceService).applyRequest(any(), anyBoolean());
     verify(emailService).createStatusNotificationEmailAndSend(any());
     verify(emailService).createAnnualEmailForTeammatesAndSend(any());

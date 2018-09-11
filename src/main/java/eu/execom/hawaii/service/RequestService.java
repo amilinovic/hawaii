@@ -177,7 +177,7 @@ public class RequestService {
       emailService.createSicknessEmailForTeammatesAndSend(request);
     } else {
       request.setRequestStatus(RequestStatus.PENDING);
-      allowanceService.createPendingRequest(request);
+      allowanceService.applyPendingRequest(request, false);
       emailService.createEmailAndSendForApproval(request);
     }
 
@@ -210,7 +210,7 @@ public class RequestService {
           log.error("Approver not authorized to approve this request for user with email: {}", user.getEmail());
           throw new NotAuthorizedApprovalExeception();
         }
-        allowanceService.cancelPendingRequest(request);
+        allowanceService.applyPendingRequest(request, true);
         applyRequest(request, false);
         break;
       case CANCELED:
@@ -223,7 +223,7 @@ public class RequestService {
           log.error("User not authorized to cancel this request for user with email: {}", user.getEmail());
           throw new NotAuthorizedApprovalExeception();
         } else if (requestIsPending) {
-          allowanceService.cancelPendingRequest(request);
+          allowanceService.applyPendingRequest(request, true);
         }
         break;
       case REJECTED:
@@ -231,7 +231,7 @@ public class RequestService {
           log.error("Approver not authorized to reject this request for user with email: {}", user.getEmail());
           throw new NotAuthorizedApprovalExeception();
         }
-        allowanceService.cancelPendingRequest(request);
+        allowanceService.applyPendingRequest(request, true);
         break;
       default:
         throw new IllegalArgumentException("Unsupported request status: " + request.getRequestStatus());
