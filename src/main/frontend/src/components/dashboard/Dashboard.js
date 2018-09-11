@@ -20,7 +20,6 @@ export default class Dashboard extends Component {
   render() {
     const { activeTabIndex } = this.state;
     const activeItem = this.state.tabList[activeTabIndex];
-    // console.log(activeItem)
     return (
       <div>
         <Tabs
