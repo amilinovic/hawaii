@@ -36,7 +36,7 @@ hs_err_pid*
 /coverage
 
 # production
-/build
+**/build
 
 # CSS
 **/*.css

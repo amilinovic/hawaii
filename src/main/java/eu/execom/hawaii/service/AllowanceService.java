@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import eu.execom.hawaii.exceptions.InsufficientHoursException;
 import eu.execom.hawaii.model.Allowance;
 import eu.execom.hawaii.model.Day;
+import eu.execom.hawaii.model.LeaveProfile;
 import eu.execom.hawaii.model.PublicHoliday;
 import eu.execom.hawaii.model.Request;
 import eu.execom.hawaii.model.User;
@@ -136,6 +137,8 @@ public class AllowanceService {
         applySickness(allowance, hours);
         break;
       case BONUS_DAYS:
+        var leaveProfile = request.getUser().getLeaveProfile();
+        checkRemainingBonusHours(leaveProfile, allowance, hours);
         applyBonus(allowance, hours);
         break;
       default:
@@ -177,13 +180,11 @@ public class AllowanceService {
 
     var yearFrom = requestYears.stream().findFirst().orElse(0);
     var yearTo = requestYears.stream().reduce((a, b) -> b).orElse(0);
-    var startYearFrom = LocalDate.of(yearFrom, 01, 01);
+    var startYearFrom = LocalDate.of(yearFrom, 1, 1);
     var endYearTo = LocalDate.of(yearTo, 12, 31);
     var publicHolidays = publicHolidayRepository.findAllByDateIsBetween(startYearFrom, endYearTo);
 
-    var workingDaysOnly = getWorkingDaysWithoutPublicHolidays(workingDaysWithoutWeekend, publicHolidays);
-
-    return workingDaysOnly;
+    return getWorkingDaysWithoutPublicHolidays(workingDaysWithoutWeekend, publicHolidays);
   }
 
   private List<Day> getWorkingDaysWithoutPublicHolidays(List<Day> workingDaysWithoutWeekend,
@@ -247,6 +248,16 @@ public class AllowanceService {
     var pendingTraining = allowance.getPendingTraining();
 
     return totalTraining - takenTraining - pendingTraining;
+  }
+
+  private void checkRemainingBonusHours(LeaveProfile leaveProfile, Allowance allowance, int requestedHours) {
+    var totalBonus = leaveProfile.getMaxBonusDays();
+    var takenBonus = allowance.getBonus();
+    var remainingBonusHours = totalBonus - takenBonus;
+
+    if (requestedHours > remainingBonusHours) {
+      throw new InsufficientHoursException();
+    }
   }
 
 }

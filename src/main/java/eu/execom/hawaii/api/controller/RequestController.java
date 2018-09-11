@@ -84,11 +84,39 @@ public class RequestController {
     return new ResponseEntity<>(requestDtos, HttpStatus.OK);
   }
 
+  @GetMapping("/user")
+  public ResponseEntity<List<RequestDto>> geUserRequests(@ApiIgnore @AuthenticationPrincipal User authUser) {
+    var requests = requestService.findAllByUser(authUser.getId());
+    var requestDtos = requests.stream().map(RequestDto::new).collect(Collectors.toList());
+
+    return new ResponseEntity<>(requestDtos, HttpStatus.OK);
+  }
+
+  @GetMapping("/user/month")
+  public ResponseEntity<List<RequestDto>> getUserRequestsByMonth(@ApiIgnore @AuthenticationPrincipal User authUser,
+      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+    var startDate = date.withDayOfMonth(1);
+    var endDate = date.withDayOfMonth(date.lengthOfMonth());
+    var requests = requestService.findAllByUserWithinDates(startDate, endDate, authUser.getId());
+    var requestDtos = requests.stream().map(RequestDto::new).collect(Collectors.toList());
+
+    return new ResponseEntity<>(requestDtos, HttpStatus.OK);
+  }
+
   @GetMapping("/user/{id}/dates")
   public ResponseEntity<List<RequestDto>> getRequestsByUserByDates(
       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate, @PathVariable Long id) {
     var requests = requestService.findAllByUserWithinDates(startDate, endDate, id);
+    var requestDtos = requests.stream().map(RequestDto::new).collect(Collectors.toList());
+
+    return new ResponseEntity<>(requestDtos, HttpStatus.OK);
+  }
+
+  @GetMapping("/team/{teamId}/month")
+  public ResponseEntity<List<RequestDto>> getTeamRequestsByMonth(@PathVariable Long teamId,
+      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+    var requests = requestService.findAllByTeamByMonthOfYear(teamId, date);
     var requestDtos = requests.stream().map(RequestDto::new).collect(Collectors.toList());
 
     return new ResponseEntity<>(requestDtos, HttpStatus.OK);
