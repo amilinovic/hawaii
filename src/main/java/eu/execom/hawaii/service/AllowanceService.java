@@ -55,18 +55,14 @@ public class AllowanceService {
   /**
    * Apply pending request on request user allowance.
    *
-   * @param request         the Request.
-   * @param pendingCanceled indicate should be pending removed.
+   * @param request the Request.
    */
   @Transactional
-  public void applyPendingRequest(Request request, boolean pendingCanceled) {
+  public void createPendingRequest(Request request) {
     var allowance = getByUser(request.getUser());
     var absence = request.getAbsence();
     var workingDays = getWorkingDaysOnly(request.getDays());
     var hours = calculateHours(workingDays);
-    if (pendingCanceled) {
-      hours = -hours;
-    }
 
     var isAbsenceTypeDeductible = AbsenceType.DEDUCTED_LEAVE.equals(absence.getAbsenceType());
     var isAbsenceTypeAnnual = AbsenceSubtype.ANNUAL.equals(absence.getAbsenceSubtype());
@@ -79,6 +75,10 @@ public class AllowanceService {
       checkRemainingTrainingHours(allowance, hours);
       applyPendingTraining(allowance, hours);
     }
+
+  }
+
+  public void cancelPendingRequest(Request request) {
 
   }
 
