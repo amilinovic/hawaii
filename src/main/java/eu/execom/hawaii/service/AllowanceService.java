@@ -175,7 +175,8 @@ public class AllowanceService {
             break;
           default:
             throw new IllegalArgumentException("Unsupported absence subtype: " + absenceSubtype);
-        } break;
+        }
+        break;
       case NON_DEDUCTED_LEAVE:
         break;
       case SICKNESS:
@@ -191,11 +192,11 @@ public class AllowanceService {
     }
   }
 
-  private void cancelAnnual(Allowance currentYearAllowance, Allowance nextYearAllowance, int requestedHours) { // 5
-    var currentYearTakenAnnual = currentYearAllowance.getTakenAnnual(); // 20
-    var nextYearTakenAnnual = nextYearAllowance.getTakenAnnual(); // 4
+  private void cancelAnnual(Allowance currentYearAllowance, Allowance nextYearAllowance, int requestedHours) {
+    var currentYearTakenAnnual = currentYearAllowance.getTakenAnnual();
+    var nextYearTakenAnnual = nextYearAllowance.getTakenAnnual();
 
-    var nextYearRequestedHours = nextYearTakenAnnual + requestedHours; // 4 + -5 = -1
+    var nextYearRequestedHours = nextYearTakenAnnual + requestedHours;
 
     if (nextYearRequestedHours < 0) {
       nextYearAllowance.setTakenAnnual(0);
@@ -212,7 +213,7 @@ public class AllowanceService {
     var currentYearAnnual = currentYearAllowance.getTakenAnnual();
     var nextYearAnnual = nextYearAllowance.getTakenAnnual();
 
-    var remainingAnnualHoursCurrentYear = calculateRemainingAnnualHours(currentYearAllowance);
+    var remainingAnnualHoursCurrentYear = calculateRemainingAnnualHoursWithoutPedning(currentYearAllowance);
     var nextYearRequestedHours = requestedHours - remainingAnnualHoursCurrentYear + nextYearAnnual;
 
     if (nextYearRequestedHours > 0) {
@@ -309,6 +310,14 @@ public class AllowanceService {
     var pendingAnnual = allowance.getPendingAnnual();
 
     return totalHours - takenAnnual - pendingAnnual;
+  }
+
+  private int calculateRemainingAnnualHoursWithoutPedning(Allowance allowance) {
+    var totalHours =
+        allowance.getAnnual() + allowance.getBonus() + allowance.getCarriedOver() + allowance.getManualAdjust();
+    var takenAnnual = allowance.getTakenAnnual();
+
+    return totalHours - takenAnnual;
   }
 
   private int calculateNextYearRemainingAnnualHours(Allowance allowance) {
