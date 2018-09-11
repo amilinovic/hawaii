@@ -6,6 +6,6 @@ import eu.execom.hawaii.model.Allowance;
 
 public interface AllowanceRepository extends JpaRepository<Allowance, Long> {
 
-  Allowance findByUserIdAndYear(Long user, int year);
+  Allowance findByUserIdAndYear(Long userId, int year);
 
 }
