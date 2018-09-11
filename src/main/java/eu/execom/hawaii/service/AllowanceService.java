@@ -48,8 +48,8 @@ public class AllowanceService {
    * @param user Allowance user.
    * @return Allowance.
    */
-  Allowance getByUser(User user) {
-    return allowanceRepository.findByUser(user);
+  Allowance getByUser(User user, int year) {
+    return allowanceRepository.findByUserIdAndYear(user.getId(), year);
   }
 
   /**
@@ -60,7 +60,8 @@ public class AllowanceService {
    */
   @Transactional
   public void applyPendingRequest(Request request, boolean pendingCanceled) {
-    var allowance = getByUser(request.getUser());
+    var yearOfRequest = request.getDays().get(0).getDate().getYear();
+    var allowance = getByUser(request.getUser(), yearOfRequest);
     var absence = request.getAbsence();
     var workingDays = getWorkingDaysOnly(request.getDays());
     var hours = calculateHours(workingDays);
@@ -103,7 +104,8 @@ public class AllowanceService {
    */
   @Transactional
   public void applyRequest(Request request, boolean requestCanceled) {
-    var allowance = getByUser(request.getUser());
+    var yearOfRequest = request.getDays().get(0).getDate().getYear();
+    var allowance = getByUser(request.getUser(), yearOfRequest);
     var absence = request.getAbsence();
     var workingDays = getWorkingDaysOnly(request.getDays());
     var hours = calculateHours(workingDays);

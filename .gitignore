@@ -38,9 +38,6 @@ hs_err_pid*
 # production
 **/build
 
-# CSS
-**/*.css
-
 # misc
 .DS_Store
 .env.local
