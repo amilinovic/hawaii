@@ -22,8 +22,7 @@ const TabButton = styled.button`
 `;
 
 class Tab extends Component {
-  handleClick = e => {
-    e.preventDefault();
+  handleClick = () => {
     this.props.handleClick();
   };
   render() {
