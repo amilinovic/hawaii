@@ -1,42 +1,35 @@
 import React, { Component } from 'react';
-import styled from 'styled-components';
 import Tabs from '../tabs/Tabs';
 import Employees from '../employees/Employees';
 import Teams from '../teams/Teams';
+import Content from '../tabs/Content';
 
-const TabContent = styled.div`
-  flex: 1;
-  width: 100%;
-  padding-top: 16px;
-`;
-
-class Dashboard extends Component {
+export default class Dashboard extends Component {
   state = {
     tabList: [
-      { id: 1, name: 'Teams', content: <Teams /> },
-      { id: 2, name: 'Employees', content: <Employees /> }
+      { label: 'Teams', content: <Teams /> },
+      { label: 'Employees', content: <Employees /> }
     ],
-    currentTab: 0
+    activeTabIndex: 0
   };
 
-  changeTab = index => {
-    this.setState({ currentTab: index });
+  handleTabClick = index => {
+    this.setState({ activeTabIndex: index });
   };
 
   render() {
+    const { activeTabIndex } = this.state;
+    const activeItem = this.state.tabList[activeTabIndex];
+    // console.log(activeItem)
     return (
       <div>
         <Tabs
-          currentTab={this.state.currentTab}
-          tabList={this.state.tabList}
-          changeTab={this.changeTab}
+          handleTabClick={this.handleTabClick}
+          data={this.state.tabList}
+          activeTabIndex={activeTabIndex}
         />
-        <TabContent>
-          {this.state.tabList[this.state.currentTab].content}
-        </TabContent>
+        <Content content={activeItem.content} />
       </div>
     );
   }
 }
-
-export default Dashboard;

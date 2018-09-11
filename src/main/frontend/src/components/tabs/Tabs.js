@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 
 import Tab from '../tabs/Tab';
@@ -15,29 +15,48 @@ const TabList = styled.div`
   width: 100%;
 `;
 
-class Tabs extends Component {
-  handleClick = tab => {
-    this.props.changeTab(tab);
-  };
+const Tabs = ({ activeTabIndex, data, handleTabClick }) => (
+  <TabsWrapper>
+    <TabList>
+      {data.map(({ label }, index) => {
+        const isActive = activeTabIndex === index;
+        return (
+          <Tab
+            key={index}
+            label={label}
+            isActive={isActive}
+            handleTabClick={handleTabClick}
+            tabIndex={index}
+          />
+        );
+      })}
+    </TabList>
+  </TabsWrapper>
+);
 
-  render() {
-    return (
-      <TabsWrapper>
-        <TabList>
-          {this.props.tabList.map((tab, index) => {
-            return (
-              <Tab
-                handleClick={() => this.handleClick(index)}
-                key={tab.id}
-                name={tab.name}
-                isCurrent={this.props.currentTab === index}
-              />
-            );
-          })}
-        </TabList>
-      </TabsWrapper>
-    );
-  }
-}
+// class Tabs  {
+//   handleClick = tab => {
+//     this.props.changeTab(tab);
+//   };
+
+//   render() {
+//     return (
+//       <TabsWrapper>
+//         <TabList>
+//           {this.props.tabList.map((tab, index) => {
+//             return (
+//               <Tab
+//                 handleClick={() => this.handleClick(index)}
+//                 key={tab.id}
+//                 name={tab.name}
+//                 isCurrent={this.props.currentTab === index}
+//               />
+//             );
+//           })}
+//         </TabList>
+//       </TabsWrapper>
+//     );
+//   }
+// }
 
 export default Tabs;

@@ -14,19 +14,25 @@ const TabButton = styled.button`
   outline: none;
   transition: border-color 0.2s ease-in;
   border: none;
-  border-bottom: 4px solid ${props => (props.selected ? 'red' : '#eee')};
+  border-bottom: 4px solid ${props => (props.active ? 'red' : '#eee')};
   &:focus,
   &:active {
-    border-bottom: 4px solid ${props => (props.selected ? 'red' : '#dc3545')};
+    border-bottom: 4px solid ${props => (props.active ? 'red' : '#dc3545')};
   }
 `;
 
 class Tab extends Component {
-  handleClick = () => {
-    this.props.handleClick();
+  onTabClick = () => {
+    this.props.handleTabClick(this.props.tabIndex);
   };
+
   render() {
-    return <TabButton onClick={this.handleClick}>{this.props.name}</TabButton>;
+    const { label, isActive } = this.props;
+    return (
+      <TabButton active={isActive} onClick={this.onTabClick}>
+        {label}
+      </TabButton>
+    );
   }
 }
 
