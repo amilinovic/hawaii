@@ -53,6 +53,14 @@ public class RequestService {
     this.emailService = emailService;
   }
 
+  public List<Request> findAllByMonth(LocalDate startDate, LocalDate endDate) {
+    List<Request> requests = requestRepository.findAll();
+    return requests.stream()
+                   .filter(isBetween(startDate, endDate))
+                   .sorted(Comparator.comparing((Request r) -> r.getDays().get(0).getDate()).reversed())
+                   .collect(Collectors.toList());
+  }
+
   /**
    * Retrieves a list of request by given dates, ordered by latest.
    *
