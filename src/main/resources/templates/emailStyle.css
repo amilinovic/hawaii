@@ -1,0 +1,55 @@
+body {
+    font-family: "Open Sans", sans-serif;
+    line-height: 1.5;
+    padding: 0 1.5em;
+}
+
+table {
+    border: 1px solid #ccc;
+    border-collapse: collapse;
+    margin: 0;
+    padding: 0;
+    width: 50%;
+    table-layout: fixed;
+}
+
+table caption {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin: .5em 0 .75em;
+    text-align: left;
+}
+
+table tr {
+    background-color: #f8f8f8;
+    border: 1px solid #ddd;
+    padding: .35em;
+}
+
+table tr .left {
+    width:35%;
+}
+
+table th,
+table td {
+    padding: .625em;
+    text-align: left;
+}
+
+table th {
+    font-size: .85em;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+}
+
+hr {
+    background-color: lightGray;
+    height: 1px;
+    border: 0;
+}
+
+.footer {
+    text-align: right;
+    margin-right: 2em;
+    color: gray;
+}
