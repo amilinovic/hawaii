@@ -55,7 +55,7 @@ public class AllowanceServiceTest {
     given(allowanceRepository.findByUserIdAndYear(mockUser.getId(), 2018)).willReturn(mockAllowance);
 
     // when
-    Allowance allowance = allowanceService.getByUserByYear(mockUser.getId(), 2018);
+    Allowance allowance = allowanceService.getByUserAndYear(mockUser.getId(), 2018);
 
     // then
     assertThat("", allowance.getYear(), is(2018));

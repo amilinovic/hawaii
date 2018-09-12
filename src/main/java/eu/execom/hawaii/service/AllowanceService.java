@@ -43,16 +43,6 @@ public class AllowanceService {
   }
 
   /**
-   * Retrieves a Allowance by given user.
-   *
-   * @param userId Allowance user.
-   * @return Allowance.
-   */
-  Allowance getByUserByYear(Long userId, int year) {
-    return allowanceRepository.findByUserIdAndYear(userId, year);
-  }
-
-  /**
    * Apply pending request on request user allowance.
    *
    * @param request the Request.
@@ -60,8 +50,8 @@ public class AllowanceService {
   @Transactional
   public void applyPendingRequest(Request request, boolean requestCanceled) {
     var yearOfRequest = request.getDays().get(0).getDate().getYear();
-    var currentYearAllowance = getByUserByYear(request.getUser().getId(), yearOfRequest);
-    var nextYearAllowance = getByUserByYear(request.getUser().getId(), yearOfRequest + 1);
+    var currentYearAllowance = getByUserAndYear(request.getUser().getId(), yearOfRequest);
+    var nextYearAllowance = getByUserAndYear(request.getUser().getId(), yearOfRequest + 1);
 
     var absence = request.getAbsence();
     var workingDays = getWorkingDaysOnly(request.getDays());
@@ -86,6 +76,16 @@ public class AllowanceService {
       applyPendingTraining(currentYearAllowance, hours);
     }
 
+  }
+
+  /**
+   * Retrieves a Allowance by given user.
+   *
+   * @param userId Allowance user.
+   * @return Allowance.
+   */
+  Allowance getByUserAndYear(Long userId, int year) {
+    return allowanceRepository.findByUserIdAndYear(userId, year);
   }
 
   private void cancelPendingAnnual(Allowance currentYearAllowance, Allowance nextYearAllowance, int requestedHours) {
@@ -144,8 +144,8 @@ public class AllowanceService {
   @Transactional
   public void applyRequest(Request request, boolean requestCanceled) {
     var yearOfRequest = request.getDays().get(0).getDate().getYear();
-    var currentYearAllowance = getByUserByYear(request.getUser().getId(), yearOfRequest);
-    var nextYearAllowance = getByUserByYear(request.getUser().getId(), yearOfRequest + 1);
+    var currentYearAllowance = getByUserAndYear(request.getUser().getId(), yearOfRequest);
+    var nextYearAllowance = getByUserAndYear(request.getUser().getId(), yearOfRequest + 1);
     var absence = request.getAbsence();
     var workingDays = getWorkingDaysOnly(request.getDays());
     var hours = calculateHours(workingDays);
@@ -213,7 +213,7 @@ public class AllowanceService {
     var currentYearAnnual = currentYearAllowance.getTakenAnnual();
     var nextYearAnnual = nextYearAllowance.getTakenAnnual();
 
-    var remainingAnnualHoursCurrentYear = calculateRemainingAnnualHoursWithoutPedning(currentYearAllowance);
+    var remainingAnnualHoursCurrentYear = calculateRemainingAnnualHoursWithoutPending(currentYearAllowance);
     var nextYearRequestedHours = requestedHours - remainingAnnualHoursCurrentYear + nextYearAnnual;
 
     if (nextYearRequestedHours > 0) {
@@ -312,7 +312,7 @@ public class AllowanceService {
     return totalHours - takenAnnual - pendingAnnual;
   }
 
-  private int calculateRemainingAnnualHoursWithoutPedning(Allowance allowance) {
+  private int calculateRemainingAnnualHoursWithoutPending(Allowance allowance) {
     var totalHours =
         allowance.getAnnual() + allowance.getBonus() + allowance.getCarriedOver() + allowance.getManualAdjust();
     var takenAnnual = allowance.getTakenAnnual();
