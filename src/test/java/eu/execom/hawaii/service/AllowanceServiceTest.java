@@ -66,7 +66,7 @@ public class AllowanceServiceTest {
   }
 
   @Test
-  public void shouldApplyRequest() {
+  public void shouldApplyAnnualLeaveRequestOnCurrentAndNextYear() {
     // given
     var dayOne = EntityBuilder.day(LocalDate.of(2018, 11, 25));
     var dayTwo = EntityBuilder.day(LocalDate.of(2018, 11, 28));
@@ -95,7 +95,7 @@ public class AllowanceServiceTest {
   // Also same for pending
 
   @Test
-  public void shouldApplyRequestOnNextYearAllowance() {
+  public void shouldApplyAnnualLeaveRequestOnNextYearAllowance() {
     // given
     var dayOne = EntityBuilder.day(LocalDate.of(2018, 11, 26));
     var dayTwo = EntityBuilder.day(LocalDate.of(2018, 11, 27));
@@ -119,7 +119,7 @@ public class AllowanceServiceTest {
   }
 
   @Test
-  public void shouldApplyRequestCancellationNextYear() {
+  public void shouldApplyAnnualLeaveRequestCancellationNextYear() {
     // given
     var dayOne = EntityBuilder.day(LocalDate.of(2018, 11, 26));
     var dayTwo = EntityBuilder.day(LocalDate.of(2018, 11, 27));
@@ -143,7 +143,7 @@ public class AllowanceServiceTest {
   }
 
   @Test
-  public void shouldApplyRequestCancellationCurrentAndNextYear() {
+  public void shouldApplyAnnualLeaveRequestCancellationCurrentAndNextYear() {
     // given
     var dayOne = EntityBuilder.day(LocalDate.of(2018, 11, 26));
     var dayTwo = EntityBuilder.day(LocalDate.of(2018, 11, 27));
@@ -202,7 +202,7 @@ public class AllowanceServiceTest {
   }
 
   @Test
-  public void shouldApplyPendingRequestCurrentAndNextYear() {
+  public void shouldApplyPendingAnnualLeaveRequestOnCurrentAndNextYear() {
     // given
     var dayOne = EntityBuilder.day(LocalDate.of(2018, 11, 26));
     var dayTwo = EntityBuilder.day(LocalDate.of(2018, 11, 27));
@@ -228,7 +228,7 @@ public class AllowanceServiceTest {
   }
 
   @Test
-  public void shouldApplyPendingRequestCurrentYear() {
+  public void shouldApplyPendingAnnualLeaveRequestOnCurrentYear() {
     // given
     var dayOne = EntityBuilder.day(LocalDate.of(2018, 11, 26));
     var dayTwo = EntityBuilder.day(LocalDate.of(2018, 11, 27));
@@ -253,7 +253,7 @@ public class AllowanceServiceTest {
   }
 
   @Test
-  public void shouldApplyPendingCancellationCurrentAndNextYear() {
+  public void shouldApplyPendingAnnualLeaveCancellationCurrentAndNextYear() {
     // given
     var dayOne = EntityBuilder.day(LocalDate.of(2018, 11, 26));
     var dayTwo = EntityBuilder.day(LocalDate.of(2018, 11, 27));
@@ -279,7 +279,7 @@ public class AllowanceServiceTest {
   }
 
   @Test
-  public void shouldApplyPendingCancellationCurrentYear() {
+  public void shouldApplyPendingAnnualLeaveCancellationCurrentYear() {
     // given
     var dayOne = EntityBuilder.day(LocalDate.of(2018, 11, 26));
     var dayTwo = EntityBuilder.day(LocalDate.of(2018, 11, 27));
