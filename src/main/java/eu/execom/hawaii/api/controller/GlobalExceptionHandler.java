@@ -19,6 +19,18 @@ import lombok.extern.slf4j.Slf4j;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+  @ResponseStatus(HttpStatus.UNAUTHORIZED) // 401
+  @ExceptionHandler(NotAuthorizedApprovalExeception.class)
+  public void handleNotAuthorizedApprovalException(HttpServletRequest request, Exception exception) {
+    logException(request, exception);
+  }
+
+  @ResponseStatus(HttpStatus.FORBIDDEN) // 403
+  @ExceptionHandler(AccessDeniedException.class)
+  public void handleAccessDeniedException(HttpServletRequest request, Exception exception) {
+    logException(request, exception);
+  }
+
   @ResponseStatus(HttpStatus.NOT_FOUND) // 404
   @ExceptionHandler(EntityNotFoundException.class)
   public void handleEntityNotFoundException(HttpServletRequest request, Exception exception) {
@@ -37,21 +49,9 @@ public class GlobalExceptionHandler {
     logException(request, exception);
   }
 
-  @ResponseStatus(HttpStatus.FORBIDDEN) // 403
-  @ExceptionHandler(AccessDeniedException.class)
-  public void handleAccessDeniedException(HttpServletRequest request, Exception exception) {
-    logException(request, exception);
-  }
-
   @ResponseStatus(HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE) // 416
   @ExceptionHandler(InsufficientHoursException.class)
   public void handleInsufficientHoursException(HttpServletRequest request, Exception exception) {
-    logException(request, exception);
-  }
-
-  @ResponseStatus(HttpStatus.UNAUTHORIZED) // 401
-  @ExceptionHandler(NotAuthorizedApprovalExeception.class)
-  public void handleNotAuthorizedApprovalException(HttpServletRequest request, Exception exception) {
     logException(request, exception);
   }
 
