@@ -18,7 +18,6 @@ import eu.execom.hawaii.model.Day;
 import eu.execom.hawaii.model.LeaveProfile;
 import eu.execom.hawaii.model.PublicHoliday;
 import eu.execom.hawaii.model.Request;
-import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.enumerations.AbsenceSubtype;
 import eu.execom.hawaii.model.enumerations.AbsenceType;
 import eu.execom.hawaii.model.enumerations.Duration;
@@ -32,6 +31,7 @@ public class AllowanceService {
 
   private static final int HALF_DAY = 4;
   private static final int FULL_DAY = 8;
+  private static final int FIVE_DAYS = 40;
 
   private AllowanceRepository allowanceRepository;
   private PublicHolidayRepository publicHolidayRepository;
@@ -43,29 +43,20 @@ public class AllowanceService {
   }
 
   /**
-   * Retrieves a Allowance by given user.
-   *
-   * @param user Allowance user.
-   * @return Allowance.
-   */
-  Allowance getByUser(User user, int year) {
-    return allowanceRepository.findByUserIdAndYear(user.getId(), year);
-  }
-
-  /**
    * Apply pending request on request user allowance.
    *
-   * @param request         the Request.
-   * @param pendingCanceled indicate should be pending removed.
+   * @param request the Request.
    */
   @Transactional
-  public void applyPendingRequest(Request request, boolean pendingCanceled) {
+  public void applyPendingRequest(Request request, boolean requestCanceled) {
     var yearOfRequest = request.getDays().get(0).getDate().getYear();
-    var allowance = getByUser(request.getUser(), yearOfRequest);
+    var currentYearAllowance = getByUserAndYear(request.getUser().getId(), yearOfRequest);
+    var nextYearAllowance = getByUserAndYear(request.getUser().getId(), yearOfRequest + 1);
+
     var absence = request.getAbsence();
     var workingDays = getWorkingDaysOnly(request.getDays());
     var hours = calculateHours(workingDays);
-    if (pendingCanceled) {
+    if (requestCanceled) {
       hours = -hours;
     }
 
@@ -74,20 +65,68 @@ public class AllowanceService {
     var isAbsenceTypeTraining = AbsenceSubtype.TRAINING.equals(absence.getAbsenceSubtype());
 
     if (isAbsenceTypeDeductible && isAbsenceTypeAnnual) {
-      checkRemainingAnnualHours(allowance, hours);
-      applyPendingAnnual(allowance, hours);
+      checkRemainingAnnualHours(currentYearAllowance, nextYearAllowance, hours);
+      if (requestCanceled) {
+        cancelPendingAnnual(currentYearAllowance, nextYearAllowance, hours);
+      } else {
+        applyPendingAnnual(currentYearAllowance, nextYearAllowance, hours);
+      }
     } else if (isAbsenceTypeDeductible && isAbsenceTypeTraining) {
-      checkRemainingTrainingHours(allowance, hours);
-      applyPendingTraining(allowance, hours);
+      checkRemainingTrainingHours(currentYearAllowance, hours);
+      applyPendingTraining(currentYearAllowance, hours);
     }
 
   }
 
-  private void applyPendingAnnual(Allowance allowance, int requestedHours) {
-    var allowancePendingAnnual = allowance.getPendingAnnual();
-    var calculatedPendingAnnual = allowancePendingAnnual + requestedHours;
-    allowance.setPendingAnnual(calculatedPendingAnnual);
-    allowanceRepository.save(allowance);
+  /**
+   * Retrieves a Allowance by given user.
+   *
+   * @param userId Allowance user.
+   * @return Allowance.
+   */
+  Allowance getByUserAndYear(Long userId, int year) {
+    return allowanceRepository.findByUserIdAndYear(userId, year);
+  }
+
+  private void cancelPendingAnnual(Allowance currentYearAllowance, Allowance nextYearAllowance, int requestedHours) {
+    var currentYearPendingAnnual = currentYearAllowance.getPendingAnnual();
+    var nextYearPendingAnnual = nextYearAllowance.getPendingAnnual();
+    var nextYearRequestedHours = nextYearPendingAnnual + requestedHours;
+
+    if (nextYearRequestedHours < 0) {
+      nextYearAllowance.setPendingAnnual(0);
+      setCurrentYearAllowance(currentYearAllowance, currentYearPendingAnnual, nextYearRequestedHours);
+      allowanceRepository.save(currentYearAllowance);
+    } else {
+      nextYearAllowance.setPendingAnnual(nextYearRequestedHours);
+    }
+
+    allowanceRepository.save(nextYearAllowance);
+  }
+
+  private void applyPendingAnnual(Allowance currentYearAllowance, Allowance nextYearAllowance, int requestedHours) {
+    var currentYearPendingAnnual = currentYearAllowance.getPendingAnnual();
+    var nextYearPendingAnnual = nextYearAllowance.getPendingAnnual();
+
+    var remainingHoursCurrentYear = calculateRemainingAnnualHours(currentYearAllowance);
+    var nextYearRequestedHours = requestedHours - remainingHoursCurrentYear + nextYearPendingAnnual;
+
+    if (nextYearRequestedHours > 0) {
+      setCurrentYearAllowance(currentYearAllowance, currentYearPendingAnnual, remainingHoursCurrentYear);
+      nextYearAllowance.setPendingAnnual(nextYearRequestedHours);
+      allowanceRepository.save(nextYearAllowance);
+    } else {
+      setCurrentYearAllowance(currentYearAllowance, currentYearPendingAnnual, requestedHours);
+    }
+
+    allowanceRepository.save(currentYearAllowance);
+  }
+
+  private void setCurrentYearAllowance(Allowance currentYearAllowance, int currentYearPendingAnnual,
+      int requestedCurrentYearHours) {
+
+    var calculatedPendingAnnual = currentYearPendingAnnual + requestedCurrentYearHours;
+    currentYearAllowance.setPendingAnnual(calculatedPendingAnnual);
   }
 
   private void applyPendingTraining(Allowance allowance, int requestedHours) {
@@ -105,7 +144,8 @@ public class AllowanceService {
   @Transactional
   public void applyRequest(Request request, boolean requestCanceled) {
     var yearOfRequest = request.getDays().get(0).getDate().getYear();
-    var allowance = getByUser(request.getUser(), yearOfRequest);
+    var currentYearAllowance = getByUserAndYear(request.getUser().getId(), yearOfRequest);
+    var nextYearAllowance = getByUserAndYear(request.getUser().getId(), yearOfRequest + 1);
     var absence = request.getAbsence();
     var workingDays = getWorkingDaysOnly(request.getDays());
     var hours = calculateHours(workingDays);
@@ -122,12 +162,16 @@ public class AllowanceService {
         }
         switch (absenceSubtype) {
           case ANNUAL:
-            checkRemainingAnnualHours(allowance, hours);
-            applyAnnual(allowance, hours);
+            checkRemainingAnnualHours(currentYearAllowance, nextYearAllowance, hours);
+            if (requestCanceled) {
+              cancelAnnual(currentYearAllowance, nextYearAllowance, hours);
+            } else {
+              applyAnnual(currentYearAllowance, nextYearAllowance, hours);
+            }
             break;
           case TRAINING:
-            checkRemainingTrainingHours(allowance, hours);
-            applyTraining(allowance, hours);
+            checkRemainingTrainingHours(currentYearAllowance, hours);
+            applyTraining(currentYearAllowance, hours);
             break;
           default:
             throw new IllegalArgumentException("Unsupported absence subtype: " + absenceSubtype);
@@ -136,22 +180,52 @@ public class AllowanceService {
       case NON_DEDUCTED_LEAVE:
         break;
       case SICKNESS:
-        applySickness(allowance, hours);
+        applySickness(currentYearAllowance, hours);
         break;
       case BONUS_DAYS:
         var leaveProfile = request.getUser().getLeaveProfile();
-        checkRemainingBonusHours(leaveProfile, allowance, hours);
-        applyBonus(allowance, hours);
+        checkRemainingBonusHours(leaveProfile, currentYearAllowance, hours);
+        applyBonus(currentYearAllowance, hours);
         break;
       default:
         throw new IllegalArgumentException("Unsupported absence type: " + absenceType);
     }
   }
 
-  private void applyAnnual(Allowance allowance, int requestedHours) {
-    var calculatedAnnual = allowance.getTakenAnnual() + requestedHours;
-    allowance.setTakenAnnual(calculatedAnnual);
-    allowanceRepository.save(allowance);
+  private void cancelAnnual(Allowance currentYearAllowance, Allowance nextYearAllowance, int requestedHours) {
+    var currentYearTakenAnnual = currentYearAllowance.getTakenAnnual();
+    var nextYearTakenAnnual = nextYearAllowance.getTakenAnnual();
+
+    var nextYearRequestedHours = nextYearTakenAnnual + requestedHours;
+
+    if (nextYearRequestedHours < 0) {
+      nextYearAllowance.setTakenAnnual(0);
+      setCurrentYearAllowance(currentYearAllowance, currentYearTakenAnnual, nextYearRequestedHours);
+      allowanceRepository.save(currentYearAllowance);
+    } else {
+      nextYearAllowance.setTakenAnnual(nextYearRequestedHours);
+    }
+
+    allowanceRepository.save(nextYearAllowance);
+  }
+
+  private void applyAnnual(Allowance currentYearAllowance, Allowance nextYearAllowance, int requestedHours) {
+    var currentYearAnnual = currentYearAllowance.getTakenAnnual();
+    var nextYearAnnual = nextYearAllowance.getTakenAnnual();
+
+    var remainingAnnualHoursCurrentYear = calculateRemainingAnnualHoursWithoutPending(currentYearAllowance);
+    var nextYearRequestedHours = requestedHours - remainingAnnualHoursCurrentYear + nextYearAnnual;
+
+    if (nextYearRequestedHours > 0) {
+      currentYearAllowance.setTakenAnnual(currentYearAnnual + remainingAnnualHoursCurrentYear);
+      nextYearAllowance.setTakenAnnual(nextYearRequestedHours);
+
+      allowanceRepository.save(nextYearAllowance);
+    } else {
+      currentYearAllowance.setTakenAnnual(currentYearAnnual + requestedHours);
+    }
+
+    allowanceRepository.save(currentYearAllowance);
   }
 
   private void applyTraining(Allowance allowance, int requestedHours) {
@@ -215,11 +289,15 @@ public class AllowanceService {
     return Duration.FULL_DAY.equals(day.getDuration()) ? FULL_DAY : HALF_DAY;
   }
 
-  private void checkRemainingAnnualHours(Allowance allowance, int requestedHours) {
-    var userEmail = allowance.getUser().getEmail();
-    var remainingHours = calculateRemainingAnnualHours(allowance);
-    if (requestedHours > remainingHours) {
-      log.error("Insufficient hours: available {}, requested {}, for user with email {}", remainingHours,
+  private void checkRemainingAnnualHours(Allowance currentYearAllowance, Allowance nextYearAllowance,
+      int requestedHours) {
+
+    var userEmail = currentYearAllowance.getUser().getEmail();
+    var remainingHoursCurrentYear = calculateRemainingAnnualHours(currentYearAllowance);
+    var remainingHoursNextYear = calculateNextYearRemainingAnnualHours(nextYearAllowance);
+
+    if (requestedHours > remainingHoursCurrentYear + remainingHoursNextYear) {
+      log.error("Insufficient hours: available {}, requested {}, for user with email {}", remainingHoursCurrentYear,
           requestedHours, userEmail);
       throw new InsufficientHoursException();
     }
@@ -232,6 +310,21 @@ public class AllowanceService {
     var pendingAnnual = allowance.getPendingAnnual();
 
     return totalHours - takenAnnual - pendingAnnual;
+  }
+
+  private int calculateRemainingAnnualHoursWithoutPending(Allowance allowance) {
+    var totalHours =
+        allowance.getAnnual() + allowance.getBonus() + allowance.getCarriedOver() + allowance.getManualAdjust();
+    var takenAnnual = allowance.getTakenAnnual();
+
+    return totalHours - takenAnnual;
+  }
+
+  private int calculateNextYearRemainingAnnualHours(Allowance allowance) {
+    var takenAnnual = allowance.getTakenAnnual();
+    var pendingAnnual = allowance.getPendingAnnual();
+
+    return FIVE_DAYS - takenAnnual - pendingAnnual;
   }
 
   private void checkRemainingTrainingHours(Allowance allowance, int requestedHours) {
