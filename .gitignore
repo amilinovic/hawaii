@@ -7,6 +7,9 @@ target/
 .project
 .classpath
 
+# VSCode
+.vscode/
+
 # IntelliJ
 *.iml
 .idea
