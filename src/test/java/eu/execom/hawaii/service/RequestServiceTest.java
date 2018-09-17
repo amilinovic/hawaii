@@ -298,7 +298,7 @@ public class RequestServiceTest {
     assertNotNull("Expect to absence exist", savedRequest.getAbsence());
     verify(absenceRepository).getOne(anyLong());
     verify(userRepository).getOne(anyLong());
-    verify(requestRepository, times(3)).getOne(anyLong());
+    verify(requestRepository).getOne(anyLong());
     verify(allowanceService).applyPendingRequest(any(), anyBoolean());
     verify(requestRepository).save(any());
     verifyNoMoreInteractions(allMocks);
@@ -330,7 +330,7 @@ public class RequestServiceTest {
         is(RequestStatus.CANCELLATION_PENDING));
     verify(absenceRepository).getOne(anyLong());
     verify(userRepository).getOne(anyLong());
-    verify(requestRepository, times(3)).getOne(anyLong());
+    verify(requestRepository).getOne(anyLong());
     verify(emailService).createEmailAndSendForApproval(any());
     verify(requestRepository).save(any());
     verifyNoMoreInteractions(allMocks);
@@ -359,7 +359,7 @@ public class RequestServiceTest {
     assertThat("Expect to saved request have status", savedRequest.getRequestStatus(), is(RequestStatus.APPROVED));
     verify(absenceRepository).getOne(anyLong());
     verify(userRepository).getOne(anyLong());
-    verify(requestRepository, times(3)).getOne(anyLong());
+    verify(requestRepository).getOne(anyLong());
     verify(allowanceService).applyPendingRequest(any(), anyBoolean());
     verify(allowanceService).applyRequest(any(), anyBoolean());
     verify(emailService).createStatusNotificationEmailAndSend(any());
