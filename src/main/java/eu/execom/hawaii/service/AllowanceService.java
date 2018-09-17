@@ -93,7 +93,7 @@ public class AllowanceService {
   private void applyPendingTraining(Allowance allowance, int requestedHours) {
     var allowancePendingTraining = allowance.getPendingTraining();
     var calculatedPendingAnnual = allowancePendingTraining + requestedHours;
-    allowance.setTakenTraining(calculatedPendingAnnual);
+    allowance.setPendingTraining(calculatedPendingAnnual);
     allowanceRepository.save(allowance);
   }
 
