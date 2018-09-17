@@ -95,7 +95,8 @@ public class AllowanceService {
 
     if (nextYearRequestedHours < 0) {
       nextYearAllowance.setPendingAnnual(0);
-      setCurrentYearAllowance(currentYearAllowance, currentYearPendingAnnual, nextYearRequestedHours);
+      currentYearAllowance.setPendingAnnual(currentYearPendingAnnual + nextYearRequestedHours);
+
       allowanceRepository.save(currentYearAllowance);
     } else {
       nextYearAllowance.setPendingAnnual(nextYearRequestedHours);
@@ -112,22 +113,17 @@ public class AllowanceService {
     var nextYearRequestedHours = requestedHours - remainingHoursCurrentYear + nextYearPendingAnnual;
 
     if (nextYearRequestedHours > 0) {
-      setCurrentYearAllowance(currentYearAllowance, currentYearPendingAnnual, remainingHoursCurrentYear);
       nextYearAllowance.setPendingAnnual(nextYearRequestedHours);
+      currentYearAllowance.setPendingAnnual(currentYearPendingAnnual + remainingHoursCurrentYear);
+
       allowanceRepository.save(nextYearAllowance);
     } else {
-      setCurrentYearAllowance(currentYearAllowance, currentYearPendingAnnual, requestedHours);
+      currentYearAllowance.setPendingAnnual(currentYearPendingAnnual + requestedHours);
     }
 
     allowanceRepository.save(currentYearAllowance);
   }
 
-  private void setCurrentYearAllowance(Allowance currentYearAllowance, int currentYearPendingAnnual,
-      int requestedCurrentYearHours) {
-
-    var calculatedPendingAnnual = currentYearPendingAnnual + requestedCurrentYearHours;
-    currentYearAllowance.setPendingAnnual(calculatedPendingAnnual);
-  }
 
   private void applyPendingTraining(Allowance allowance, int requestedHours) {
     var allowancePendingTraining = allowance.getPendingTraining();
@@ -200,7 +196,8 @@ public class AllowanceService {
 
     if (nextYearRequestedHours < 0) {
       nextYearAllowance.setTakenAnnual(0);
-      setCurrentYearAllowance(currentYearAllowance, currentYearTakenAnnual, nextYearRequestedHours);
+      currentYearAllowance.setTakenAnnual(currentYearTakenAnnual + nextYearRequestedHours);
+
       allowanceRepository.save(currentYearAllowance);
     } else {
       nextYearAllowance.setTakenAnnual(nextYearRequestedHours);
@@ -217,8 +214,8 @@ public class AllowanceService {
     var nextYearRequestedHours = requestedHours - remainingAnnualHoursCurrentYear + nextYearAnnual;
 
     if (nextYearRequestedHours > 0) {
-      currentYearAllowance.setTakenAnnual(currentYearAnnual + remainingAnnualHoursCurrentYear);
       nextYearAllowance.setTakenAnnual(nextYearRequestedHours);
+      currentYearAllowance.setTakenAnnual(currentYearAnnual + remainingAnnualHoursCurrentYear);
 
       allowanceRepository.save(nextYearAllowance);
     } else {
