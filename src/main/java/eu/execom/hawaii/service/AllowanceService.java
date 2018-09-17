@@ -124,7 +124,6 @@ public class AllowanceService {
     allowanceRepository.save(currentYearAllowance);
   }
 
-
   private void applyPendingTraining(Allowance allowance, int requestedHours) {
     var allowancePendingTraining = allowance.getPendingTraining();
     var calculatedPendingAnnual = allowancePendingTraining + requestedHours;
