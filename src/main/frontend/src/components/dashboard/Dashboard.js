@@ -2,7 +2,13 @@ import React, { Component } from 'react';
 import Tabs from '../tabs/Tabs';
 import Employees from '../employees/Employees';
 import Teams from '../teams/Teams';
-import Content from '../tabs/Content';
+import styled from 'styled-components';
+
+const TabContent = styled.div`
+  flex: 1;
+  width: 100%;
+  padding-top: 16px;
+`;
 
 export default class Dashboard extends Component {
   state = {
@@ -27,7 +33,7 @@ export default class Dashboard extends Component {
           data={this.state.tabList}
           activeTabIndex={activeTabIndex}
         />
-        <Content activeItem={activeItem} />
+        <TabContent>{activeItem.content}</TabContent>
       </div>
     );
   }
