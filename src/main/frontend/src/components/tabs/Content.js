@@ -7,6 +7,8 @@ const TabContent = styled.div`
   padding-top: 16px;
 `;
 
-const Content = ({ content }) => <TabContent>{content}</TabContent>;
+const Content = ({ activeItem }) => (
+  <TabContent>{activeItem.content}</TabContent>
+);
 
 export default Content;

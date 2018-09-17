@@ -18,18 +18,15 @@ const TabList = styled.div`
 const Tabs = ({ activeTabIndex, data, handleTabClick }) => (
   <TabsWrapper>
     <TabList>
-      {data.map(({ label }, index) => {
-        const isActive = activeTabIndex === index;
-        return (
-          <Tab
-            key={index}
-            label={label}
-            isActive={isActive}
-            handleTabClick={handleTabClick}
-            tabIndex={index}
-          />
-        );
-      })}
+      {data.map(({ label }, index) => (
+        <Tab
+          key={index}
+          label={label}
+          isActive={activeTabIndex === index}
+          handleTabClick={handleTabClick}
+          tabIndex={index}
+        />
+      ))}
     </TabList>
   </TabsWrapper>
 );

@@ -27,7 +27,7 @@ export default class Dashboard extends Component {
           data={this.state.tabList}
           activeTabIndex={activeTabIndex}
         />
-        <Content content={activeItem.content} />
+        <Content activeItem={activeItem} />
       </div>
     );
   }
