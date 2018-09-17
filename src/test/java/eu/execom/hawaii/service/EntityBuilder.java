@@ -71,6 +71,7 @@ public class EntityBuilder {
     leaveProfile.setName("Default");
     leaveProfile.setEntitlement(160);
     leaveProfile.setMaxCarriedOver(40);
+    leaveProfile.setMaxBonusDays(40);
     leaveProfile.setTraining(16);
     leaveProfile.setComment("No comment");
     leaveProfile.setUsers(new ArrayList<>());
@@ -115,6 +116,18 @@ public class EntityBuilder {
     publicHoliday.setDate(LocalDate.of(2018, 1, 5));
 
     return publicHoliday;
+  }
+
+  static Absence absence() {
+    var absence = new Absence();
+    absence.setAbsenceType(AbsenceType.BONUS_DAYS);
+    absence.setName("Training");
+    absence.setComment("Description");
+    absence.setActive(true);
+    absence.setIconUrl("icons/training.png");
+    absence.setLeaveRequests(new ArrayList<>());
+
+    return absence;
   }
 
   static Absence absenceAnnual() {
