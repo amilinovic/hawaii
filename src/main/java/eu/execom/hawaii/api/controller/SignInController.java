@@ -45,7 +45,7 @@ public class SignInController {
   }
 
   @GetMapping(value = "/signin")
-  public ResponseEntity<?> signIn(@RequestHeader(value = "Authorization") String token) {
+  public ResponseEntity<UserDto> signIn(@RequestHeader(value = "Authorization") String token) {
 
     Google google = new GoogleTemplate(token);
     Person profile = google.plusOperations().getGoogleProfile();
