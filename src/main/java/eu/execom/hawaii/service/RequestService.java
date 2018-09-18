@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import eu.execom.hawaii.exceptions.NotAuthorizedApprovalExeception;
+import eu.execom.hawaii.exceptions.RequestAlreadyCanceledException;
 import eu.execom.hawaii.model.Absence;
 import eu.execom.hawaii.model.Day;
 import eu.execom.hawaii.model.Request;
@@ -227,10 +228,12 @@ public class RequestService {
     User user = userRepository.getOne(request.getUser().getId());
     request.setUser(user);
 
+    var existingRequest = getById(request.getId());
     boolean userIsRequestApprover = isUserRequestApprover(authUser, user);
-    boolean requestIsApproved = isApproved(request);
-    boolean requestHasPendingCancellation = isCancellationPending(request);
-    boolean requestIsPending = isPending(request);
+    boolean requestIsApproved = existingRequest.isApproved();
+    boolean requestHasPendingCancellation = existingRequest.isCancellationPending();
+    boolean requestIsPending = existingRequest.isPending();
+    boolean requestIsCanceled = existingRequest.isCanceled();
 
     switch (request.getRequestStatus()) {
       case APPROVED:
@@ -242,7 +245,10 @@ public class RequestService {
         applyRequest(request, false);
         break;
       case CANCELED:
-        if (userIsRequestApprover && (requestIsApproved || requestHasPendingCancellation)) {
+        if (requestIsCanceled) {
+          log.error("Request by user: {}, is already canceled.", user.getEmail());
+          throw new RequestAlreadyCanceledException();
+        } else if (userIsRequestApprover && (requestIsApproved || requestHasPendingCancellation)) {
           applyRequest(request, true);
         } else if (!userIsRequestApprover && requestIsApproved) {
           request.setRequestStatus(RequestStatus.CANCELLATION_PENDING);
@@ -273,27 +279,6 @@ public class RequestService {
                       .getTeamApprovers()
                       .stream()
                       .anyMatch(teamApprover -> teamApprover.getId().equals(approver.getId()));
-  }
-
-  private boolean isApproved(Request request) {
-    var requestId = request.getId();
-    var existingRequest = getById(requestId);
-
-    return RequestStatus.APPROVED.equals(existingRequest.getRequestStatus());
-  }
-
-  private boolean isCancellationPending(Request request) {
-    var requestId = request.getId();
-    var existingRequest = getById(requestId);
-
-    return RequestStatus.CANCELLATION_PENDING.equals(existingRequest.getRequestStatus());
-  }
-
-  private boolean isPending(Request request) {
-    var requestId = request.getId();
-    var existingRequest = getById(requestId);
-
-    return RequestStatus.PENDING.equals(existingRequest.getRequestStatus());
   }
 
   private void applyRequest(Request request, boolean requestCanceled) {
