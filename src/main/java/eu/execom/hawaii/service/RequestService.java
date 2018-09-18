@@ -1,6 +1,7 @@
 package eu.execom.hawaii.service;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -181,6 +182,19 @@ public class RequestService {
     request.setUser(user);
     googleCalendarService.handleCreatedRequest(request);
 
+    var requests = findAllByUser(user.getId());
+    List<Day> matchingDays = requests.stream()
+                                     .map(Request::getDays)
+                                     .flatMap(Collection::stream)
+                                     .filter(isRequestDaysMatch(request))
+                                     .collect(Collectors.toList());
+
+    if (!matchingDays.isEmpty()) {
+      log.error("Request for days: {} overlaps with existing requests.",
+          matchingDays.stream().map(day -> day.getDate().toString()).collect(Collectors.joining(", ")));
+      throw new EntityExistsException();
+    }
+
     if (AbsenceType.SICKNESS.equals(request.getAbsence().getAbsenceType())) {
       request.setRequestStatus(RequestStatus.APPROVED);
       allowanceService.applyRequest(request, false);
@@ -192,6 +206,10 @@ public class RequestService {
     }
 
     return requestRepository.save(request);
+  }
+
+  private Predicate<Day> isRequestDaysMatch(Request request) {
+    return day -> request.getDays().stream().anyMatch(requestDay -> requestDay.getDate().equals(day.getDate()));
   }
 
   /**
