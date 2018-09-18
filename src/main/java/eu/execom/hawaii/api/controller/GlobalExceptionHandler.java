@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import eu.execom.hawaii.exceptions.InsufficientHoursException;
 import eu.execom.hawaii.exceptions.NotAuthorizedApprovalExeception;
+import eu.execom.hawaii.exceptions.RequestAlreadyCanceledException;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -46,6 +47,12 @@ public class GlobalExceptionHandler {
   @ResponseStatus(HttpStatus.CONFLICT) // 409
   @ExceptionHandler(DataIntegrityViolationException.class)
   public void handleDataIntegrityViolationException(HttpServletRequest request, Exception exception) {
+    logException(request, exception);
+  }
+
+  @ResponseStatus(HttpStatus.CONFLICT) // 409
+  @ExceptionHandler(RequestAlreadyCanceledException.class)
+  public void handleRequestAlreadyCanceledException(HttpServletRequest request, Exception exception) {
     logException(request, exception);
   }
 
