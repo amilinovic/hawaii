@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -51,7 +52,7 @@ public class UserController {
   @GetMapping("/search")
   public ResponseEntity<Page<UserDto>> searchUsersByNameAndEmail(@RequestParam final int page, @RequestParam int size,
       @RequestParam boolean active, @RequestParam String searchQuery) {
-    Pageable pageable = PageRequest.of(page, size);
+    Pageable pageable = PageRequest.of(page, size, Sort.Direction.ASC, "fullName");
 
     Page<User> users = userService.findAllByActiveAndEmailOrFullName(active, searchQuery, pageable);
     List<UserDto> userDtos = users.getContent().stream().map(UserDto::new).collect(Collectors.toList());
