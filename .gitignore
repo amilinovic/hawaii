@@ -7,6 +7,9 @@ target/
 .project
 .classpath
 
+# VSCode
+.vscode/
+
 # IntelliJ
 *.iml
 .idea
@@ -37,9 +40,6 @@ hs_err_pid*
 
 # production
 **/build
-
-# CSS
-**/*.css
 
 # misc
 .DS_Store

@@ -14,6 +14,7 @@ public class LeaveProfileDto {
   private String name;
   private int entitlement;
   private int maxCarriedOver;
+  private int maxBonusDays;
   private int training;
   private String comment;
   private List<UserDto> users = new ArrayList<>();
@@ -23,6 +24,7 @@ public class LeaveProfileDto {
     this.name = leaveProfile.getName();
     this.entitlement = leaveProfile.getEntitlement();
     this.maxCarriedOver = leaveProfile.getMaxCarriedOver();
+    this.maxBonusDays = leaveProfile.getMaxBonusDays();
     this.training = leaveProfile.getTraining();
     this.comment = leaveProfile.getComment();
     this.users = leaveProfile.getUsers().stream().map(UserDto::new).collect(Collectors.toList());

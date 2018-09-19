@@ -13,11 +13,24 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import eu.execom.hawaii.exceptions.InsufficientHoursException;
 import eu.execom.hawaii.exceptions.NotAuthorizedApprovalExeception;
+import eu.execom.hawaii.exceptions.RequestAlreadyCanceledException;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+  @ResponseStatus(HttpStatus.UNAUTHORIZED) // 401
+  @ExceptionHandler(NotAuthorizedApprovalExeception.class)
+  public void handleNotAuthorizedApprovalException(HttpServletRequest request, Exception exception) {
+    logException(request, exception);
+  }
+
+  @ResponseStatus(HttpStatus.FORBIDDEN) // 403
+  @ExceptionHandler(AccessDeniedException.class)
+  public void handleAccessDeniedException(HttpServletRequest request, Exception exception) {
+    logException(request, exception);
+  }
 
   @ResponseStatus(HttpStatus.NOT_FOUND) // 404
   @ExceptionHandler(EntityNotFoundException.class)
@@ -37,21 +50,15 @@ public class GlobalExceptionHandler {
     logException(request, exception);
   }
 
-  @ResponseStatus(HttpStatus.FORBIDDEN) // 403
-  @ExceptionHandler(AccessDeniedException.class)
-  public void handleAccessDeniedException(HttpServletRequest request, Exception exception) {
+  @ResponseStatus(HttpStatus.CONFLICT) // 409
+  @ExceptionHandler(RequestAlreadyCanceledException.class)
+  public void handleRequestAlreadyCanceledException(HttpServletRequest request, Exception exception) {
     logException(request, exception);
   }
 
   @ResponseStatus(HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE) // 416
   @ExceptionHandler(InsufficientHoursException.class)
   public void handleInsufficientHoursException(HttpServletRequest request, Exception exception) {
-    logException(request, exception);
-  }
-
-  @ResponseStatus(HttpStatus.UNAUTHORIZED) // 401
-  @ExceptionHandler(NotAuthorizedApprovalExeception.class)
-  public void handleNotAuthorizedApprovalException(HttpServletRequest request, Exception exception) {
     logException(request, exception);
   }
 
