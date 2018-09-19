@@ -43,4 +43,24 @@ public class Request extends BaseEntity implements Serializable {
   @OneToMany(mappedBy = "request", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
   private List<Day> days;
 
+  public boolean isApproved() {
+    return RequestStatus.APPROVED.equals(requestStatus);
+  }
+
+  public boolean isPending() {
+    return RequestStatus.PENDING.equals(requestStatus);
+  }
+
+  public boolean isCanceled() {
+    return RequestStatus.CANCELED.equals(requestStatus);
+  }
+
+  public boolean isCancellationPending() {
+    return RequestStatus.CANCELLATION_PENDING.equals(requestStatus);
+  }
+
+  public boolean isRejected() {
+    return RequestStatus.REJECTED.equals(requestStatus);
+  }
+
 }

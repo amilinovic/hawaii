@@ -12,9 +12,11 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 
 import org.junit.Before;
@@ -234,13 +236,14 @@ public class RequestServiceTest {
   }
 
   @Test
-  public void shouldCreateRequest() {
+  public void shouldCreateRequestForApproval() {
     // given
-    var user = EntityBuilder.user(EntityBuilder.team());
     var request = EntityBuilder.request(absenceTraining, List.of(dayOne));
-    request.setUser(user);
-    given(userRepository.getOne(1L)).willReturn(user);
+    request.setUser(mockUser);
+
+    given(userRepository.getOne(1L)).willReturn(mockUser);
     given(requestRepository.save(requestOne)).willReturn(request);
+    given(requestRepository.findAllByUser(mockUser)).willReturn(new ArrayList<>());
 
     // when
     Request savedRequest = requestService.create(requestOne);
@@ -248,11 +251,40 @@ public class RequestServiceTest {
     // then
     assertThat("Expect to request user email be aria.stark@gmail.com", savedRequest.getUser().getEmail(),
         is("aria.stark@gmail.com"));
-    verify(userRepository).getOne(anyLong());
+    verify(userRepository, times(2)).getOne(anyLong());
     verify(requestRepository).save(any());
     verify(googleCalendarService).handleCreatedRequest(any());
     verify(emailService).createEmailAndSendForApproval(any());
     verify(allowanceService).applyPendingRequest(any(), anyBoolean());
+    verify(requestRepository).findAllByUser(any());
+    verifyNoMoreInteractions(allMocks);
+  }
+
+  @Test
+  public void shouldCreateApprovedSicknessRequest() {
+    // given
+    var sicknessAbsence = EntityBuilder.absence();
+    sicknessAbsence.setAbsenceType(AbsenceType.SICKNESS);
+    var requestOne = EntityBuilder.request(sicknessAbsence, List.of(dayOne));
+    var requestTwo = EntityBuilder.request(sicknessAbsence, List.of(dayOne));
+    requestTwo.setRequestStatus(RequestStatus.APPROVED);
+
+    given(userRepository.getOne(1L)).willReturn(mockUser);
+    given(requestRepository.save(requestTwo)).willReturn(requestTwo);
+    given(requestRepository.findAllByUser(mockUser)).willReturn(new ArrayList<>());
+
+    // when
+    Request savedRequest = requestService.create(requestOne);
+
+    // then
+    assertThat("Expect to request be with status APPROVED", savedRequest.getRequestStatus(),
+        is(RequestStatus.APPROVED));
+    verify(userRepository, times(2)).getOne(anyLong());
+    verify(requestRepository).save(any());
+    verify(googleCalendarService).handleCreatedRequest(any());
+    verify(emailService).createSicknessEmailForTeammatesAndSend(any());
+    verify(allowanceService).applyRequest(any(), anyBoolean());
+    verify(requestRepository).findAllByUser(any());
     verifyNoMoreInteractions(allMocks);
   }
 
@@ -260,6 +292,23 @@ public class RequestServiceTest {
   public void shouldFailToFindUserForCreateRequest() {
     // given
     given(userRepository.getOne(1L)).willThrow(new EntityNotFoundException());
+
+    // when
+    requestService.create(requestOne);
+
+    // then
+
+  }
+
+  @Test(expected = EntityExistsException.class)
+  public void shouldFailToCreateNewRequestDueOverlappingDays() {
+    // given
+    var request = EntityBuilder.request(absenceTraining, List.of(dayOne));
+    request.setUser(mockUser);
+    var existingRequest = EntityBuilder.request(absenceTraining, List.of(dayOne));
+
+    given(userRepository.getOne(1L)).willReturn(mockUser);
+    given(requestRepository.findAllByUser(mockUser)).willReturn(List.of(existingRequest));
 
     // when
     requestService.create(requestOne);
@@ -298,7 +347,7 @@ public class RequestServiceTest {
     assertNotNull("Expect to absence exist", savedRequest.getAbsence());
     verify(absenceRepository).getOne(anyLong());
     verify(userRepository).getOne(anyLong());
-    verify(requestRepository, times(3)).getOne(anyLong());
+    verify(requestRepository).getOne(anyLong());
     verify(allowanceService).applyPendingRequest(any(), anyBoolean());
     verify(requestRepository).save(any());
     verifyNoMoreInteractions(allMocks);
@@ -330,7 +379,7 @@ public class RequestServiceTest {
         is(RequestStatus.CANCELLATION_PENDING));
     verify(absenceRepository).getOne(anyLong());
     verify(userRepository).getOne(anyLong());
-    verify(requestRepository, times(3)).getOne(anyLong());
+    verify(requestRepository).getOne(anyLong());
     verify(emailService).createEmailAndSendForApproval(any());
     verify(requestRepository).save(any());
     verifyNoMoreInteractions(allMocks);
@@ -359,7 +408,7 @@ public class RequestServiceTest {
     assertThat("Expect to saved request have status", savedRequest.getRequestStatus(), is(RequestStatus.APPROVED));
     verify(absenceRepository).getOne(anyLong());
     verify(userRepository).getOne(anyLong());
-    verify(requestRepository, times(3)).getOne(anyLong());
+    verify(requestRepository).getOne(anyLong());
     verify(allowanceService).applyPendingRequest(any(), anyBoolean());
     verify(allowanceService).applyRequest(any(), anyBoolean());
     verify(emailService).createStatusNotificationEmailAndSend(any());

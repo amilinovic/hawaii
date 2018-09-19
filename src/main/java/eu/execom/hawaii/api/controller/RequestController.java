@@ -46,8 +46,9 @@ public class RequestController {
     this.userService = userService;
   }
 
-  @GetMapping ("/month")
-  public ResponseEntity<List<RequestDto>> getAllRequestsByMonthOfYear(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+  @GetMapping("/month")
+  public ResponseEntity<List<RequestDto>> getAllRequestsByMonthOfYear(
+      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
     var startDate = date.withDayOfMonth(1);
     var endDate = date.withDayOfMonth(date.lengthOfMonth());
     List<Request> requests = requestService.findAllByMonth(startDate, endDate);
