@@ -6,6 +6,10 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -42,6 +46,18 @@ public class UserController {
     List<UserDto> userDtos = users.stream().map(UserDto::new).collect(Collectors.toList());
 
     return new ResponseEntity<>(userDtos, HttpStatus.OK);
+  }
+
+  @GetMapping("/search")
+  public ResponseEntity<Page<UserDto>> searchUsersByNameAndEmail(@RequestParam final int page, @RequestParam int size,
+      @RequestParam boolean active, @RequestParam String searchQuery) {
+    Pageable pageable = PageRequest.of(page, size);
+
+    Page<User> users = userService.findAllByActiveAndEmailOrFullName(active, searchQuery, pageable);
+    List<UserDto> userDtos = users.getContent().stream().map(UserDto::new).collect(Collectors.toList());
+    Page<UserDto> pageableUserDtos = new PageImpl<>(userDtos, pageable, users.getTotalElements());
+
+    return new ResponseEntity<>(pageableUserDtos, HttpStatus.OK);
   }
 
   @GetMapping("/{email}")
