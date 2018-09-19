@@ -7,16 +7,19 @@ export const tokenRequest = async accessToken => {
       .set('Authorization', accessToken)
       .set('Accept', 'application/json');
 
-    const [token, role] = [
+    const [token, role, user] = [
       response.headers['x-auth-token'],
-      response.headers.role
+      response.headers.role,
+      response.body
     ];
 
     sessionStorage.setItem('token', token);
     sessionStorage.setItem('role', role);
+    sessionStorage.setItem('user', user);
     return {
       token,
-      role
+      role,
+      user
     };
   } catch (e) {
     // TODO error handling
