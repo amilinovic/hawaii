@@ -5,6 +5,8 @@ import java.util.List;
 import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,6 +41,19 @@ public class UserService {
    */
   public List<User> findAllByActive(boolean active) {
     return userRepository.findAllByActive(active);
+  }
+
+  /**
+   * Retrieves a list of all users searched by given query.
+   *
+   * @param active      is user active.
+   * @param searchQuery search by given query.
+   * @param pageable    the Pageable information about size per page and number of page.
+   * @return a list of queried users by given search.
+   */
+  public Page<User> findAllByActiveAndEmailOrFullName(boolean active, String searchQuery, Pageable pageable) {
+    return userRepository.findAllByActiveAndEmailContainingOrFullNameContaining(active, searchQuery, searchQuery,
+        pageable);
   }
 
   /**
