@@ -50,7 +50,7 @@ public class UserController {
   }
 
   @GetMapping("/search")
-  public ResponseEntity<Page<UserDto>> searchUsersByNameAndEmail(@RequestParam final int page, @RequestParam int size,
+  public ResponseEntity<Page<UserDto>> searchUsersByNameAndEmail(@RequestParam int page, @RequestParam int size,
       @RequestParam boolean active, @RequestParam String searchQuery) {
     Pageable pageable = PageRequest.of(page, size, Sort.Direction.ASC, "fullName");
 
