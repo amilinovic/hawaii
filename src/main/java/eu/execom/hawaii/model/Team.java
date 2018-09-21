@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -24,6 +25,7 @@ public class Team extends BaseEntity implements Serializable {
   private static final long serialVersionUID = -448979442951482200L;
 
   @NotNull
+  @Column(unique = true)
   private String name;
 
   private String emails;
