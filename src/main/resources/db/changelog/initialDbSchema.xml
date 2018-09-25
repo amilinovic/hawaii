@@ -126,6 +126,7 @@
       <column name="request_status" type="VARCHAR(255)">
         <constraints nullable="false"/>
       </column>
+      <column name="submission_time" type="datetime"/>
       <column name="absence_id" type="BIGINT(19)"/>
       <column name="user_id" type="BIGINT(19)"/>
     </createTable>
