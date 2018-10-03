@@ -51,7 +51,7 @@ public class RequestController {
       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
     var startDate = date.withDayOfMonth(1);
     var endDate = date.withDayOfMonth(date.lengthOfMonth());
-    List<Request> requests = requestService.findAllByMonth(startDate, endDate);
+    List<Request> requests = requestService.findAllByDateRange(startDate, endDate);
     var requestDtos = requests.stream().map(RequestDto::new).collect(Collectors.toList());
 
     return new ResponseEntity<>(requestDtos, HttpStatus.OK);

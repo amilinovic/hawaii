@@ -1,19 +1,5 @@
 package eu.execom.hawaii.service;
 
-import java.time.LocalDate;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
-import javax.persistence.EntityExistsException;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import eu.execom.hawaii.exceptions.NotAuthorizedApprovalExeception;
 import eu.execom.hawaii.exceptions.RequestAlreadyCanceledException;
 import eu.execom.hawaii.model.Absence;
@@ -29,6 +15,18 @@ import eu.execom.hawaii.repository.RequestRepository;
 import eu.execom.hawaii.repository.TeamRepository;
 import eu.execom.hawaii.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.persistence.EntityExistsException;
+import java.time.LocalDate;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -57,7 +55,7 @@ public class RequestService {
     this.emailService = emailService;
   }
 
-  public List<Request> findAllByMonth(LocalDate startDate, LocalDate endDate) {
+  public List<Request> findAllByDateRange(LocalDate startDate, LocalDate endDate) {
     List<Request> requests = requestRepository.findAll();
     return requests.stream()
                    .filter(isBetween(startDate, endDate))
