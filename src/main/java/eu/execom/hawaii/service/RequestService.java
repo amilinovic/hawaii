@@ -1,6 +1,8 @@
 package eu.execom.hawaii.service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -189,6 +191,8 @@ public class RequestService {
 
     User user = userRepository.getOne(request.getUser().getId());
     request.setUser(user);
+    LocalDateTime submissionTime = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
+    request.setSubmissionTime(submissionTime);
     googleCalendarService.handleCreatedRequest(request);
 
     var requests = findAllByUser(user.getId());
