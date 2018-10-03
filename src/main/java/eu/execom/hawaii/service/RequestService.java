@@ -1,19 +1,5 @@
 package eu.execom.hawaii.service;
 
-import java.time.LocalDate;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
-import javax.persistence.EntityExistsException;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import eu.execom.hawaii.exceptions.NotAuthorizedApprovalExeception;
 import eu.execom.hawaii.exceptions.RequestAlreadyCanceledException;
 import eu.execom.hawaii.model.Absence;
@@ -22,6 +8,7 @@ import eu.execom.hawaii.model.Request;
 import eu.execom.hawaii.model.Team;
 import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.enumerations.AbsenceType;
+import eu.execom.hawaii.model.enumerations.Duration;
 import eu.execom.hawaii.model.enumerations.RequestStatus;
 import eu.execom.hawaii.repository.AbsenceRepository;
 import eu.execom.hawaii.repository.DayRepository;
@@ -29,6 +16,18 @@ import eu.execom.hawaii.repository.RequestRepository;
 import eu.execom.hawaii.repository.TeamRepository;
 import eu.execom.hawaii.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.persistence.EntityExistsException;
+import java.time.LocalDate;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -173,21 +172,22 @@ public class RequestService {
    * of request depending of absence type SICKNESS or any other.
    * Also applies leave days from request to pending field on user's allowance.
    *
-   * @param request the Request entity to be persisted.
+   * @param newRequest the Request entity to be persisted.
    * @return a saved request with id.
    */
-  public Request create(Request request) {
-    request.getDays().forEach(day -> day.setRequest(request));
+  public Request create(Request newRequest) {
+    newRequest.getDays().forEach(day -> day.setRequest(newRequest));
 
-    User user = userRepository.getOne(request.getUser().getId());
-    request.setUser(user);
-    googleCalendarService.handleCreatedRequest(request);
+    User user = userRepository.getOne(newRequest.getUser().getId());
+    newRequest.setUser(user);
+    googleCalendarService.handleCreatedRequest(newRequest);
 
     var requests = findAllByUser(user.getId());
     List<Day> matchingDays = requests.stream()
                                      .map(Request::getDays)
                                      .flatMap(Collection::stream)
-                                     .filter(isRequestDaysMatch(request))
+                                     .filter(isRequestDaysMatch(newRequest))
+                                     .filter(isDayRequestApprovedOrPending())
                                      .collect(Collectors.toList());
 
     if (!matchingDays.isEmpty()) {
@@ -196,21 +196,33 @@ public class RequestService {
       throw new EntityExistsException();
     }
 
-    if (AbsenceType.SICKNESS.equals(request.getAbsence().getAbsenceType())) {
-      request.setRequestStatus(RequestStatus.APPROVED);
-      allowanceService.applyRequest(request, false);
-      emailService.createSicknessEmailForTeammatesAndSend(request);
+    if (AbsenceType.SICKNESS.equals(newRequest.getAbsence().getAbsenceType())) {
+      newRequest.setRequestStatus(RequestStatus.APPROVED);
+      allowanceService.applyRequest(newRequest, false);
+      emailService.createSicknessEmailForTeammatesAndSend(newRequest);
     } else {
-      request.setRequestStatus(RequestStatus.PENDING);
-      allowanceService.applyPendingRequest(request, false);
-      emailService.createEmailAndSendForApproval(request);
+      newRequest.setRequestStatus(RequestStatus.PENDING);
+      allowanceService.applyPendingRequest(newRequest, false);
+      emailService.createEmailAndSendForApproval(newRequest);
     }
 
-    return requestRepository.save(request);
+    return requestRepository.save(newRequest);
   }
 
-  private Predicate<Day> isRequestDaysMatch(Request request) {
-    return day -> request.getDays().stream().anyMatch(requestDay -> requestDay.getDate().equals(day.getDate()));
+  private Predicate<Day> isRequestDaysMatch(Request newRequest) {
+    return day -> newRequest.getDays()
+                            .stream()
+                            .anyMatch(newRequestDay -> newRequestDay.getDate().equals(day.getDate())
+                                && (newRequestDay.getDuration().equals(day.getDuration()) || Duration.FULL_DAY.equals(
+                                    newRequestDay.getDuration()) || Duration.FULL_DAY.equals(day.getDuration())));
+  }
+
+  private Predicate<Day> isDayRequestApprovedOrPending() {
+    return day -> day.getRequest().getRequestStatus().equals(RequestStatus.APPROVED) || day.getRequest()
+                                                                                           .getRequestStatus()
+                                                                                           .equals(
+                                                                                               RequestStatus.PENDING)
+        || day.getRequest().getRequestStatus().equals(RequestStatus.CANCELLATION_PENDING);
   }
 
   /**
