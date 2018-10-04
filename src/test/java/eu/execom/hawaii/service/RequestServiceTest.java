@@ -1,5 +1,33 @@
 package eu.execom.hawaii.service;
 
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import javax.persistence.EntityExistsException;
+import javax.persistence.EntityNotFoundException;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+
 import eu.execom.hawaii.exceptions.NotAuthorizedApprovalExeception;
 import eu.execom.hawaii.exceptions.RequestAlreadyCanceledException;
 import eu.execom.hawaii.model.Absence;
@@ -309,6 +337,7 @@ public class RequestServiceTest {
     var requestOne = EntityBuilder.request(sicknessAbsence, List.of(dayOne));
     var requestTwo = EntityBuilder.request(sicknessAbsence, List.of(dayOne));
     requestTwo.setRequestStatus(RequestStatus.APPROVED);
+    requestTwo.setSubmissionTime(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES));
 
     given(userRepository.getOne(1L)).willReturn(mockUser);
     given(requestRepository.save(requestTwo)).willReturn(requestTwo);

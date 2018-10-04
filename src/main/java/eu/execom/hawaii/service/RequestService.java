@@ -179,6 +179,8 @@ public class RequestService {
 
     User user = userRepository.getOne(request.getUser().getId());
     request.setUser(user);
+    LocalDateTime submissionTime = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
+    request.setSubmissionTime(submissionTime);
     googleCalendarService.handleCreatedRequest(request);
 
     var requests = findAllByUser(user.getId());
