@@ -1,33 +1,5 @@
 package eu.execom.hawaii.service;
 
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.persistence.EntityExistsException;
-import javax.persistence.EntityNotFoundException;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
 import eu.execom.hawaii.exceptions.NotAuthorizedApprovalExeception;
 import eu.execom.hawaii.exceptions.RequestAlreadyCanceledException;
 import eu.execom.hawaii.model.Absence;
@@ -52,6 +24,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -456,19 +430,22 @@ public class RequestServiceTest {
   }
 
   @Test
-  @Ignore
   public void shouldCancelPendingRequest() {
     var approver = EntityBuilder.approver();
     approver.setId(2L);
+
     var request = EntityBuilder.request(absenceAnnual, List.of(dayOne));
     request.setRequestStatus(RequestStatus.CANCELED);
     request.setUser(mockUser);
+    request.setSubmissionTime(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES));
+
     var databaseRequest = EntityBuilder.request(absenceAnnual, List.of(dayOne));
     databaseRequest.setRequestStatus(RequestStatus.PENDING);
 
     given(absenceRepository.getOne(1L)).willReturn(absenceAnnual);
     given(userRepository.getOne(1L)).willReturn(mockUser);
     given(requestRepository.getOne(1L)).willReturn(databaseRequest);
+    given(requestRepository.save(request)).willReturn(request);
 
     //when
     Request savedRequest = requestService.handleRequestStatusUpdate(request, approver);
@@ -478,7 +455,7 @@ public class RequestServiceTest {
     verify(absenceRepository).getOne(anyLong());
     verify(userRepository).getOne(anyLong());
     verify(requestRepository).getOne(anyLong());
-    verify(emailService).createEmailAndSendForApproval(any());
+    verify(allowanceService).applyPendingRequest(any(), anyBoolean());
     verify(requestRepository).save(any());
     verifyNoMoreInteractions(allMocks);
   }
@@ -543,7 +520,7 @@ public class RequestServiceTest {
     given(requestRepository.getOne(1L)).willReturn(databaseRequest);
 
     // when
-    Request savedRequest = requestService.handleRequestStatusUpdate(request, approver);
+    requestService.handleRequestStatusUpdate(request, approver);
 
     //then
   }
@@ -564,7 +541,7 @@ public class RequestServiceTest {
     //      given(requestRepository.save(request)).willReturn(request);
 
     // when
-    Request savedRequest = requestService.handleRequestStatusUpdate(request, approver);
+    requestService.handleRequestStatusUpdate(request, approver);
 
     //then
 
@@ -585,7 +562,7 @@ public class RequestServiceTest {
     given(requestRepository.getOne(1L)).willReturn(databaseRequest);
 
     // when
-    Request savedRequest = requestService.handleRequestStatusUpdate(request, approver);
+    requestService.handleRequestStatusUpdate(request, approver);
 
     //then
 
@@ -606,7 +583,7 @@ public class RequestServiceTest {
     given(requestRepository.getOne(1L)).willReturn(databaseRequest);
 
     // when
-    Request savedRequest = requestService.handleRequestStatusUpdate(request, approver);
+    requestService.handleRequestStatusUpdate(request, approver);
 
     //then
   }
