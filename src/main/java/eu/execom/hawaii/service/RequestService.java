@@ -1,24 +1,5 @@
 package eu.execom.hawaii.service;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
-import javax.persistence.EntityExistsException;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import eu.execom.hawaii.exceptions.NotAuthorizedApprovalExeception;
 import eu.execom.hawaii.exceptions.RequestAlreadyCanceledException;
 import eu.execom.hawaii.model.Absence;
@@ -35,6 +16,23 @@ import eu.execom.hawaii.repository.RequestRepository;
 import eu.execom.hawaii.repository.TeamRepository;
 import eu.execom.hawaii.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityExistsException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -226,17 +224,14 @@ public class RequestService {
   private Predicate<Day> isRequestDaysMatch(Request newRequest) {
     return day -> newRequest.getDays()
                             .stream()
-                            .anyMatch(newRequestDay -> newRequestDay.getDate().equals(day.getDate())
-                                && (newRequestDay.getDuration().equals(day.getDuration()) || Duration.FULL_DAY.equals(
+                            .anyMatch(newRequestDay -> newRequestDay.getDate().equals(day.getDate()) && (
+                                newRequestDay.getDuration().equals(day.getDuration()) || Duration.FULL_DAY.equals(
                                     newRequestDay.getDuration()) || Duration.FULL_DAY.equals(day.getDuration())));
   }
 
   private Predicate<Day> isDayRequestApprovedOrPending() {
-    return day -> day.getRequest().getRequestStatus().equals(RequestStatus.APPROVED) || day.getRequest()
-                                                                                           .getRequestStatus()
-                                                                                           .equals(
-                                                                                               RequestStatus.PENDING)
-        || day.getRequest().getRequestStatus().equals(RequestStatus.CANCELLATION_PENDING);
+    return day -> day.getRequest().isApproved() || day.getRequest().isPending() || day.getRequest()
+                                                                                      .isCancellationPending();
   }
 
   /**
