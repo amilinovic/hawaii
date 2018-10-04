@@ -1,5 +1,24 @@
 package eu.execom.hawaii.service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+import javax.persistence.EntityExistsException;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import eu.execom.hawaii.exceptions.NotAuthorizedApprovalExeception;
 import eu.execom.hawaii.exceptions.RequestAlreadyCanceledException;
 import eu.execom.hawaii.model.Absence;
@@ -16,22 +35,12 @@ import eu.execom.hawaii.repository.RequestRepository;
 import eu.execom.hawaii.repository.TeamRepository;
 import eu.execom.hawaii.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import javax.persistence.EntityExistsException;
-import java.time.LocalDate;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 public class RequestService {
+
+  private static final String REQUESTS_CACHE = "requestsCache";
 
   private RequestRepository requestRepository;
   private UserRepository userRepository;
@@ -96,6 +105,7 @@ public class RequestService {
    * @param userId the User id.
    * @return a list of all requests for given user.
    */
+  @Cacheable(value = REQUESTS_CACHE, key = "#userId")
   public List<Request> findAllByUser(Long userId) {
     User user = userRepository.getOne(userId);
     return requestRepository.findAllByUser(user);
@@ -175,11 +185,15 @@ public class RequestService {
    * @param newRequest the Request entity to be persisted.
    * @return a saved request with id.
    */
+  @CacheEvict(value = REQUESTS_CACHE, key = "#request.user.id")
+  @Transactional
   public Request create(Request newRequest) {
-    newRequest.getDays().forEach(day -> day.setRequest(newRequest));
+    newRequest.getDays().forEach(day -> day.setRequest(request));
 
     User user = userRepository.getOne(newRequest.getUser().getId());
     newRequest.setUser(user);
+    LocalDateTime submissionTime = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
+    newRequest.setSubmissionTime(submissionTime);
     googleCalendarService.handleCreatedRequest(newRequest);
 
     var requests = findAllByUser(user.getId());
@@ -233,6 +247,8 @@ public class RequestService {
    * @param request to be persisted.
    * @return saved request.
    */
+  @CacheEvict(value = REQUESTS_CACHE, key = "#request.user.id")
+  @Transactional
   public Request handleRequestStatusUpdate(Request request, User authUser) {
     Absence absence = absenceRepository.getOne(request.getAbsence().getId());
     request.setAbsence(absence);
