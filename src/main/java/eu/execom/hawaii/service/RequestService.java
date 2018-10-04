@@ -185,10 +185,10 @@ public class RequestService {
    * @param newRequest the Request entity to be persisted.
    * @return a saved request with id.
    */
-  @CacheEvict(value = REQUESTS_CACHE, key = "#request.user.id")
+  @CacheEvict(value = REQUESTS_CACHE, key = "#newRequest.user.id")
   @Transactional
   public Request create(Request newRequest) {
-    newRequest.getDays().forEach(day -> day.setRequest(request));
+    newRequest.getDays().forEach(day -> day.setRequest(newRequest));
 
     User user = userRepository.getOne(newRequest.getUser().getId());
     newRequest.setUser(user);
