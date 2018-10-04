@@ -1,6 +1,7 @@
 package eu.execom.hawaii.model;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -38,6 +39,8 @@ public class Request extends BaseEntity implements Serializable {
   private RequestStatus requestStatus;
 
   private String reason;
+
+  private LocalDateTime submissionTime;
 
   @NotNull
   @OneToMany(mappedBy = "request", cascade = {CascadeType.PERSIST, CascadeType.MERGE})

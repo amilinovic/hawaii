@@ -1,5 +1,6 @@
 package eu.execom.hawaii.dto;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,6 +18,7 @@ public class RequestDto {
   private AbsenceDto absence;
   private RequestStatus requestStatus;
   private String reason;
+  private LocalDateTime submissionTime;
   @NotNull
   private List<DayDto> days;
 

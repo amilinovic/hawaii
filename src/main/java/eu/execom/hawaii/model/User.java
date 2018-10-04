@@ -57,7 +57,7 @@ public class User extends BaseEntity implements Serializable {
   @OneToMany(mappedBy = "user")
   private List<Request> requests;
 
-  @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+  @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST)
   private List<Allowance> allowances;
 
 }
