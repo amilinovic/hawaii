@@ -1,9 +1,11 @@
 package eu.execom.hawaii.service;
 
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
@@ -16,6 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -25,6 +28,11 @@ import org.mockito.junit.MockitoJUnitRunner;
 import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.repository.LeaveProfileRepository;
 import eu.execom.hawaii.repository.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UserServiceTest {
@@ -70,6 +78,25 @@ public class UserServiceTest {
     assertThat("Expect name to be Aria Stark", users.get(0).getFullName(), is("Aria Stark"));
     assertThat("Expect name to be John Snow", users.get(1).getFullName(), is("John Snow"));
     verify(userRepository).findAllByActive(anyBoolean());
+    verifyNoMoreInteractions(userRepository);
+  }
+
+  @Test
+  public void shouldgetAllUsersByActiveAndEmailOrFullName() {
+    //given
+    var active = true;
+    var searchQuery = "aria.stark@gmail.com";
+    var pageSize = 1;
+    Pageable pageable = PageRequest.of(1, 1, Sort.Direction.ASC, "fullName");
+    Page<User> pagedUsers = new PageImpl<>(List.of(mockUser));
+    given(userRepository.findAllByActiveAndEmailContainingOrFullNameContaining(active, searchQuery, searchQuery, pageable)).willReturn(pagedUsers);
+
+    //when
+    Page<User> users = userService.findAllByActiveAndEmailOrFullName(active, searchQuery, pageable);
+
+    //then
+    assertEquals(users.getContent().size(), pageSize);
+    verify(userRepository).findAllByActiveAndEmailContainingOrFullNameContaining(anyBoolean(), anyString(), anyString(), any());
     verifyNoMoreInteractions(userRepository);
   }
 
