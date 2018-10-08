@@ -7,6 +7,7 @@ import javax.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,7 +33,10 @@ public class UserService {
     this.userRepository = userRepository;
     this.leaveProfileRepository = leaveProfileRepository;
   }
-
+  /**
+   * Retrieves a list of all users from repository.
+   * @return a list of all users, both active and non-active
+   */
   public List<User> findAllUsers() {
     return userRepository.findAll();
   }
@@ -141,6 +145,15 @@ public class UserService {
     allowance.setTraining(leaveProfile.getTraining());
 
     return allowance;
+  }
+
+  @Scheduled(cron = "0 0 0 1 1 *")
+  public void addServiceYearsToUser(){
+    List<User> users = userRepository.findAllByActive(true);
+    users.stream().forEach(user -> {
+      user.setYearsOfService(user.getYearsOfService() + 1);
+      userRepository.save(user);
+        });
   }
 
 }
