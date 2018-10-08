@@ -120,6 +120,7 @@ public class EntityBuilder {
 
   static Absence absence() {
     var absence = new Absence();
+    absence.setId(2L);
     absence.setAbsenceType(AbsenceType.BONUS_DAYS);
     absence.setName("Training");
     absence.setComment("Description");
@@ -146,6 +147,7 @@ public class EntityBuilder {
 
   static Absence absenceTraining() {
     var absence = new Absence();
+    absence.setId(3L);
     absence.setAbsenceType(AbsenceType.DEDUCTED_LEAVE);
     absence.setAbsenceSubtype(AbsenceSubtype.TRAINING);
     absence.setName("Training");

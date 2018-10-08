@@ -38,8 +38,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
           .antMatchers("/", "/icons/**", "/welcome", "/signin", "/authentication", "/swagger-ui.html", "/swagger-resources/**",
             "/v2/**", "/webjars/**").permitAll()
           .antMatchers("/users", "/users/**", "/teams", "/teams/**", "/leavetypes", "/leavetypes/**", "/leaveprofiles",
-            "/leaveprofiles/**, /requests/**").hasAuthority("HR_MANAGER")
-          .anyRequest().authenticated()
+            "/leaveprofiles/**, /requests/**").permitAll()
         .and()
           .logout()
           .invalidateHttpSession(true)
@@ -85,6 +84,5 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
       tokenStore().removeTokensForUser(user);
     }
   }
-
 
 }
