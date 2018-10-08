@@ -66,8 +66,9 @@ public class RequestServiceTest {
 
   private User mockUser;
   private Day dayOne;
-  private Day dayLast;
-  private Day daySecond;
+  private Day dayTwo;
+  private Day dayThree;
+  private Day dayFour;
   private Absence absenceAnnual;
   private Absence absenceTraining;
   private Request requestOne;
@@ -83,10 +84,11 @@ public class RequestServiceTest {
     absenceTraining = EntityBuilder.absenceTraining();
 
     dayOne = EntityBuilder.day(LocalDate.of(2018, 11, 20));
-    dayLast = EntityBuilder.day(LocalDate.of(2021, 1, 1));
-    daySecond = EntityBuilder.day(LocalDate.of(2018, 12, 1));
-    var dayTwo = EntityBuilder.day(LocalDate.of(2018, 11, 21));
-    var dayThree = EntityBuilder.day(LocalDate.of(2018, 11, 22));
+    dayTwo = EntityBuilder.day(LocalDate.of(2018, 11, 21));
+    dayThree = EntityBuilder.day(LocalDate.of(2018, 11, 22));
+    dayFour = EntityBuilder.day(LocalDate.of(2021, 1, 15));
+    /*var dayTwo = EntityBuilder.day(LocalDate.of(2018, 11, 21));
+    var dayThree = EntityBuilder.day(LocalDate.of(2018, 11, 22));*/
 
     requestOne = EntityBuilder.request(absenceAnnual, List.of(dayOne));
     requestTwo = EntityBuilder.request(absenceTraining, Arrays.asList(dayTwo, dayThree));
@@ -650,7 +652,7 @@ public class RequestServiceTest {
   public void shouldFindFirstAndLastRequestsYear() {
     //given
     given(dayRepository.findFirstByOrderByDateAsc()).willReturn(dayOne);
-    given(dayRepository.findFirstByOrderByDateDesc()).willReturn(dayLast);
+    given(dayRepository.findFirstByOrderByDateDesc()).willReturn(dayFour);
 
     //when
     Map<String, Integer> firstAndLastDate = requestService.getFirstAndLastRequestsYear();
@@ -666,7 +668,7 @@ public class RequestServiceTest {
   public void shouldFindFirstAndLastRequestsYearBeingTheSame() {
     //given
     given(dayRepository.findFirstByOrderByDateAsc()).willReturn(dayOne);
-    given(dayRepository.findFirstByOrderByDateDesc()).willReturn(daySecond);
+    given(dayRepository.findFirstByOrderByDateDesc()).willReturn(dayTwo);
 
     //when
     Map<String, Integer> firstAndLastDate = requestService.getFirstAndLastRequestsYear();
