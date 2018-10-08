@@ -33,6 +33,10 @@ public class UserService {
     this.leaveProfileRepository = leaveProfileRepository;
   }
 
+  public List<User> findAllUsers() {
+    return userRepository.findAll();
+  }
+
   /**
    * Retrieves a list of all users from repository.
    *

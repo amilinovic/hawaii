@@ -1,6 +1,7 @@
 package eu.execom.hawaii.api.controller;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,8 +43,13 @@ public class UserController {
   }
 
   @GetMapping
-  public ResponseEntity<List<UserDto>> getUsers(@RequestParam boolean active) {
-    List<User> users = userService.findAllByActive(active);
+  public ResponseEntity<List<UserDto>> getUsers(@RequestParam(required = false) Boolean active) {
+    List<User> users = new ArrayList<>();
+    if(active != null) {
+      users = userService.findAllByActive(active);
+    }else{
+      users = userService.findAllUsers();
+    }
     List<UserDto> userDtos = users.stream().map(UserDto::new).collect(Collectors.toList());
 
     return new ResponseEntity<>(userDtos, HttpStatus.OK);
