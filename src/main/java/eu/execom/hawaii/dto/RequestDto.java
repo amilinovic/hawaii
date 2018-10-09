@@ -28,6 +28,7 @@ public class RequestDto {
     this.absence = new AbsenceDto(request.getAbsence());
     this.requestStatus = request.getRequestStatus();
     this.reason = request.getReason();
+    this.submissionTime = request.getSubmissionTime();
     this.days = request.getDays().stream().map(DayDto::new).collect(Collectors.toList());
   }
 
