@@ -1,13 +1,19 @@
 package eu.execom.hawaii.service;
 
+import java.lang.reflect.Array;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import eu.execom.hawaii.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -349,6 +355,32 @@ public class AllowanceService {
     if (requestedHours > remainingBonusHours) {
       throw new InsufficientHoursException();
     }
+  }
+
+  public Map<String, Integer> getFirstAndLastAllowancesYear(Long userId) {
+    List<Allowance> allowances = allowanceRepository.findAllByUserId(userId);
+    Map<String, Integer> firstAndLastYear = new LinkedHashMap<>();
+    List<Integer> years = new ArrayList<Integer>();
+
+    for(Allowance a: allowances){
+      years.add(a.getYear());
+    }
+
+    var firstYearAllowance = Collections.min(years);
+    var lastYearAllowance = Collections.max(years);
+
+//    var allowance = allowanceRepository.findFirstByOrderByYearAsc();
+//    var allowance1 = allowanceRepository.findFirstByOrderByYearDesc();
+
+//    Map<String, Integer> firstAndLastYear = new LinkedHashMap<>();
+//
+//    firstAndLastYear.put("first", allowance.getYear());
+//    firstAndLastYear.put("last", allowance1.getYear());
+
+    firstAndLastYear.put("first", firstYearAllowance);
+    firstAndLastYear.put("last", lastYearAllowance);
+
+    return firstAndLastYear;
   }
 
 }
