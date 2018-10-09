@@ -68,7 +68,7 @@ public class RequestServiceTest {
   private Day dayOne;
   private Day dayTwo;
   private Day dayThree;
-  private Day dayFour;
+  private Day dayFromDifferentYear;
   private Absence absenceAnnual;
   private Absence absenceTraining;
   private Request requestOne;
@@ -86,9 +86,8 @@ public class RequestServiceTest {
     dayOne = EntityBuilder.day(LocalDate.of(2018, 11, 20));
     dayTwo = EntityBuilder.day(LocalDate.of(2018, 11, 21));
     dayThree = EntityBuilder.day(LocalDate.of(2018, 11, 22));
-    dayFour = EntityBuilder.day(LocalDate.of(2021, 1, 15));
-    /*var dayTwo = EntityBuilder.day(LocalDate.of(2018, 11, 21));
-    var dayThree = EntityBuilder.day(LocalDate.of(2018, 11, 22));*/
+
+    dayFromDifferentYear = EntityBuilder.day(LocalDate.of(2021, 1, 15));
 
     requestOne = EntityBuilder.request(absenceAnnual, List.of(dayOne));
     requestTwo = EntityBuilder.request(absenceTraining, Arrays.asList(dayTwo, dayThree));
@@ -652,7 +651,7 @@ public class RequestServiceTest {
   public void shouldFindFirstAndLastRequestsYear() {
     //given
     given(dayRepository.findFirstByOrderByDateAsc()).willReturn(dayOne);
-    given(dayRepository.findFirstByOrderByDateDesc()).willReturn(dayFour);
+    given(dayRepository.findFirstByOrderByDateDesc()).willReturn(dayFromDifferentYear);
 
     //when
     Map<String, Integer> firstAndLastDate = requestService.getFirstAndLastRequestsYear();
