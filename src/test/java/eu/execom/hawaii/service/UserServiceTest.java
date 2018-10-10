@@ -86,7 +86,6 @@ public class UserServiceTest {
     //given
     var active = true;
     var searchQuery = "aria.stark@gmail.com";
-    var pageSize = 1;
     Pageable pageable = PageRequest.of(1, 1, Sort.Direction.ASC, "fullName");
     Page<User> pagedUsers = new PageImpl<>(List.of(mockUser));
     given(userRepository.findAllByActiveAndEmailContainingOrFullNameContaining(active, searchQuery, searchQuery, pageable)).willReturn(pagedUsers);
@@ -95,7 +94,7 @@ public class UserServiceTest {
     Page<User> users = userService.findAllByActiveAndEmailOrFullName(active, searchQuery, pageable);
 
     //then
-    assertEquals(users.getContent().size(), pageSize);
+    assertEquals(users.getContent().size(), 1);
     verify(userRepository).findAllByActiveAndEmailContainingOrFullNameContaining(anyBoolean(), anyString(), anyString(), any());
     verifyNoMoreInteractions(userRepository);
   }

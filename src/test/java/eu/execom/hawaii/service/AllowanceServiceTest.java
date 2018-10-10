@@ -40,9 +40,6 @@ public class AllowanceServiceTest {
   @Mock
   private PublicHolidayRepository publicHolidayRepository;
 
-  @Mock
-  private DayRepository dayRepository;
-
   @InjectMocks
   private AllowanceService allowanceService;
 
@@ -208,7 +205,6 @@ public class AllowanceServiceTest {
 
       given(allowanceRepository.findByUserIdAndYear(mockUser.getId(), 2018)).willReturn(allowance);
       given(allowanceRepository.findByUserIdAndYear(mockUser.getId(), 2019)).willReturn(nextYearAllownace);
-
 
       // when
       allowanceService.applyRequest(request, false);

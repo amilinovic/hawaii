@@ -1,7 +1,6 @@
 package eu.execom.hawaii.api.controller;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,7 +43,7 @@ public class UserController {
 
   @GetMapping
   public ResponseEntity<List<UserDto>> getUsers(@RequestParam(required = false) Boolean active) {
-    List<User> users = new ArrayList<>();
+    List<User> users;
     if(active != null) {
       users = userService.findAllByActive(active);
     }else{

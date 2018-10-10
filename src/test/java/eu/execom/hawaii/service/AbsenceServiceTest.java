@@ -32,7 +32,6 @@ public class AbsenceServiceTest {
 
   private User mockUser;
   private Absence mockAbsence;
-  private List<Absence> mockAbsences;
 
   @Before
   public void setUp() {

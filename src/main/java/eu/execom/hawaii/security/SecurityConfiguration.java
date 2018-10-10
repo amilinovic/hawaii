@@ -38,7 +38,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
           .antMatchers("/", "/icons/**", "/welcome", "/signin", "/authentication", "/swagger-ui.html", "/swagger-resources/**",
             "/v2/**", "/webjars/**").permitAll()
           .antMatchers("/users", "/users/**", "/teams", "/teams/**", "/leavetypes", "/leavetypes/**", "/leaveprofiles",
-            "/leaveprofiles/**, /requests/**").permitAll()
+            "/leaveprofiles/**, /requests/**").hasAuthority("HR_MANAGER")
+          .anyRequest().authenticated()
         .and()
           .logout()
           .invalidateHttpSession(true)

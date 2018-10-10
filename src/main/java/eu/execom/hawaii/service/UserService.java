@@ -153,7 +153,6 @@ public class UserService {
     users.stream().forEach(user -> {
       user.setYearsOfService(user.getYearsOfService() + 1);
       userRepository.save(user);
-        });
+    });
   }
-
 }
