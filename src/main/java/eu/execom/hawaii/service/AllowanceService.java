@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import eu.execom.hawaii.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +23,7 @@ import eu.execom.hawaii.model.Day;
 import eu.execom.hawaii.model.LeaveProfile;
 import eu.execom.hawaii.model.PublicHoliday;
 import eu.execom.hawaii.model.Request;
+import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.enumerations.AbsenceSubtype;
 import eu.execom.hawaii.model.enumerations.AbsenceType;
 import eu.execom.hawaii.model.enumerations.Duration;
@@ -39,11 +41,14 @@ public class AllowanceService {
 
   private AllowanceRepository allowanceRepository;
   private PublicHolidayRepository publicHolidayRepository;
+  private UserRepository userRepository;
 
   @Autowired
-  public AllowanceService(AllowanceRepository allowanceRepository, PublicHolidayRepository publicHolidayRepository) {
+  public AllowanceService(AllowanceRepository allowanceRepository, PublicHolidayRepository publicHolidayRepository,
+      UserRepository userRepository) {
     this.allowanceRepository = allowanceRepository;
     this.publicHolidayRepository = publicHolidayRepository;
+    this.userRepository = userRepository;
   }
 
   /**
@@ -355,8 +360,9 @@ public class AllowanceService {
     }
   }
 
-  public Map<String, Integer> getFirstAndLastAllowancesYear(Long userId) {
-    List<Allowance> allowances = allowanceRepository.findAllByUserId(userId);
+  public Map<String, Integer> getFirstAndLastAllowancesYear(User authUser) {
+//    User user = userRepository.findOne(authUser.getId());
+    List<Allowance> allowances = allowanceRepository.findAllByUserId(authUser.getId());
     Map<String, Integer> firstAndLastYear = new LinkedHashMap<>();
     List<Integer> years = new ArrayList<Integer>();
 
