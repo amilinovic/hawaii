@@ -361,12 +361,11 @@ public class AllowanceService {
   }
 
   public Map<String, Integer> getFirstAndLastAllowancesYear(User authUser) {
-//    User user = userRepository.findOne(authUser.getId());
     List<Allowance> allowances = allowanceRepository.findAllByUserId(authUser.getId());
     Map<String, Integer> firstAndLastYear = new LinkedHashMap<>();
-    List<Integer> years = new ArrayList<Integer>();
+    List<Integer> years = new ArrayList<>();
 
-    for(Allowance a: allowances){
+    for (Allowance a : allowances) {
       years.add(a.getYear());
     }
 
