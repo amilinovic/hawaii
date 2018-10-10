@@ -14,6 +14,7 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
+import eu.execom.hawaii.repository.DayRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -184,7 +185,34 @@ public class AllowanceServiceTest {
   }
 
   @Test(expected = InsufficientHoursException.class)
-  public void shouldFailToApplyRequestDueInsufficientHours() {
+  public void shouldFailToApplyAnnualRequestDueInsufficientHours() {
+      //given
+      var absence = EntityBuilder.absenceAnnual();
+      absence.setAbsenceSubtype(AbsenceSubtype.ANNUAL);
+
+      var allowance = EntityBuilder.allowance(mockUser);
+      allowance.setTakenAnnual(160);
+      allowance.setCarriedOver(0);
+
+      var nextYearAllownace = EntityBuilder.allowance(mockUser);
+      nextYearAllownace.setTakenAnnual(160);
+      nextYearAllownace.setCarriedOver(0);
+
+      var dayOne = EntityBuilder.day(LocalDate.of(2018, 10, 17));
+      var dayTwo = EntityBuilder.day(LocalDate.of(2018, 10, 18));
+
+      var request = EntityBuilder.request(absence, List.of(dayOne, dayTwo));
+
+      given(allowanceRepository.findByUserIdAndYear(mockUser.getId(), 2018)).willReturn(allowance);
+      given(allowanceRepository.findByUserIdAndYear(mockUser.getId(), 2019)).willReturn(nextYearAllownace);
+
+      // when
+      allowanceService.applyRequest(request, false);
+
+  }
+
+  @Test(expected = InsufficientHoursException.class)
+  public void shouldFailToApplyTrainingRequestDueInsufficientHours() {
     //given
     var absence = EntityBuilder.absenceAnnual();
     absence.setAbsenceSubtype(AbsenceSubtype.TRAINING);
