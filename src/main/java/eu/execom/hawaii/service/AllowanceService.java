@@ -1,6 +1,5 @@
 package eu.execom.hawaii.service;
 
-import java.lang.reflect.Array;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -13,7 +12,6 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import eu.execom.hawaii.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -368,14 +366,6 @@ public class AllowanceService {
 
     var firstYearAllowance = Collections.min(years);
     var lastYearAllowance = Collections.max(years);
-
-//    var allowance = allowanceRepository.findFirstByOrderByYearAsc();
-//    var allowance1 = allowanceRepository.findFirstByOrderByYearDesc();
-
-//    Map<String, Integer> firstAndLastYear = new LinkedHashMap<>();
-//
-//    firstAndLastYear.put("first", allowance.getYear());
-//    firstAndLastYear.put("last", allowance1.getYear());
 
     firstAndLastYear.put("first", firstYearAllowance);
     firstAndLastYear.put("last", lastYearAllowance);
