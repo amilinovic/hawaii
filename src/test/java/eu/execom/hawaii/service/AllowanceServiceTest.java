@@ -229,34 +229,6 @@ public class AllowanceServiceTest {
 
   }
 
-  @Test(expected = InsufficientHoursException.class)
-  public void shouldFailToApplyAnnualRequestDueInsufficientHours() {
-    //given
-    var absence = EntityBuilder.absenceAnnual();
-
-    var allowance = EntityBuilder.allowance(mockUser);
-    allowance.setTakenAnnual(160);
-    allowance.setCarriedOver(0);
-
-    var dayOne = EntityBuilder.day(LocalDate.of(2018, 12, 10));
-    var dayTwo = EntityBuilder.day(LocalDate.of(2018, 12, 11));
-    var dayThree = EntityBuilder.day(LocalDate.of(2018, 12, 12));
-    var request = EntityBuilder.request(absence, List.of(dayOne, dayTwo, dayThree));
-
-    var nextYearAllowance = EntityBuilder.allowance(mockUser);
-    nextYearAllowance.setId(2L);
-    nextYearAllowance.setYear(2019);
-    nextYearAllowance.setTakenAnnual(160);
-    nextYearAllowance.setCarriedOver(0);
-
-    given(allowanceRepository.findByUserIdAndYear(mockUser.getId(), 2018)).willReturn(allowance);
-    given(allowanceRepository.findByUserIdAndYear(mockUser.getId(), 2019)).willReturn(nextYearAllowance);
-
-
-    //when
-    allowanceService.applyRequest(request, false);
-  }
-
   @Test
   public void shouldApplyPendingAnnualLeaveRequestOnCurrentAndNextYear() {
     // given
