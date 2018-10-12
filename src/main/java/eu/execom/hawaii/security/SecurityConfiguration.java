@@ -35,11 +35,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     //@formatter:off
     http.csrf().disable()
         .authorizeRequests()
-          /*.antMatchers("/", "/icons/**", "/welcome", "/signin", "/authentication", "/swagger-ui.html", "/swagger-resources/**",
+          .antMatchers("/", "/icons/**", "/welcome", "/signin", "/authentication", "/swagger-ui.html", "/swagger-resources/**",
             "/v2/**", "/webjars/**").permitAll()
           .antMatchers("/users", "/users/**", "/teams", "/teams/**", "/leavetypes", "/leavetypes/**", "/leaveprofiles",
-            "/leaveprofiles/**, /requests/**").hasAuthority("HR_MANAGER")*/
-          .anyRequest().permitAll()
+            "/leaveprofiles/**, /requests/**").hasAuthority("HR_MANAGER")
+          .anyRequest().authenticated()
         .and()
           .logout()
           .invalidateHttpSession(true)
