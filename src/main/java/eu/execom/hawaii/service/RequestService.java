@@ -48,11 +48,13 @@ public class RequestService {
   private AllowanceService allowanceService;
   private GoogleCalendarService googleCalendarService;
   private EmailService emailService;
+  private SendNotificationsService sendNotificationsService;
 
   @Autowired
   public RequestService(RequestRepository requestRepository, UserRepository userRepository,
       AbsenceRepository absenceRepository, DayRepository dayRepository, TeamRepository teamRepository,
-      AllowanceService allowanceService, GoogleCalendarService googleCalendarService, EmailService emailService) {
+      AllowanceService allowanceService, GoogleCalendarService googleCalendarService, EmailService emailService,
+                        SendNotificationsService sendNotificationsService) {
     this.requestRepository = requestRepository;
     this.userRepository = userRepository;
     this.dayRepository = dayRepository;
@@ -61,6 +63,7 @@ public class RequestService {
     this.absenceRepository = absenceRepository;
     this.googleCalendarService = googleCalendarService;
     this.emailService = emailService;
+    this.sendNotificationsService = sendNotificationsService;
   }
 
   public List<Request> findAllByMonth(LocalDate startDate, LocalDate endDate) {
@@ -293,6 +296,8 @@ public class RequestService {
       default:
         throw new IllegalArgumentException("Unsupported request status: " + request.getRequestStatus());
     }
+
+    sendNotificationsService.sendNotificationForRequestedLeave(request.getRequestStatus(), authUser);
 
     return requestRepository.save(request);
   }

@@ -3,12 +3,18 @@ package eu.execom.hawaii.api.controller;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import eu.execom.hawaii.service.SendNotificationsService;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -37,13 +43,17 @@ public class RequestController {
 
   private static final ModelMapper MAPPER = new ModelMapper();
 
+  private final String TOPIC = "test";
+
   private RequestService requestService;
   private UserService userService;
+  private SendNotificationsService sendNotificationsService;
 
   @Autowired
-  public RequestController(RequestService requestService, UserService userService) {
+  public RequestController(RequestService requestService, UserService userService, SendNotificationsService sendNotificationsService) {
     this.requestService = requestService;
     this.userService = userService;
+    this.sendNotificationsService = sendNotificationsService;
   }
 
   @GetMapping("/month")
@@ -172,5 +182,6 @@ public class RequestController {
 
     return new ResponseEntity<>(new RequestDto(request), HttpStatus.OK);
   }
+
 
 }
