@@ -60,4 +60,6 @@ public class User extends BaseEntity implements Serializable {
   @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST)
   private List<Allowance> allowances;
 
+  private String pushToken;
+
 }

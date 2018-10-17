@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.persistence.EntityNotFoundException;
 
+import eu.execom.hawaii.dto.UserPushTokenDto;
+import eu.execom.hawaii.exceptions.GenericNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -154,5 +156,15 @@ public class UserService {
       user.setYearsOfService(user.getYearsOfService() + 1);
       userRepository.save(user);
     });
+  }
+
+  public void updateUserPushToken(UserPushTokenDto userPushTokenDto) throws GenericNotFoundException {
+    User user = userRepository.findOneByEmail(userPushTokenDto.getUid());
+    if(user != null) {
+      user.setPushToken(userPushTokenDto.getPushToken());
+      userRepository.save(user);
+    } else {
+      throw new GenericNotFoundException();
+    }
   }
 }

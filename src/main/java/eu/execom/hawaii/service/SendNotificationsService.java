@@ -37,6 +37,7 @@ public class SendNotificationsService {
     JSONObject body = new JSONObject();
     body.put("to", "/topics/" + TOPIC);
     body.put("register_ids", "[" + authUser.getEmail() + "]");
+    body.put("token", authUser.getPushToken());
 
     JSONObject notification = new JSONObject();
     notification.put("Key-1", "JSA Data 1");

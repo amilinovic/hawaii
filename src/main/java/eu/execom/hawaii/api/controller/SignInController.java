@@ -7,6 +7,9 @@ import java.util.Collections;
 
 import javax.servlet.http.HttpServletRequest;
 
+import eu.execom.hawaii.dto.UserPushTokenDto;
+import eu.execom.hawaii.exceptions.GenericNotFoundException;
+import eu.execom.hawaii.model.GenericResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -21,6 +24,8 @@ import org.springframework.social.google.api.Google;
 import org.springframework.social.google.api.impl.GoogleTemplate;
 import org.springframework.social.google.api.plus.Person;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -91,6 +96,13 @@ public class SignInController {
       return HttpStatus.UNAUTHORIZED;
     }
     return HttpStatus.OK;
+  }
+
+  @PutMapping("/token")
+  public ResponseEntity<GenericResponse> tokenReset(@RequestBody UserPushTokenDto userPushTokenDto)
+    throws GenericNotFoundException {
+    userService.updateUserPushToken(userPushTokenDto);
+    return new ResponseEntity<>(GenericResponse.OK, HttpStatus.OK);
   }
 
 }
