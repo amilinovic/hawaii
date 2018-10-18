@@ -1,71 +1,102 @@
 package eu.execom.hawaii.service;
 
-import eu.execom.hawaii.configuration.HeaderRequestInterceptor;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import eu.execom.hawaii.dto.NotificationDto;
+import eu.execom.hawaii.dto.PushNotificationDto;
 import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.enumerations.RequestStatus;
-import org.json.JSONObject;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 @Service
 public class SendNotificationsService {
-  private static final String FIREBASE_SERVER_KEY = "AAAA-fb15Pk:APA91bEPf55o8CrawoRDytyWSYuT4iHRW5yI-Pdvttes-gEUElDXSzbnyStZTRgOkyDvRl52Ls50dSFJNw3MPdalAdlFDNwFBIUHEqeNbrFJ6lpWHEjw8_B8Ue-NoQpUydZaCby9IE54";
+  private static final Logger logger = LoggerFactory.getLogger(SendNotificationsService.class);
+//  private static final String FIREBASE_SERVER_KEY = "AAAAamvUVUc:APA91bFuEB9GG4bFZhcdk5n3ky4iCbrMLrfyUDGda8uO4pH67VVJ63DVTltGqVdfHGuHAlBsIyeAlP4BKQkHh6ue2_KWNSnMCEwTpVNFHJYNUkpOKbrojclx2SFvteiPtjjGIrikcxyLM4KUhZzqbUKSMiZnJgBBMQ";
   private static final String FIREBASE_API_URL = "https://fcm.googleapis.com/fcm/send";
-  private final String TOPIC = "test";
 
   @Async
-  public CompletableFuture<String> send(HttpEntity<String> entity) {
-    RestTemplate restTemplate = new RestTemplate();
+  public void send(String convertedToJson) {
+    BufferedReader in = null;
+    OutputStream os = null;
 
-    ArrayList<ClientHttpRequestInterceptor> interceptors = new ArrayList<>();
-    interceptors.add(new HeaderRequestInterceptor("Authorization", "key=" + FIREBASE_SERVER_KEY));
-    interceptors.add(new HeaderRequestInterceptor("Content-Type", "application/json"));
-    restTemplate.setInterceptors(interceptors);
+    try {
+      URL url = new URL(FIREBASE_API_URL);
+      HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+      conn.setRequestMethod("POST");
+      conn.setDoInput(true);
+      conn.setDoOutput(true);
+      conn.setRequestProperty("Content-Type", "application/json");
+      conn.setRequestProperty("Accept", "application/json");
+      conn.setRequestProperty("Authorization", "key=AIzaSyCHQvWMzrWEbD2NBv4ZzVsAUr2KZx5W1og");
+      conn.connect();
 
-    String firebaseResponse = restTemplate.postForObject(FIREBASE_API_URL, entity, String.class);
-    return CompletableFuture.completedFuture(firebaseResponse);
+      os = conn.getOutputStream();
+      OutputStreamWriter osw = new OutputStreamWriter(os, "UTF-8");
+      osw.write(convertedToJson);
+      osw.flush();
+      osw.close();
+
+      int responseCode = conn.getResponseCode();
+      in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+      String inputLine;
+      StringBuilder response = new StringBuilder();
+
+      while ((inputLine = in.readLine()) != null) {
+        response.append(inputLine);
+      }
+      logger.debug("Push returned code {}", responseCode);
+    } catch (IOException e){
+      logger.error("Failed to send push notification {}", e);
+    } finally {
+      IOUtils.closeQuietly(in);
+      IOUtils.closeQuietly(os);
+    }
   }
 
   public void sendNotificationForRequestedLeave(RequestStatus requestStatus, User authUser) {
-    JSONObject body = new JSONObject();
-    body.put("to", "/topics/" + TOPIC);
-    body.put("register_ids", "[" + authUser.getEmail() + "]");
-    body.put("token", authUser.getPushToken());
-
-    JSONObject notification = new JSONObject();
-    notification.put("Key-1", "JSA Data 1");
-    notification.put("Key-2", "JSA Data 2");
-
-    JSONObject data = new JSONObject();
-    data.put("notification", notification);
+    PushNotificationDto result = new PushNotificationDto();
+    NotificationDto notification = new NotificationDto();
 
     switch (requestStatus) {
       case APPROVED:
-        body.put("Your request has been approved", requestStatus);
+        notification.setMessage("Your request has been approved");
+        notification.setData(requestStatus.toString());
       case CANCELED:
-        body.put("Your request has been cancelled", requestStatus);
+        notification.setMessage("Your request has been cancelled");
+        notification.setData(requestStatus.toString());
       case REJECTED:
-        body.put("Your request has been rejected", requestStatus);
+        notification.setMessage("Your request has been rejected");
+        notification.setData(requestStatus.toString());
     }
 
-    HttpEntity<String> request = new HttpEntity<>(body.toString());
+    result.setTo(authUser.getPushToken());
+    result.setData(notification);
+    result.setPriority("high");
 
-    CompletableFuture<String> pushNotification = send(request);
-    CompletableFuture.allOf(pushNotification).join();
+    String convertedToJson = objectToJsonMapper(result);
+    send(convertedToJson);
+  }
+
+  private String objectToJsonMapper(PushNotificationDto result) {
+    ObjectMapper mapper = new ObjectMapper();
+    String jsonInString = "";
 
     try {
-      String firebaseResponse = pushNotification.get();
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    } catch (ExecutionException e) {
-      e.printStackTrace();
+      jsonInString = mapper.writeValueAsString(result);
+    } catch (IOException e) {
+      logger.error("Failed to send push notification {}", e);
     }
+    return jsonInString;
   }
 }

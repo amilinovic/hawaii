@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
@@ -33,6 +34,7 @@ import eu.execom.hawaii.dto.UserDto;
 import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.security.TokenStore;
 import eu.execom.hawaii.service.UserService;
+import springfox.documentation.annotations.ApiIgnore;
 
 @RestController
 public class SignInController {
@@ -99,9 +101,10 @@ public class SignInController {
   }
 
   @PutMapping("/token")
-  public ResponseEntity<GenericResponse> tokenReset(@RequestBody UserPushTokenDto userPushTokenDto)
+  public ResponseEntity<GenericResponse> tokenReset(@ApiIgnore @AuthenticationPrincipal User authUser,
+      @RequestBody UserPushTokenDto userPushTokenDto)
     throws GenericNotFoundException {
-    userService.updateUserPushToken(userPushTokenDto);
+    userService.updateUserPushToken(userPushTokenDto, authUser);
     return new ResponseEntity<>(GenericResponse.OK, HttpStatus.OK);
   }
 
