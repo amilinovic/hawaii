@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import eu.execom.hawaii.dto.UserDto;
@@ -102,9 +103,9 @@ public class SignInController {
 
   @PutMapping("/token")
   public ResponseEntity<GenericResponse> tokenReset(@ApiIgnore @AuthenticationPrincipal User authUser,
-      @RequestBody UserPushTokenDto userPushTokenDto)
+      @RequestParam String pushToken)
     throws GenericNotFoundException {
-    userService.updateUserPushToken(userPushTokenDto, authUser);
+    userService.updateUserPushToken(pushToken, authUser);
     return new ResponseEntity<>(GenericResponse.OK, HttpStatus.OK);
   }
 

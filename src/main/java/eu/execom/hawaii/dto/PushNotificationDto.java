@@ -7,8 +7,8 @@ import lombok.Data;
 public class PushNotificationDto {
   @JsonProperty("to")
   private String to;
+  @JsonProperty("notification")
+  private NotificationDto notification;
   @JsonProperty("data")
   private NotificationDto data;
-  @JsonProperty("priority")
-  private String priority = "high";
 }

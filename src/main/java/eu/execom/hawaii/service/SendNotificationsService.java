@@ -67,22 +67,38 @@ public class SendNotificationsService {
   public void sendNotificationForRequestedLeave(RequestStatus requestStatus, User authUser) {
     PushNotificationDto result = new PushNotificationDto();
     NotificationDto notification = new NotificationDto();
+    NotificationDto data = new NotificationDto();
 
     switch (requestStatus) {
       case APPROVED:
-        notification.setMessage("Your request has been approved");
-        notification.setData(requestStatus.toString());
+        notification.setTitle("Approved!");
+        notification.setBody("Your request has been approved");
+        notification.setPriority("high");
+        data.setTitle("Data title");
+        data.setBody("Data body");
+        data.setPriority("high");
+        break;
       case CANCELED:
-        notification.setMessage("Your request has been cancelled");
-        notification.setData(requestStatus.toString());
+        notification.setTitle("Cancelled!");
+        notification.setBody("Your request has been cancelled");
+        notification.setPriority("high");
+        data.setTitle("Data title");
+        data.setBody("Data body");
+        data.setPriority("high");
+        break;
       case REJECTED:
-        notification.setMessage("Your request has been rejected");
-        notification.setData(requestStatus.toString());
+        notification.setTitle("Rejected!");
+        notification.setBody("Your request has been rejected");
+        notification.setPriority("high");
+        data.setTitle("Data title");
+        data.setBody("Data body");
+        data.setPriority("high");
+        break;
     }
 
     result.setTo(authUser.getPushToken());
-    result.setData(notification);
-    result.setPriority("high");
+    result.setNotification(notification);
+    result.setData(data);
 
     String convertedToJson = objectToJsonMapper(result);
     send(convertedToJson);

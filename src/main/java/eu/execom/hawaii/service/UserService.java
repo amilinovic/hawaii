@@ -158,10 +158,10 @@ public class UserService {
     });
   }
 
-  public void updateUserPushToken(UserPushTokenDto userPushTokenDto, User authUser) throws GenericNotFoundException {
+  public void updateUserPushToken(String pushToken, User authUser) throws GenericNotFoundException {
     User user = userRepository.findOneByEmail(authUser.getEmail());
     if(user != null) {
-      user.setPushToken(userPushTokenDto.getPushToken());
+      user.setPushToken(pushToken);
       userRepository.save(user);
     } else {
       throw new GenericNotFoundException();

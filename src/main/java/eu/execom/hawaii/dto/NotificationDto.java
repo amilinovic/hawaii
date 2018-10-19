@@ -5,6 +5,7 @@ import lombok.Data;
 @Data
 public class NotificationDto {
 
-  private String message;
-  private String data;
+  private String body;
+  private String title;
+  private String priority;
 }

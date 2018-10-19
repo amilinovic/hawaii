@@ -248,8 +248,9 @@ public class RequestService {
   @CacheEvict(value = REQUESTS_CACHE, key = "#request.user.id")
   @Transactional
   public Request handleRequestStatusUpdate(Request request, User authUser) {
-    Absence absence = absenceRepository.getOne(request.getAbsence().getId());
-    request.setAbsence(absence);
+//    request = requestRepository.getOne(request.getId());
+    // Absence absence = absenceRepository.getOne(request.getAbsence().getId());
+    // request.setAbsence(absence);
 
     User user = userRepository.getOne(request.getUser().getId());
     request.setUser(user);
@@ -297,7 +298,7 @@ public class RequestService {
         throw new IllegalArgumentException("Unsupported request status: " + request.getRequestStatus());
     }
 
-    sendNotificationsService.sendNotificationForRequestedLeave(request.getRequestStatus(), authUser);
+    sendNotificationsService.sendNotificationForRequestedLeave(request.getRequestStatus(), user);
 
     return requestRepository.save(request);
   }
