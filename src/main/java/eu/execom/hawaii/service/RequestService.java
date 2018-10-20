@@ -274,6 +274,8 @@ public class RequestService {
     boolean requestIsPending = existingRequest.isPending();
     boolean requestIsCanceled = existingRequest.isCanceled();
 
+    boolean shouldSendPushNotification = true;
+
     switch (request.getRequestStatus()) {
       case APPROVED:
         if (!userIsRequestApprover) {
@@ -297,6 +299,7 @@ public class RequestService {
           throw new NotAuthorizedApprovalExeception();
         } else if (requestIsPending) {
           allowanceService.applyPendingRequest(request, true);
+          shouldSendPushNotification = false;
         }
         break;
       case REJECTED:
@@ -310,7 +313,9 @@ public class RequestService {
         throw new IllegalArgumentException("Unsupported request status: " + request.getRequestStatus());
     }
 
-    sendNotificationsService.sendNotificationForRequestedLeave(request.getRequestStatus(), user);
+    if(shouldSendPushNotification) {
+      sendNotificationsService.sendNotificationForRequestedLeave(request.getRequestStatus(), user);
+    }
 
     return requestRepository.save(request);
   }
