@@ -14,7 +14,6 @@ import eu.execom.hawaii.repository.RequestRepository;
 import eu.execom.hawaii.repository.TeamRepository;
 import eu.execom.hawaii.repository.UserRepository;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -61,6 +60,8 @@ public class RequestServiceTest {
   private TeamRepository teamRepository;
   @Mock
   private DayRepository dayRepository;
+  @Mock
+  private SendNotificationsService sendNotificationsService;
   @InjectMocks
   private RequestService requestService;
 
@@ -377,7 +378,6 @@ public class RequestServiceTest {
 
     var databaseRequest = EntityBuilder.request(absenceAnnual, List.of(dayOne));
 
-    given(absenceRepository.getOne(1L)).willReturn(absenceAnnual);
     given(userRepository.getOne(1L)).willReturn(user);
     given(requestRepository.getOne(1L)).willReturn(databaseRequest);
     given(requestRepository.save(request)).willReturn(request);
@@ -390,7 +390,6 @@ public class RequestServiceTest {
     assertNotNull("Expect to days exist", savedRequest.getDays());
     assertNotNull("Expect to user exist", savedRequest.getUser());
     assertNotNull("Expect to absence exist", savedRequest.getAbsence());
-    verify(absenceRepository).getOne(anyLong());
     verify(userRepository).getOne(anyLong());
     verify(requestRepository).getOne(anyLong());
     verify(allowanceService).applyPendingRequest(any(), anyBoolean());
@@ -411,7 +410,7 @@ public class RequestServiceTest {
     var changedRequest = EntityBuilder.request(absenceAnnual, List.of(dayOne));
     changedRequest.setRequestStatus(RequestStatus.CANCELLATION_PENDING);
 
-    given(absenceRepository.getOne(1L)).willReturn(absenceAnnual);
+    //    given(absenceRepository.getOne(1L)).willReturn(absenceAnnual);
     given(userRepository.getOne(1L)).willReturn(request.getUser());
     given(requestRepository.getOne(1L)).willReturn(databaseRequest);
     given(requestRepository.save(changedRequest)).willReturn(changedRequest);
@@ -422,7 +421,6 @@ public class RequestServiceTest {
     // then
     assertThat("Expect to saved request have status", savedRequest.getRequestStatus(),
         is(RequestStatus.CANCELLATION_PENDING));
-    verify(absenceRepository).getOne(anyLong());
     verify(userRepository).getOne(anyLong());
     verify(requestRepository).getOne(anyLong());
     verify(emailService).createEmailAndSendForApproval(any());
@@ -443,7 +441,6 @@ public class RequestServiceTest {
     var databaseRequest = EntityBuilder.request(absenceAnnual, List.of(dayOne));
     databaseRequest.setRequestStatus(RequestStatus.PENDING);
 
-    given(absenceRepository.getOne(1L)).willReturn(absenceAnnual);
     given(userRepository.getOne(1L)).willReturn(mockUser);
     given(requestRepository.getOne(1L)).willReturn(databaseRequest);
     given(requestRepository.save(request)).willReturn(request);
@@ -453,7 +450,6 @@ public class RequestServiceTest {
 
     //then
     assertThat("Expect to saved request has status", savedRequest.getRequestStatus(), is(RequestStatus.CANCELED));
-    verify(absenceRepository).getOne(anyLong());
     verify(userRepository).getOne(anyLong());
     verify(requestRepository).getOne(anyLong());
     verify(allowanceService).applyPendingRequest(any(), anyBoolean());
@@ -472,7 +468,6 @@ public class RequestServiceTest {
     var databaseRequest = EntityBuilder.request(absenceAnnual, List.of(dayOne));
     databaseRequest.setRequestStatus(RequestStatus.PENDING);
 
-    given(absenceRepository.getOne(1L)).willReturn(absenceAnnual);
     given(userRepository.getOne(1L)).willReturn(request.getUser());
     given(requestRepository.getOne(1L)).willReturn(databaseRequest);
     given(requestRepository.save(request)).willReturn(request);
@@ -482,7 +477,6 @@ public class RequestServiceTest {
 
     // then
     assertThat("Expect to saved request have status", savedRequest.getRequestStatus(), is(RequestStatus.APPROVED));
-    verify(absenceRepository).getOne(anyLong());
     verify(userRepository).getOne(anyLong());
     verify(requestRepository).getOne(anyLong());
     verify(allowanceService).applyPendingRequest(any(), anyBoolean());
@@ -516,7 +510,6 @@ public class RequestServiceTest {
     var databaseRequest = EntityBuilder.request(absenceAnnual, List.of(dayOne));
     databaseRequest.setRequestStatus(RequestStatus.CANCELLATION_PENDING);
 
-    given(absenceRepository.getOne(1L)).willReturn(absenceAnnual);
     given(userRepository.getOne(1L)).willReturn(request.getUser());
     given(requestRepository.getOne(1L)).willReturn(databaseRequest);
 
@@ -536,7 +529,6 @@ public class RequestServiceTest {
     var databaseRequest = EntityBuilder.request(absenceAnnual, List.of(dayOne));
     databaseRequest.setRequestStatus(RequestStatus.CANCELED);
 
-    given(absenceRepository.getOne(1L)).willReturn(absenceAnnual);
     given(userRepository.getOne(1L)).willReturn(request.getUser());
     given(requestRepository.getOne(1L)).willReturn(databaseRequest);
     //      given(requestRepository.save(request)).willReturn(request);
@@ -558,7 +550,6 @@ public class RequestServiceTest {
     var databaseRequest = EntityBuilder.request(absenceAnnual, List.of(dayOne));
     databaseRequest.setRequestStatus(RequestStatus.PENDING);
 
-    given(absenceRepository.getOne(1L)).willReturn(absenceAnnual);
     given(userRepository.getOne(1L)).willReturn(request.getUser());
     given(requestRepository.getOne(1L)).willReturn(databaseRequest);
 
@@ -579,7 +570,6 @@ public class RequestServiceTest {
     var databaseRequest = EntityBuilder.request(absenceAnnual, List.of(dayOne));
     databaseRequest.setRequestStatus(RequestStatus.REJECTED);
 
-    given(absenceRepository.getOne(1L)).willReturn(absenceAnnual);
     given(userRepository.getOne(1L)).willReturn(request.getUser());
     given(requestRepository.getOne(1L)).willReturn(databaseRequest);
 
