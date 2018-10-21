@@ -32,20 +32,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import javax.persistence.EntityExistsException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -294,6 +280,8 @@ public class RequestService {
         } else if (!userIsRequestApprover && requestIsApproved) {
           request.setRequestStatus(RequestStatus.CANCELLATION_PENDING);
           emailService.createEmailAndSendForApproval(request);
+          shouldSendPushNotification = false;
+          sendNotificationsService.sendNotificationToApproversAboutSubmittedRequest(request);
         } else if (!userIsRequestApprover && requestHasPendingCancellation) {
           log.error("User not authorized to cancel this request for user with email: {}", user.getEmail());
           throw new NotAuthorizedApprovalExeception();
@@ -313,7 +301,7 @@ public class RequestService {
         throw new IllegalArgumentException("Unsupported request status: " + request.getRequestStatus());
     }
 
-    if(shouldSendPushNotification) {
+    if (shouldSendPushNotification) {
       sendNotificationsService.sendNotificationForRequestedLeave(request.getRequestStatus(), user);
     }
 

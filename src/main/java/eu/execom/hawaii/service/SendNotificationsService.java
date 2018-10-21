@@ -40,13 +40,38 @@ public class SendNotificationsService {
     NotificationDto notification = new NotificationDto();
     NotificationDataDto data = new NotificationDataDto();
 
+    RequestStatus requestStatus = newRequest.getRequestStatus();
+
+    switch (requestStatus) {
+      case CANCELLATION_PENDING:
+        notification.setTitle("New request!");
+        notification.setBody(newRequest.getUser().getFullName() + "submitted new cancel request");
+        notification.setPriority("high");
+        data.setTitle("Data title");
+        data.setBody("Data body");
+        data.setPriority("high");
+        data.setRequestStatus(newRequest.getRequestStatus());
+        break;
+      case PENDING:
+        notification.setTitle("New request!");
+        notification.setBody(newRequest.getUser().getFullName() + "submitted new leave request");
+        notification.setPriority("high");
+        data.setTitle("Data title");
+        data.setBody("Data body");
+        data.setPriority("high");
+        data.setRequestStatus(newRequest.getRequestStatus());
+        break;
+      default:
+        throw new IllegalArgumentException("Unsupported request status: " + newRequest.getRequestStatus());
+
+    }
     notification.setTitle("New request!");
-    notification.setBody("User submitted new leave request");
+    notification.setBody(newRequest.getUser().getFullName().toString() + "submitted new request");
     notification.setPriority("high");
     data.setTitle("Data title");
     data.setBody("Data body");
     data.setPriority("high");
-    data.setRequestStatus(RequestStatus.PENDING);
+    data.setRequestStatus(newRequest.getRequestStatus());
 
     List<String> approversPushToken = newRequest.getUser()
                                                 .getTeam()
