@@ -29,7 +29,8 @@ public class AllowanceController {
   }
 
   @GetMapping("/years/range")
-  public ResponseEntity<Map<String, Integer>> getFirstAndLastAllowancesYear(@ApiIgnore @AuthenticationPrincipal User authUser){
+  public ResponseEntity<Map<String, Integer>> getFirstAndLastAllowancesYear(
+      @ApiIgnore @AuthenticationPrincipal User authUser) {
     var firstAndLastAllowanceYear = allowanceService.getFirstAndLastAllowancesYear(authUser);
     return new ResponseEntity<>(firstAndLastAllowanceYear, HttpStatus.OK);
   }
