@@ -149,6 +149,9 @@ public class UserService {
     return allowance;
   }
 
+  /**
+  *Each active user receives increment of one year of service on every year, on 1st of January
+  */
   @Scheduled(cron = "0 0 0 1 1 *")
   public void addServiceYearsToUser(){
     List<User> users = userRepository.findAllByActive(true);
@@ -157,7 +160,10 @@ public class UserService {
       userRepository.save(user);
     });
   }
+/**
+ * Assigns push token to user, from device where the user is logged in
 
+*/
   public void updateUserPushToken(String pushToken, User authUser) throws GenericNotFoundException {
     User user = userRepository.findOneByEmail(authUser.getEmail());
     if(user != null) {

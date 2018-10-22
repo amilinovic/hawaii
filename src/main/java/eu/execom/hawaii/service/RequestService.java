@@ -2,7 +2,6 @@ package eu.execom.hawaii.service;
 
 import eu.execom.hawaii.exceptions.NotAuthorizedApprovalExeception;
 import eu.execom.hawaii.exceptions.RequestAlreadyCanceledException;
-import eu.execom.hawaii.model.Absence;
 import eu.execom.hawaii.model.Day;
 import eu.execom.hawaii.model.Request;
 import eu.execom.hawaii.model.Team;
@@ -239,8 +238,9 @@ public class RequestService {
 
   /**
    * Saves changed request status. If status is changed to APPROVED/CANCELED/REJECTED,
-   * applies leave days from the request to the user's allowance
-   * and creates an event in the user's Google calendar.
+   * applies leave days from the request to the user's allowance,
+   * creates an event in the user's Google calendar
+   *and sends notification to user who made request, WHEN the request is handled by approver
    *
    * @param request to be persisted.
    * @return saved request.
@@ -248,9 +248,6 @@ public class RequestService {
   @CacheEvict(value = REQUESTS_CACHE, key = "#request.user.id")
   @Transactional
   public Request handleRequestStatusUpdate(Request request, User authUser) {
-//    request = requestRepository.getOne(request.getId());
-    // Absence absence = absenceRepository.getOne(request.getAbsence().getId());
-    // request.setAbsence(absence);
 
     User user = userRepository.getOne(request.getUser().getId());
     request.setUser(user);

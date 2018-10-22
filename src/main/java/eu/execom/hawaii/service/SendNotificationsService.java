@@ -23,7 +23,6 @@ import java.net.URL;
 @Service
 public class SendNotificationsService {
   private static final Logger logger = LoggerFactory.getLogger(SendNotificationsService.class);
-//  private static final String FIREBASE_SERVER_KEY = "AAAAamvUVUc:APA91bFuEB9GG4bFZhcdk5n3ky4iCbrMLrfyUDGda8uO4pH67VVJ63DVTltGqVdfHGuHAlBsIyeAlP4BKQkHh6ue2_KWNSnMCEwTpVNFHJYNUkpOKbrojclx2SFvteiPtjjGIrikcxyLM4KUhZzqbUKSMiZnJgBBMQ";
   private static final String FIREBASE_API_URL = "https://fcm.googleapis.com/fcm/send";
 
   @Async
@@ -65,7 +64,7 @@ public class SendNotificationsService {
     }
   }
 
-  public void sendNotificationForRequestedLeave(RequestStatus requestStatus, User authUser) {
+  public void sendNotificationForRequestedLeave(RequestStatus requestStatus, User user) {
     PushNotificationDto result = new PushNotificationDto();
     NotificationDto notification = new NotificationDto();
     NotificationDataDto data = new NotificationDataDto();
@@ -100,7 +99,7 @@ public class SendNotificationsService {
         break;
     }
 
-    result.setTo(authUser.getPushToken());
+    result.setTo(user.getPushToken());
     result.setNotification(notification);
     result.setData(data);
 
