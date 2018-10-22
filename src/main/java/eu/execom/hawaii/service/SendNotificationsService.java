@@ -1,6 +1,7 @@
 package eu.execom.hawaii.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import eu.execom.hawaii.dto.NotificationDataDto;
 import eu.execom.hawaii.dto.NotificationDto;
 import eu.execom.hawaii.dto.PushNotificationDto;
 import eu.execom.hawaii.model.User;
@@ -67,7 +68,7 @@ public class SendNotificationsService {
   public void sendNotificationForRequestedLeave(RequestStatus requestStatus, User authUser) {
     PushNotificationDto result = new PushNotificationDto();
     NotificationDto notification = new NotificationDto();
-    NotificationDto data = new NotificationDto();
+    NotificationDataDto data = new NotificationDataDto();
 
     switch (requestStatus) {
       case APPROVED:
@@ -77,6 +78,7 @@ public class SendNotificationsService {
         data.setTitle("Data title");
         data.setBody("Data body");
         data.setPriority("high");
+        data.setRequestStatus(RequestStatus.APPROVED);
         break;
       case CANCELED:
         notification.setTitle("Cancelled!");
@@ -85,6 +87,7 @@ public class SendNotificationsService {
         data.setTitle("Data title");
         data.setBody("Data body");
         data.setPriority("high");
+        data.setRequestStatus(RequestStatus.CANCELED);
         break;
       case REJECTED:
         notification.setTitle("Rejected!");
@@ -93,6 +96,7 @@ public class SendNotificationsService {
         data.setTitle("Data title");
         data.setBody("Data body");
         data.setPriority("high");
+        data.setRequestStatus(RequestStatus.REJECTED);
         break;
     }
 

@@ -10,5 +10,5 @@ public class PushNotificationDto {
   @JsonProperty("notification")
   private NotificationDto notification;
   @JsonProperty("data")
-  private NotificationDto data;
+  private NotificationDataDto data;
 }
