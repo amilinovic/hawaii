@@ -44,7 +44,6 @@ public class EntityBuilder {
     user.setApproverTeams(new ArrayList<>());
     user.setRequests(new ArrayList<>());
     user.setAllowances(new ArrayList<>());
-//    user.setPushToken("dSy1vx2kDOk:APA91bFRCZgg3AR7RV0duTZszfSVndI4X0bdHNDOtNah9CwUZHMWM5ttEdClvG9EcruHcYZRkNMCYmRAPPoqN5Hlum5igY4f6gCWim5RaJ2urfU7oeqnp2W2ym8jqrToz0sjanoJxX4x");
 
     return user;
   }

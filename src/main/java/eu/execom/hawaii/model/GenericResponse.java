@@ -1,20 +1,18 @@
 package eu.execom.hawaii.model;
 
-import lombok.Data;
+import lombok.Value;
 import org.springframework.http.HttpStatus;
 
-import javax.persistence.Entity;
-
-@Data
+@Value
 public class GenericResponse {
 
-  private final int code;
-
-  private final String message;
-
-  private final Object data;
-
   public static final GenericResponse OK = new GenericResponse(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(), null);
+
+  private int code;
+
+  private String message;
+
+  private Object data;
 
   public GenericResponse(Object data) {
     this.code = HttpStatus.OK.value();

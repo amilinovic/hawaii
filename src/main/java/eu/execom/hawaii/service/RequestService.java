@@ -53,7 +53,7 @@ public class RequestService {
   public RequestService(RequestRepository requestRepository, UserRepository userRepository,
       AbsenceRepository absenceRepository, DayRepository dayRepository, TeamRepository teamRepository,
       AllowanceService allowanceService, GoogleCalendarService googleCalendarService, EmailService emailService,
-                        SendNotificationsService sendNotificationsService) {
+      SendNotificationsService sendNotificationsService) {
     this.requestRepository = requestRepository;
     this.userRepository = userRepository;
     this.dayRepository = dayRepository;
@@ -220,8 +220,6 @@ public class RequestService {
       emailService.createEmailAndSendForApproval(newRequest);
       sendNotificationsService.sendNotificationToApproversAboutSubmittedRequest(newRequest);
     }
-//    sendNotificationsService.sendNotificationToApproversAboutSubmittedRequest(newRequest);
-
 
     return requestRepository.save(newRequest);
   }
@@ -243,7 +241,7 @@ public class RequestService {
    * Saves changed request status. If status is changed to APPROVED/CANCELED/REJECTED,
    * applies leave days from the request to the user's allowance,
    * creates an event in the user's Google calendar
-   *and sends notification to user who made request, WHEN the request is handled by approver
+   * and sends notification to user who made request, WHEN the request is handled by approver
    *
    * @param request to be persisted.
    * @return saved request.

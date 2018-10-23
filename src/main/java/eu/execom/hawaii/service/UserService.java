@@ -1,11 +1,12 @@
 package eu.execom.hawaii.service;
 
-import java.util.List;
-
-import javax.persistence.EntityNotFoundException;
-
-import eu.execom.hawaii.dto.UserPushTokenDto;
 import eu.execom.hawaii.exceptions.GenericNotFoundException;
+import eu.execom.hawaii.model.Allowance;
+import eu.execom.hawaii.model.LeaveProfile;
+import eu.execom.hawaii.model.User;
+import eu.execom.hawaii.repository.LeaveProfileRepository;
+import eu.execom.hawaii.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,12 +14,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import eu.execom.hawaii.model.Allowance;
-import eu.execom.hawaii.model.LeaveProfile;
-import eu.execom.hawaii.model.User;
-import eu.execom.hawaii.repository.LeaveProfileRepository;
-import eu.execom.hawaii.repository.UserRepository;
-import lombok.extern.slf4j.Slf4j;
+import javax.persistence.EntityNotFoundException;
+import java.util.List;
 
 /**
  * User management service.
@@ -35,8 +32,10 @@ public class UserService {
     this.userRepository = userRepository;
     this.leaveProfileRepository = leaveProfileRepository;
   }
+
   /**
    * Retrieves a list of all users from repository.
+   *
    * @return a list of all users, both active and non-active
    */
   public List<User> findAllUsers() {
@@ -150,23 +149,23 @@ public class UserService {
   }
 
   /**
-  *Each active user receives increment of one year of service on every year, on 1st of January
-  */
+   * Each active user receives increment of one year of service on every year, on 1st of January
+   */
   @Scheduled(cron = "0 0 0 1 1 *")
-  public void addServiceYearsToUser(){
+  public void addServiceYearsToUser() {
     List<User> users = userRepository.findAllByActive(true);
     users.stream().forEach(user -> {
       user.setYearsOfService(user.getYearsOfService() + 1);
       userRepository.save(user);
     });
   }
-/**
- * Assigns push token to user, from device where the user is logged in
 
-*/
-  public void updateUserPushToken(String pushToken, User authUser) throws GenericNotFoundException {
+  /**
+   * Assigns push token to user, from device where the user is logged in
+   */
+  public void updateUserPushToken(String pushToken, User authUser) {
     User user = userRepository.findOneByEmail(authUser.getEmail());
-    if(user != null) {
+    if (user != null) {
       user.setPushToken(pushToken);
       userRepository.save(user);
     } else {

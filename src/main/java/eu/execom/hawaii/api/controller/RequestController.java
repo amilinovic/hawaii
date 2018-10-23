@@ -43,8 +43,6 @@ public class RequestController {
 
   private static final ModelMapper MAPPER = new ModelMapper();
 
-  private final String TOPIC = "test";
-
   private RequestService requestService;
   private UserService userService;
   private SendNotificationsService sendNotificationsService;

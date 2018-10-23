@@ -1,14 +1,11 @@
 package eu.execom.hawaii.api.controller;
 
-import static eu.execom.hawaii.security.AuthenticationFilter.AUTHENTICATION_TOKEN_KEY;
-
-import java.util.Collection;
-import java.util.Collections;
-
-import javax.servlet.http.HttpServletRequest;
-
+import eu.execom.hawaii.dto.UserDto;
 import eu.execom.hawaii.exceptions.GenericNotFoundException;
 import eu.execom.hawaii.model.GenericResponse;
+import eu.execom.hawaii.model.User;
+import eu.execom.hawaii.security.TokenStore;
+import eu.execom.hawaii.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -28,12 +25,13 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import eu.execom.hawaii.dto.UserDto;
-import eu.execom.hawaii.model.User;
-import eu.execom.hawaii.security.TokenStore;
-import eu.execom.hawaii.service.UserService;
 import springfox.documentation.annotations.ApiIgnore;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Collection;
+import java.util.Collections;
+
+import static eu.execom.hawaii.security.AuthenticationFilter.AUTHENTICATION_TOKEN_KEY;
 
 @RestController
 public class SignInController {

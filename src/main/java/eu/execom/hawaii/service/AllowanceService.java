@@ -1,22 +1,5 @@
 package eu.execom.hawaii.service;
 
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
-import eu.execom.hawaii.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import eu.execom.hawaii.exceptions.InsufficientHoursException;
 import eu.execom.hawaii.model.Allowance;
 import eu.execom.hawaii.model.Day;
@@ -29,7 +12,17 @@ import eu.execom.hawaii.model.enumerations.AbsenceType;
 import eu.execom.hawaii.model.enumerations.Duration;
 import eu.execom.hawaii.repository.AllowanceRepository;
 import eu.execom.hawaii.repository.PublicHolidayRepository;
+import eu.execom.hawaii.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -363,17 +356,13 @@ public class AllowanceService {
   public Map<String, Integer> getFirstAndLastAllowancesYear(User authUser) {
     List<Allowance> allowances = allowanceRepository.findAllByUserId(authUser.getId());
     Map<String, Integer> firstAndLastYear = new LinkedHashMap<>();
-    List<Integer> years = new ArrayList<>();
 
-    for (Allowance a : allowances) {
-      years.add(a.getYear());
-    }
+    IntSummaryStatistics firstAndLastAllowanceYear = allowances.stream()
+                                             .map((allowance -> allowance.getYear()))
+                                             .collect(Collectors.summarizingInt(Integer::intValue));
 
-    var firstYearAllowance = Collections.min(years);
-    var lastYearAllowance = Collections.max(years);
-
-    firstAndLastYear.put("first", firstYearAllowance);
-    firstAndLastYear.put("last", lastYearAllowance);
+    firstAndLastYear.put("first", firstAndLastAllowanceYear.getMin());
+    firstAndLastYear.put("last", firstAndLastAllowanceYear.getMax());
 
     return firstAndLastYear;
   }
