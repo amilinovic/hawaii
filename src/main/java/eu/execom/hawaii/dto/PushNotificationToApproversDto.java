@@ -1,0 +1,17 @@
+package eu.execom.hawaii.dto;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
+
+import java.util.List;
+
+@Data
+public class PushNotificationToApproversDto {
+
+  @JsonProperty("registration_ids")
+  private List<String> registration_ids;
+  @JsonProperty("notification")
+  private NotificationDto notification;
+  @JsonProperty("data")
+  private NotificationDataDto data;
+}

@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.execom.hawaii.dto.NotificationDataDto;
 import eu.execom.hawaii.dto.NotificationDto;
 import eu.execom.hawaii.dto.PushNotificationDto;
+import eu.execom.hawaii.dto.PushNotificationToApproversDto;
+import eu.execom.hawaii.model.Request;
 import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.enumerations.RequestStatus;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
@@ -19,6 +21,9 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class SendNotificationsService {
@@ -62,6 +67,32 @@ public class SendNotificationsService {
       IOUtils.closeQuietly(in);
       IOUtils.closeQuietly(os);
     }
+  }
+
+  public void sendNotificationToApproversAboutSubmittedRequest(Request newRequest) {
+    PushNotificationToApproversDto result = new PushNotificationToApproversDto();
+    NotificationDto notification = new NotificationDto();
+    NotificationDataDto data = new NotificationDataDto();
+
+    notification.setTitle("New request!");
+    notification.setBody("User submitted new leave request");
+    notification.setPriority("high");
+    data.setTitle("Data title");
+    data.setBody("Data body");
+    data.setPriority("high");
+    data.setRequestStatus(RequestStatus.PENDING);
+
+    List<String> approversPushToken = newRequest.getUser()
+                                         .getTeam()
+                                         .getTeamApprovers()
+                                         .stream()
+                                         .map(User::getPushToken)
+                                         .collect(Collectors.toList());
+      result.setRegistration_ids(approversPushToken);
+      result.setNotification(notification);
+      result.setData(data);
+      String convertedToJson = objectToJsonMapperList(result);
+      send(convertedToJson);
   }
 
   public void sendNotificationForRequestedLeave(RequestStatus requestStatus, User user) {
@@ -108,6 +139,18 @@ public class SendNotificationsService {
   }
 
   private String objectToJsonMapper(PushNotificationDto result) {
+    ObjectMapper mapper = new ObjectMapper();
+    String jsonInString = "";
+
+    try {
+      jsonInString = mapper.writeValueAsString(result);
+    } catch (IOException e) {
+      logger.error("Failed to send push notification {}", e);
+    }
+    return jsonInString;
+  }
+
+  private String objectToJsonMapperList(PushNotificationToApproversDto result) {
     ObjectMapper mapper = new ObjectMapper();
     String jsonInString = "";
 

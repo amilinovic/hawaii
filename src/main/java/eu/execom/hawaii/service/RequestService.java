@@ -218,7 +218,10 @@ public class RequestService {
       newRequest.setRequestStatus(RequestStatus.PENDING);
       allowanceService.applyPendingRequest(newRequest, false);
       emailService.createEmailAndSendForApproval(newRequest);
+      sendNotificationsService.sendNotificationToApproversAboutSubmittedRequest(newRequest);
     }
+//    sendNotificationsService.sendNotificationToApproversAboutSubmittedRequest(newRequest);
+
 
     return requestRepository.save(newRequest);
   }
