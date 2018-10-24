@@ -32,11 +32,10 @@ public class SendNotificationsService {
   private static final String FIREBASE_API_URL = "https://fcm.googleapis.com/fcm/send";
 
   private final ObjectMapper objectMapper;
+  private final String authorizationKey;
 
-  @Value("${fcm.server-legacy-key}")
-  private String authorizationKey;
-
-  public SendNotificationsService(ObjectMapper objectMapper) {
+  public SendNotificationsService(@Value("${fcm.server-legacy-key}") String authorizationKey, ObjectMapper objectMapper) {
+    this.authorizationKey = authorizationKey;
     this.objectMapper = objectMapper;
   }
 
