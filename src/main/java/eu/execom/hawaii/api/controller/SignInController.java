@@ -57,6 +57,10 @@ public class SignInController {
 
     User user = userService.findByEmail(email);
 
+    if (!user.isActive()) {
+      return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+    }
+
     Collection<GrantedAuthority> authorities = Collections.singletonList(
         new SimpleGrantedAuthority(user.getUserRole().name()));
 
