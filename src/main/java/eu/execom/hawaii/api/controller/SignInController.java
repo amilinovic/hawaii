@@ -99,8 +99,7 @@ public class SignInController {
 
   @PutMapping("/token")
   public ResponseEntity<GenericResponse> tokenReset(@ApiIgnore @AuthenticationPrincipal User authUser,
-      @RequestParam String pushToken)
-    throws GenericNotFoundException {
+      @RequestParam String pushToken) {
     userService.updateUserPushToken(pushToken, authUser);
     return new ResponseEntity<>(GenericResponse.OK, HttpStatus.OK);
   }

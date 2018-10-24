@@ -1,9 +1,11 @@
 package eu.execom.hawaii.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Value;
 import org.springframework.http.HttpStatus;
 
 @Value
+@AllArgsConstructor
 public class GenericResponse {
 
   public static final GenericResponse OK = new GenericResponse(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(), null);
@@ -17,12 +19,6 @@ public class GenericResponse {
   public GenericResponse(Object data) {
     this.code = HttpStatus.OK.value();
     this.message = HttpStatus.OK.getReasonPhrase();
-    this.data = data;
-  }
-
-  public GenericResponse(int code, String message, Object data) {
-    this.code = code;
-    this.message = message;
     this.data = data;
   }
 

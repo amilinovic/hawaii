@@ -39,40 +39,6 @@ public class SendNotificationsService {
     this.objectMapper = objectMapper;
   }
 
-  @Async
-  public void send(String convertedToJson) {
-    try {
-      URL url = new URL(FIREBASE_API_URL);
-      HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-      conn.setRequestMethod("POST");
-      conn.setDoInput(true);
-      conn.setDoOutput(true);
-      conn.setRequestProperty("Content-Type", "application/json");
-      conn.setRequestProperty("Accept", "application/json");
-      conn.setRequestProperty("Authorization", "key=" + authorizationKey);
-      conn.connect();
-
-      int responseCode = conn.getResponseCode();
-      logger.debug("Push returned code {}", responseCode);
-
-      try (OutputStream os = conn.getOutputStream();
-          OutputStreamWriter osw = new OutputStreamWriter(os, "UTF-8");
-          BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
-        osw.write(convertedToJson);
-        osw.flush();
-
-        String inputLine;
-        StringBuilder response = new StringBuilder();
-
-        while ((inputLine = in.readLine()) != null) {
-          response.append(inputLine);
-        }
-      }
-    } catch (IOException e) {
-      logger.error("Failed to send push notification {}", e);
-    }
-  }
-
   public void sendNotificationToApproversAboutSubmittedRequest(Request newRequest) {
     PushNotificationToApproversDto result = new PushNotificationToApproversDto();
     NotificationDto notification = new NotificationDto();
@@ -92,7 +58,7 @@ public class SendNotificationsService {
                                          .stream()
                                          .map(User::getPushToken)
                                          .collect(Collectors.toList());
-      result.setRegistration_ids(approversPushToken);
+      result.setTo(approversPushToken);
       result.setNotification(notification);
       result.setData(data);
       String convertedToJson = objectToJsonMapperList(result);
@@ -108,22 +74,20 @@ public class SendNotificationsService {
     data.setTitle("Data title");
     data.setBody("Data body");
     data.setPriority("high");
+    data.setRequestStatus(requestStatus);
 
     switch (requestStatus) {
       case APPROVED:
         notification.setTitle("Approved!");
         notification.setBody("Your request has been approved");
-        data.setRequestStatus(RequestStatus.APPROVED);
         break;
       case CANCELED:
         notification.setTitle("Cancelled!");
         notification.setBody("Your request has been cancelled");
-        data.setRequestStatus(RequestStatus.CANCELED);
         break;
       case REJECTED:
         notification.setTitle("Rejected!");
         notification.setBody("Your request has been rejected");
-        data.setRequestStatus(RequestStatus.REJECTED);
         break;
       default:
         throw new IllegalArgumentException("Unsupported request status: " + requestStatus);
@@ -157,5 +121,39 @@ public class SendNotificationsService {
       logger.error("Failed to send push notification {}", e);
     }
     return jsonInString;
+  }
+
+  @Async
+  private void send(String convertedToJson) {
+    try {
+      URL url = new URL(FIREBASE_API_URL);
+      HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+      conn.setRequestMethod("POST");
+      conn.setDoInput(true);
+      conn.setDoOutput(true);
+      conn.setRequestProperty("Content-Type", "application/json");
+      conn.setRequestProperty("Accept", "application/json");
+      conn.setRequestProperty("Authorization", "key=" + authorizationKey);
+      conn.connect();
+
+      int responseCode = conn.getResponseCode();
+      logger.debug("Push returned code {}", responseCode);
+
+      try (OutputStream os = conn.getOutputStream();
+          OutputStreamWriter osw = new OutputStreamWriter(os, "UTF-8");
+          BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
+        osw.write(convertedToJson);
+        osw.flush();
+
+        String inputLine;
+        StringBuilder response = new StringBuilder();
+
+        while ((inputLine = in.readLine()) != null) {
+          response.append(inputLine);
+        }
+      }
+    } catch (IOException e) {
+      logger.error("Failed to send push notification {}", e);
+    }
   }
 }
