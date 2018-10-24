@@ -61,7 +61,7 @@ public class SignInController {
 
     User user = userService.findByEmail(email);
 
-    if(!user.isActive()) {
+    if (!user.isActive()) {
       return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 
