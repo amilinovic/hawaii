@@ -658,8 +658,8 @@ public class RequestServiceTest {
 
     //then
     assertThat("Expect to map of firstAndLastDate be two", firstAndLastDate.size(), is(2));
-    verify(dayRepository, times(1)).findFirstByOrderByDateAsc();
-    verify(dayRepository, times(1)).findFirstByOrderByDateDesc();
+    verify(dayRepository).findFirstByOrderByDateAsc();
+    verify(dayRepository).findFirstByOrderByDateDesc();
     verifyNoMoreInteractions(allMocks);
   }
 
@@ -674,8 +674,8 @@ public class RequestServiceTest {
 
     //then
     assertThat("Expect to map of firstAndLastYear be two", firstAndLastDate.size(), is(2));
-    verify(dayRepository, times(1)).findFirstByOrderByDateAsc();
-    verify(dayRepository, times(1)).findFirstByOrderByDateDesc();
+    verify(dayRepository).findFirstByOrderByDateAsc();
+    verify(dayRepository).findFirstByOrderByDateDesc();
     verifyNoMoreInteractions(allMocks);
   }
 
