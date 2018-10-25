@@ -1,11 +1,11 @@
 package eu.execom.hawaii.dto;
 
+import eu.execom.hawaii.model.Team;
+import lombok.Data;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import eu.execom.hawaii.model.Team;
-import lombok.Data;
 
 @Data
 public class TeamDto {

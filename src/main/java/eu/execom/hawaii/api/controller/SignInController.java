@@ -1,7 +1,6 @@
 package eu.execom.hawaii.api.controller;
 
 import eu.execom.hawaii.dto.UserDto;
-import eu.execom.hawaii.exceptions.GenericNotFoundException;
 import eu.execom.hawaii.model.GenericResponse;
 import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.security.TokenStore;

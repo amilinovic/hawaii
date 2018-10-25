@@ -1,6 +1,5 @@
 package eu.execom.hawaii.service;
 
-import eu.execom.hawaii.exceptions.GenericNotFoundException;
 import eu.execom.hawaii.model.Allowance;
 import eu.execom.hawaii.model.LeaveProfile;
 import eu.execom.hawaii.model.User;
@@ -169,7 +168,7 @@ public class UserService {
       user.setPushToken(pushToken);
       userRepository.save(user);
     } else {
-      throw new GenericNotFoundException();
+      throw new EntityNotFoundException();
     }
   }
 }

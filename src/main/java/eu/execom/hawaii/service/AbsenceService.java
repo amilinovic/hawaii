@@ -1,14 +1,12 @@
 package eu.execom.hawaii.service;
 
-import java.util.List;
-
-import javax.persistence.EntityNotFoundException;
-
+import eu.execom.hawaii.model.Absence;
+import eu.execom.hawaii.repository.AbsenceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import eu.execom.hawaii.model.Absence;
-import eu.execom.hawaii.repository.AbsenceRepository;
+import javax.persistence.EntityNotFoundException;
+import java.util.List;
 
 /**
  * Absence type management service.

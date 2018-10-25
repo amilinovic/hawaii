@@ -1,20 +1,17 @@
 package eu.execom.hawaii.api.controller;
 
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
+import eu.execom.hawaii.dto.RequestDto;
+import eu.execom.hawaii.model.Request;
+import eu.execom.hawaii.model.Team;
+import eu.execom.hawaii.model.User;
+import eu.execom.hawaii.model.enumerations.AbsenceType;
+import eu.execom.hawaii.model.enumerations.RequestStatus;
+import eu.execom.hawaii.service.RequestService;
 import eu.execom.hawaii.service.SendNotificationsService;
-import org.json.JSONException;
-import org.json.JSONObject;
+import eu.execom.hawaii.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -26,16 +23,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import eu.execom.hawaii.dto.RequestDto;
-import eu.execom.hawaii.model.Request;
-import eu.execom.hawaii.model.Team;
-import eu.execom.hawaii.model.User;
-import eu.execom.hawaii.model.enumerations.AbsenceType;
-import eu.execom.hawaii.model.enumerations.RequestStatus;
-import eu.execom.hawaii.service.RequestService;
-import eu.execom.hawaii.service.UserService;
 import springfox.documentation.annotations.ApiIgnore;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/requests")
@@ -48,7 +42,8 @@ public class RequestController {
   private SendNotificationsService sendNotificationsService;
 
   @Autowired
-  public RequestController(RequestService requestService, UserService userService, SendNotificationsService sendNotificationsService) {
+  public RequestController(RequestService requestService, UserService userService,
+      SendNotificationsService sendNotificationsService) {
     this.requestService = requestService;
     this.userService = userService;
     this.sendNotificationsService = sendNotificationsService;

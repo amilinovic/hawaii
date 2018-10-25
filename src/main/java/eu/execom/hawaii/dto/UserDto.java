@@ -1,12 +1,12 @@
 package eu.execom.hawaii.dto;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.enumerations.UserRole;
 import lombok.Data;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 public class UserDto {

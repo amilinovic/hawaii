@@ -20,7 +20,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.HashMap;
+import java.util.IntSummaryStatistics;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -355,11 +360,11 @@ public class AllowanceService {
 
   public Map<String, Integer> getFirstAndLastAllowancesYear(User authUser) {
     List<Allowance> allowances = allowanceRepository.findAllByUserId(authUser.getId());
-    Map<String, Integer> firstAndLastYear = new LinkedHashMap<>();
+    Map<String, Integer> firstAndLastYear = new HashMap<>();
 
     IntSummaryStatistics firstAndLastAllowanceYear = allowances.stream()
-                                             .map((allowance -> allowance.getYear()))
-                                             .collect(Collectors.summarizingInt(Integer::intValue));
+                                                               .map((allowance -> allowance.getYear()))
+                                                               .collect(Collectors.summarizingInt(Integer::intValue));
 
     firstAndLastYear.put("first", firstAndLastAllowanceYear.getMin());
     firstAndLastYear.put("last", firstAndLastAllowanceYear.getMax());

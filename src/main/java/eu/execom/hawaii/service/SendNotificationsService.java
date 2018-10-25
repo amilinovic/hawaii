@@ -12,16 +12,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,13 +27,15 @@ import java.util.stream.Collectors;
 @Slf4j
 public class SendNotificationsService {
   private static final Logger logger = LoggerFactory.getLogger(SendNotificationsService.class);
-  private static final String FIREBASE_API_URL = "https://fcm.googleapis.com/fcm/send";
 
   private final ObjectMapper objectMapper;
   private final String authorizationKey;
+  private final String firebaseApiUrl;
 
-  public SendNotificationsService(@Value("${fcm.server-legacy-key}") String authorizationKey, ObjectMapper objectMapper) {
+  public SendNotificationsService(@Value("${fcm.server-legacy-key}") String authorizationKey,
+      @Value("${fcm.api-url}") String firebaseApiUrl, ObjectMapper objectMapper) {
     this.authorizationKey = authorizationKey;
+    this.firebaseApiUrl = firebaseApiUrl;
     this.objectMapper = objectMapper;
   }
 
@@ -53,16 +53,16 @@ public class SendNotificationsService {
     data.setRequestStatus(RequestStatus.PENDING);
 
     List<String> approversPushToken = newRequest.getUser()
-                                         .getTeam()
-                                         .getTeamApprovers()
-                                         .stream()
-                                         .map(User::getPushToken)
-                                         .collect(Collectors.toList());
-      result.setTo(approversPushToken);
-      result.setNotification(notification);
-      result.setData(data);
-      String convertedToJson = objectToJsonMapperList(result);
-      send(convertedToJson);
+                                                .getTeam()
+                                                .getTeamApprovers()
+                                                .stream()
+                                                .map(User::getPushToken)
+                                                .collect(Collectors.toList());
+    result.setTo(approversPushToken);
+    result.setNotification(notification);
+    result.setData(data);
+    String convertedToJson = objectToJsonMapper(result);
+    send(convertedToJson);
   }
 
   public void sendNotificationForRequestedLeave(RequestStatus requestStatus, User user) {
@@ -101,7 +101,7 @@ public class SendNotificationsService {
     send(convertedToJson);
   }
 
-  private String objectToJsonMapper(PushNotificationDto result) {
+  private String objectToJsonMapper(Object result) {
     String jsonInString = "";
 
     try {
@@ -112,21 +112,9 @@ public class SendNotificationsService {
     return jsonInString;
   }
 
-  private String objectToJsonMapperList(PushNotificationToApproversDto result) {
-    String jsonInString = "";
-
-    try {
-      jsonInString = objectMapper.writeValueAsString(result);
-    } catch (IOException e) {
-      logger.error("Failed to send push notification {}", e);
-    }
-    return jsonInString;
-  }
-
-  @Async
   private void send(String convertedToJson) {
     try {
-      URL url = new URL(FIREBASE_API_URL);
+      URL url = new URL(firebaseApiUrl);
       HttpURLConnection conn = (HttpURLConnection) url.openConnection();
       conn.setRequestMethod("POST");
       conn.setDoInput(true);
@@ -140,17 +128,9 @@ public class SendNotificationsService {
       logger.debug("Push returned code {}", responseCode);
 
       try (OutputStream os = conn.getOutputStream();
-          OutputStreamWriter osw = new OutputStreamWriter(os, "UTF-8");
-          BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
+          OutputStreamWriter osw = new OutputStreamWriter(os, StandardCharsets.UTF_8)) {
         osw.write(convertedToJson);
         osw.flush();
-
-        String inputLine;
-        StringBuilder response = new StringBuilder();
-
-        while ((inputLine = in.readLine()) != null) {
-          response.append(inputLine);
-        }
       }
     } catch (IOException e) {
       logger.error("Failed to send push notification {}", e);

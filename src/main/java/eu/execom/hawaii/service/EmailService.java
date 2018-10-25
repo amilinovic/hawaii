@@ -1,25 +1,5 @@
 package eu.execom.hawaii.service;
 
-import java.io.IOException;
-import java.time.LocalDate;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.MailException;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Service;
-import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
-
 import eu.execom.hawaii.model.Email;
 import eu.execom.hawaii.model.Request;
 import eu.execom.hawaii.model.User;
@@ -28,6 +8,24 @@ import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.MailException;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
+
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -125,8 +123,8 @@ public class EmailService {
     LocalDate startDate = request.getDays().get(0).getDate();
     LocalDate endDate = request.getDays().get(numberOfRequestedDays - 1).getDate();
     String reason = request.getAbsence().getName();
-    Map<String, Object> templateData = Map.of(USER_NAME, userName, TEAM_NAME, teamName, START_DATE, startDate,
-        END_DATE, endDate, NUMBER_OF_REQUESTED_DAYS, numberOfRequestedDays, REASON, reason);
+    Map<String, Object> templateData = Map.of(USER_NAME, userName, TEAM_NAME, teamName, START_DATE, startDate, END_DATE,
+        endDate, NUMBER_OF_REQUESTED_DAYS, numberOfRequestedDays, REASON, reason);
 
     sendEmail(new Email(teammatesEmails, subject, templateData), "teammatesSicknessEmail.ftl");
   }
