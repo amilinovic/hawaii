@@ -9,8 +9,6 @@ import eu.execom.hawaii.model.Request;
 import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.enumerations.RequestStatus;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -26,8 +24,6 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class SendNotificationsService {
-  private static final Logger logger = LoggerFactory.getLogger(SendNotificationsService.class);
-
   private final ObjectMapper objectMapper;
   private final String authorizationKey;
   private final String firebaseApiUrl;
@@ -107,7 +103,7 @@ public class SendNotificationsService {
     try {
       jsonInString = objectMapper.writeValueAsString(result);
     } catch (IOException e) {
-      logger.error("Failed to send push notification {}", e);
+      log.error("Failed to send push notification {}", e);
     }
     return jsonInString;
   }
@@ -125,7 +121,7 @@ public class SendNotificationsService {
       conn.connect();
 
       int responseCode = conn.getResponseCode();
-      logger.debug("Push returned code {}", responseCode);
+      log.debug("Push returned code {}", responseCode);
 
       try (OutputStream os = conn.getOutputStream();
           OutputStreamWriter osw = new OutputStreamWriter(os, StandardCharsets.UTF_8)) {
@@ -133,7 +129,7 @@ public class SendNotificationsService {
         osw.flush();
       }
     } catch (IOException e) {
-      logger.error("Failed to send push notification {}", e);
+      log.error("Failed to send push notification {}", e);
     }
   }
 }
