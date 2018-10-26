@@ -1,5 +1,36 @@
 package eu.execom.hawaii.service;
 
+import eu.execom.hawaii.exceptions.NotAuthorizedApprovalExeception;
+import eu.execom.hawaii.exceptions.RequestAlreadyCanceledException;
+import eu.execom.hawaii.model.Absence;
+import eu.execom.hawaii.model.Day;
+import eu.execom.hawaii.model.Request;
+import eu.execom.hawaii.model.User;
+import eu.execom.hawaii.model.enumerations.AbsenceType;
+import eu.execom.hawaii.model.enumerations.RequestStatus;
+import eu.execom.hawaii.repository.AbsenceRepository;
+import eu.execom.hawaii.repository.DayRepository;
+import eu.execom.hawaii.repository.RequestRepository;
+import eu.execom.hawaii.repository.TeamRepository;
+import eu.execom.hawaii.repository.UserRepository;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import javax.persistence.EntityExistsException;
+import javax.persistence.EntityNotFoundException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
@@ -10,34 +41,6 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.persistence.EntityExistsException;
-import javax.persistence.EntityNotFoundException;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
-import eu.execom.hawaii.model.Absence;
-import eu.execom.hawaii.model.Day;
-import eu.execom.hawaii.model.Request;
-import eu.execom.hawaii.model.User;
-import eu.execom.hawaii.model.enumerations.AbsenceType;
-import eu.execom.hawaii.model.enumerations.RequestStatus;
-import eu.execom.hawaii.repository.AbsenceRepository;
-import eu.execom.hawaii.repository.RequestRepository;
-import eu.execom.hawaii.repository.TeamRepository;
-import eu.execom.hawaii.repository.UserRepository;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RequestServiceTest {
@@ -56,11 +59,16 @@ public class RequestServiceTest {
   private AbsenceRepository absenceRepository;
   @Mock
   private TeamRepository teamRepository;
+  @Mock
+  private DayRepository dayRepository;
   @InjectMocks
   private RequestService requestService;
 
   private User mockUser;
   private Day dayOne;
+  private Day dayTwo;
+  private Day dayThree;
+  private Day dayFromDifferentYear;
   private Absence absenceAnnual;
   private Absence absenceTraining;
   private Request requestOne;
@@ -76,8 +84,10 @@ public class RequestServiceTest {
     absenceTraining = EntityBuilder.absenceTraining();
 
     dayOne = EntityBuilder.day(LocalDate.of(2018, 11, 20));
-    var dayTwo = EntityBuilder.day(LocalDate.of(2018, 11, 21));
-    var dayThree = EntityBuilder.day(LocalDate.of(2018, 11, 22));
+    dayTwo = EntityBuilder.day(LocalDate.of(2018, 11, 21));
+    dayThree = EntityBuilder.day(LocalDate.of(2018, 11, 22));
+
+    dayFromDifferentYear = EntityBuilder.day(LocalDate.of(2021, 1, 15));
 
     requestOne = EntityBuilder.request(absenceAnnual, List.of(dayOne));
     requestTwo = EntityBuilder.request(absenceTraining, Arrays.asList(dayTwo, dayThree));
@@ -85,6 +95,38 @@ public class RequestServiceTest {
 
     allMocks = new Object[] {allowanceService, googleCalendarService, emailService, requestRepository, userRepository,
         absenceRepository, teamRepository};
+  }
+
+  @Test
+  public void shouldFindAllByDateRange() {
+    //given
+    given(requestRepository.findAll()).willReturn(mockRequests);
+    var startDate = LocalDate.of(2018, 11, 1);
+    var endDate = LocalDate.of(2018, 12, 1);
+
+    //when
+    List<Request> requests = requestService.findAllByDateRange(startDate, endDate);
+
+    //then
+    assertThat("Expect to list size be two", requests.size(), is(2));
+    verify(requestRepository).findAll();
+    verifyNoMoreInteractions(allMocks);
+  }
+
+  @Test
+  public void shouldFailToFindAnyByDateRange() {
+    //given
+    given(requestRepository.findAll()).willReturn(mockRequests);
+    var startDate = LocalDate.of(2018, 11, 1);
+    var endDate = LocalDate.of(2018, 11, 10);
+
+    //when
+    List<Request> requests = requestService.findAllByDateRange(startDate, endDate);
+
+    //then
+    assertThat("Expect to list size be two", requests.isEmpty(), is(true));
+    verify(requestRepository).findAll();
+    verifyNoMoreInteractions(allMocks);
   }
 
   @Test
@@ -389,6 +431,37 @@ public class RequestServiceTest {
   }
 
   @Test
+  public void shouldCancelPendingRequest() {
+    var approver = EntityBuilder.approver();
+    approver.setId(2L);
+
+    var request = EntityBuilder.request(absenceAnnual, List.of(dayOne));
+    request.setRequestStatus(RequestStatus.CANCELED);
+    request.setUser(mockUser);
+    request.setSubmissionTime(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES));
+
+    var databaseRequest = EntityBuilder.request(absenceAnnual, List.of(dayOne));
+    databaseRequest.setRequestStatus(RequestStatus.PENDING);
+
+    given(absenceRepository.getOne(1L)).willReturn(absenceAnnual);
+    given(userRepository.getOne(1L)).willReturn(mockUser);
+    given(requestRepository.getOne(1L)).willReturn(databaseRequest);
+    given(requestRepository.save(request)).willReturn(request);
+
+    //when
+    Request savedRequest = requestService.handleRequestStatusUpdate(request, approver);
+
+    //then
+    assertThat("Expect to saved request has status", savedRequest.getRequestStatus(), is(RequestStatus.CANCELED));
+    verify(absenceRepository).getOne(anyLong());
+    verify(userRepository).getOne(anyLong());
+    verify(requestRepository).getOne(anyLong());
+    verify(allowanceService).applyPendingRequest(any(), anyBoolean());
+    verify(requestRepository).save(any());
+    verifyNoMoreInteractions(allMocks);
+  }
+
+  @Test
   public void shouldHandleRequestStatusUpdateApproved() {
     // given
     var approver = EntityBuilder.approver();
@@ -431,6 +504,89 @@ public class RequestServiceTest {
 
     // then
 
+  }
+
+  @Test(expected = NotAuthorizedApprovalExeception.class)
+  public void shouldFailToHandleRequestStatusCancelledBecauseApproverNotAuthorizedToApprove() {
+    //given
+    var approver = EntityBuilder.approver();
+    approver.setId(2L);
+    var request = EntityBuilder.request(absenceAnnual, List.of(dayOne));
+    request.setRequestStatus(RequestStatus.CANCELED);
+    var databaseRequest = EntityBuilder.request(absenceAnnual, List.of(dayOne));
+    databaseRequest.setRequestStatus(RequestStatus.CANCELLATION_PENDING);
+
+    given(absenceRepository.getOne(1L)).willReturn(absenceAnnual);
+    given(userRepository.getOne(1L)).willReturn(request.getUser());
+    given(requestRepository.getOne(1L)).willReturn(databaseRequest);
+
+    // when
+    requestService.handleRequestStatusUpdate(request, approver);
+
+    //then
+  }
+
+  @Test(expected = RequestAlreadyCanceledException.class)
+  public void shouldFailToHandleRequestStatusCancelledBecauseRequestAlreadyCancelled() {
+    //given
+    var approver = EntityBuilder.approver();
+    approver.setId(2L);
+    var request = EntityBuilder.request(absenceAnnual, List.of(dayOne));
+    request.setRequestStatus(RequestStatus.CANCELED);
+    var databaseRequest = EntityBuilder.request(absenceAnnual, List.of(dayOne));
+    databaseRequest.setRequestStatus(RequestStatus.CANCELED);
+
+    given(absenceRepository.getOne(1L)).willReturn(absenceAnnual);
+    given(userRepository.getOne(1L)).willReturn(request.getUser());
+    given(requestRepository.getOne(1L)).willReturn(databaseRequest);
+    //      given(requestRepository.save(request)).willReturn(request);
+
+    // when
+    requestService.handleRequestStatusUpdate(request, approver);
+
+    //then
+
+  }
+
+  @Test(expected = NotAuthorizedApprovalExeception.class)
+  public void shouldFailToHandleRequestStatusApprovedBecauseApproverNotAuthorizedToApprove() {
+    //given
+    var approver = EntityBuilder.approver();
+    approver.setId(2L);
+    var request = EntityBuilder.request(absenceAnnual, List.of(dayOne));
+    request.setRequestStatus(RequestStatus.APPROVED);
+    var databaseRequest = EntityBuilder.request(absenceAnnual, List.of(dayOne));
+    databaseRequest.setRequestStatus(RequestStatus.PENDING);
+
+    given(absenceRepository.getOne(1L)).willReturn(absenceAnnual);
+    given(userRepository.getOne(1L)).willReturn(request.getUser());
+    given(requestRepository.getOne(1L)).willReturn(databaseRequest);
+
+    // when
+    requestService.handleRequestStatusUpdate(request, approver);
+
+    //then
+
+  }
+
+  @Test(expected = NotAuthorizedApprovalExeception.class)
+  public void shouldFailToHandleRequestStatusRejectedBecauseApproverNotAuthorizedToApprove() {
+    //given
+    var approver = EntityBuilder.approver();
+    approver.setId(2L);
+    var request = EntityBuilder.request(absenceAnnual, List.of(dayOne));
+    request.setRequestStatus(RequestStatus.REJECTED);
+    var databaseRequest = EntityBuilder.request(absenceAnnual, List.of(dayOne));
+    databaseRequest.setRequestStatus(RequestStatus.REJECTED);
+
+    given(absenceRepository.getOne(1L)).willReturn(absenceAnnual);
+    given(userRepository.getOne(1L)).willReturn(request.getUser());
+    given(requestRepository.getOne(1L)).willReturn(databaseRequest);
+
+    // when
+    requestService.handleRequestStatusUpdate(request, approver);
+
+    //then
   }
 
   @Test
@@ -488,6 +644,38 @@ public class RequestServiceTest {
     verify(teamRepository).getOne(anyLong());
     verify(userRepository, times(2)).getOne(anyLong());
     verify(requestRepository, times(2)).findAllByUser(any());
+    verifyNoMoreInteractions(allMocks);
+  }
+
+  @Test
+  public void shouldFindFirstAndLastRequestsYear() {
+    //given
+    given(dayRepository.findFirstByOrderByDateAsc()).willReturn(dayOne);
+    given(dayRepository.findFirstByOrderByDateDesc()).willReturn(dayFromDifferentYear);
+
+    //when
+    Map<String, Integer> firstAndLastDate = requestService.getFirstAndLastRequestsYear();
+
+    //then
+    assertThat("Expect to map of firstAndLastDate be two", firstAndLastDate.size(), is(2));
+    verify(dayRepository).findFirstByOrderByDateAsc();
+    verify(dayRepository).findFirstByOrderByDateDesc();
+    verifyNoMoreInteractions(allMocks);
+  }
+
+  @Test
+  public void shouldFindFirstAndLastRequestsYearBeingTheSame() {
+    //given
+    given(dayRepository.findFirstByOrderByDateAsc()).willReturn(dayOne);
+    given(dayRepository.findFirstByOrderByDateDesc()).willReturn(dayTwo);
+
+    //when
+    Map<String, Integer> firstAndLastDate = requestService.getFirstAndLastRequestsYear();
+
+    //then
+    assertThat("Expect to map of firstAndLastYear be two", firstAndLastDate.size(), is(2));
+    verify(dayRepository).findFirstByOrderByDateAsc();
+    verify(dayRepository).findFirstByOrderByDateDesc();
     verifyNoMoreInteractions(allMocks);
   }
 
