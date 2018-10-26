@@ -1,14 +1,13 @@
 package eu.execom.hawaii.dto;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import javax.validation.constraints.NotNull;
-
 import eu.execom.hawaii.model.Request;
 import eu.execom.hawaii.model.enumerations.RequestStatus;
 import lombok.Data;
+
+import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 public class RequestDto {

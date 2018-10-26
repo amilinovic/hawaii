@@ -1,11 +1,14 @@
 package eu.execom.hawaii.api.controller;
 
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
+import eu.execom.hawaii.dto.RequestDto;
+import eu.execom.hawaii.model.Request;
+import eu.execom.hawaii.model.Team;
+import eu.execom.hawaii.model.User;
+import eu.execom.hawaii.model.enumerations.AbsenceType;
+import eu.execom.hawaii.model.enumerations.RequestStatus;
+import eu.execom.hawaii.service.RequestService;
+import eu.execom.hawaii.service.SendNotificationsService;
+import eu.execom.hawaii.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -20,16 +23,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import eu.execom.hawaii.dto.RequestDto;
-import eu.execom.hawaii.model.Request;
-import eu.execom.hawaii.model.Team;
-import eu.execom.hawaii.model.User;
-import eu.execom.hawaii.model.enumerations.AbsenceType;
-import eu.execom.hawaii.model.enumerations.RequestStatus;
-import eu.execom.hawaii.service.RequestService;
-import eu.execom.hawaii.service.UserService;
 import springfox.documentation.annotations.ApiIgnore;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/requests")
@@ -39,11 +39,14 @@ public class RequestController {
 
   private RequestService requestService;
   private UserService userService;
+  private SendNotificationsService sendNotificationsService;
 
   @Autowired
-  public RequestController(RequestService requestService, UserService userService) {
+  public RequestController(RequestService requestService, UserService userService,
+      SendNotificationsService sendNotificationsService) {
     this.requestService = requestService;
     this.userService = userService;
+    this.sendNotificationsService = sendNotificationsService;
   }
 
   @GetMapping("/month")

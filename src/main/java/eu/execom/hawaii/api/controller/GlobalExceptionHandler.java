@@ -1,9 +1,9 @@
 package eu.execom.hawaii.api.controller;
 
-import javax.persistence.EntityExistsException;
-import javax.persistence.EntityNotFoundException;
-import javax.servlet.http.HttpServletRequest;
-
+import eu.execom.hawaii.exceptions.InsufficientHoursException;
+import eu.execom.hawaii.exceptions.NotAuthorizedApprovalExeception;
+import eu.execom.hawaii.exceptions.RequestAlreadyCanceledException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
@@ -11,10 +11,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import eu.execom.hawaii.exceptions.InsufficientHoursException;
-import eu.execom.hawaii.exceptions.NotAuthorizedApprovalExeception;
-import eu.execom.hawaii.exceptions.RequestAlreadyCanceledException;
-import lombok.extern.slf4j.Slf4j;
+import javax.persistence.EntityExistsException;
+import javax.persistence.EntityNotFoundException;
+import javax.servlet.http.HttpServletRequest;
 
 @Slf4j
 @RestControllerAdvice

@@ -1,7 +1,9 @@
 package eu.execom.hawaii.model;
 
-import java.io.Serializable;
-import java.util.List;
+import eu.execom.hawaii.model.enumerations.UserRole;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -13,11 +15,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
-
-import eu.execom.hawaii.model.enumerations.UserRole;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import java.io.Serializable;
+import java.util.List;
 
 @Entity
 @Data
@@ -50,6 +49,8 @@ public class User extends BaseEntity implements Serializable {
   private boolean active;
 
   private int yearsOfService;
+
+  private String pushToken;
 
   @ManyToMany(mappedBy = "teamApprovers", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
   private List<Team> approverTeams;

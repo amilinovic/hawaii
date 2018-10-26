@@ -1,13 +1,12 @@
 package eu.execom.hawaii.repository;
 
-import java.util.List;
-
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import eu.execom.hawaii.model.Request;
 import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.enumerations.AbsenceType;
 import eu.execom.hawaii.model.enumerations.RequestStatus;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
 
 public interface RequestRepository extends JpaRepository<Request, Long> {
 

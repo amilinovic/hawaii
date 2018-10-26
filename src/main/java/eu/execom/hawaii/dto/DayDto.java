@@ -1,10 +1,10 @@
 package eu.execom.hawaii.dto;
 
-import java.time.LocalDate;
-
 import eu.execom.hawaii.model.Day;
 import eu.execom.hawaii.model.enumerations.Duration;
 import lombok.Data;
+
+import java.time.LocalDate;
 
 @Data
 public class DayDto {

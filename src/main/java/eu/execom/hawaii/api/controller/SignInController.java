@@ -1,12 +1,10 @@
 package eu.execom.hawaii.api.controller;
 
-import static eu.execom.hawaii.security.AuthenticationFilter.AUTHENTICATION_TOKEN_KEY;
-
-import java.util.Collection;
-import java.util.Collections;
-
-import javax.servlet.http.HttpServletRequest;
-
+import eu.execom.hawaii.dto.UserDto;
+import eu.execom.hawaii.model.GenericResponse;
+import eu.execom.hawaii.model.User;
+import eu.execom.hawaii.security.TokenStore;
+import eu.execom.hawaii.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -14,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
@@ -21,13 +20,17 @@ import org.springframework.social.google.api.Google;
 import org.springframework.social.google.api.impl.GoogleTemplate;
 import org.springframework.social.google.api.plus.Person;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import springfox.documentation.annotations.ApiIgnore;
 
-import eu.execom.hawaii.dto.UserDto;
-import eu.execom.hawaii.model.User;
-import eu.execom.hawaii.security.TokenStore;
-import eu.execom.hawaii.service.UserService;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Collection;
+import java.util.Collections;
+
+import static eu.execom.hawaii.security.AuthenticationFilter.AUTHENTICATION_TOKEN_KEY;
 
 @RestController
 public class SignInController {
@@ -93,4 +96,10 @@ public class SignInController {
     return HttpStatus.OK;
   }
 
+  @PutMapping("/token")
+  public ResponseEntity<GenericResponse> tokenReset(@ApiIgnore @AuthenticationPrincipal User authUser,
+      @RequestParam String pushToken) {
+    userService.updateUserPushToken(pushToken, authUser);
+    return new ResponseEntity<>(GenericResponse.OK, HttpStatus.OK);
+  }
 }

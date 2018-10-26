@@ -10,7 +10,5 @@ public interface AllowanceRepository extends JpaRepository<Allowance, Long> {
 
   Allowance findByUserIdAndYear(Long userId, int year);
   List<Allowance> findAllByUserId(Long userId);
-  Allowance findFirstByOrderByYearAsc();
-  Allowance findFirstByOrderByYearDesc();
 
 }
