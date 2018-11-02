@@ -1,13 +1,11 @@
 package eu.execom.hawaii.security;
 
-import eu.execom.hawaii.service.UserService;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
@@ -18,21 +16,18 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class ApiSecurityTests {
 
-  @Autowired
-  private TestRestTemplate restTemplate;
+    @Autowired
+    private TestRestTemplate restTemplate;
 
-  @LocalServerPort
-  private int port;
+    @LocalServerPort
+    private int port;
 
-  @MockBean
-  private UserService userService;
+    @Test
+    public void shouldReturnUnauthorizedStatusCodeWhenIdTokenHeaderIsNotSet() {
+        String url = "http://localhost:" + port + "/security/test";
 
-  @Test
-  public void shouldReturnUnauthorizedStatusCodeWhenIdTokenHeaderIsNotSet() {
-    String url = "http://localhost:" + port + "/users";
+        ResponseEntity<String> response = this.restTemplate.getForEntity(url, String.class);
 
-    ResponseEntity<String> response = this.restTemplate.getForEntity(url, String.class);
-
-    Assert.assertThat(response.getStatusCode(), Matchers.is(HttpStatus.UNAUTHORIZED));
-  }
+        Assert.assertThat(response.getStatusCode(), Matchers.is(HttpStatus.UNAUTHORIZED));
+    }
 }
