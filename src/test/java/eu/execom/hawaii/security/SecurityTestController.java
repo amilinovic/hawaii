@@ -7,11 +7,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/security")
-public class SecurityTestController {
-
+class SecurityTestController {
     @GetMapping("/test")
-    public ResponseEntity testAction(){
-        return ResponseEntity.ok().build();
+    ResponseEntity<String> testAction() {
+        return ResponseEntity.ok("Security test action reached.");
     }
-
 }
