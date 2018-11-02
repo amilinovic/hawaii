@@ -34,17 +34,15 @@ public class IdTokenVerifierFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         String idToken = ((HttpServletRequest) servletRequest).getHeader(ID_TOKEN_HEADER);
 
-        if (idToken == null) {
-            ((HttpServletResponse) servletResponse).sendError(HttpServletResponse.SC_UNAUTHORIZED);
+        if (isValid(idToken)) {
+            filterChain.doFilter(servletRequest, servletResponse);
         } else {
-            boolean tokenIsValid = idTokenVerifier.verify(idToken);
-
-            if (tokenIsValid) {
-                filterChain.doFilter(servletRequest, servletResponse);
-            } else {
-                ((HttpServletResponse) servletResponse).sendError(HttpServletResponse.SC_UNAUTHORIZED);
-            }
+            ((HttpServletResponse) servletResponse).sendError(HttpServletResponse.SC_UNAUTHORIZED);
         }
+    }
+
+    private boolean isValid(String token) {
+        return token != null && idTokenVerifier.verify(token);
     }
 
     @Override

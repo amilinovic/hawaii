@@ -19,6 +19,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import static eu.execom.hawaii.security.IdTokenVerifierFilter.ID_TOKEN_HEADER;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.BDDMockito.given;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -50,10 +51,24 @@ public class ApiSecurityTests {
 
     @Test
     public void shouldReturnUnauthorizedStatusCodeWhenIdTokenIsInvalid() {
-        final HttpHeaders headers = new HttpHeaders();
-        headers.add(ID_TOKEN_HEADER, SAMPLE_ID_TOKEN);
-        ResponseEntity<String> response = restTemplate.exchange(testUrl, HttpMethod.GET, new HttpEntity<>(headers), String.class);
+        ResponseEntity<String> response = restTemplate.exchange(testUrl, HttpMethod.GET, new HttpEntity<>(createIdTokenHeader()), String.class);
 
         assertThat(response.getStatusCode(), is(HttpStatus.UNAUTHORIZED));
+    }
+
+    private HttpHeaders createIdTokenHeader() {
+        final HttpHeaders headers = new HttpHeaders();
+        headers.add(ID_TOKEN_HEADER, SAMPLE_ID_TOKEN);
+        return headers;
+    }
+
+    @Test
+    public void shouldReturnOkResponseWhenIdTokenIsValid() {
+        given(idTokenVerifier.verify(SAMPLE_ID_TOKEN)).willReturn(true);
+
+        ResponseEntity<String> response = restTemplate.exchange(testUrl, HttpMethod.GET, new HttpEntity<>(createIdTokenHeader()), String.class);
+
+        assertThat(response.getStatusCode(), is(HttpStatus.OK));
+        assertThat(response.getBody(), is("Security test action reached."));
     }
 }
