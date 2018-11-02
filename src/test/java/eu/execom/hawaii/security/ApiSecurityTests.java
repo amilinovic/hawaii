@@ -50,15 +50,22 @@ public class ApiSecurityTests {
     }
 
     @Test
-    public void shouldReturnUnauthorizedStatusCodeWhenIdTokenIsInvalid() {
-        ResponseEntity<String> response = restTemplate.exchange(testUrl, HttpMethod.GET, new HttpEntity<>(createIdTokenHeader()), String.class);
+    public void shouldReturnUnauthorizedStatusCodeWhenIdTokenHeaderIsSetToEmptyValue() {
+        ResponseEntity<String> response = restTemplate.exchange(testUrl, HttpMethod.GET, new HttpEntity<>(createIdTokenHeader("   ")), String.class);
 
         assertThat(response.getStatusCode(), is(HttpStatus.UNAUTHORIZED));
     }
 
-    private HttpHeaders createIdTokenHeader() {
+    @Test
+    public void shouldReturnUnauthorizedStatusCodeWhenIdTokenIsInvalid() {
+        ResponseEntity<String> response = restTemplate.exchange(testUrl, HttpMethod.GET, new HttpEntity<>(createIdTokenHeader(SAMPLE_ID_TOKEN)), String.class);
+
+        assertThat(response.getStatusCode(), is(HttpStatus.UNAUTHORIZED));
+    }
+
+    private HttpHeaders createIdTokenHeader(String value) {
         final HttpHeaders headers = new HttpHeaders();
-        headers.add(ID_TOKEN_HEADER, SAMPLE_ID_TOKEN);
+        headers.add(ID_TOKEN_HEADER, value);
         return headers;
     }
 
@@ -66,7 +73,7 @@ public class ApiSecurityTests {
     public void shouldReturnOkResponseWhenIdTokenIsValid() {
         given(idTokenVerifier.verify(SAMPLE_ID_TOKEN)).willReturn(true);
 
-        ResponseEntity<String> response = restTemplate.exchange(testUrl, HttpMethod.GET, new HttpEntity<>(createIdTokenHeader()), String.class);
+        ResponseEntity<String> response = restTemplate.exchange(testUrl, HttpMethod.GET, new HttpEntity<>(createIdTokenHeader(SAMPLE_ID_TOKEN)), String.class);
 
         assertThat(response.getStatusCode(), is(HttpStatus.OK));
         assertThat(response.getBody(), is("Security test action reached."));
