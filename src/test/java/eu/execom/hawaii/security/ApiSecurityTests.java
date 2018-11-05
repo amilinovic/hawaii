@@ -23,7 +23,7 @@ import static org.mockito.BDDMockito.given;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class ApiSecurityTests {
-    private static final String SAMPLE_PROTECTED_URL_PATH = "/security/test";
+    private static final String SAMPLE_PROTECTED_URL_PATH = "/api/security/test";
     private static final String SAMPLE_UNPROTECTED_URL_PATH = "/";
     private static final String SAMPLE_ID_TOKEN = "-- id token --";
 

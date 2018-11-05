@@ -14,7 +14,7 @@ import springfox.documentation.annotations.ApiIgnore;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/allowances")
+@RequestMapping("/api/allowances")
 public class AllowanceController {
 
   private AllowanceService allowanceService;

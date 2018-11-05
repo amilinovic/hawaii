@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/leaveprofiles")
+@RequestMapping("/api/leaveprofiles")
 public class LeaveProfileController {
 
   private static final ModelMapper MAPPER = new ModelMapper();

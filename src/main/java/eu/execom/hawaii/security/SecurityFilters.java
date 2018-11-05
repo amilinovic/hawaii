@@ -20,7 +20,7 @@ public class SecurityFilters {
     public FilterRegistrationBean idTokenVerifierFilterRegistrationBean() {
         FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
         filterRegistrationBean.setFilter(idTokenVerifierFilter);
-        filterRegistrationBean.setUrlPatterns(Collections.singletonList("/*"));
+        filterRegistrationBean.setUrlPatterns(Collections.singletonList("/api/*"));
 
         return filterRegistrationBean;
     }

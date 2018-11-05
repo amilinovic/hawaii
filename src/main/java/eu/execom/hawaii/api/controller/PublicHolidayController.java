@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/publicholidays")
+@RequestMapping("/api/publicholidays")
 public class PublicHolidayController {
 
   private static final ModelMapper MAPPER = new ModelMapper();
