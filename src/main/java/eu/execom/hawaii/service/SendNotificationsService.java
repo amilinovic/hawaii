@@ -120,10 +120,11 @@ public class SendNotificationsService {
       conn.setRequestProperty("Authorization", "key=" + authorizationKey);
       conn.connect();
 
-      OutputStream os = conn.getOutputStream();
-      OutputStreamWriter osw = new OutputStreamWriter(os, StandardCharsets.UTF_8);
-      osw.write(convertedToJson);
-      osw.flush();
+      try (OutputStream os = conn.getOutputStream();
+      OutputStreamWriter osw = new OutputStreamWriter(os, StandardCharsets.UTF_8)) {
+        osw.write(convertedToJson);
+        osw.flush();
+      }
 
       int responseCode = conn.getResponseCode();
       log.debug("Push returned code {}", responseCode);
