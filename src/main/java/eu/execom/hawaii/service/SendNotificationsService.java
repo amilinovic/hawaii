@@ -120,14 +120,15 @@ public class SendNotificationsService {
       conn.setRequestProperty("Authorization", "key=" + authorizationKey);
       conn.connect();
 
-      int responseCode = conn.getResponseCode();
-      log.debug("Push returned code {}", responseCode);
-
       try (OutputStream os = conn.getOutputStream();
-          OutputStreamWriter osw = new OutputStreamWriter(os, StandardCharsets.UTF_8)) {
+      OutputStreamWriter osw = new OutputStreamWriter(os, StandardCharsets.UTF_8)) {
         osw.write(convertedToJson);
         osw.flush();
       }
+
+      int responseCode = conn.getResponseCode();
+      log.debug("Push returned code {}", responseCode);
+
     } catch (IOException e) {
       log.error("Failed to send push notification {}", e);
     }
