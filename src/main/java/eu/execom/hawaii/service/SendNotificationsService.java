@@ -40,38 +40,27 @@ public class SendNotificationsService {
     NotificationDto notification = new NotificationDto();
     NotificationDataDto data = new NotificationDataDto();
 
+    String bodyMessage;
     RequestStatus requestStatus = newRequest.getRequestStatus();
 
     switch (requestStatus) {
       case CANCELLATION_PENDING:
-        notification.setTitle("New request!");
-        notification.setBody(newRequest.getUser().getFullName() + "submitted new cancel request");
-        notification.setPriority("high");
-        data.setTitle("Data title");
-        data.setBody("Data body");
-        data.setPriority("high");
-        data.setRequestStatus(newRequest.getRequestStatus());
+        bodyMessage = newRequest.getUser().getFullName() + " submitted new cancel request";
         break;
       case PENDING:
-        notification.setTitle("New request!");
-        notification.setBody(newRequest.getUser().getFullName() + "submitted new leave request");
-        notification.setPriority("high");
-        data.setTitle("Data title");
-        data.setBody("Data body");
-        data.setPriority("high");
-        data.setRequestStatus(newRequest.getRequestStatus());
+        bodyMessage = newRequest.getUser().getFullName() + " submitted new leave request";
         break;
       default:
-        throw new IllegalArgumentException("Unsupported request status: " + newRequest.getRequestStatus());
+        throw new IllegalArgumentException("Unsupported request status: " + requestStatus);
 
     }
     notification.setTitle("New request!");
-    notification.setBody(newRequest.getUser().getFullName().toString() + "submitted new request");
+    notification.setBody(bodyMessage);
     notification.setPriority("high");
     data.setTitle("Data title");
     data.setBody("Data body");
     data.setPriority("high");
-    data.setRequestStatus(newRequest.getRequestStatus());
+    data.setRequestStatus(requestStatus);
 
     List<String> approversPushToken = newRequest.getUser()
                                                 .getTeam()
@@ -145,10 +134,11 @@ public class SendNotificationsService {
       conn.setRequestProperty("Authorization", "key=" + authorizationKey);
       conn.connect();
 
-      OutputStream os = conn.getOutputStream();
-      OutputStreamWriter osw = new OutputStreamWriter(os, StandardCharsets.UTF_8);
-      osw.write(convertedToJson);
-      osw.flush();
+      try (OutputStream os = conn.getOutputStream();
+      OutputStreamWriter osw = new OutputStreamWriter(os, StandardCharsets.UTF_8)) {
+        osw.write(convertedToJson);
+        osw.flush();
+      }
 
       int responseCode = conn.getResponseCode();
       log.debug("Push returned code {}", responseCode);

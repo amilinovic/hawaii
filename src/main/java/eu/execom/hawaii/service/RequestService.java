@@ -32,6 +32,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.persistence.EntityExistsException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -260,7 +274,7 @@ public class RequestService {
     boolean requestIsPending = existingRequest.isPending();
     boolean requestIsCanceled = existingRequest.isCanceled();
 
-    boolean shouldSendPushNotification = true;
+//    boolean shouldSendPushNotification = true;
 
     switch (request.getRequestStatus()) {
       case APPROVED:
@@ -270,6 +284,7 @@ public class RequestService {
         }
         allowanceService.applyPendingRequest(request, true);
         applyRequest(request, false);
+        sendNotificationsService.sendNotificationForRequestedLeave(request.getRequestStatus(), user);
         break;
       case CANCELED:
         if (requestIsCanceled) {
@@ -277,17 +292,16 @@ public class RequestService {
           throw new RequestAlreadyCanceledException();
         } else if (userIsRequestApprover && (requestIsApproved || requestHasPendingCancellation)) {
           applyRequest(request, true);
+          sendNotificationsService.sendNotificationForRequestedLeave(request.getRequestStatus(), user);
         } else if (!userIsRequestApprover && requestIsApproved) {
           request.setRequestStatus(RequestStatus.CANCELLATION_PENDING);
           emailService.createEmailAndSendForApproval(request);
-          shouldSendPushNotification = false;
           sendNotificationsService.sendNotificationToApproversAboutSubmittedRequest(request);
         } else if (!userIsRequestApprover && requestHasPendingCancellation) {
           log.error("User not authorized to cancel this request for user with email: {}", user.getEmail());
           throw new NotAuthorizedApprovalExeception();
         } else if (requestIsPending) {
           allowanceService.applyPendingRequest(request, true);
-          shouldSendPushNotification = false;
         }
         break;
       case REJECTED:
@@ -296,14 +310,15 @@ public class RequestService {
           throw new NotAuthorizedApprovalExeception();
         }
         allowanceService.applyPendingRequest(request, true);
+        sendNotificationsService.sendNotificationForRequestedLeave(request.getRequestStatus(), user);
         break;
       default:
         throw new IllegalArgumentException("Unsupported request status: " + request.getRequestStatus());
     }
 
-    if (shouldSendPushNotification) {
+    /*if (shouldSendPushNotification) {
       sendNotificationsService.sendNotificationForRequestedLeave(request.getRequestStatus(), user);
-    }
+    }*/
 
     return requestRepository.save(request);
   }
