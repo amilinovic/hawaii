@@ -2,7 +2,7 @@ package eu.execom.hawaii.security;
 
 import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.enumerations.UserRole;
-import eu.execom.hawaii.service.IdTokenVerifier;
+import eu.execom.hawaii.service.TokenIdentityVerifier;
 import eu.execom.hawaii.service.UserService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,7 +34,7 @@ import static org.mockito.BDDMockito.given;
 
     @Autowired private TestRestTemplate restTemplate;
 
-    @MockBean private IdTokenVerifier idTokenVerifier;
+    @MockBean private TokenIdentityVerifier tokenIdentityVerifier;
 
     @MockBean private UserService userService;
 
@@ -59,7 +59,7 @@ import static org.mockito.BDDMockito.given;
     }
 
     @Test public void shouldReturnUnauthorizedStatusCodeForProtectedUrlRequestsWhenIdTokenIsValidButUserIsNotFound() {
-        given(idTokenVerifier.tryToGetIdentityOf(SAMPLE_ID_TOKEN)).willReturn(Optional.of(SAMPLE_USER));
+        given(tokenIdentityVerifier.tryToGetIdentityOf(SAMPLE_ID_TOKEN)).willReturn(Optional.of(SAMPLE_USER));
 
         ResponseEntity<String> response = restTemplate.exchange(SAMPLE_PROTECTED_URL_PATH, HttpMethod.GET,
                 new HttpEntity<>(createIdTokenHeader(SAMPLE_ID_TOKEN)), String.class);
@@ -68,7 +68,7 @@ import static org.mockito.BDDMockito.given;
     }
 
     @Test public void shouldReturnForbiddenStatusCodeForProtectedUrlRequestsWhenIdTokenIsValidButUserIsInactive() {
-        given(idTokenVerifier.tryToGetIdentityOf(SAMPLE_ID_TOKEN)).willReturn(Optional.of(SAMPLE_USER));
+        given(tokenIdentityVerifier.tryToGetIdentityOf(SAMPLE_ID_TOKEN)).willReturn(Optional.of(SAMPLE_USER));
         given(userService.findByEmail(SAMPLE_USER)).willReturn(new User());
 
         ResponseEntity<String> response = restTemplate.exchange(SAMPLE_PROTECTED_URL_PATH, HttpMethod.GET,
@@ -81,7 +81,7 @@ import static org.mockito.BDDMockito.given;
         User user = new User();
         user.setActive(true);
         user.setUserRole(UserRole.USER);
-        given(idTokenVerifier.tryToGetIdentityOf(SAMPLE_ID_TOKEN)).willReturn(Optional.of(SAMPLE_USER));
+        given(tokenIdentityVerifier.tryToGetIdentityOf(SAMPLE_ID_TOKEN)).willReturn(Optional.of(SAMPLE_USER));
         given(userService.findByEmail(SAMPLE_USER)).willReturn(user);
 
         ResponseEntity<String> response = restTemplate.exchange(SAMPLE_PROTECTED_URL_PATH, HttpMethod.GET,
@@ -119,7 +119,7 @@ import static org.mockito.BDDMockito.given;
     }
 
     @Test public void shouldReturnUnauthorizedStatusCodeForProtectedUrlRequestsWhichRequireHrManagerAuthorityWhenIdTokenIsValidButUserIsNotFound() {
-        given(idTokenVerifier.tryToGetIdentityOf(SAMPLE_ID_TOKEN)).willReturn(Optional.of(SAMPLE_USER));
+        given(tokenIdentityVerifier.tryToGetIdentityOf(SAMPLE_ID_TOKEN)).willReturn(Optional.of(SAMPLE_USER));
 
         ResponseEntity<String> response = restTemplate.exchange(SAMPLE_PROTECTED_HR_MANAGER_URL_PATH, HttpMethod.GET,
                 new HttpEntity<>(createIdTokenHeader(SAMPLE_ID_TOKEN)), String.class);
@@ -128,7 +128,7 @@ import static org.mockito.BDDMockito.given;
     }
 
     @Test public void shouldReturnForbiddenStatusCodeForProtectedUrlRequestsWhichRequireHrManagerAuthorityWhenIdTokenIsValidButUserIsInactive() {
-        given(idTokenVerifier.tryToGetIdentityOf(SAMPLE_ID_TOKEN)).willReturn(Optional.of(SAMPLE_USER));
+        given(tokenIdentityVerifier.tryToGetIdentityOf(SAMPLE_ID_TOKEN)).willReturn(Optional.of(SAMPLE_USER));
         given(userService.findByEmail(SAMPLE_USER)).willReturn(new User());
 
         ResponseEntity<String> response = restTemplate.exchange(SAMPLE_PROTECTED_HR_MANAGER_URL_PATH, HttpMethod.GET,
@@ -141,7 +141,7 @@ import static org.mockito.BDDMockito.given;
         User user = new User();
         user.setActive(true);
         user.setUserRole(UserRole.USER);
-        given(idTokenVerifier.tryToGetIdentityOf(SAMPLE_ID_TOKEN)).willReturn(Optional.of(SAMPLE_USER));
+        given(tokenIdentityVerifier.tryToGetIdentityOf(SAMPLE_ID_TOKEN)).willReturn(Optional.of(SAMPLE_USER));
         given(userService.findByEmail(SAMPLE_USER)).willReturn(user);
 
         ResponseEntity<String> response = restTemplate.exchange(SAMPLE_PROTECTED_HR_MANAGER_URL_PATH, HttpMethod.GET,
@@ -154,7 +154,7 @@ import static org.mockito.BDDMockito.given;
         User user = new User();
         user.setActive(true);
         user.setUserRole(UserRole.HR_MANAGER);
-        given(idTokenVerifier.tryToGetIdentityOf(SAMPLE_ID_TOKEN)).willReturn(Optional.of(SAMPLE_USER));
+        given(tokenIdentityVerifier.tryToGetIdentityOf(SAMPLE_ID_TOKEN)).willReturn(Optional.of(SAMPLE_USER));
         given(userService.findByEmail(SAMPLE_USER)).willReturn(user);
 
         ResponseEntity<String> response = restTemplate.exchange(SAMPLE_PROTECTED_HR_MANAGER_URL_PATH, HttpMethod.GET,

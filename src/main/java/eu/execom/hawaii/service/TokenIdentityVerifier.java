@@ -2,6 +2,6 @@ package eu.execom.hawaii.service;
 
 import java.util.Optional;
 
-public interface IdTokenVerifier {
+public interface TokenIdentityVerifier {
     Optional<String> tryToGetIdentityOf(String token);
 }

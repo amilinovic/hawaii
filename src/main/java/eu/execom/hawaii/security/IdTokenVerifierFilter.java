@@ -1,7 +1,7 @@
 package eu.execom.hawaii.security;
 
 import eu.execom.hawaii.model.User;
-import eu.execom.hawaii.service.IdTokenVerifier;
+import eu.execom.hawaii.service.TokenIdentityVerifier;
 import eu.execom.hawaii.service.UserService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
@@ -21,14 +21,14 @@ import java.util.Optional;
 public class IdTokenVerifierFilter extends OncePerRequestFilter {
     public static final String ID_TOKEN_HEADER = "X-ID-TOKEN";
 
-    private final IdTokenVerifier idTokenVerifier;
+    private final TokenIdentityVerifier tokenIdentityVerifier;
     private final UserService userService;
     private final AuthenticationManager authenticationManager;
 
-    public IdTokenVerifierFilter(IdTokenVerifier idTokenVerifier, UserService userService,
+    public IdTokenVerifierFilter(TokenIdentityVerifier tokenIdentityVerifier, UserService userService,
             AuthenticationManager authenticationManager) {
 
-        this.idTokenVerifier = idTokenVerifier;
+        this.tokenIdentityVerifier = tokenIdentityVerifier;
         this.userService = userService;
         this.authenticationManager = authenticationManager;
     }
@@ -65,6 +65,6 @@ public class IdTokenVerifierFilter extends OncePerRequestFilter {
     }
 
     private Optional<String> tryToGetUserIdentityFromToken(String token) {
-        return token == null ? Optional.empty() : idTokenVerifier.tryToGetIdentityOf(token);
+        return token == null ? Optional.empty() : tokenIdentityVerifier.tryToGetIdentityOf(token);
     }
 }

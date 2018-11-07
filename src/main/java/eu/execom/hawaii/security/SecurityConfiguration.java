@@ -1,6 +1,6 @@
 package eu.execom.hawaii.security;
 
-import eu.execom.hawaii.service.IdTokenVerifier;
+import eu.execom.hawaii.service.TokenIdentityVerifier;
 import eu.execom.hawaii.service.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -17,10 +17,10 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 
 @EnableWebSecurity @EnableSwagger2 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private final UserService userService;
-    private final IdTokenVerifier idTokenVerifier;
+    private final TokenIdentityVerifier tokenIdentityVerifier;
 
-    public SecurityConfiguration(IdTokenVerifier idTokenVerifier, UserService userService) {
-        this.idTokenVerifier = idTokenVerifier;
+    public SecurityConfiguration(TokenIdentityVerifier tokenIdentityVerifier, UserService userService) {
+        this.tokenIdentityVerifier = tokenIdentityVerifier;
         this.userService = userService;
     }
 
@@ -49,7 +49,7 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
     }
 
     @Bean public IdTokenVerifierFilter idTokenVerifierFilter() throws Exception {
-        return new IdTokenVerifierFilter(idTokenVerifier, userService, authenticationManagerBean());
+        return new IdTokenVerifierFilter(tokenIdentityVerifier, userService, authenticationManagerBean());
     }
 
     private class CustomAuthenticationProvider implements AuthenticationProvider {
