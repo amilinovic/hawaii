@@ -1,51 +1,69 @@
 package eu.execom.hawaii.security;
 
+import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.service.IdTokenVerifier;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import eu.execom.hawaii.service.UserService;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
+import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.servlet.Filter;
 import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Optional;
 
-@Component
-public class IdTokenVerifierFilter implements Filter {
+public class IdTokenVerifierFilter extends OncePerRequestFilter {
     public static final String ID_TOKEN_HEADER = "X-ID-TOKEN";
 
     private final IdTokenVerifier idTokenVerifier;
+    private final UserService userService;
+    private final AuthenticationManager authenticationManager;
 
-    @Autowired
-    public IdTokenVerifierFilter(IdTokenVerifier idTokenVerifier) {
+    public IdTokenVerifierFilter(IdTokenVerifier idTokenVerifier, UserService userService,
+            AuthenticationManager authenticationManager) {
 
         this.idTokenVerifier = idTokenVerifier;
+        this.userService = userService;
+        this.authenticationManager = authenticationManager;
     }
 
-    @Override
-    public void init(FilterConfig filterConfig) {
-    }
+    @Override protected void doFilterInternal(HttpServletRequest httpServletRequest,
+            HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
+        String idToken = httpServletRequest.getHeader(ID_TOKEN_HEADER);
 
-    @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-        String idToken = ((HttpServletRequest) servletRequest).getHeader(ID_TOKEN_HEADER);
+        Optional<String> userIdentity = tryToGetUserIdentityFromToken(idToken);
 
-        if (isValid(idToken)) {
-            filterChain.doFilter(servletRequest, servletResponse);
+        if (userIdentity.isPresent()) {
+            User user = userService.findByEmail(userIdentity.get());
+
+            if (user == null) {
+                httpServletResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                return;
+            }
+
+            if (!user.isActive()) {
+                httpServletResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
+                return;
+            }
+
+            Authentication authentication = authenticationManager.authenticate(
+                    new PreAuthenticatedAuthenticationToken(user, null,
+                            Collections.singletonList(new SimpleGrantedAuthority(user.getUserRole().toString()))));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            filterChain.doFilter(httpServletRequest, httpServletResponse);
         } else {
-            ((HttpServletResponse) servletResponse).sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            httpServletResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
         }
     }
 
-    private boolean isValid(String token) {
-        return token != null && idTokenVerifier.verify(token);
-    }
-
-    @Override
-    public void destroy() {
+    private Optional<String> tryToGetUserIdentityFromToken(String token) {
+        return token == null ? Optional.empty() : idTokenVerifier.tryToGetIdentityOf(token);
     }
 }
