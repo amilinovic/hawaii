@@ -39,28 +39,29 @@ public class IdTokenVerifierFilter extends OncePerRequestFilter {
 
         Optional<String> userIdentity = tryToGetUserIdentityFromToken(idToken);
 
-        if (userIdentity.isPresent()) {
-            User user = userService.findByEmail(userIdentity.get());
-
-            if (user == null) {
-                httpServletResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-                return;
-            }
-
-            if (!user.isActive()) {
-                httpServletResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
-                return;
-            }
-
-            Authentication authentication = authenticationManager.authenticate(
-                    new PreAuthenticatedAuthenticationToken(user, null,
-                            Collections.singletonList(new SimpleGrantedAuthority(user.getUserRole().toString()))));
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-
-            filterChain.doFilter(httpServletRequest, httpServletResponse);
-        } else {
+        if(!userIdentity.isPresent()) {
             httpServletResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
         }
+
+        User user = userService.findByEmail(userIdentity.get());
+
+        if (user == null) {
+            httpServletResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
+
+        if (!user.isActive()) {
+            httpServletResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
+            return;
+        }
+
+        Authentication authentication = authenticationManager.authenticate(
+                new PreAuthenticatedAuthenticationToken(user, null,
+                        Collections.singletonList(new SimpleGrantedAuthority(user.getUserRole().toString()))));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        filterChain.doFilter(httpServletRequest, httpServletResponse);
     }
 
     private Optional<String> tryToGetUserIdentityFromToken(String token) {
