@@ -15,9 +15,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
-@EnableWebSecurity
-@EnableSwagger2
-public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+@EnableWebSecurity @EnableSwagger2 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private final UserService userService;
     private final IdTokenVerifier idTokenVerifier;
 
@@ -26,8 +24,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         this.userService = userService;
     }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
+    @Override protected void configure(HttpSecurity http) throws Exception {
         //@formatter:off
         http.csrf().disable()
             .sessionManagement().sessionCreationPolicy(STATELESS)
@@ -41,29 +38,26 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         //@formatter:on
     }
 
-    @Override
-    public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/", "/icons/**", "/swagger-ui.html", "/swagger-resources/**");
+    @Override public void configure(WebSecurity web) throws Exception {
+        web.ignoring()
+           .antMatchers("/", "/icons/**", "/swagger-ui.html", "/swagger-resources/**", "/v2/**",
+                   "/webjars/**");
     }
 
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) {
+    @Override protected void configure(AuthenticationManagerBuilder auth) {
         auth.authenticationProvider(new CustomAuthenticationProvider());
     }
 
-    @Bean
-    public IdTokenVerifierFilter idTokenVerifierFilter() throws Exception {
+    @Bean public IdTokenVerifierFilter idTokenVerifierFilter() throws Exception {
         return new IdTokenVerifierFilter(idTokenVerifier, userService, authenticationManagerBean());
     }
 
     private class CustomAuthenticationProvider implements AuthenticationProvider {
-        @Override
-        public Authentication authenticate(Authentication authentication) {
+        @Override public Authentication authenticate(Authentication authentication) {
             return authentication;
         }
 
-        @Override
-        public boolean supports(Class<?> authentication) {
+        @Override public boolean supports(Class<?> authentication) {
             return true;
         }
     }
