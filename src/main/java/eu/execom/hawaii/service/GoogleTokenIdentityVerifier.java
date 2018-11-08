@@ -7,6 +7,8 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 
 @Component public class GoogleTokenIdentityVerifier implements TokenIdentityVerifier {
+    private static final String EXECOM_DOMAIN = "execom.eu";
+
     private final GoogleIdTokenVerifier googleVerifier;
 
     public GoogleTokenIdentityVerifier(GoogleIdTokenVerifier googleVerifier) {
@@ -18,8 +20,16 @@ import java.util.Optional;
         try {
             idToken = googleVerifier.verify(token);
         } catch (Exception e) {
-
         }
-        return Optional.empty();
+
+        if(idToken == null) {
+            return Optional.empty();
+        }
+
+        if(!EXECOM_DOMAIN.equalsIgnoreCase(idToken.getPayload().getHostedDomain())) {
+            return Optional.empty();
+        }
+
+        return Optional.of(idToken.getPayload().getEmail());
     }
 }
