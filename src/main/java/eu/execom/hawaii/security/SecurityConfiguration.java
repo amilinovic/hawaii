@@ -1,5 +1,11 @@
 package eu.execom.hawaii.security;
 
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.jackson2.JacksonFactory;
+import eu.execom.hawaii.service.GoogleTokenIdentityVerifier;
 import eu.execom.hawaii.service.TokenIdentityVerifier;
 import eu.execom.hawaii.service.UserService;
 import org.springframework.context.annotation.Bean;
@@ -13,14 +19,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AnonymousAuthenticationFilter;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 @EnableWebSecurity @EnableSwagger2 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private final UserService userService;
-    private final TokenIdentityVerifier tokenIdentityVerifier;
 
-    public SecurityConfiguration(TokenIdentityVerifier tokenIdentityVerifier, UserService userService) {
-        this.tokenIdentityVerifier = tokenIdentityVerifier;
+    public SecurityConfiguration(UserService userService) {
         this.userService = userService;
     }
 
@@ -40,8 +46,7 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 
     @Override public void configure(WebSecurity web) throws Exception {
         web.ignoring()
-           .antMatchers("/", "/icons/**", "/swagger-ui.html", "/swagger-resources/**", "/v2/**",
-                   "/webjars/**");
+           .antMatchers("/", "/icons/**", "/swagger-ui.html", "/swagger-resources/**", "/v2/**", "/webjars/**");
     }
 
     @Override protected void configure(AuthenticationManagerBuilder auth) {
@@ -49,7 +54,22 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
     }
 
     @Bean public IdTokenVerifierFilter idTokenVerifierFilter() throws Exception {
-        return new IdTokenVerifierFilter(tokenIdentityVerifier, userService, authenticationManagerBean());
+        return new IdTokenVerifierFilter(tokenIdentityVerifier(), userService, authenticationManagerBean());
+    }
+
+    @Bean public TokenIdentityVerifier tokenIdentityVerifier() {
+        return new GoogleTokenIdentityVerifier(googleIdTokenVerifier());
+    }
+
+    @Bean public GoogleIdTokenVerifier googleIdTokenVerifier() {
+        HttpTransport transport = new NetHttpTransport();
+        JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
+
+        return new GoogleIdTokenVerifier.Builder(transport, jsonFactory).setIssuers(
+                asList("https://accounts.google.com", "accounts.google.com"))
+                                                                        .setAudience(
+                                                                                singletonList("113557616224114467717"))
+                                                                        .build();
     }
 
     private class CustomAuthenticationProvider implements AuthenticationProvider {

@@ -2,11 +2,10 @@ package eu.execom.hawaii.service;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
-import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
-@Component public class GoogleTokenIdentityVerifier implements TokenIdentityVerifier {
+public class GoogleTokenIdentityVerifier implements TokenIdentityVerifier {
     private static final String EXECOM_DOMAIN = "execom.eu";
 
     private final GoogleIdTokenVerifier googleVerifier;
@@ -22,11 +21,11 @@ import java.util.Optional;
         } catch (Exception e) {
         }
 
-        if(idToken == null) {
+        if (idToken == null) {
             return Optional.empty();
         }
 
-        if(!EXECOM_DOMAIN.equalsIgnoreCase(idToken.getPayload().getHostedDomain())) {
+        if (!EXECOM_DOMAIN.equalsIgnoreCase(idToken.getPayload().getHostedDomain())) {
             return Optional.empty();
         }
 

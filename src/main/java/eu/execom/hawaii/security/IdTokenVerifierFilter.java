@@ -39,7 +39,7 @@ public class IdTokenVerifierFilter extends OncePerRequestFilter {
 
         Optional<String> userIdentity = tryToGetUserIdentityFromToken(idToken);
 
-        if(!userIdentity.isPresent()) {
+        if (!userIdentity.isPresent()) {
             httpServletResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
