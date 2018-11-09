@@ -8,6 +8,7 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import eu.execom.hawaii.service.GoogleTokenIdentityVerifier;
 import eu.execom.hawaii.service.TokenIdentityVerifier;
 import eu.execom.hawaii.service.UserService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -19,19 +20,25 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AnonymousAuthenticationFilter;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
+import java.util.List;
+
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
-@EnableWebSecurity @EnableSwagger2 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
-    private final UserService userService;
+@EnableWebSecurity
+@EnableSwagger2
+public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+  private final List<String> clientIds;
+  private final UserService userService;
 
-    public SecurityConfiguration(UserService userService) {
-        this.userService = userService;
-    }
+  public SecurityConfiguration(@Value("#{'${security.google-client-ids}'.split(',')}") List<String> googleClientIds,
+      UserService userService) {
+    this.clientIds = googleClientIds;
+    this.userService = userService;
+  }
 
-    @Override protected void configure(HttpSecurity http) throws Exception {
-        //@formatter:off
+  @Override
+  protected void configure(HttpSecurity http) throws Exception {
+    //@formatter:off
         http.csrf().disable()
             .sessionManagement().sessionCreationPolicy(STATELESS)
             .and()
@@ -42,43 +49,45 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
             .and()
                 .addFilterBefore(idTokenVerifierFilter(), AnonymousAuthenticationFilter.class);
         //@formatter:on
+  }
+
+  @Override
+  public void configure(WebSecurity web) {
+    web.ignoring().antMatchers("/", "/icons/**", "/swagger-ui.html", "/swagger-resources/**", "/v2/**", "/webjars/**");
+  }
+
+  @Override
+  protected void configure(AuthenticationManagerBuilder auth) {
+    auth.authenticationProvider(new CustomAuthenticationProvider());
+  }
+
+  @Bean
+  public IdTokenVerifierFilter idTokenVerifierFilter() throws Exception {
+    return new IdTokenVerifierFilter(tokenIdentityVerifier(), userService, authenticationManagerBean());
+  }
+
+  @Bean
+  public TokenIdentityVerifier tokenIdentityVerifier() {
+    return new GoogleTokenIdentityVerifier(googleIdTokenVerifier());
+  }
+
+  @Bean
+  public GoogleIdTokenVerifier googleIdTokenVerifier() {
+    HttpTransport transport = new NetHttpTransport();
+    JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
+
+    return new GoogleIdTokenVerifier.Builder(transport, jsonFactory).setAudience(clientIds).build();
+  }
+
+  private class CustomAuthenticationProvider implements AuthenticationProvider {
+    @Override
+    public Authentication authenticate(Authentication authentication) {
+      return authentication;
     }
 
-    @Override public void configure(WebSecurity web) throws Exception {
-        web.ignoring()
-           .antMatchers("/", "/icons/**", "/swagger-ui.html", "/swagger-resources/**", "/v2/**", "/webjars/**");
+    @Override
+    public boolean supports(Class<?> authentication) {
+      return true;
     }
-
-    @Override protected void configure(AuthenticationManagerBuilder auth) {
-        auth.authenticationProvider(new CustomAuthenticationProvider());
-    }
-
-    @Bean public IdTokenVerifierFilter idTokenVerifierFilter() throws Exception {
-        return new IdTokenVerifierFilter(tokenIdentityVerifier(), userService, authenticationManagerBean());
-    }
-
-    @Bean public TokenIdentityVerifier tokenIdentityVerifier() {
-        return new GoogleTokenIdentityVerifier(googleIdTokenVerifier());
-    }
-
-    @Bean public GoogleIdTokenVerifier googleIdTokenVerifier() {
-        HttpTransport transport = new NetHttpTransport();
-        JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
-
-        return new GoogleIdTokenVerifier.Builder(transport, jsonFactory).setIssuers(
-                asList("https://accounts.google.com", "accounts.google.com"))
-                                                                        .setAudience(
-                                                                                singletonList("113557616224114467717"))
-                                                                        .build();
-    }
-
-    private class CustomAuthenticationProvider implements AuthenticationProvider {
-        @Override public Authentication authenticate(Authentication authentication) {
-            return authentication;
-        }
-
-        @Override public boolean supports(Class<?> authentication) {
-            return true;
-        }
-    }
+  }
 }
