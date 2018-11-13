@@ -19,6 +19,7 @@ public class GoogleTokenIdentityVerifier implements TokenIdentityVerifier {
         try {
             idToken = googleVerifier.verify(token);
         } catch (Exception e) {
+            e.printStackTrace();
         }
 
         if (idToken == null) {
