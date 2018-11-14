@@ -2,9 +2,11 @@ package eu.execom.hawaii.service;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Optional;
 
+@Slf4j
 public class GoogleTokenIdentityVerifier implements TokenIdentityVerifier {
     private static final String EXECOM_DOMAIN = "execom.eu";
 
@@ -19,7 +21,7 @@ public class GoogleTokenIdentityVerifier implements TokenIdentityVerifier {
         try {
             idToken = googleVerifier.verify(token);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Google unable to verify id token", e);
         }
 
         if (idToken == null) {
