@@ -21,14 +21,16 @@ public class GoogleTokenIdentityVerifier implements TokenIdentityVerifier {
         try {
             idToken = googleVerifier.verify(token);
         } catch (Exception e) {
-            log.error("Google unable to verify id token", e);
+            log.error("Google unable to verify id token: " + token, e);
         }
 
         if (idToken == null) {
+            log.error("Id token is not valid: " + token);
             return Optional.empty();
         }
 
         if (!EXECOM_DOMAIN.equalsIgnoreCase(idToken.getPayload().getHostedDomain())) {
+            log.error("User with invalid hosted domain tried to sign in. User: " + idToken.getPayload().getEmail());
             return Optional.empty();
         }
 

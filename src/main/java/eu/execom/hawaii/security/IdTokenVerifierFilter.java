@@ -3,6 +3,7 @@ package eu.execom.hawaii.security;
 import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.service.TokenIdentityVerifier;
 import eu.execom.hawaii.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -18,6 +19,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Optional;
 
+@Slf4j
 public class IdTokenVerifierFilter extends OncePerRequestFilter {
     public static final String ID_TOKEN_HEADER = "X-ID-TOKEN";
 
@@ -37,10 +39,15 @@ public class IdTokenVerifierFilter extends OncePerRequestFilter {
             HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
         String idToken = httpServletRequest.getHeader(ID_TOKEN_HEADER);
 
+        if(idToken == null) {
+            log.error("Id token not set in header for url path: " + httpServletRequest.getServletPath());
+        }
+
         Optional<String> userIdentity = tryToGetUserIdentityFromToken(idToken);
 
         if (!userIdentity.isPresent()) {
             httpServletResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            log.error("Not established user identity from id token: " + idToken);
             return;
         }
 
@@ -48,11 +55,13 @@ public class IdTokenVerifierFilter extends OncePerRequestFilter {
 
         if (user == null) {
             httpServletResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            log.error("User " + userIdentity.get() + " not found in database");
             return;
         }
 
         if (!user.isActive()) {
             httpServletResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
+            log.error("User " + userIdentity.get() + " found in database, but is not active");
             return;
         }
 
