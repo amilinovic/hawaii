@@ -21,59 +21,60 @@ import java.util.Optional;
 
 @Slf4j
 public class IdTokenVerifierFilter extends OncePerRequestFilter {
-    public static final String ID_TOKEN_HEADER = "X-ID-TOKEN";
+  public static final String ID_TOKEN_HEADER = "X-ID-TOKEN";
 
-    private final TokenIdentityVerifier tokenIdentityVerifier;
-    private final UserService userService;
-    private final AuthenticationManager authenticationManager;
+  private final TokenIdentityVerifier tokenIdentityVerifier;
+  private final UserService userService;
+  private final AuthenticationManager authenticationManager;
 
-    public IdTokenVerifierFilter(TokenIdentityVerifier tokenIdentityVerifier, UserService userService,
-            AuthenticationManager authenticationManager) {
+  public IdTokenVerifierFilter(TokenIdentityVerifier tokenIdentityVerifier, UserService userService,
+      AuthenticationManager authenticationManager) {
 
-        this.tokenIdentityVerifier = tokenIdentityVerifier;
-        this.userService = userService;
-        this.authenticationManager = authenticationManager;
+    this.tokenIdentityVerifier = tokenIdentityVerifier;
+    this.userService = userService;
+    this.authenticationManager = authenticationManager;
+  }
+
+  @Override
+  protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
+      FilterChain filterChain) throws ServletException, IOException {
+    String idToken = httpServletRequest.getHeader(ID_TOKEN_HEADER);
+
+    if (idToken == null) {
+      log.error("Id token not set in header for url path: {}", httpServletRequest.getServletPath());
     }
 
-    @Override protected void doFilterInternal(HttpServletRequest httpServletRequest,
-            HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
-        String idToken = httpServletRequest.getHeader(ID_TOKEN_HEADER);
+    Optional<String> userIdentity = getUserIdentity(idToken);
 
-        if(idToken == null) {
-            log.error("Id token not set in header for url path: " + httpServletRequest.getServletPath());
-        }
-
-        Optional<String> userIdentity = tryToGetUserIdentityFromToken(idToken);
-
-        if (!userIdentity.isPresent()) {
-            httpServletResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-            log.error("Not established user identity from id token: " + idToken);
-            return;
-        }
-
-        User user = userService.findByEmail(userIdentity.get());
-
-        if (user == null) {
-            httpServletResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-            log.error("User " + userIdentity.get() + " not found in database");
-            return;
-        }
-
-        if (!user.isActive()) {
-            httpServletResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
-            log.error("User " + userIdentity.get() + " found in database, but is not active");
-            return;
-        }
-
-        Authentication authentication = authenticationManager.authenticate(
-                new PreAuthenticatedAuthenticationToken(user, null,
-                        Collections.singletonList(new SimpleGrantedAuthority(user.getUserRole().toString()))));
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        filterChain.doFilter(httpServletRequest, httpServletResponse);
+    if (!userIdentity.isPresent()) {
+      httpServletResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+      log.error("Not established user identity from id token: {}", idToken);
+      return;
     }
 
-    private Optional<String> tryToGetUserIdentityFromToken(String token) {
-        return token == null ? Optional.empty() : tokenIdentityVerifier.tryToGetIdentityOf(token);
+    User user = userService.findByEmail(userIdentity.get());
+
+    if (user == null) {
+      httpServletResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+      log.error("User {} not found in database", userIdentity.get());
+      return;
     }
+
+    if (!user.isActive()) {
+      httpServletResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
+      log.error("User {} found in database, but is not active", userIdentity.get());
+      return;
+    }
+
+    Authentication authentication = authenticationManager.authenticate(
+        new PreAuthenticatedAuthenticationToken(user, null,
+            Collections.singletonList(new SimpleGrantedAuthority(user.getUserRole().toString()))));
+    SecurityContextHolder.getContext().setAuthentication(authentication);
+
+    filterChain.doFilter(httpServletRequest, httpServletResponse);
+  }
+
+  private Optional<String> getUserIdentity(String token) {
+    return token == null ? Optional.empty() : tokenIdentityVerifier.tryToGetIdentityOf(token);
+  }
 }
