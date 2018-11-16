@@ -75,6 +75,6 @@ public class IdTokenVerifierFilter extends OncePerRequestFilter {
   }
 
   private Optional<String> getUserIdentity(String token) {
-    return token == null ? Optional.empty() : tokenIdentityVerifier.tryToGetIdentityOf(token);
+    return token == null ? Optional.empty() : tokenIdentityVerifier.getIdentityOf(token);
   }
 }

@@ -17,7 +17,7 @@ public class GoogleTokenIdentityVerifier implements TokenIdentityVerifier {
   }
 
   @Override
-  public Optional<String> tryToGetIdentityOf(String token) {
+  public Optional<String> getIdentityOf(String token) {
     GoogleIdToken idToken = null;
     try {
       idToken = googleVerifier.verify(token);

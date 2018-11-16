@@ -39,16 +39,16 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     //@formatter:off
-        http.csrf().disable()
-            .sessionManagement().sessionCreationPolicy(STATELESS)
-            .and()
-                .authorizeRequests()
-                    .antMatchers("/api/users", "/api/users/**", "/api/teams", "/api/teams/**", "/api/leavetypes", "/api/leavetypes/**", "/api/leaveprofiles",
-                        "/api/leaveprofiles/**", "/api/requests/**").hasAuthority("HR_MANAGER")
-                    .antMatchers("/api/**").permitAll()
-            .and()
-                .addFilterBefore(idTokenVerifierFilter(), AnonymousAuthenticationFilter.class);
-        //@formatter:on
+      http.csrf().disable()
+        .sessionManagement().sessionCreationPolicy(STATELESS)
+          .and()
+            .authorizeRequests()
+              .antMatchers("/api/users", "/api/users/**", "/api/teams", "/api/teams/**", "/api/leavetypes", "/api/leavetypes/**", "/api/leaveprofiles",
+                "/api/leaveprofiles/**", "/api/requests/**").hasAuthority("HR_MANAGER")
+              .antMatchers("/api/**").permitAll()
+          .and()
+            .addFilterBefore(idTokenVerifierFilter(), AnonymousAuthenticationFilter.class);
+    //@formatter:on
   }
 
   @Override
