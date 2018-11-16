@@ -13,6 +13,7 @@ public class UserDto {
 
   private Long id;
   private Long teamId;
+  private String teamName;
   private Long leaveProfileId;
   private String fullName;
   private String email;
@@ -25,6 +26,7 @@ public class UserDto {
   public UserDto(User user) {
     this.id = user.getId();
     this.teamId = (user.getTeam().getId());
+    this.teamName = (user.getTeam().getName());
     this.leaveProfileId = (user.getLeaveProfile().getId());
     this.fullName = user.getFullName();
     this.email = user.getEmail();
