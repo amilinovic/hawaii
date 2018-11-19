@@ -218,7 +218,7 @@ public class RequestService {
             newRequest.setRequestStatus(RequestStatus.PENDING);
             allowanceService.applyPendingRequest(newRequest, false);
             emailService.createEmailAndSendForApproval(newRequest);
-            sendNotificationsService.sendNotificationToApproversAboutSubmittedRequest(newRequest);
+            //            sendNotificationsService.sendNotificationToApproversAboutSubmittedRequest(newRequest);
         }
 
         return requestRepository.save(newRequest);
@@ -280,7 +280,7 @@ public class RequestService {
                 } else if (!userIsRequestApprover && requestIsApproved) {
                     request.setRequestStatus(RequestStatus.CANCELLATION_PENDING);
                     emailService.createEmailAndSendForApproval(request);
-                    sendNotificationsService.sendNotificationToApproversAboutSubmittedRequest(request);
+                    //                    sendNotificationsService.sendNotificationToApproversAboutSubmittedRequest(request);
                 } else if (!userIsRequestApprover && requestHasPendingCancellation) {
                     log.error("User not authorized to cancel this request for user with email: {}", user.getEmail());
                     throw new NotAuthorizedApprovalExeception();
