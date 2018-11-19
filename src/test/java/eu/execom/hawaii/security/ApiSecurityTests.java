@@ -68,7 +68,7 @@ public class ApiSecurityTests {
 
   @Test
   public void shouldReturnUnauthorizedStatusCodeForProtectedUrlRequestsWhenIdTokenIsValidButUserIsNotFound() {
-    given(tokenIdentityVerifier.tryToGetIdentityOf(SAMPLE_ID_TOKEN)).willReturn(Optional.of(SAMPLE_USER));
+    given(tokenIdentityVerifier.getIdentityOf(SAMPLE_ID_TOKEN)).willReturn(Optional.of(SAMPLE_USER));
 
     ResponseEntity<String> response = restTemplate.exchange(SAMPLE_PROTECTED_URL_PATH, HttpMethod.GET,
         new HttpEntity<>(createIdTokenHeader(SAMPLE_ID_TOKEN)), String.class);
@@ -78,7 +78,7 @@ public class ApiSecurityTests {
 
   @Test
   public void shouldReturnForbiddenStatusCodeForProtectedUrlRequestsWhenIdTokenIsValidButUserIsInactive() {
-    given(tokenIdentityVerifier.tryToGetIdentityOf(SAMPLE_ID_TOKEN)).willReturn(Optional.of(SAMPLE_USER));
+    given(tokenIdentityVerifier.getIdentityOf(SAMPLE_ID_TOKEN)).willReturn(Optional.of(SAMPLE_USER));
     given(userService.findByEmail(SAMPLE_USER)).willReturn(new User());
 
     ResponseEntity<String> response = restTemplate.exchange(SAMPLE_PROTECTED_URL_PATH, HttpMethod.GET,
@@ -92,7 +92,7 @@ public class ApiSecurityTests {
     User user = new User();
     user.setActive(true);
     user.setUserRole(UserRole.USER);
-    given(tokenIdentityVerifier.tryToGetIdentityOf(SAMPLE_ID_TOKEN)).willReturn(Optional.of(SAMPLE_USER));
+    given(tokenIdentityVerifier.getIdentityOf(SAMPLE_ID_TOKEN)).willReturn(Optional.of(SAMPLE_USER));
     given(userService.findByEmail(SAMPLE_USER)).willReturn(user);
 
     ResponseEntity<String> response = restTemplate.exchange(SAMPLE_PROTECTED_URL_PATH, HttpMethod.GET,
@@ -135,7 +135,7 @@ public class ApiSecurityTests {
 
   @Test
   public void shouldReturnUnauthorizedStatusCodeForProtectedUrlRequestsWhichRequireHrManagerAuthorityWhenIdTokenIsValidButUserIsNotFound() {
-    given(tokenIdentityVerifier.tryToGetIdentityOf(SAMPLE_ID_TOKEN)).willReturn(Optional.of(SAMPLE_USER));
+    given(tokenIdentityVerifier.getIdentityOf(SAMPLE_ID_TOKEN)).willReturn(Optional.of(SAMPLE_USER));
 
     ResponseEntity<String> response = restTemplate.exchange(SAMPLE_PROTECTED_HR_MANAGER_URL_PATH, HttpMethod.GET,
         new HttpEntity<>(createIdTokenHeader(SAMPLE_ID_TOKEN)), String.class);
@@ -145,7 +145,7 @@ public class ApiSecurityTests {
 
   @Test
   public void shouldReturnForbiddenStatusCodeForProtectedUrlRequestsWhichRequireHrManagerAuthorityWhenIdTokenIsValidButUserIsInactive() {
-    given(tokenIdentityVerifier.tryToGetIdentityOf(SAMPLE_ID_TOKEN)).willReturn(Optional.of(SAMPLE_USER));
+    given(tokenIdentityVerifier.getIdentityOf(SAMPLE_ID_TOKEN)).willReturn(Optional.of(SAMPLE_USER));
     given(userService.findByEmail(SAMPLE_USER)).willReturn(new User());
 
     ResponseEntity<String> response = restTemplate.exchange(SAMPLE_PROTECTED_HR_MANAGER_URL_PATH, HttpMethod.GET,
@@ -159,7 +159,7 @@ public class ApiSecurityTests {
     User user = new User();
     user.setActive(true);
     user.setUserRole(UserRole.USER);
-    given(tokenIdentityVerifier.tryToGetIdentityOf(SAMPLE_ID_TOKEN)).willReturn(Optional.of(SAMPLE_USER));
+    given(tokenIdentityVerifier.getIdentityOf(SAMPLE_ID_TOKEN)).willReturn(Optional.of(SAMPLE_USER));
     given(userService.findByEmail(SAMPLE_USER)).willReturn(user);
 
     ResponseEntity<String> response = restTemplate.exchange(SAMPLE_PROTECTED_HR_MANAGER_URL_PATH, HttpMethod.GET,
@@ -173,7 +173,7 @@ public class ApiSecurityTests {
     User user = new User();
     user.setActive(true);
     user.setUserRole(UserRole.HR_MANAGER);
-    given(tokenIdentityVerifier.tryToGetIdentityOf(SAMPLE_ID_TOKEN)).willReturn(Optional.of(SAMPLE_USER));
+    given(tokenIdentityVerifier.getIdentityOf(SAMPLE_ID_TOKEN)).willReturn(Optional.of(SAMPLE_USER));
     given(userService.findByEmail(SAMPLE_USER)).willReturn(user);
 
     ResponseEntity<String> response = restTemplate.exchange(SAMPLE_PROTECTED_HR_MANAGER_URL_PATH, HttpMethod.GET,
