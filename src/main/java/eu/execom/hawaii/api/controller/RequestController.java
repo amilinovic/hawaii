@@ -32,7 +32,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/requests")
+@RequestMapping("/api/requests")
 public class RequestController {
 
   private static final ModelMapper MAPPER = new ModelMapper();

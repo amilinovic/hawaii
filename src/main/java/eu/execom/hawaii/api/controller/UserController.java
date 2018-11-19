@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/api/users")
 public class UserController {
 
   private static final ModelMapper MAPPER = new ModelMapper();
