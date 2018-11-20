@@ -1,9 +1,12 @@
 package eu.execom.hawaii.service;
 
+import eu.execom.hawaii.dto.CreateTokenDto;
 import eu.execom.hawaii.model.Allowance;
 import eu.execom.hawaii.model.LeaveProfile;
 import eu.execom.hawaii.model.User;
+import eu.execom.hawaii.model.UserPushToken;
 import eu.execom.hawaii.repository.LeaveProfileRepository;
+import eu.execom.hawaii.repository.UserPushTokensRepository;
 import eu.execom.hawaii.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,11 +28,14 @@ public class UserService {
 
   private UserRepository userRepository;
   private LeaveProfileRepository leaveProfileRepository;
+  private UserPushTokensRepository userPushTokensRepository;
 
   @Autowired
-  public UserService(UserRepository userRepository, LeaveProfileRepository leaveProfileRepository) {
+  public UserService(UserRepository userRepository, LeaveProfileRepository leaveProfileRepository,
+      UserPushTokensRepository userPushTokensRepository) {
     this.userRepository = userRepository;
     this.leaveProfileRepository = leaveProfileRepository;
+    this.userPushTokensRepository = userPushTokensRepository;
   }
 
   /**
@@ -160,15 +166,28 @@ public class UserService {
   }
 
   /**
-   * Assigns push token to user, from device where the user is logged in
-   */
+   * Updates push token
+   *//*
   public void updateUserPushToken(String pushToken, User authUser) {
     User user = userRepository.findOneByEmail(authUser.getEmail());
     if (user != null) {
-      user.setPushToken(pushToken);
+      UserPushToken userPushTokens = new UserPushToken(user, pushToken, platform);
+      user.
       userRepository.save(user);
     } else {
       throw new EntityNotFoundException();
     }
+  }*/
+
+  /**
+   * Creates new Object userPushToken which has push token, platform from which user signed in and user who is the owner of that push token
+   */
+  public void createUserToken(User authUser, CreateTokenDto createTokenDto) {
+    UserPushToken userPushToken = new UserPushToken();
+    userPushToken.setUser(authUser);
+    userPushToken.setPushToken(createTokenDto.getPushToken());
+    userPushToken.setPlatform(createTokenDto.getPlatform());
+    userPushToken.setName(createTokenDto.getName());
+    userPushTokensRepository.save(userPushToken);
   }
 }

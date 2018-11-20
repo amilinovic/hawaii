@@ -5,7 +5,7 @@ import eu.execom.hawaii.dto.NotificationDataDto;
 import eu.execom.hawaii.dto.NotificationDto;
 import eu.execom.hawaii.dto.PushNotificationDto;
 import eu.execom.hawaii.model.User;
-import eu.execom.hawaii.model.UserPushTokens;
+import eu.execom.hawaii.model.UserPushToken;
 import eu.execom.hawaii.model.enumerations.RequestStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -66,7 +66,7 @@ public class SendNotificationsService {
                                                 .getTeamApprovers()
                                                 .stream()
                                                 .map(User::getUserPushTokens)
-                                                .map(UserPushTokens::getPushToken)
+                                                .map(UserPushToken::getPushToken)
                                                 .collect(Collectors.toList());
     result.setTo(approversPushToken);
     result.setNotification(notification);
@@ -84,8 +84,8 @@ public class SendNotificationsService {
     result.setNotification(notification);
     result.setData(data);
     String convertedToJson = objectToJsonMapper(result);
-    send(convertedToJson);*/
-  }
+    send(convertedToJson);
+}*/
 
   public void sendNotificationForRequestedLeave(RequestStatus requestStatus, User user) {
     PushNotificationDto result = new PushNotificationDto();
@@ -115,9 +115,7 @@ public class SendNotificationsService {
         throw new IllegalArgumentException("Unsupported request status: " + requestStatus);
     }
 
-    List<String> pushTokens = user.getUserPushTokens()
-                                  .stream()
-                                  .map(UserPushTokens::getPushToken)
+    List<String> pushTokens = user.getUserPushTokens().stream().map(UserPushToken::getPushToken)
                                   .collect(Collectors.toList());
 
     result.setTo(pushTokens);

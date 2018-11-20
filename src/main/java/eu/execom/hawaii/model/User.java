@@ -51,7 +51,7 @@ public class User extends BaseEntity implements Serializable {
   private int yearsOfService;
 
   @OneToMany(mappedBy = "user")
-  private List<UserPushTokens> userPushTokens;
+  private List<UserPushToken> userPushTokens;
 
   @ManyToMany(mappedBy = "teamApprovers", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
   private List<Team> approverTeams;
