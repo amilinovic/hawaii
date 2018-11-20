@@ -74,6 +74,18 @@ public class SendNotificationsService {
     String convertedToJson = objectToJsonMapper(result);
     send(convertedToJson);
   }*/
+    /*List<String> approversPushToken = newRequest.getUser()
+                                                .getTeam()
+                                                .getTeamApprovers()
+                                                .stream()
+                                                .map(User::getPushToken)
+                                                .collect(Collectors.toList());
+    result.setTo(approversPushToken);
+    result.setNotification(notification);
+    result.setData(data);
+    String convertedToJson = objectToJsonMapper(result);
+    send(convertedToJson);*/
+  }
 
   public void sendNotificationForRequestedLeave(RequestStatus requestStatus, User user) {
     PushNotificationDto result = new PushNotificationDto();

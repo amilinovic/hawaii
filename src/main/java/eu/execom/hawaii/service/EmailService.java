@@ -171,7 +171,7 @@ public class EmailService {
     try {
       emailSender.send(message);
     } catch (MailException exception) {
-      log.error("Error on sending email to: {}", email.getTo());
+      log.error("Error on sending email to: " + email.getTo(), exception);
     }
   }
 

@@ -1,55 +1,59 @@
 package eu.execom.hawaii.security;
 
-import eu.execom.hawaii.model.User;
-import org.springframework.boot.autoconfigure.security.oauth2.client.EnableOAuth2Sso;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.jackson2.JacksonFactory;
+import eu.execom.hawaii.service.GoogleTokenIdentityVerifier;
+import eu.execom.hawaii.service.TokenIdentityVerifier;
+import eu.execom.hawaii.service.UserService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.security.web.authentication.AnonymousAuthenticationFilter;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import java.util.List;
 
-import static eu.execom.hawaii.security.AuthenticationFilter.AUTHENTICATION_TOKEN_KEY;
+import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
-@Configuration
-@EnableOAuth2Sso
 @EnableWebSecurity
 @EnableSwagger2
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+  private final List<String> clientIds;
+  private final UserService userService;
+
+  public SecurityConfiguration(@Value("#{'${security.google-client-ids}'.split(',')}") List<String> googleClientIds,
+      UserService userService) {
+    this.clientIds = googleClientIds;
+    this.userService = userService;
+  }
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     //@formatter:off
-    http.csrf().disable()
-        .authorizeRequests()
-          .antMatchers("/", "/icons/**", "/welcome", "/signin", "/authentication", "/swagger-ui.html", "/swagger-resources/**",
-            "/v2/**", "/webjars/**").permitAll()
-          .antMatchers("/users", "/users/**", "/teams", "/teams/**", "/leavetypes", "/leavetypes/**", "/leaveprofiles",
-            "/leaveprofiles/**, /requests/**").hasAuthority("HR_MANAGER")
-          .anyRequest().authenticated()
-        .and()
-          .logout()
-          .invalidateHttpSession(true)
-          .deleteCookies("JSESSIONID")
-          .logoutSuccessHandler(new CustomLogoutSuccessHandler())
-          .logoutSuccessUrl("http://localhost:3000/")
-          .permitAll()
-        .and()
-        .addFilterBefore(
-          new AuthenticationFilter(authenticationManager(), tokenStore()),
-          BasicAuthenticationFilter.class);
+      http.csrf().disable()
+        .sessionManagement().sessionCreationPolicy(STATELESS)
+          .and()
+            .authorizeRequests()
+              .antMatchers("/api/users", "/api/users/**", "/api/teams", "/api/teams/**", "/api/leavetypes", "/api/leavetypes/**", "/api/leaveprofiles",
+                "/api/leaveprofiles/**", "/api/requests/**").hasAuthority("HR_MANAGER")
+              .antMatchers("/api/**").permitAll()
+          .and()
+            .addFilterBefore(idTokenVerifierFilter(), AnonymousAuthenticationFilter.class);
     //@formatter:on
+  }
+
+  @Override
+  public void configure(WebSecurity web) {
+    web.ignoring().antMatchers("/", "/icons/**", "/swagger-ui.html", "/swagger-resources/**", "/v2/**", "/webjars/**");
   }
 
   @Override
@@ -58,13 +62,26 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
   }
 
   @Bean
-  public TokenStore tokenStore() {
-    return new TokenStore();
+  public IdTokenVerifierFilter idTokenVerifierFilter() throws Exception {
+    return new IdTokenVerifierFilter(tokenIdentityVerifier(), userService, authenticationManagerBean());
+  }
+
+  @Bean
+  public TokenIdentityVerifier tokenIdentityVerifier() {
+    return new GoogleTokenIdentityVerifier(googleIdTokenVerifier());
+  }
+
+  @Bean
+  public GoogleIdTokenVerifier googleIdTokenVerifier() {
+    HttpTransport transport = new NetHttpTransport();
+    JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
+
+    return new GoogleIdTokenVerifier.Builder(transport, jsonFactory).setAudience(clientIds).build();
   }
 
   private class CustomAuthenticationProvider implements AuthenticationProvider {
     @Override
-    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+    public Authentication authenticate(Authentication authentication) {
       return authentication;
     }
 
@@ -73,15 +90,4 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
       return true;
     }
   }
-
-  private class CustomLogoutSuccessHandler implements LogoutSuccessHandler {
-    @Override
-    public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
-        throws IOException, ServletException {
-      String token = request.getHeader(AUTHENTICATION_TOKEN_KEY);
-      User user = tokenStore().getUser(token);
-      tokenStore().removeTokensForUser(user);
-    }
-  }
-
 }

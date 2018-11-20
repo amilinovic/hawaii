@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/leavetypes")
+@RequestMapping("/api/leavetypes")
 public class AbsenceController {
 
   private static final ModelMapper MAPPER = new ModelMapper();
