@@ -20,7 +20,7 @@ import java.util.List;
 
 @Entity
 @Data
-@ToString(exclude = {"approverTeams", "requests", "allowances"})
+@ToString(exclude = {"approverTeams", "requests", "allowances", "userPushTokens"})
 @EqualsAndHashCode(callSuper = false)
 public class User extends BaseEntity implements Serializable {
 
