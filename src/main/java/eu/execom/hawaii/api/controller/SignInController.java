@@ -1,6 +1,7 @@
 package eu.execom.hawaii.api.controller;
 
 import eu.execom.hawaii.dto.CreateTokenDto;
+import eu.execom.hawaii.dto.DeleteTokenDto;
 import eu.execom.hawaii.model.GenericResponse;
 import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.service.UserService;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,5 +40,12 @@ public class SignInController {
     userService.updateUserPushToken(pushToken, authUser);
     return new ResponseEntity<>(GenericResponse.OK, HttpStatus.OK);
   }*/
+
+  @DeleteMapping("/token")
+  public ResponseEntity deleteToken(@ApiIgnore @AuthenticationPrincipal User authUser,
+      @RequestBody DeleteTokenDto deleteTokenDto) {
+    userService.deleteUserPushToken(authUser, deleteTokenDto.getPushToken());
+    return new ResponseEntity(HttpStatus.NO_CONTENT);
+  }
 
 }

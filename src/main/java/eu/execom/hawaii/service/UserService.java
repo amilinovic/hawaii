@@ -182,6 +182,7 @@ public class UserService {
   /**
    * Creates new Object userPushToken which has push token, platform from which user signed in and user who is the owner of that push token
    */
+  @Transactional
   public void createUserToken(User authUser, CreateTokenDto createTokenDto) {
     UserPushToken userPushToken = new UserPushToken();
     userPushToken.setUser(authUser);
@@ -189,5 +190,21 @@ public class UserService {
     userPushToken.setPlatform(createTokenDto.getPlatform());
     userPushToken.setName(createTokenDto.getName());
     userPushTokensRepository.save(userPushToken);
+  }
+
+  @Transactional
+  public void deleteUserPushToken(User authUser, String pushToken) {
+    List<UserPushToken> userPushTokens = authUser.getUserPushTokens();
+    for (UserPushToken userPushToken : userPushTokens) {
+      if (userPushToken.getPushToken().equals(pushToken)) {
+        userPushTokensRepository.delete(userPushToken);
+      }
+    }
+    //    var usersPushToken = authUser.getUserPushTokens().stream().map(UserPushToken::getPushToken);
+    //    if (usersPushTokenId.equals(pushTokenId)) {
+    //      userPushTokensRepository.deleteById(pushTokenId);
+    //    } else {
+    //      throw new UnsupportedOperationException();
+    //    }
   }
 }
