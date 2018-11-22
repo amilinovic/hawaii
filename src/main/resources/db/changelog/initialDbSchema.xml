@@ -223,6 +223,7 @@
             </column>
             <column name="name" type="VARCHAR(255)"/>
             <column name="user_id" type="BIGINT(19)"/>
+            <column name="create_date_time" type="TIMESTAMP"/>
         </createTable>
     </changeSet>
     <changeSet author="admin" id="{initialId}-21">
