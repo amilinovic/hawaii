@@ -15,5 +15,5 @@ public class NotificationDataDto {
   private String title;
   private String priority;
   private RequestStatus requestStatus;
-  private Long requestId;
+  private int requestId;
 }

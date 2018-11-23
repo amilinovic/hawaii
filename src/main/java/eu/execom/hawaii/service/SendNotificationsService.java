@@ -59,13 +59,15 @@ public class SendNotificationsService {
     notification.setTitle("New request!");
     notification.setBody(bodyMessage);
     notification.setPriority("high");
+    notification.setClickAction("requestNotification");
     data.setTitle("New request!");
     data.setBody(bodyMessage);
     data.setPriority("high");
     data.setRequestStatus(requestStatus);
-    data.setRequestId(newRequest.getId());
+    data.setRequestId((newRequest.getId()).intValue());
 
     List<User> approvers = newRequest.getUser().getTeam().getTeamApprovers();
+    System.out.println("approvers: " + approvers);
     for (User u : approvers) {
       Map<Platform, List<String>> pushTokensPerPlatform = u.getUserPushTokens()
                                                            .stream()
@@ -75,8 +77,9 @@ public class SendNotificationsService {
       pushTokensPerPlatform.forEach((platform, pushTokens) -> {
         if (platform.equals(Platform.IOS)) {
           result.setTo(pushTokens);
+          System.out.println("push tokens:" + pushTokens);
           result.setNotification(notification);
-          result.setMutableContent(false);
+          result.setMutableContent(true);
           result.setData(data);
           String convertedToJson = objectToJsonMapper(result);
           send(convertedToJson);
@@ -91,33 +94,7 @@ public class SendNotificationsService {
         }
       });
     }
-
-   /* List<String> approversPushToken = newRequest.getUser()
-                                                .getTeam()
-                                                .getTeamApprovers()
-                                                .stream()
-                                                .map(User::getUserPushTokens)
-                                                .map(UserPushToken::getPushToken)
-                                                .collect(Collectors.toList());
-    result.setTo(approversPushToken);
-    result.setNotification(notification);
-    result.setData(data);
-    String convertedToJson = objectToJsonMapper(result);
-    send(convertedToJson);*/
   }
-
-  /*List<String> approversPushToken = newRequest.getUser()
-                                                .getTeam()
-                                                .getTeamApprovers()
-                                                .stream()
-                                                .map(User::getPushToken)
-                                                .collect(Collectors.toList());
-    result.setTo(approversPushToken);
-    result.setNotification(notification);
-    result.setData(data);
-    String convertedToJson = objectToJsonMapper(result);
-    send(convertedToJson);*/
-
 
   public void sendNotificationForRequestedLeave(RequestStatus requestStatus, User user) {
     PushNotificationDto result = new PushNotificationDto();
@@ -125,7 +102,7 @@ public class SendNotificationsService {
     NotificationDataDto data = new NotificationDataDto();
 
     notification.setPriority("high");
-    notification.setClickAction(null);
+    notification.setClickAction("requestNotification");
     data.setPriority("high");
     data.setRequestStatus(requestStatus);
 
@@ -152,14 +129,12 @@ public class SendNotificationsService {
         throw new IllegalArgumentException("Unsupported request status: " + requestStatus);
     }
 
-    //    List<UserPushToken> userPushTokens = user.getUserPushTokens();
     Map<Platform, List<String>> pushTokensPerPlatform = user.getUserPushTokens()
                                                             .stream()
                                                             .collect(Collectors.groupingBy(UserPushToken::getPlatform,
                                                                 Collectors.mapping(UserPushToken::getPushToken,
                                                                     Collectors.toList())));
-    // all user IOS tokens and all user Android tokens - group tpkens by platform (Map<Platform, List<Token>>)
-    //    for (UserPushToken u : userPushTokens) {
+
     pushTokensPerPlatform.forEach((platform, pushTokens) -> {
       if (platform.equals(Platform.IOS)) {
         result.setTo(pushTokens);
@@ -178,25 +153,6 @@ public class SendNotificationsService {
         send(convertedToJson);
       }
     });
-    /*if (u.getPlatform().equals(Platform.IOS)) {
-      result.setTo(tokensPerPlatform.get(Platform.IOS));
-      result.setNotification(notification);
-      result.setMutableContent(false);
-      result.setData(data);
-      String convertedToJson = objectToJsonMapper(result);
-      send(convertedToJson);
-    } else {
-      result.setTo(u.getPushToken());
-      result.setMutableContent(false);
-      result.setNotification(null);
-      result.setData(data);
-      String convertedToJson = objectToJsonMapper(result);
-      send(convertedToJson);
-    }*/
-    //    }
-
-   /* List<String> pushTokens = user.getUserPushTokens().stream().map(UserPushToken::getPushToken)
-                                  .collect(Collectors.toList());*/
   }
 
   private String objectToJsonMapper(Object result) {

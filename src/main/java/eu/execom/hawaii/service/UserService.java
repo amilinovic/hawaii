@@ -5,6 +5,7 @@ import eu.execom.hawaii.model.Allowance;
 import eu.execom.hawaii.model.LeaveProfile;
 import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.UserPushToken;
+import eu.execom.hawaii.repository.AllowanceRepository;
 import eu.execom.hawaii.repository.LeaveProfileRepository;
 import eu.execom.hawaii.repository.UserPushTokensRepository;
 import eu.execom.hawaii.repository.UserRepository;
@@ -29,13 +30,15 @@ public class UserService {
   private UserRepository userRepository;
   private LeaveProfileRepository leaveProfileRepository;
   private UserPushTokensRepository userPushTokensRepository;
+  private AllowanceRepository allowanceRepository;
 
   @Autowired
   public UserService(UserRepository userRepository, LeaveProfileRepository leaveProfileRepository,
-      UserPushTokensRepository userPushTokensRepository) {
+      UserPushTokensRepository userPushTokensRepository, AllowanceRepository allowanceRepository) {
     this.userRepository = userRepository;
     this.leaveProfileRepository = leaveProfileRepository;
     this.userPushTokensRepository = userPushTokensRepository;
+    this.allowanceRepository = allowanceRepository;
   }
 
   /**
@@ -139,6 +142,7 @@ public class UserService {
       var allowance = createAllowance(user, year, leaveProfile);
       userAllowances.add(allowance);
     }
+    //    allowanceRepository.saveAll(userAllowances);
 
     return save(user);
   }
@@ -149,6 +153,7 @@ public class UserService {
     allowance.setYear(year);
     allowance.setAnnual(leaveProfile.getEntitlement());
     allowance.setTraining(leaveProfile.getTraining());
+    allowanceRepository.save(allowance);
 
     return allowance;
   }
