@@ -171,20 +171,6 @@ public class UserService {
   }
 
   /**
-   * Updates push token
-   *//*
-  public void updateUserPushToken(String pushToken, User authUser) {
-    User user = userRepository.findOneByEmail(authUser.getEmail());
-    if (user != null) {
-      UserPushToken userPushTokens = new UserPushToken(user, pushToken, platform);
-      user.
-      userRepository.save(user);
-    } else {
-      throw new EntityNotFoundException();
-    }
-  }*/
-
-  /**
    * Creates new Object userPushToken which has push token, platform from which user signed in and user who is the owner of that push token
    */
   @Transactional
@@ -205,11 +191,5 @@ public class UserService {
         userPushTokensRepository.delete(userPushToken);
       }
     }
-    //    var usersPushToken = authUser.getUserPushTokens().stream().map(UserPushToken::getPushToken);
-    //    if (usersPushTokenId.equals(pushTokenId)) {
-    //      userPushTokensRepository.deleteById(pushTokenId);
-    //    } else {
-    //      throw new UnsupportedOperationException();
-    //    }
   }
 }

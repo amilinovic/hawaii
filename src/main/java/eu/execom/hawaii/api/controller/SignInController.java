@@ -34,13 +34,6 @@ public class SignInController {
     return new ResponseEntity<>(GenericResponse.OK, HttpStatus.OK);
   }
 
-  /*@PutMapping("/token")
-  public ResponseEntity<GenericResponse> tokenReset(@ApiIgnore @AuthenticationPrincipal User authUser,
-      @RequestParam String pushToken) {
-    userService.updateUserPushToken(pushToken, authUser);
-    return new ResponseEntity<>(GenericResponse.OK, HttpStatus.OK);
-  }*/
-
   @DeleteMapping("/token")
   public ResponseEntity deleteToken(@ApiIgnore @AuthenticationPrincipal User authUser,
       @RequestBody DeleteTokenDto deleteTokenDto) {
