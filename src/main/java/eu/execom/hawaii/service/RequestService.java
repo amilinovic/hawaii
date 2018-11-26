@@ -209,18 +209,18 @@ public class RequestService {
           matchingDays.stream().map(day -> day.getDate().toString()).collect(Collectors.joining(", ")));
       throw new EntityExistsException();
     }
-        if (AbsenceType.SICKNESS.equals(newRequest.getAbsence().getAbsenceType())) {
-            newRequest.setRequestStatus(RequestStatus.APPROVED);
-            allowanceService.applyRequest(newRequest, false);
-            emailService.createSicknessEmailForTeammatesAndSend(newRequest);
-          requestRepository.save(newRequest);
-        } else {
-            newRequest.setRequestStatus(RequestStatus.PENDING);
-            allowanceService.applyPendingRequest(newRequest, false);
-            emailService.createEmailAndSendForApproval(newRequest);
-          requestRepository.save(newRequest);
-          sendNotificationsService.sendNotificationToApproversAboutSubmittedRequest(newRequest);
-        }
+    if (AbsenceType.SICKNESS.equals(newRequest.getAbsence().getAbsenceType())) {
+      newRequest.setRequestStatus(RequestStatus.APPROVED);
+      allowanceService.applyRequest(newRequest, false);
+      emailService.createSicknessEmailForTeammatesAndSend(newRequest);
+      requestRepository.save(newRequest);
+    } else {
+      newRequest.setRequestStatus(RequestStatus.PENDING);
+      allowanceService.applyPendingRequest(newRequest, false);
+      emailService.createEmailAndSendForApproval(newRequest);
+      requestRepository.save(newRequest);
+      sendNotificationsService.sendNotificationToApproversAboutSubmittedRequest(newRequest);
+    }
     return newRequest;
   }
 
@@ -260,45 +260,45 @@ public class RequestService {
     boolean requestIsPending = existingRequest.isPending();
     boolean requestIsCanceled = existingRequest.isCanceled();
 
-        switch (request.getRequestStatus()) {
-            case APPROVED:
-                if (!userIsRequestApprover) {
-                    log.error("Approver not authorized to approve this request for user with email: {}", user.getEmail());
-                    throw new NotAuthorizedApprovalExeception();
-                }
-                allowanceService.applyPendingRequest(request, true);
-                applyRequest(request, false);
-                sendNotificationsService.sendNotificationForRequestedLeave(request.getRequestStatus(), user);
-                break;
-            case CANCELED:
-                if (requestIsCanceled) {
-                    log.error("Request by user: {}, is already canceled.", user.getEmail());
-                    throw new RequestAlreadyCanceledException();
-                } else if (userIsRequestApprover && (requestIsApproved || requestHasPendingCancellation)) {
-                    applyRequest(request, true);
-                    sendNotificationsService.sendNotificationForRequestedLeave(request.getRequestStatus(), user);
-                } else if (!userIsRequestApprover && requestIsApproved) {
-                    request.setRequestStatus(RequestStatus.CANCELLATION_PENDING);
-                    emailService.createEmailAndSendForApproval(request);
-                    //                    sendNotificationsService.sendNotificationToApproversAboutSubmittedRequest(request);
-                } else if (!userIsRequestApprover && requestHasPendingCancellation) {
-                    log.error("User not authorized to cancel this request for user with email: {}", user.getEmail());
-                    throw new NotAuthorizedApprovalExeception();
-                } else if (requestIsPending) {
-                    allowanceService.applyPendingRequest(request, true);
-                }
-                break;
-            case REJECTED:
-                if (!userIsRequestApprover) {
-                    log.error("Approver not authorized to reject this request for user with email: {}", user.getEmail());
-                    throw new NotAuthorizedApprovalExeception();
-                }
-                allowanceService.applyPendingRequest(request, true);
-                sendNotificationsService.sendNotificationForRequestedLeave(request.getRequestStatus(), user);
-                break;
-            default:
-                throw new IllegalArgumentException("Unsupported request status: " + request.getRequestStatus());
+    switch (request.getRequestStatus()) {
+      case APPROVED:
+        if (!userIsRequestApprover) {
+          log.error("Approver not authorized to approve this request for user with email: {}", user.getEmail());
+          throw new NotAuthorizedApprovalExeception();
         }
+        allowanceService.applyPendingRequest(request, true);
+        applyRequest(request, false);
+        sendNotificationsService.sendNotificationForRequestedLeave(request.getRequestStatus(), user);
+        break;
+      case CANCELED:
+        if (requestIsCanceled) {
+          log.error("Request by user: {}, is already canceled.", user.getEmail());
+          throw new RequestAlreadyCanceledException();
+        } else if (userIsRequestApprover && (requestIsApproved || requestHasPendingCancellation)) {
+          applyRequest(request, true);
+          sendNotificationsService.sendNotificationForRequestedLeave(request.getRequestStatus(), user);
+        } else if (!userIsRequestApprover && requestIsApproved) {
+          request.setRequestStatus(RequestStatus.CANCELLATION_PENDING);
+          emailService.createEmailAndSendForApproval(request);
+          //                    sendNotificationsService.sendNotificationToApproversAboutSubmittedRequest(request);
+        } else if (!userIsRequestApprover && requestHasPendingCancellation) {
+          log.error("User not authorized to cancel this request for user with email: {}", user.getEmail());
+          throw new NotAuthorizedApprovalExeception();
+        } else if (requestIsPending) {
+          allowanceService.applyPendingRequest(request, true);
+        }
+        break;
+      case REJECTED:
+        if (!userIsRequestApprover) {
+          log.error("Approver not authorized to reject this request for user with email: {}", user.getEmail());
+          throw new NotAuthorizedApprovalExeception();
+        }
+        allowanceService.applyPendingRequest(request, true);
+        sendNotificationsService.sendNotificationForRequestedLeave(request.getRequestStatus(), user);
+        break;
+      default:
+        throw new IllegalArgumentException("Unsupported request status: " + request.getRequestStatus());
+    }
 
     return requestRepository.save(request);
   }
