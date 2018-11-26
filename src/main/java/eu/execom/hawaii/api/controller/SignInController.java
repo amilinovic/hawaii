@@ -14,7 +14,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -39,14 +38,6 @@ public class SignInController {
   public ResponseEntity<UserPushTokenDto> createToken(@ApiIgnore @AuthenticationPrincipal User authUser,
       @RequestBody CreateTokenDto createTokenDto) {
     UserPushToken userPushToken = userService.createUserToken(authUser, createTokenDto);
-    return new ResponseEntity<>(new UserPushTokenDto(userPushToken), HttpStatus.OK);
-  }
-
-  @PutMapping("/updateToken")
-  public ResponseEntity<UserPushTokenDto> updateToken(@ApiIgnore @AuthenticationPrincipal User authUser,
-      @RequestBody UserPushTokenDto userPushTokenDto) {
-    UserPushToken userPushToken = MAPPER.map(userPushTokenDto, UserPushToken.class);
-    userPushTokensRepository.save(userPushToken);
     return new ResponseEntity<>(new UserPushTokenDto(userPushToken), HttpStatus.OK);
   }
 
