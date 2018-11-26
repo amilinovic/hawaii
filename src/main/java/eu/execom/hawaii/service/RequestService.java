@@ -318,5 +318,4 @@ public class RequestService {
     }
     googleCalendarService.handleRequestUpdate(request, requestCanceled);
   }
-
 }

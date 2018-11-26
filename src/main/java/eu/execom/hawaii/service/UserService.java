@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -174,20 +175,22 @@ public class UserService {
    * Creates new Object userPushToken which has push token, platform from which user signed in and user who is the owner of that push token
    */
   @Transactional
-  public void createUserToken(User authUser, CreateTokenDto createTokenDto) {
+  public UserPushToken createUserToken(User authUser, CreateTokenDto createTokenDto) {
     UserPushToken userPushToken = new UserPushToken();
     userPushToken.setUser(authUser);
     userPushToken.setPushToken(createTokenDto.getPushToken());
     userPushToken.setPlatform(createTokenDto.getPlatform());
     userPushToken.setName(createTokenDto.getName());
+    userPushToken.setCreateDateTime(LocalDateTime.now());
     userPushTokensRepository.save(userPushToken);
+    return userPushToken;
   }
 
   @Transactional
-  public void deleteUserPushToken(User authUser, String pushToken) {
+  public void deleteUserPushToken(User authUser, Long id) {
     List<UserPushToken> userPushTokens = authUser.getUserPushTokens();
     for (UserPushToken userPushToken : userPushTokens) {
-      if (userPushToken.getPushToken().equals(pushToken)) {
+      if (userPushToken.getId().equals(id)) {
         userPushTokensRepository.delete(userPushToken);
       }
     }
