@@ -48,6 +48,8 @@ public class User extends BaseEntity implements Serializable {
 
   private boolean active;
 
+  private boolean deleted;
+
   private int yearsOfService;
 
   private String pushToken;

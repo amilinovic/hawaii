@@ -97,14 +97,23 @@ public class UserService {
   }
 
   /**
+   * Sets user to be active. When user is created he is initially inactive.
+   */
+  public void activate(Long id) {
+    var user = userRepository.getOne(id);
+    user.setActive(true);
+    userRepository.save(user);
+  }
+
+  /**
    * Logically deletes User.
    *
    * @param id - the user id
    */
   @Transactional
-  public void delete(Long id) {
+  public void deleteUser(Long id) {
     var user = userRepository.getOne(id);
-    user.setActive(false);
+    user.setDeleted(true);
     userRepository.save(user);
   }
 

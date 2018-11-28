@@ -110,9 +110,16 @@ public class UserController {
     return new ResponseEntity<>(userDtos, HttpStatus.OK);
   }
 
+  @PutMapping("/{id}/activate")
+  public ResponseEntity activateUser(@PathVariable Long id) {
+    userService.activate(id);
+
+    return new ResponseEntity(HttpStatus.OK);
+  }
+
   @DeleteMapping("/{id}")
   public ResponseEntity deleteUser(@PathVariable Long id) {
-    userService.delete(id);
+    userService.deleteUser(id);
 
     return new ResponseEntity(HttpStatus.NO_CONTENT);
   }

@@ -1,9 +1,5 @@
 package eu.execom.hawaii.service;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-
 import eu.execom.hawaii.model.Absence;
 import eu.execom.hawaii.model.Allowance;
 import eu.execom.hawaii.model.Day;
@@ -18,12 +14,16 @@ import eu.execom.hawaii.model.enumerations.Duration;
 import eu.execom.hawaii.model.enumerations.RequestStatus;
 import eu.execom.hawaii.model.enumerations.UserRole;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
 public class EntityBuilder {
 
   static Team team() {
     var team = new Team();
     team.setName("My team1");
-    team.setActive(true);
+    team.setDeleted(false);
     team.setEmails("example@example.com");
     team.setUsers(new ArrayList<>());
     team.setTeamApprovers(new ArrayList<>());
@@ -111,7 +111,7 @@ public class EntityBuilder {
 
   static PublicHoliday publicholiday() {
     var publicHoliday = new PublicHoliday();
-    publicHoliday.setActive(true);
+    publicHoliday.setDeleted(false);
     publicHoliday.setName("New year");
     publicHoliday.setDate(LocalDate.of(2018, 1, 5));
 

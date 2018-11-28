@@ -69,7 +69,7 @@ public class TeamService {
   @Transactional
   public void delete(Long id) {
     var team = getById(id);
-    team.setActive(false);
+    team.setDeleted(true);
     teamRepository.save(team);
   }
 

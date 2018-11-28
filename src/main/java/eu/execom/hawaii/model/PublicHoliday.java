@@ -1,13 +1,12 @@
 package eu.execom.hawaii.model;
 
-import java.io.Serializable;
-import java.time.LocalDate;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
-
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import java.io.Serializable;
+import java.time.LocalDate;
 
 @Entity
 @Data
@@ -16,7 +15,7 @@ public class PublicHoliday extends BaseEntity implements Serializable {
 
   private static final long serialVersionUID = -482913463156061328L;
 
-  private boolean active;
+  private boolean deleted;
 
   @NotNull
   private String name;

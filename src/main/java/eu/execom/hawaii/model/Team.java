@@ -1,7 +1,8 @@
 package eu.execom.hawaii.model;
 
-import java.io.Serializable;
-import java.util.List;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -11,10 +12,8 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
-
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import java.io.Serializable;
+import java.util.List;
 
 @Entity
 @Data
@@ -30,7 +29,7 @@ public class Team extends BaseEntity implements Serializable {
 
   private String emails;
 
-  private boolean active;
+  private boolean deleted;
 
   @OneToMany(mappedBy = "team", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
   private List<User> users;

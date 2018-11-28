@@ -20,6 +20,7 @@ public class UserDto {
   private UserRole userRole;
   private String jobTitle;
   private boolean active;
+  private boolean deleted;
   private int yearsOfService;
   private List<AllowanceDto> allowances = new ArrayList<>();
 
@@ -33,6 +34,7 @@ public class UserDto {
     this.userRole = user.getUserRole();
     this.jobTitle = user.getJobTitle();
     this.active = user.isActive();
+    this.deleted = user.isDeleted();
     this.yearsOfService = user.getYearsOfService();
     this.allowances = user.getAllowances().stream().map(AllowanceDto::new).collect(Collectors.toList());
   }

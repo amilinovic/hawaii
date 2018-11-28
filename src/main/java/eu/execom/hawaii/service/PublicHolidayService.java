@@ -57,7 +57,7 @@ public class PublicHolidayService {
    */
   public void delete(Long id) {
     var publicHoliday = getById(id);
-    publicHoliday.setActive(false);
+    publicHoliday.setDeleted(true);
     publicHolidayRepository.save(publicHoliday);
   }
 
