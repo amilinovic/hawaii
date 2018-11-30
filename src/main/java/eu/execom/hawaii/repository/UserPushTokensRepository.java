@@ -6,6 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserPushTokensRepository extends JpaRepository<UserPushToken, Long> {
   UserPushToken findOneByPushToken(String pushToken);
-
   UserPushToken findOneByUserAndPushToken(User user, String pushToken);
 }
