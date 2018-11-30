@@ -173,7 +173,6 @@
                 <constraints nullable="false"/>
             </column>
             <column name="job_title" type="VARCHAR(255)"/>
-            <column name="push_token" type="VARCHAR(255)"/>
             <column name="user_role" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
@@ -213,5 +212,30 @@
     </changeSet>
     <changeSet author="admin" id="{initialId}-19">
         <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="request" constraintName="FKqws2fdeknk90txm7qnm9bxd07" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="user"/>
+    </changeSet>
+    <changeSet author="admin" id="{initialId}-20">
+        <createTable tableName="user_push_token">
+            <column autoIncrement="true" name="id" type="BIGINT(19)">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="push_token" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="platform" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="user_id" type="BIGINT(19)"/>
+            <column name="create_date_time" type="TIMESTAMP"/>
+        </createTable>
+        <addUniqueConstraint tableName="user_push_token"
+                             columnNames="push_token"
+                             constraintName="test"/>
+    </changeSet>
+    <changeSet author="admin" id="{initialId}-21">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="user_push_token"
+                                 constraintName="FK_user_push_token_user" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                                 referencedTableName="user"/>
     </changeSet>
 </databaseChangeLog>

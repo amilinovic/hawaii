@@ -4,9 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.execom.hawaii.dto.NotificationDataDto;
 import eu.execom.hawaii.dto.NotificationDto;
 import eu.execom.hawaii.dto.PushNotificationDto;
-import eu.execom.hawaii.dto.PushNotificationToApproversDto;
 import eu.execom.hawaii.model.Request;
 import eu.execom.hawaii.model.User;
+import eu.execom.hawaii.model.UserPushToken;
+import eu.execom.hawaii.model.enumerations.Platform;
 import eu.execom.hawaii.model.enumerations.RequestStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,6 +20,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,7 +38,7 @@ public class SendNotificationsService {
   }
 
   public void sendNotificationToApproversAboutSubmittedRequest(Request newRequest) {
-    PushNotificationToApproversDto result = new PushNotificationToApproversDto();
+    PushNotificationDto result = new PushNotificationDto();
     NotificationDto notification = new NotificationDto();
     NotificationDataDto data = new NotificationDataDto();
 
@@ -57,22 +59,41 @@ public class SendNotificationsService {
     notification.setTitle("New request!");
     notification.setBody(bodyMessage);
     notification.setPriority("high");
-    data.setTitle("Data title");
-    data.setBody("Data body");
+    notification.setClickAction("requestNotification");
+    data.setTitle("New request!");
+    data.setBody(bodyMessage);
     data.setPriority("high");
     data.setRequestStatus(requestStatus);
+    data.setRequestId((newRequest.getId()).intValue());
 
-    List<String> approversPushToken = newRequest.getUser()
-                                                .getTeam()
-                                                .getTeamApprovers()
-                                                .stream()
-                                                .map(User::getPushToken)
-                                                .collect(Collectors.toList());
-    result.setTo(approversPushToken);
-    result.setNotification(notification);
-    result.setData(data);
-    String convertedToJson = objectToJsonMapper(result);
-    send(convertedToJson);
+    List<User> approvers = newRequest.getUser().getTeam().getTeamApprovers();
+    for (User u : approvers) {
+      Map<Platform, List<String>> pushTokensPerPlatform = u.getUserPushTokens()
+                                                           .stream()
+                                                           .collect(Collectors.groupingBy(UserPushToken::getPlatform,
+                                                               Collectors.mapping(UserPushToken::getPushToken,
+                                                                   Collectors.toList())));
+      pushTokensPerPlatform.forEach((platform, pushTokens) -> {
+        result.setTo(pushTokens);
+        result.setData(data);
+
+        switch (platform) {
+          case IOS:
+            result.setNotification(notification);
+            result.setMutableContent(true);
+            break;
+          case ANDROID:
+            result.setNotification(null);
+            result.setMutableContent(false);
+            break;
+          default:
+            throw new IllegalArgumentException("Unsupported platform " + platform);
+        }
+
+        String convertedToJson = objectToJsonMapper(result);
+        send(convertedToJson);
+      });
+    }
   }
 
   public void sendNotificationForRequestedLeave(RequestStatus requestStatus, User user) {
@@ -81,8 +102,7 @@ public class SendNotificationsService {
     NotificationDataDto data = new NotificationDataDto();
 
     notification.setPriority("high");
-    data.setTitle("Data title");
-    data.setBody("Data body");
+    notification.setClickAction("requestNotification");
     data.setPriority("high");
     data.setRequestStatus(requestStatus);
 
@@ -90,25 +110,51 @@ public class SendNotificationsService {
       case APPROVED:
         notification.setTitle("Approved!");
         notification.setBody("Your request has been approved");
+        data.setTitle("Approved!");
+        data.setBody("Your request has been approved");
         break;
       case CANCELED:
         notification.setTitle("Cancelled!");
         notification.setBody("Your request has been cancelled");
+        data.setTitle("Cancelled!");
+        data.setBody("Your request has been cancelled");
         break;
       case REJECTED:
         notification.setTitle("Rejected!");
         notification.setBody("Your request has been rejected");
+        data.setTitle("Rejected!");
+        data.setBody("Your request has been rejected");
         break;
       default:
         throw new IllegalArgumentException("Unsupported request status: " + requestStatus);
     }
 
-    result.setTo(user.getPushToken());
-    result.setNotification(notification);
-    result.setData(data);
+    Map<Platform, List<String>> pushTokensPerPlatform = user.getUserPushTokens()
+                                                            .stream()
+                                                            .collect(Collectors.groupingBy(UserPushToken::getPlatform,
+                                                                Collectors.mapping(UserPushToken::getPushToken,
+                                                                    Collectors.toList())));
 
-    String convertedToJson = objectToJsonMapper(result);
-    send(convertedToJson);
+    pushTokensPerPlatform.forEach((platform, pushTokens) -> {
+      result.setTo(pushTokens);
+      result.setData(data);
+
+      switch (platform) {
+        case IOS:
+          result.setNotification(notification);
+          result.setMutableContent(true);
+          break;
+        case ANDROID:
+          result.setNotification(null);
+          result.setMutableContent(false);
+          break;
+        default:
+          throw new IllegalArgumentException("Unsupported platform " + platform);
+      }
+
+      String convertedToJson = objectToJsonMapper(result);
+      send(convertedToJson);
+    });
   }
 
   private String objectToJsonMapper(Object result) {

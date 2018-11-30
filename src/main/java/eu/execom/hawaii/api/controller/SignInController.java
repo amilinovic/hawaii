@@ -1,6 +1,7 @@
 package eu.execom.hawaii.api.controller;
 
-import eu.execom.hawaii.model.GenericResponse;
+import eu.execom.hawaii.dto.CreateTokenDto;
+import eu.execom.hawaii.dto.UserPushTokenDto;
 import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.UserPushToken;
 import eu.execom.hawaii.repository.UserPushTokensRepository;
@@ -45,4 +46,5 @@ public class SignInController {
     userService.deleteUserPushToken(authUser, id);
     return new ResponseEntity(HttpStatus.NO_CONTENT);
   }
+
 }

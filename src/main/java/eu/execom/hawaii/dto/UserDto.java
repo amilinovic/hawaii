@@ -23,6 +23,7 @@ public class UserDto {
   private boolean deleted;
   private int yearsOfService;
   private List<AllowanceDto> allowances = new ArrayList<>();
+  private List<UserPushTokenDto> userPushTokens = new ArrayList<>();
 
   public UserDto(User user) {
     this.id = user.getId();
@@ -37,6 +38,7 @@ public class UserDto {
     this.deleted = user.isDeleted();
     this.yearsOfService = user.getYearsOfService();
     this.allowances = user.getAllowances().stream().map(AllowanceDto::new).collect(Collectors.toList());
+    this.userPushTokens = user.getUserPushTokens().stream().map(UserPushTokenDto::new).collect(Collectors.toList());
   }
 
 }

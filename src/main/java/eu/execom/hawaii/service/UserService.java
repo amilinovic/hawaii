@@ -178,7 +178,7 @@ public class UserService {
   }
 
   /**
-   * Assigns push token to user, from device where the user is logged in
+   * Creates new Object userPushToken which has push token, platform from which user signed in and user who is the owner of that push token
    */
   @Transactional
   public UserPushToken createUserToken(User authUser, CreateTokenDto createTokenDto) {
