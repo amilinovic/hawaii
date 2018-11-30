@@ -7,7 +7,6 @@ import lombok.Data;
  * Notification is made of four parts: "to", "notification", "mutableContent" and "data".
  * NotificationDto refers to part "notification" and it is used by iOS only.
  */
-
 @Data
 public class NotificationDto {
 

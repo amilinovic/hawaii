@@ -67,7 +67,6 @@ public class SendNotificationsService {
     data.setRequestId((newRequest.getId()).intValue());
 
     List<User> approvers = newRequest.getUser().getTeam().getTeamApprovers();
-    System.out.println("approvers: " + approvers);
     for (User u : approvers) {
       Map<Platform, List<String>> pushTokensPerPlatform = u.getUserPushTokens()
                                                            .stream()
@@ -75,23 +74,24 @@ public class SendNotificationsService {
                                                                Collectors.mapping(UserPushToken::getPushToken,
                                                                    Collectors.toList())));
       pushTokensPerPlatform.forEach((platform, pushTokens) -> {
-        if (platform.equals(Platform.IOS)) {
-          result.setTo(pushTokens);
-          System.out.println("push tokens:" + pushTokens);
-          result.setNotification(notification);
-          result.setMutableContent(true);
-          result.setData(data);
-          String convertedToJson = objectToJsonMapper(result);
-          send(convertedToJson);
+        result.setTo(pushTokens);
+        result.setData(data);
+
+        switch (platform) {
+          case IOS:
+            result.setNotification(notification);
+            result.setMutableContent(true);
+            break;
+          case ANDROID:
+            result.setNotification(null);
+            result.setMutableContent(false);
+            break;
+          default:
+            throw new IllegalArgumentException("Unsupported platform " + platform);
         }
-        if (platform.equals(Platform.ANDROID)) {
-          result.setTo(pushTokens);
-          result.setMutableContent(false);
-          result.setNotification(null);
-          result.setData(data);
-          String convertedToJson = objectToJsonMapper(result);
-          send(convertedToJson);
-        }
+
+        String convertedToJson = objectToJsonMapper(result);
+        send(convertedToJson);
       });
     }
   }
@@ -136,22 +136,24 @@ public class SendNotificationsService {
                                                                     Collectors.toList())));
 
     pushTokensPerPlatform.forEach((platform, pushTokens) -> {
-      if (platform.equals(Platform.IOS)) {
-        result.setTo(pushTokens);
-        result.setNotification(notification);
-        result.setMutableContent(false);
-        result.setData(data);
-        String convertedToJson = objectToJsonMapper(result);
-        send(convertedToJson);
+      result.setTo(pushTokens);
+      result.setData(data);
+
+      switch (platform) {
+        case IOS:
+          result.setNotification(notification);
+          result.setMutableContent(true);
+          break;
+        case ANDROID:
+          result.setNotification(null);
+          result.setMutableContent(false);
+          break;
+        default:
+          throw new IllegalArgumentException("Unsupported platform " + platform);
       }
-      if (platform.equals(Platform.ANDROID)) {
-        result.setTo(pushTokens);
-        result.setMutableContent(false);
-        result.setNotification(null);
-        result.setData(data);
-        String convertedToJson = objectToJsonMapper(result);
-        send(convertedToJson);
-      }
+
+      String convertedToJson = objectToJsonMapper(result);
+      send(convertedToJson);
     });
   }
 

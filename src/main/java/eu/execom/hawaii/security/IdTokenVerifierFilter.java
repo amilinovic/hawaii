@@ -53,6 +53,7 @@ public class IdTokenVerifierFilter extends OncePerRequestFilter {
     }
 
     User user = userService.findByEmail(userIdentity.get());
+    user.getUserPushTokens();
 
     if (user == null) {
       httpServletResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);

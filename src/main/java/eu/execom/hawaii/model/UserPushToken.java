@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.CreationTimestamp;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -15,9 +16,9 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-@Entity
 @Data
 @EqualsAndHashCode(callSuper = false)
+@Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class UserPushToken extends BaseEntity implements Serializable {
 
@@ -27,6 +28,7 @@ public class UserPushToken extends BaseEntity implements Serializable {
   private User user;
 
   @NotNull
+  @Column(unique = true)
   private String pushToken;
 
   private String name;

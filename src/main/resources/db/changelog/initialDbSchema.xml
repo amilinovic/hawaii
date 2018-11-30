@@ -225,6 +225,9 @@
             <column name="user_id" type="BIGINT(19)"/>
             <column name="create_date_time" type="TIMESTAMP"/>
         </createTable>
+        <addUniqueConstraint tableName="user_push_token"
+                             columnNames="push_token"
+                             constraintName="test"/>
     </changeSet>
     <changeSet author="admin" id="{initialId}-21">
         <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="user_push_token"

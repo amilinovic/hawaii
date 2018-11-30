@@ -130,7 +130,6 @@ public class UserService {
     var userHasAllowanceForGivenYear = userAllowances.stream().anyMatch(allowance -> year == allowance.getYear());
     if (userHasAllowanceForGivenYear) {
       log.warn("User: {}, already has allowance for given year: {}", user.getEmail(), year);
-
       return user;
     }
 
@@ -143,8 +142,6 @@ public class UserService {
       var allowance = createAllowance(user, year, leaveProfile);
       userAllowances.add(allowance);
     }
-    //    allowanceRepository.saveAll(userAllowances);
-
     return save(user);
   }
 
