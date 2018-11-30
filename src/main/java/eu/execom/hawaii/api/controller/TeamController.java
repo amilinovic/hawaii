@@ -70,8 +70,8 @@ public class TeamController {
     return new ResponseEntity(HttpStatus.NO_CONTENT);
   }
 
-  private List<Team> getTeamsByStatus(Boolean active) {
-    return active == null ? teamService.findAll() : teamService.findAllByActive(active);
+  private List<Team> getTeamsByStatus(Boolean deleted) {
+    return deleted == null ? teamService.findAll() : teamService.findAllByDeleted(deleted);
   }
 
 }

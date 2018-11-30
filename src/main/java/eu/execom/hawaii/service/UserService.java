@@ -117,12 +117,10 @@ public class UserService {
 
   /**
    * Logically deletes User.
-   *
-   * @param id - the user id
    */
   @Transactional
-  public void deleteUser(Long id) {
-    var user = userRepository.getOne(id);
+  public void delete(Long userId) {
+    var user = userRepository.getOne(userId);
     user.setDeleted(true);
     userRepository.save(user);
   }

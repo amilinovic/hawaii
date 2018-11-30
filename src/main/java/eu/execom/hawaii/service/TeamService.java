@@ -33,11 +33,11 @@ public class TeamService {
   /**
    * Retrieves a list of all teams from repository by given status.
    *
-   * @param active is it active.
+   * @param deleted is it deleted.
    * @return a list of all teams.
    */
-  public List<Team> findAllByActive(boolean active) {
-    return teamRepository.findAllByActive(active);
+  public List<Team> findAllByDeleted(boolean deleted) {
+    return teamRepository.findAllByDeleted(deleted);
   }
 
   /**

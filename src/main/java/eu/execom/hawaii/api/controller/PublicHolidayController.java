@@ -42,8 +42,8 @@ public class PublicHolidayController {
   }
 
   @GetMapping
-  public ResponseEntity<List<PublicHolidayDto>> getPublicHolidays(@RequestParam boolean active) {
-    var publicHolidays = publicHolidayService.findAllByActive(active);
+  public ResponseEntity<List<PublicHolidayDto>> getPublicHolidays(@RequestParam boolean deleted) {
+    var publicHolidays = publicHolidayService.findAllByDeleted(deleted);
     var publicHolidayDtos = publicHolidays.stream().map(PublicHolidayDto::new).collect(Collectors.toList());
 
     return new ResponseEntity<>(publicHolidayDtos, HttpStatus.OK);

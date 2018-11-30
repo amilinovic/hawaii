@@ -147,7 +147,7 @@ public class UserServiceTest {
     given(userRepository.getOne(userId)).willReturn(mockUser);
 
     // when
-    userService.deleteUser(userId);
+    userService.delete(userId);
 
     // then
     verify(userRepository).getOne(anyLong());
