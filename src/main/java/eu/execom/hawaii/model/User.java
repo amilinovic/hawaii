@@ -10,6 +10,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -20,7 +21,7 @@ import java.util.List;
 
 @Entity
 @Data
-@ToString(exclude = {"approverTeams", "requests", "allowances"})
+@ToString(exclude = {"approverTeams", "requests", "allowances", "userPushTokens"})
 @EqualsAndHashCode(callSuper = false)
 public class User extends BaseEntity implements Serializable {
 
@@ -50,7 +51,8 @@ public class User extends BaseEntity implements Serializable {
 
   private int yearsOfService;
 
-  private String pushToken;
+  @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+  private List<UserPushToken> userPushTokens;
 
   @ManyToMany(mappedBy = "teamApprovers", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
   private List<Team> approverTeams;

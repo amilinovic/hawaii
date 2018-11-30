@@ -1,9 +1,13 @@
 package eu.execom.hawaii.service;
 
+import eu.execom.hawaii.dto.CreateTokenDto;
 import eu.execom.hawaii.model.Allowance;
 import eu.execom.hawaii.model.LeaveProfile;
 import eu.execom.hawaii.model.User;
+import eu.execom.hawaii.model.UserPushToken;
+import eu.execom.hawaii.repository.AllowanceRepository;
 import eu.execom.hawaii.repository.LeaveProfileRepository;
+import eu.execom.hawaii.repository.UserPushTokensRepository;
 import eu.execom.hawaii.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -25,11 +30,16 @@ public class UserService {
 
   private UserRepository userRepository;
   private LeaveProfileRepository leaveProfileRepository;
+  private UserPushTokensRepository userPushTokensRepository;
+  private AllowanceRepository allowanceRepository;
 
   @Autowired
-  public UserService(UserRepository userRepository, LeaveProfileRepository leaveProfileRepository) {
+  public UserService(UserRepository userRepository, LeaveProfileRepository leaveProfileRepository,
+      UserPushTokensRepository userPushTokensRepository, AllowanceRepository allowanceRepository) {
     this.userRepository = userRepository;
     this.leaveProfileRepository = leaveProfileRepository;
+    this.userPushTokensRepository = userPushTokensRepository;
+    this.allowanceRepository = allowanceRepository;
   }
 
   /**
@@ -120,7 +130,6 @@ public class UserService {
     var userHasAllowanceForGivenYear = userAllowances.stream().anyMatch(allowance -> year == allowance.getYear());
     if (userHasAllowanceForGivenYear) {
       log.warn("User: {}, already has allowance for given year: {}", user.getEmail(), year);
-
       return user;
     }
 
@@ -133,7 +142,6 @@ public class UserService {
       var allowance = createAllowance(user, year, leaveProfile);
       userAllowances.add(allowance);
     }
-
     return save(user);
   }
 
@@ -143,6 +151,7 @@ public class UserService {
     allowance.setYear(year);
     allowance.setAnnual(leaveProfile.getEntitlement());
     allowance.setTraining(leaveProfile.getTraining());
+    allowanceRepository.save(allowance);
 
     return allowance;
   }
@@ -160,15 +169,27 @@ public class UserService {
   }
 
   /**
-   * Assigns push token to user, from device where the user is logged in
+   * Creates new Object userPushToken which has push token, platform from which user signed in and user who is the owner of that push token
    */
-  public void updateUserPushToken(String pushToken, User authUser) {
-    User user = userRepository.findOneByEmail(authUser.getEmail());
-    if (user != null) {
-      user.setPushToken(pushToken);
-      userRepository.save(user);
-    } else {
-      throw new EntityNotFoundException();
+  @Transactional
+  public UserPushToken createUserToken(User authUser, CreateTokenDto createTokenDto) {
+    UserPushToken userPushToken = new UserPushToken();
+    userPushToken.setUser(authUser);
+    userPushToken.setPushToken(createTokenDto.getPushToken());
+    userPushToken.setPlatform(createTokenDto.getPlatform());
+    userPushToken.setName(createTokenDto.getName());
+    userPushToken.setCreateDateTime(LocalDateTime.now());
+    userPushTokensRepository.save(userPushToken);
+    return userPushToken;
+  }
+
+  @Transactional
+  public void deleteUserPushToken(User authUser, Long id) {
+    List<UserPushToken> userPushTokens = authUser.getUserPushTokens();
+    for (UserPushToken userPushToken : userPushTokens) {
+      if (userPushToken.getId().equals(id)) {
+        userPushTokensRepository.delete(userPushToken);
+      }
     }
   }
 }

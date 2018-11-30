@@ -209,19 +209,19 @@ public class RequestService {
           matchingDays.stream().map(day -> day.getDate().toString()).collect(Collectors.joining(", ")));
       throw new EntityExistsException();
     }
-
     if (AbsenceType.SICKNESS.equals(newRequest.getAbsence().getAbsenceType())) {
       newRequest.setRequestStatus(RequestStatus.APPROVED);
       allowanceService.applyRequest(newRequest, false);
       emailService.createSicknessEmailForTeammatesAndSend(newRequest);
+      requestRepository.save(newRequest);
     } else {
       newRequest.setRequestStatus(RequestStatus.PENDING);
       allowanceService.applyPendingRequest(newRequest, false);
       emailService.createEmailAndSendForApproval(newRequest);
+      requestRepository.save(newRequest);
       sendNotificationsService.sendNotificationToApproversAboutSubmittedRequest(newRequest);
     }
-
-    return requestRepository.save(newRequest);
+    return newRequest;
   }
 
   private Predicate<Day> isRequestDaysMatch(Request newRequest) {
@@ -318,5 +318,4 @@ public class RequestService {
     }
     googleCalendarService.handleRequestUpdate(request, requestCanceled);
   }
-
 }
