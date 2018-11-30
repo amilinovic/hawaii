@@ -169,6 +169,11 @@ public class UserService {
   }
 
   /**
+   * First, checks if the exact same push token for authenticated user already exists
+   * If it doesn't exist, create new UserPushToken and return the new UserPushToken
+   * If already exists, just pass him through and return the old UserPushToken
+   */
+  /**
    * Creates new Object userPushToken which has push token, platform from which user signed in and user who is the owner of that push token
    */
   @Transactional
