@@ -173,14 +173,41 @@ public class UserService {
    */
   @Transactional
   public UserPushToken createUserToken(User authUser, CreateTokenDto createTokenDto) {
-    UserPushToken userPushToken = new UserPushToken();
-    userPushToken.setUser(authUser);
-    userPushToken.setPushToken(createTokenDto.getPushToken());
-    userPushToken.setPlatform(createTokenDto.getPlatform());
-    userPushToken.setName(createTokenDto.getName());
-    userPushToken.setCreateDateTime(LocalDateTime.now());
-    userPushTokensRepository.save(userPushToken);
-    return userPushToken;
+    UserPushToken authUserPushToken = userPushTokensRepository.findOneByUserAndPushToken(authUser,
+        createTokenDto.getPushToken());
+
+    if (authUserPushToken == null) {
+      UserPushToken userPushToken = new UserPushToken();
+      userPushToken.setUser(authUser);
+      userPushToken.setPushToken(createTokenDto.getPushToken());
+      userPushToken.setPlatform(createTokenDto.getPlatform());
+      userPushToken.setName(createTokenDto.getName());
+      userPushToken.setCreateDateTime(LocalDateTime.now());
+      userPushTokensRepository.save(userPushToken);
+      return userPushToken;
+    } else {
+      return userPushTokensRepository.findOneByPushToken(createTokenDto.getPushToken());
+    }
+
+    /*List<String> authUserPushTokens = authUser.getUserPushTokens()
+                                              .stream()
+                                              .map(UserPushToken::getPushToken)
+                                              .collect(Collectors.toList());
+    for (String token : authUserPushTokens) {
+      if (!token.equals(createTokenDto.getPushToken())) {
+        UserPushToken userPushToken = new UserPushToken();
+        userPushToken.setUser(authUser);
+        userPushToken.setPushToken(createTokenDto.getPushToken());
+        userPushToken.setPlatform(createTokenDto.getPlatform());
+        userPushToken.setName(createTokenDto.getName());
+        userPushToken.setCreateDateTime(LocalDateTime.now());
+        userPushTokensRepository.save(userPushToken);
+        return userPushToken;
+      } else {
+        return userPushTokensRepository.findOneByPushToken(createTokenDto.getPushToken());
+      }
+    }*/
+
   }
 
   @Transactional
