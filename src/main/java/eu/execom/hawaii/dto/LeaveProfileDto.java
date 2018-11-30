@@ -16,6 +16,7 @@ public class LeaveProfileDto {
   private int maxCarriedOver;
   private int maxBonusDays;
   private int training;
+  private boolean deleted;
   private String comment;
   private List<UserDto> users = new ArrayList<>();
 
@@ -26,6 +27,7 @@ public class LeaveProfileDto {
     this.maxCarriedOver = leaveProfile.getMaxCarriedOver();
     this.maxBonusDays = leaveProfile.getMaxBonusDays();
     this.training = leaveProfile.getTraining();
+    this.deleted = leaveProfile.isDeleted();
     this.comment = leaveProfile.getComment();
     this.users = leaveProfile.getUsers().stream().map(UserDto::new).collect(Collectors.toList());
   }
