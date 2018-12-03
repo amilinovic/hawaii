@@ -176,18 +176,27 @@ public class UserService {
   }
 
   /**
-   * Creates new Object userPushToken which has push token, platform from which user signed in and user who is the owner of that push token
+   * First, checks if the exact same push token for authenticated user already exists
+   * If it doesn't exist, create new UserPushToken and return the new UserPushToken
+   * If already exists, just pass him through and return the old UserPushToken
    */
   @Transactional
   public UserPushToken createUserToken(User authUser, CreateTokenDto createTokenDto) {
-    UserPushToken userPushToken = new UserPushToken();
-    userPushToken.setUser(authUser);
-    userPushToken.setPushToken(createTokenDto.getPushToken());
-    userPushToken.setPlatform(createTokenDto.getPlatform());
-    userPushToken.setName(createTokenDto.getName());
-    userPushToken.setCreateDateTime(LocalDateTime.now());
-    userPushTokensRepository.save(userPushToken);
-    return userPushToken;
+    UserPushToken authUserPushToken = userPushTokensRepository.findOneByUserAndPushToken(authUser,
+        createTokenDto.getPushToken());
+
+    if (authUserPushToken == null) {
+      UserPushToken userPushToken = new UserPushToken();
+      userPushToken.setUser(authUser);
+      userPushToken.setPushToken(createTokenDto.getPushToken());
+      userPushToken.setPlatform(createTokenDto.getPlatform());
+      userPushToken.setName(createTokenDto.getName());
+      userPushToken.setCreateDateTime(LocalDateTime.now());
+      userPushTokensRepository.save(userPushToken);
+      return userPushToken;
+    } else {
+      return userPushTokensRepository.findOneByPushToken(createTokenDto.getPushToken());
+    }
   }
 
   @Transactional
