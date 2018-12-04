@@ -111,10 +111,27 @@ public class UserService {
 
   /**
    * Sets user to be active. When user is created he is initially inactive.
+   * Only inactive users can become active.
+   * Once user is deleted, he can only turn back to being inactive, and then active.
    */
   public void activate(Long id) {
     var user = userRepository.getOne(id);
-    user.setUserStatusType(UserStatusType.ACTIVE);
+
+    UserStatusType userStatusType = user.getUserStatusType();
+
+    switch (userStatusType) {
+      case INACTIVE:
+        user.setUserStatusType(UserStatusType.ACTIVE);
+        break;
+      case DELETED:
+        user.setUserStatusType(UserStatusType.INACTIVE);
+        break;
+      case ACTIVE:
+        log.warn("User already active");
+        break;
+      default:
+        throw new IllegalArgumentException("Unsupported user status type: " + userStatusType);
+    }
     userRepository.save(user);
   }
 
