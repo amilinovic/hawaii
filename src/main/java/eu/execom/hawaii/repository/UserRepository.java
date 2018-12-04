@@ -15,10 +15,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
   User findOneByEmail(String email);
 
-  List<User> findAllByUserStatusTypeIn(UserStatusType userStatusType);
+  List<User> findAllByUserStatusTypeIn(List<UserStatusType> userStatusType);
 
   Page<User> findAllByUserStatusTypeAndEmailContainingOrFullNameContaining(UserStatusType userStatusType, String email,
-      String fullName,
-      Pageable pageable);
+      String fullName, Pageable pageable);
 
 }

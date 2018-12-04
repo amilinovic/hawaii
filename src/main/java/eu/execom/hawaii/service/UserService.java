@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -58,7 +59,7 @@ public class UserService {
    * @param userStatusType what is user status (ACTIVE, INACTIVE or DELETED)
    * @return a list of all users.
    */
-  public List<User> findAllByUserStatusType(UserStatusType userStatusType) {
+  public List<User> findAllByUserStatusType(List<UserStatusType> userStatusType) {
     return userRepository.findAllByUserStatusTypeIn(userStatusType);
   }
 
@@ -66,15 +67,14 @@ public class UserService {
    * Retrieves a list of all users searched by given query.
    *
    * @param userStatusType what is user status (ACTIVE, INACTIVE or DELETED)
-   * @param searchQuery search by given query.
-   * @param pageable    the Pageable information about size per page and number of page.
+   * @param searchQuery    search by given query.
+   * @param pageable       the Pageable information about size per page and number of page.
    * @return a list of queried users by given search.
    */
   public Page<User> findAllByActiveAndEmailOrFullName(UserStatusType userStatusType, String searchQuery,
       Pageable pageable) {
     return userRepository.findAllByUserStatusTypeAndEmailContainingOrFullNameContaining(userStatusType, searchQuery,
-        searchQuery,
-        pageable);
+        searchQuery, pageable);
   }
 
   /**
@@ -171,7 +171,7 @@ public class UserService {
    */
   @Scheduled(cron = "0 0 0 1 1 *")
   public void addServiceYearsToUser() {
-    List<User> users = userRepository.findAllByUserStatusTypeIn(UserStatusType.ACTIVE);
+    List<User> users = userRepository.findAllByUserStatusTypeIn(Collections.singletonList(UserStatusType.ACTIVE));
     users.stream().forEach(user -> {
       user.setYearsOfService(user.getYearsOfService() + 1);
       userRepository.save(user);

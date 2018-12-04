@@ -1,6 +1,5 @@
 package eu.execom.hawaii.api.controller;
 
-import eu.execom.hawaii.converter.UserStatusTypeConverter;
 import eu.execom.hawaii.dto.UserDto;
 import eu.execom.hawaii.model.Allowance;
 import eu.execom.hawaii.model.User;
@@ -15,10 +14,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -28,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,15 +42,10 @@ public class UserController {
     this.userService = userService;
   }
 
-  @InitBinder
-  public void initBinder(WebDataBinder webDataBinder) {
-    webDataBinder.registerCustomEditor(UserStatusType.class, new UserStatusTypeConverter());
-  }
-
   @GetMapping
-  public ResponseEntity<List<UserDto>> getUsers(@RequestParam(required = false) UserStatusType userStatusType) {
+  public ResponseEntity<List<UserDto>> getUsers(@RequestParam(required = false) List<UserStatusType> userStatusType) {
     List<User> users;
-    if (userStatusType != null) {
+    if (userStatusType != null && !userStatusType.isEmpty()) {
       users = userService.findAllByUserStatusType(userStatusType);
     } else {
       users = userService.findAllUsers();
@@ -109,7 +102,7 @@ public class UserController {
 
   @PutMapping("/allowances/{year}")
   public ResponseEntity<List<UserDto>> createAllowanceForAllUsersForYear(@PathVariable int year) {
-    List<User> users = userService.findAllByUserStatusType(UserStatusType.ACTIVE);
+    List<User> users = userService.findAllByUserStatusType(Collections.singletonList(UserStatusType.ACTIVE));
 
     List<UserDto> userDtos = users.stream()
                                   .map(user -> userService.createAllowanceForUser(user, year))
