@@ -1,6 +1,7 @@
 package eu.execom.hawaii.security;
 
 import eu.execom.hawaii.model.User;
+import eu.execom.hawaii.model.enumerations.UserStatusType;
 import eu.execom.hawaii.service.TokenIdentityVerifier;
 import eu.execom.hawaii.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -61,7 +62,7 @@ public class IdTokenVerifierFilter extends OncePerRequestFilter {
       return;
     }
 
-    if (!user.isActive()) {
+    if (!user.getUserStatusType().equals(UserStatusType.ACTIVE)) {
       httpServletResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
       log.error("User {} found in database, but is not active", userIdentity.get());
       return;

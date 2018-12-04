@@ -1,8 +1,10 @@
 package eu.execom.hawaii.api.controller;
 
+import eu.execom.hawaii.converter.UserStatusTypeConverter;
 import eu.execom.hawaii.dto.UserDto;
 import eu.execom.hawaii.model.Allowance;
 import eu.execom.hawaii.model.User;
+import eu.execom.hawaii.model.enumerations.UserStatusType;
 import eu.execom.hawaii.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +15,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -40,11 +44,16 @@ public class UserController {
     this.userService = userService;
   }
 
+  @InitBinder
+  public void initBinder(WebDataBinder webDataBinder) {
+    webDataBinder.registerCustomEditor(UserStatusType.class, new UserStatusTypeConverter());
+  }
+
   @GetMapping
-  public ResponseEntity<List<UserDto>> getUsers(@RequestParam(required = false) Boolean active) {
+  public ResponseEntity<List<UserDto>> getUsers(@RequestParam(required = false) UserStatusType userStatusType) {
     List<User> users;
-    if (active != null) {
-      users = userService.findAllByActive(active);
+    if (userStatusType != null) {
+      users = userService.findAllByUserStatusType(userStatusType);
     } else {
       users = userService.findAllUsers();
     }
@@ -55,10 +64,10 @@ public class UserController {
 
   @GetMapping("/search")
   public ResponseEntity<Page<UserDto>> searchUsersByNameAndEmail(@RequestParam int page, @RequestParam int size,
-      @RequestParam boolean active, @RequestParam String searchQuery) {
+      @RequestParam UserStatusType userStatusType, @RequestParam String searchQuery) {
     Pageable pageable = PageRequest.of(page, size, Sort.Direction.ASC, "fullName");
 
-    Page<User> users = userService.findAllByActiveAndEmailOrFullName(active, searchQuery, pageable);
+    Page<User> users = userService.findAllByActiveAndEmailOrFullName(userStatusType, searchQuery, pageable);
     List<UserDto> userDtos = users.getContent().stream().map(UserDto::new).collect(Collectors.toList());
     Page<UserDto> pageableUserDtos = new PageImpl<>(userDtos, pageable, users.getTotalElements());
 
@@ -100,7 +109,7 @@ public class UserController {
 
   @PutMapping("/allowances/{year}")
   public ResponseEntity<List<UserDto>> createAllowanceForAllUsersForYear(@PathVariable int year) {
-    List<User> users = userService.findAllByActive(true);
+    List<User> users = userService.findAllByUserStatusType(UserStatusType.ACTIVE);
 
     List<UserDto> userDtos = users.stream()
                                   .map(user -> userService.createAllowanceForUser(user, year))

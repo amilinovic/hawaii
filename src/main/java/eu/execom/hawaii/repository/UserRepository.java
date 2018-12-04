@@ -1,6 +1,7 @@
 package eu.execom.hawaii.repository;
 
 import eu.execom.hawaii.model.User;
+import eu.execom.hawaii.model.enumerations.UserStatusType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,9 +15,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
   User findOneByEmail(String email);
 
-  List<User> findAllByActive(boolean active);
+  List<User> findAllByUserStatusTypeIn(UserStatusType userStatusType);
 
-  Page<User> findAllByActiveAndEmailContainingOrFullNameContaining(boolean active, String email, String fullName,
+  Page<User> findAllByUserStatusTypeAndEmailContainingOrFullNameContaining(UserStatusType userStatusType, String email,
+      String fullName,
       Pageable pageable);
 
 }

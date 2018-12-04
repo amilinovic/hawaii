@@ -163,10 +163,7 @@
       <column autoIncrement="true" name="id" type="BIGINT(19)">
         <constraints primaryKey="true"/>
       </column>
-      <column name="active" type="BIT(1)">
-        <constraints nullable="false"/>
-      </column>
-      <column name="deleted" type="BIT(1)">
+      <column name="user_status_type" type="VARCHAR(255)">
         <constraints nullable="false"/>
       </column>
       <column name="email" type="VARCHAR(255)">

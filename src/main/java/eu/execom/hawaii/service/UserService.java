@@ -5,6 +5,7 @@ import eu.execom.hawaii.model.Allowance;
 import eu.execom.hawaii.model.LeaveProfile;
 import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.UserPushToken;
+import eu.execom.hawaii.model.enumerations.UserStatusType;
 import eu.execom.hawaii.repository.AllowanceRepository;
 import eu.execom.hawaii.repository.LeaveProfileRepository;
 import eu.execom.hawaii.repository.UserPushTokensRepository;
@@ -54,23 +55,25 @@ public class UserService {
   /**
    * Retrieves a list of all users from repository.
    *
-   * @param active is it active.
+   * @param userStatusType what is user status (ACTIVE, INACTIVE or DELETED)
    * @return a list of all users.
    */
-  public List<User> findAllByActive(boolean active) {
-    return userRepository.findAllByActive(active);
+  public List<User> findAllByUserStatusType(UserStatusType userStatusType) {
+    return userRepository.findAllByUserStatusTypeIn(userStatusType);
   }
 
   /**
    * Retrieves a list of all users searched by given query.
    *
-   * @param active      is user active.
+   * @param userStatusType what is user status (ACTIVE, INACTIVE or DELETED)
    * @param searchQuery search by given query.
    * @param pageable    the Pageable information about size per page and number of page.
    * @return a list of queried users by given search.
    */
-  public Page<User> findAllByActiveAndEmailOrFullName(boolean active, String searchQuery, Pageable pageable) {
-    return userRepository.findAllByActiveAndEmailContainingOrFullNameContaining(active, searchQuery, searchQuery,
+  public Page<User> findAllByActiveAndEmailOrFullName(UserStatusType userStatusType, String searchQuery,
+      Pageable pageable) {
+    return userRepository.findAllByUserStatusTypeAndEmailContainingOrFullNameContaining(userStatusType, searchQuery,
+        searchQuery,
         pageable);
   }
 
@@ -111,7 +114,7 @@ public class UserService {
    */
   public void activate(Long id) {
     var user = userRepository.getOne(id);
-    user.setActive(true);
+    user.setUserStatusType(UserStatusType.ACTIVE);
     userRepository.save(user);
   }
 
@@ -121,7 +124,7 @@ public class UserService {
   @Transactional
   public void delete(Long userId) {
     var user = userRepository.getOne(userId);
-    user.setDeleted(true);
+    user.setUserStatusType(UserStatusType.DELETED);
     userRepository.save(user);
   }
 
@@ -168,7 +171,7 @@ public class UserService {
    */
   @Scheduled(cron = "0 0 0 1 1 *")
   public void addServiceYearsToUser() {
-    List<User> users = userRepository.findAllByActive(true);
+    List<User> users = userRepository.findAllByUserStatusTypeIn(UserStatusType.ACTIVE);
     users.stream().forEach(user -> {
       user.setYearsOfService(user.getYearsOfService() + 1);
       userRepository.save(user);
