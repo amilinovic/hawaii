@@ -18,6 +18,7 @@ import org.springframework.data.domain.Sort;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -65,10 +66,10 @@ public class UserServiceTest {
   public void shouldGetAllUsers() {
     // given
     var userStatusType = UserStatusType.ACTIVE;
-    given(userRepository.findAllByUserStatusTypeIn(userStatusType)).willReturn(initialUsers);
+    given(userRepository.findAllByUserStatusTypeIn(Collections.singletonList(userStatusType))).willReturn(initialUsers);
 
     // when
-    List<User> users = userService.findAllByUserStatusType(userStatusType);
+    List<User> users = userService.findAllByUserStatusType(Collections.singletonList(userStatusType));
 
     // then
     assertThat("Expect size to be two", users.size(), is(2));
