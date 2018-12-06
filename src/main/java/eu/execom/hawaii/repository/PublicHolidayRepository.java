@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface PublicHolidayRepository extends JpaRepository<PublicHoliday, Long> {
 
-  List<PublicHoliday> findAllByActive(boolean active);
+  List<PublicHoliday> findAllByDeleted(boolean deleted);
 
   List<PublicHoliday> findAllByDateIsBetween(LocalDate from, LocalDate to);
 

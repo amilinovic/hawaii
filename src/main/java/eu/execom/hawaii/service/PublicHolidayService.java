@@ -33,11 +33,11 @@ public class PublicHolidayService {
   /**
    * Retrieves all publicHolidays.
    *
-   * @param active is it active.
+   * @param deleted is it deleted.
    * @return a list of publicHolidays.
    */
-  public List<PublicHoliday> findAllByActive(boolean active) {
-    return publicHolidayRepository.findAllByActive(active);
+  public List<PublicHoliday> findAllByDeleted(boolean deleted) {
+    return publicHolidayRepository.findAllByDeleted(deleted);
   }
 
   /**
@@ -57,7 +57,7 @@ public class PublicHolidayService {
    */
   public void delete(Long id) {
     var publicHoliday = getById(id);
-    publicHoliday.setActive(false);
+    publicHoliday.setDeleted(true);
     publicHolidayRepository.save(publicHoliday);
   }
 

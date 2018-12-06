@@ -2,6 +2,7 @@ package eu.execom.hawaii.security;
 
 import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.enumerations.UserRole;
+import eu.execom.hawaii.model.enumerations.UserStatusType;
 import eu.execom.hawaii.service.TokenIdentityVerifier;
 import eu.execom.hawaii.service.UserService;
 import org.junit.Test;
@@ -90,7 +91,7 @@ public class ApiSecurityTests {
   @Test
   public void shouldReturnOkResponseForProtectedUrlRequestsWhenIdTokenIsValidAndUserIsActive() {
     User user = new User();
-    user.setActive(true);
+    user.setUserStatusType(UserStatusType.ACTIVE);
     user.setUserRole(UserRole.USER);
     given(tokenIdentityVerifier.getIdentityOf(SAMPLE_ID_TOKEN)).willReturn(Optional.of(SAMPLE_USER));
     given(userService.findByEmail(SAMPLE_USER)).willReturn(user);
@@ -157,7 +158,7 @@ public class ApiSecurityTests {
   @Test
   public void shouldReturnForbiddenStatusCodeForProtectedUrlRequestsWhichRequireHrManagerAuthorityWhenActiveUserIsNotHrManager() {
     User user = new User();
-    user.setActive(true);
+    user.setUserStatusType(UserStatusType.ACTIVE);
     user.setUserRole(UserRole.USER);
     given(tokenIdentityVerifier.getIdentityOf(SAMPLE_ID_TOKEN)).willReturn(Optional.of(SAMPLE_USER));
     given(userService.findByEmail(SAMPLE_USER)).willReturn(user);
@@ -171,7 +172,7 @@ public class ApiSecurityTests {
   @Test
   public void shouldReturnOkResponseForProtectedUrlRequestsWhichRequireHrManagerAuthorityWhenActiveUserIsHrManager() {
     User user = new User();
-    user.setActive(true);
+    user.setUserStatusType(UserStatusType.ACTIVE);
     user.setUserRole(UserRole.HR_MANAGER);
     given(tokenIdentityVerifier.getIdentityOf(SAMPLE_ID_TOKEN)).willReturn(Optional.of(SAMPLE_USER));
     given(userService.findByEmail(SAMPLE_USER)).willReturn(user);

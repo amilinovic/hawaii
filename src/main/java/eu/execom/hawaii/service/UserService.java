@@ -5,6 +5,7 @@ import eu.execom.hawaii.model.Allowance;
 import eu.execom.hawaii.model.LeaveProfile;
 import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.UserPushToken;
+import eu.execom.hawaii.model.enumerations.UserStatusType;
 import eu.execom.hawaii.repository.AllowanceRepository;
 import eu.execom.hawaii.repository.LeaveProfileRepository;
 import eu.execom.hawaii.repository.UserPushTokensRepository;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -54,24 +56,25 @@ public class UserService {
   /**
    * Retrieves a list of all users from repository.
    *
-   * @param active is it active.
+   * @param userStatusType what is user status (ACTIVE, INACTIVE or DELETED)
    * @return a list of all users.
    */
-  public List<User> findAllByActive(boolean active) {
-    return userRepository.findAllByActive(active);
+  public List<User> findAllByUserStatusType(List<UserStatusType> userStatusType) {
+    return userRepository.findAllByUserStatusTypeIn(userStatusType);
   }
 
   /**
    * Retrieves a list of all users searched by given query.
    *
-   * @param active      is user active.
-   * @param searchQuery search by given query.
-   * @param pageable    the Pageable information about size per page and number of page.
+   * @param userStatusType what is user status (ACTIVE, INACTIVE or DELETED)
+   * @param searchQuery    search by given query.
+   * @param pageable       the Pageable information about size per page and number of page.
    * @return a list of queried users by given search.
    */
-  public Page<User> findAllByActiveAndEmailOrFullName(boolean active, String searchQuery, Pageable pageable) {
-    return userRepository.findAllByActiveAndEmailContainingOrFullNameContaining(active, searchQuery, searchQuery,
-        pageable);
+  public Page<User> findAllByActiveAndEmailOrFullName(UserStatusType userStatusType, String searchQuery,
+      Pageable pageable) {
+    return userRepository.findAllByUserStatusTypeAndEmailContainingOrFullNameContaining(userStatusType, searchQuery,
+        searchQuery, pageable);
   }
 
   /**
@@ -107,14 +110,38 @@ public class UserService {
   }
 
   /**
+   * Sets user to be active. When user is created he is initially inactive.
+   * Only inactive users can become active.
+   * Once user is deleted, he can only turn back to being inactive, and then active.
+   */
+  public void activate(Long id) {
+    var user = userRepository.getOne(id);
+
+    UserStatusType userStatusType = user.getUserStatusType();
+
+    switch (userStatusType) {
+      case INACTIVE:
+        user.setUserStatusType(UserStatusType.ACTIVE);
+        break;
+      case DELETED:
+        user.setUserStatusType(UserStatusType.INACTIVE);
+        break;
+      case ACTIVE:
+        log.warn("User already active");
+        break;
+      default:
+        throw new IllegalArgumentException("Unsupported user status type: " + userStatusType);
+    }
+    userRepository.save(user);
+  }
+
+  /**
    * Logically deletes User.
-   *
-   * @param id - the user id
    */
   @Transactional
-  public void delete(Long id) {
-    var user = userRepository.getOne(id);
-    user.setActive(false);
+  public void delete(Long userId) {
+    var user = userRepository.getOne(userId);
+    user.setUserStatusType(UserStatusType.DELETED);
     userRepository.save(user);
   }
 
@@ -161,7 +188,7 @@ public class UserService {
    */
   @Scheduled(cron = "0 0 0 1 1 *")
   public void addServiceYearsToUser() {
-    List<User> users = userRepository.findAllByActive(true);
+    List<User> users = userRepository.findAllByUserStatusTypeIn(Collections.singletonList(UserStatusType.ACTIVE));
     users.stream().forEach(user -> {
       user.setYearsOfService(user.getYearsOfService() + 1);
       userRepository.save(user);

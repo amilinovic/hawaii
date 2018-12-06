@@ -3,6 +3,7 @@ package eu.execom.hawaii.api.controller;
 import eu.execom.hawaii.dto.UserDto;
 import eu.execom.hawaii.model.Allowance;
 import eu.execom.hawaii.model.User;
+import eu.execom.hawaii.model.enumerations.UserStatusType;
 import eu.execom.hawaii.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,10 +43,10 @@ public class UserController {
   }
 
   @GetMapping
-  public ResponseEntity<List<UserDto>> getUsers(@RequestParam(required = false) Boolean active) {
+  public ResponseEntity<List<UserDto>> getUsers(@RequestParam(required = false) List<UserStatusType> userStatusType) {
     List<User> users;
-    if (active != null) {
-      users = userService.findAllByActive(active);
+    if (userStatusType != null && !userStatusType.isEmpty()) {
+      users = userService.findAllByUserStatusType(userStatusType);
     } else {
       users = userService.findAllUsers();
     }
@@ -55,10 +57,10 @@ public class UserController {
 
   @GetMapping("/search")
   public ResponseEntity<Page<UserDto>> searchUsersByNameAndEmail(@RequestParam int page, @RequestParam int size,
-      @RequestParam boolean active, @RequestParam String searchQuery) {
+      @RequestParam UserStatusType userStatusType, @RequestParam String searchQuery) {
     Pageable pageable = PageRequest.of(page, size, Sort.Direction.ASC, "fullName");
 
-    Page<User> users = userService.findAllByActiveAndEmailOrFullName(active, searchQuery, pageable);
+    Page<User> users = userService.findAllByActiveAndEmailOrFullName(userStatusType, searchQuery, pageable);
     List<UserDto> userDtos = users.getContent().stream().map(UserDto::new).collect(Collectors.toList());
     Page<UserDto> pageableUserDtos = new PageImpl<>(userDtos, pageable, users.getTotalElements());
 
@@ -100,7 +102,7 @@ public class UserController {
 
   @PutMapping("/allowances/{year}")
   public ResponseEntity<List<UserDto>> createAllowanceForAllUsersForYear(@PathVariable int year) {
-    List<User> users = userService.findAllByActive(true);
+    List<User> users = userService.findAllByUserStatusType(Collections.singletonList(UserStatusType.ACTIVE));
 
     List<UserDto> userDtos = users.stream()
                                   .map(user -> userService.createAllowanceForUser(user, year))
@@ -108,6 +110,13 @@ public class UserController {
                                   .collect(Collectors.toList());
 
     return new ResponseEntity<>(userDtos, HttpStatus.OK);
+  }
+
+  @PutMapping("/{id}/activate")
+  public ResponseEntity activateUser(@PathVariable Long id) {
+    userService.activate(id);
+
+    return new ResponseEntity(HttpStatus.OK);
   }
 
   @DeleteMapping("/{id}")

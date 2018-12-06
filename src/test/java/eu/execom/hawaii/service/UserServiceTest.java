@@ -1,38 +1,36 @@
 package eu.execom.hawaii.service;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-
+import eu.execom.hawaii.model.User;
+import eu.execom.hawaii.model.enumerations.UserStatusType;
+import eu.execom.hawaii.repository.LeaveProfileRepository;
+import eu.execom.hawaii.repository.UserRepository;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import eu.execom.hawaii.model.User;
-import eu.execom.hawaii.repository.LeaveProfileRepository;
-import eu.execom.hawaii.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UserServiceTest {
@@ -67,35 +65,37 @@ public class UserServiceTest {
   @Test
   public void shouldGetAllUsers() {
     // given
-    var active = true;
-    given(userRepository.findAllByActive(active)).willReturn(initialUsers);
+    var userStatusType = UserStatusType.ACTIVE;
+    given(userRepository.findAllByUserStatusTypeIn(Collections.singletonList(userStatusType))).willReturn(initialUsers);
 
     // when
-    List<User> users = userService.findAllByActive(active);
+    List<User> users = userService.findAllByUserStatusType(Collections.singletonList(userStatusType));
 
     // then
     assertThat("Expect size to be two", users.size(), is(2));
     assertThat("Expect name to be Aria Stark", users.get(0).getFullName(), is("Aria Stark"));
     assertThat("Expect name to be John Snow", users.get(1).getFullName(), is("John Snow"));
-    verify(userRepository).findAllByActive(anyBoolean());
+    verify(userRepository).findAllByUserStatusTypeIn(any());
     verifyNoMoreInteractions(userRepository);
   }
 
   @Test
   public void shouldgetAllUsersByActiveAndEmailOrFullName() {
     //given
-    var active = true;
+    var active = UserStatusType.ACTIVE;
     var searchQuery = "aria.stark@gmail.com";
     Pageable pageable = PageRequest.of(1, 1, Sort.Direction.ASC, "fullName");
     Page<User> pagedUsers = new PageImpl<>(List.of(mockUser));
-    given(userRepository.findAllByActiveAndEmailContainingOrFullNameContaining(active, searchQuery, searchQuery, pageable)).willReturn(pagedUsers);
+    given(userRepository.findAllByUserStatusTypeAndEmailContainingOrFullNameContaining(active, searchQuery, searchQuery,
+        pageable)).willReturn(pagedUsers);
 
     //when
     Page<User> users = userService.findAllByActiveAndEmailOrFullName(active, searchQuery, pageable);
 
     //then
     assertEquals(users.getContent().size(), 1);
-    verify(userRepository).findAllByActiveAndEmailContainingOrFullNameContaining(anyBoolean(), anyString(), anyString(), any());
+    verify(userRepository).findAllByUserStatusTypeAndEmailContainingOrFullNameContaining(any(), anyString(),
+        anyString(), any());
     verifyNoMoreInteractions(userRepository);
   }
 

@@ -1,9 +1,5 @@
 package eu.execom.hawaii.service;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-
 import eu.execom.hawaii.model.Absence;
 import eu.execom.hawaii.model.Allowance;
 import eu.execom.hawaii.model.Day;
@@ -17,13 +13,18 @@ import eu.execom.hawaii.model.enumerations.AbsenceType;
 import eu.execom.hawaii.model.enumerations.Duration;
 import eu.execom.hawaii.model.enumerations.RequestStatus;
 import eu.execom.hawaii.model.enumerations.UserRole;
+import eu.execom.hawaii.model.enumerations.UserStatusType;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 public class EntityBuilder {
 
   static Team team() {
     var team = new Team();
     team.setName("My team1");
-    team.setActive(true);
+    team.setDeleted(false);
     team.setEmails("example@example.com");
     team.setUsers(new ArrayList<>());
     team.setTeamApprovers(new ArrayList<>());
@@ -40,7 +41,7 @@ public class EntityBuilder {
     user.setEmail("aria.stark@gmail.com");
     user.setUserRole(UserRole.HR_MANAGER);
     user.setJobTitle("Developer");
-    user.setActive(true);
+    user.setUserStatusType(UserStatusType.ACTIVE);
     user.setApproverTeams(new ArrayList<>());
     user.setRequests(new ArrayList<>());
     user.setAllowances(new ArrayList<>());
@@ -57,7 +58,7 @@ public class EntityBuilder {
     approver.setEmail("bruce.wayne@execom.eu");
     approver.setUserRole(UserRole.HR_MANAGER);
     approver.setJobTitle("Developer");
-    approver.setActive(true);
+    approver.setUserStatusType(UserStatusType.ACTIVE);
     approver.setApproverTeams(new ArrayList<>());
     approver.setRequests(new ArrayList<>());
     approver.setAllowances(new ArrayList<>());
@@ -111,7 +112,7 @@ public class EntityBuilder {
 
   static PublicHoliday publicholiday() {
     var publicHoliday = new PublicHoliday();
-    publicHoliday.setActive(true);
+    publicHoliday.setDeleted(false);
     publicHoliday.setName("New year");
     publicHoliday.setDate(LocalDate.of(2018, 1, 5));
 

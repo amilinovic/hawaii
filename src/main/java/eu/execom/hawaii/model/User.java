@@ -1,6 +1,7 @@
 package eu.execom.hawaii.model;
 
 import eu.execom.hawaii.model.enumerations.UserRole;
+import eu.execom.hawaii.model.enumerations.UserStatusType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -47,7 +48,9 @@ public class User extends BaseEntity implements Serializable {
 
   private String jobTitle;
 
-  private boolean active;
+  @NotNull
+  @Enumerated(EnumType.STRING)
+  private UserStatusType userStatusType;
 
   private int yearsOfService;
 

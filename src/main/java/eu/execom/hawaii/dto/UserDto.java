@@ -2,6 +2,7 @@ package eu.execom.hawaii.dto;
 
 import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.enumerations.UserRole;
+import eu.execom.hawaii.model.enumerations.UserStatusType;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -19,7 +20,7 @@ public class UserDto {
   private String email;
   private UserRole userRole;
   private String jobTitle;
-  private boolean active;
+  private UserStatusType userStatusType;
   private int yearsOfService;
   private List<AllowanceDto> allowances = new ArrayList<>();
   private List<UserPushTokenDto> userPushTokens = new ArrayList<>();
@@ -33,7 +34,7 @@ public class UserDto {
     this.email = user.getEmail();
     this.userRole = user.getUserRole();
     this.jobTitle = user.getJobTitle();
-    this.active = user.isActive();
+    this.userStatusType = user.getUserStatusType();
     this.yearsOfService = user.getYearsOfService();
     this.allowances = user.getAllowances().stream().map(AllowanceDto::new).collect(Collectors.toList());
     this.userPushTokens = user.getUserPushTokens().stream().map(UserPushTokenDto::new).collect(Collectors.toList());

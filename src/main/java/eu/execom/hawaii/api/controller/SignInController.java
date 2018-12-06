@@ -41,7 +41,7 @@ public class SignInController {
     return new ResponseEntity<>(new UserPushTokenDto(userPushToken), HttpStatus.OK);
   }
 
-  @DeleteMapping("/token")
+  @DeleteMapping("/token/{id}")
   public ResponseEntity deleteToken(@ApiIgnore @AuthenticationPrincipal User authUser, @PathVariable Long id) {
     userService.deleteUserPushToken(authUser, id);
     return new ResponseEntity(HttpStatus.NO_CONTENT);
