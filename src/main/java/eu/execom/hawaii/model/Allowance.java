@@ -20,9 +20,9 @@ public class Allowance extends BaseEntity implements Serializable {
   @ManyToOne
   private User user;
 
-  /*@ManyToOne
-  private Year year;*/
-  private int year;
+  @ManyToOne
+  private Year year;
+  //  private int year;
 
   private int annual;
 

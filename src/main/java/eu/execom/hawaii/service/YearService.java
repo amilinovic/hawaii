@@ -1,5 +1,6 @@
 package eu.execom.hawaii.service;
 
+import eu.execom.hawaii.model.Allowance;
 import eu.execom.hawaii.model.LeaveProfile;
 import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.Year;
@@ -33,21 +34,24 @@ public class YearService {
 
   public void createAllowanceOnCreateYear(Year createdYear){
     List<User> activeUsers = userRepository.findAllByUserStatusTypeIn(Collections.singletonList(UserStatusType.ACTIVE));
-    for(User u: activeUsers){
-      LeaveProfile leaveProfile = u.getLeaveProfile();
-      createAllowance(createdYear, leaveProfile, u);
+    for (User user : activeUsers) {
+      LeaveProfile leaveProfile = user.getLeaveProfile();
+      var userAllowances = user.getAllowances();
+      Allowance allowance = createAllowance(createdYear, leaveProfile, user);
+      userAllowances.add(allowance);
+      userRepository.save(user);
     }
 
   }
 
-  public void createAllowance(Year createdYear, LeaveProfile leaveProfile, User user){
-   /* Allowance allowance = new Allowance();
+  public Allowance createAllowance(Year createdYear, LeaveProfile leaveProfile, User user) {
+    Allowance allowance = new Allowance();
     allowance.setUser(user);
     allowance.setYear(createdYear);
     allowance.setAnnual(leaveProfile.getEntitlement());
     allowance.setTraining(leaveProfile.getTraining());
-    allowanceRepository.save(allowance);*/
+    allowanceRepository.save(allowance);
 
-//    return allowance;
+    return allowance;
   }
 }

@@ -5,7 +5,10 @@ import lombok.EqualsAndHashCode;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
 import java.io.Serializable;
+import java.util.List;
 
 @Entity
 @Data
@@ -17,6 +20,6 @@ public class Year extends BaseEntity implements Serializable {
   @Column(unique = true)
   private int year;
 
-  /*@OneToMany(mappedBy = "allowance", fetch = FetchType.EAGER)
-  private List<Allowance> allowances;*/
+  @OneToMany(mappedBy = "allowance", fetch = FetchType.EAGER)
+  private List<Allowance> allowances;
 }
