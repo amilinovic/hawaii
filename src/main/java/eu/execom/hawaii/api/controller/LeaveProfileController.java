@@ -57,8 +57,10 @@ public class LeaveProfileController {
   @PutMapping
   public ResponseEntity<LeaveProfileDto> updateLeaveProfile(@RequestBody LeaveProfileDto leaveProfileDto) {
     var leaveProfile = MAPPER.map(leaveProfileDto, LeaveProfile.class);
-    var leaveProfileDtoResponse = new LeaveProfileDto(leaveProfile);
-    return new ResponseEntity<>(leaveProfileDtoResponse, HttpStatus.OK);
+    leaveProfileService.save(leaveProfile);
+    /*List<User> users = userRepository.findAllByLeaveProfile(leaveProfile.getId());
+    allowanceService.updateUsersAllowances(users, leaveProfile.getId());*/
+    return new ResponseEntity<>(new LeaveProfileDto(leaveProfile), HttpStatus.OK);
   }
 
   @DeleteMapping("/{id}")
