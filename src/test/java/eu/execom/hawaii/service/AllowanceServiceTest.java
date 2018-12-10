@@ -26,7 +26,7 @@ public class AllowanceServiceTest {
   }
 */
 
-  @Test
+  /*@Test
   public void shouldGetAllowanceByUser() {
     // given
     given(allowanceRepository.findByUserIdAndYear(mockUser.getId(), 2018)).willReturn(currentYearAllowance);
@@ -38,7 +38,7 @@ public class AllowanceServiceTest {
     assertThat("Expected year to be 2018", allowance.getYear(), is(2018));
     verify(allowanceRepository).findByUserIdAndYear(anyLong(), anyInt());
     verifyNoMoreInteractions(allowanceRepository);
-  }
+  }*/
 /*
   @Test
   public void shouldApplyAnnualLeaveRequestOnCurrentAndNextYear() {
