@@ -1,5 +1,6 @@
 package eu.execom.hawaii.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.enumerations.UserRole;
 import eu.execom.hawaii.model.enumerations.UserStatusType;
@@ -22,7 +23,10 @@ public class UserDto {
   private String jobTitle;
   private UserStatusType userStatusType;
   private int yearsOfService;
+
+  @JsonIgnore
   private List<AllowanceDto> allowances = new ArrayList<>();
+
   private List<UserPushTokenDto> userPushTokens = new ArrayList<>();
 
   public UserDto(User user) {

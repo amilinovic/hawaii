@@ -5,11 +5,13 @@ import eu.execom.hawaii.model.Allowance;
 import eu.execom.hawaii.model.LeaveProfile;
 import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.UserPushToken;
+import eu.execom.hawaii.model.Year;
 import eu.execom.hawaii.model.enumerations.UserStatusType;
 import eu.execom.hawaii.repository.AllowanceRepository;
 import eu.execom.hawaii.repository.LeaveProfileRepository;
 import eu.execom.hawaii.repository.UserPushTokensRepository;
 import eu.execom.hawaii.repository.UserRepository;
+import eu.execom.hawaii.repository.YearRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -34,14 +37,17 @@ public class UserService {
   private LeaveProfileRepository leaveProfileRepository;
   private UserPushTokensRepository userPushTokensRepository;
   private AllowanceRepository allowanceRepository;
+  private YearRepository yearRepository;
 
   @Autowired
   public UserService(UserRepository userRepository, LeaveProfileRepository leaveProfileRepository,
-      UserPushTokensRepository userPushTokensRepository, AllowanceRepository allowanceRepository) {
+      UserPushTokensRepository userPushTokensRepository, AllowanceRepository allowanceRepository,
+      YearRepository yearRepository) {
     this.userRepository = userRepository;
     this.leaveProfileRepository = leaveProfileRepository;
     this.userPushTokensRepository = userPushTokensRepository;
     this.allowanceRepository = allowanceRepository;
+    this.yearRepository = yearRepository;
   }
 
   /**
@@ -145,12 +151,34 @@ public class UserService {
     userRepository.save(user);
   }
 
+  public User createAllowanceForUserOnCreateUser(User user) {
+    var leaveProfile = leaveProfileRepository.getOne(user.getLeaveProfile().getId());
+    var openedActiveYears = yearRepository.findAllByYearGreaterThanEqual(LocalDate.now().getYear());
+    var userAllowances = user.getAllowances();
+    for (Year year : openedActiveYears) {
+      Allowance allowance = createAllowance(user, year, leaveProfile);
+      userAllowances.add(allowance);
+    }
+    return save(user);
+  }
+
+  private Allowance createAllowance(User user, Year year, LeaveProfile leaveProfile) {
+    Allowance allowance = new Allowance();
+    allowance.setUser(user);
+    allowance.setYear(year);
+    allowance.setAnnual(leaveProfile.getEntitlement());
+    allowance.setTraining(leaveProfile.getTraining());
+    allowanceRepository.save(allowance);
+
+    return allowance;
+  }
+
   /**
    * Assign new allowance to User based on users leave profile.
    *
    * @param user new User.
    */
-  public User createAllowanceForUser(User user, int year) {
+  /*public User createAllowanceForUser(User user, int year) {
     var leaveProfile = leaveProfileRepository.getOne(user.getLeaveProfile().getId());
     var userAllowances = user.getAllowances();
 
@@ -181,7 +209,7 @@ public class UserService {
     allowanceRepository.save(allowance);
 
     return allowance;
-  }
+  }*/
 
   /**
    * Each active user receives increment of one year of service on every year, on 1st of January

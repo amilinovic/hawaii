@@ -23,8 +23,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDate;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -76,7 +74,8 @@ public class UserController {
   @PostMapping
   public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto) {
     User user = MAPPER.map(userDto, User.class);
-    user = userService.createAllowanceForUser(user, LocalDate.now().getYear());
+    userService.save(user);
+    user = userService.createAllowanceForUserOnCreateUser(user);
 
     return new ResponseEntity<>(new UserDto(user), HttpStatus.CREATED);
   }
@@ -99,7 +98,7 @@ public class UserController {
     return new ResponseEntity<>(new UserDto(user), HttpStatus.OK);
   }*/
 
-  @PutMapping("/allowances/{year}")
+  /*@PutMapping("/allowances/{year}")
   public ResponseEntity<List<UserDto>> createAllowanceForAllUsersForYear(@PathVariable int year) {
     List<User> users = userService.findAllByUserStatusType(Collections.singletonList(UserStatusType.ACTIVE));
 
@@ -109,7 +108,7 @@ public class UserController {
                                   .collect(Collectors.toList());
 
     return new ResponseEntity<>(userDtos, HttpStatus.OK);
-  }
+  }*/
 
   @PutMapping("/{id}/activate")
   public ResponseEntity activateUser(@PathVariable Long id) {

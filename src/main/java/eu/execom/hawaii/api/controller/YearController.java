@@ -34,7 +34,7 @@ public class YearController {
   public ResponseEntity<YearDto> createYear(@RequestBody YearDto yearDto) {
     Year year = yearRepository.findOneByYear(yearDto.getYear());
     Year newYear = new Year();
-    if(year != null ) {
+    if (year == null) {
       newYear = MAPPER.map(yearDto, Year.class);
       yearService.createAllowanceOnCreateYear(newYear);
       yearService.saveYear(newYear);

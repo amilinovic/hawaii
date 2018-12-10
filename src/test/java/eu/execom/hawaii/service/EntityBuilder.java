@@ -97,7 +97,7 @@ public class EntityBuilder {
     var allowance = new Allowance();
     allowance.setId(1L);
     allowance.setUser(user);
-    allowance.setYear(2018);
+    allowance.getYear().setId(1L);
     allowance.setAnnual(160);
     allowance.setTakenAnnual(0);
     allowance.setSickness(0);

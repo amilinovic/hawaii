@@ -1,40 +1,12 @@
 package eu.execom.hawaii.service;
 
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-
-import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.List;
-
-import eu.execom.hawaii.repository.DayRepository;
-import org.junit.Before;
-import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import eu.execom.hawaii.exceptions.InsufficientHoursException;
-import eu.execom.hawaii.model.Allowance;
-import eu.execom.hawaii.model.User;
-import eu.execom.hawaii.model.enumerations.AbsenceSubtype;
-import eu.execom.hawaii.model.enumerations.AbsenceType;
-import eu.execom.hawaii.model.enumerations.RequestStatus;
-import eu.execom.hawaii.repository.AllowanceRepository;
-import eu.execom.hawaii.repository.PublicHolidayRepository;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AllowanceServiceTest {
 
-  @Mock
+  /*@Mock
   private AllowanceRepository allowanceRepository;
 
   @Mock
@@ -415,6 +387,6 @@ public class AllowanceServiceTest {
     verify(allowanceRepository, times(2)).findByUserIdAndYear(anyLong(), anyInt());
     verify(allowanceRepository).save(any());
     verifyNoMoreInteractions(allowanceRepository);
-  }
+  }*/
 
 }

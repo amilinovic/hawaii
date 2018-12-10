@@ -43,6 +43,8 @@ public class IdTokenVerifierFilter extends OncePerRequestFilter {
 
     if (idToken == null) {
       log.error("Id token not set in header for url path: {}", httpServletRequest.getServletPath());
+    } else {
+      log.info("Id token: {}", idToken);
     }
 
     Optional<String> userIdentity = getUserIdentity(idToken);

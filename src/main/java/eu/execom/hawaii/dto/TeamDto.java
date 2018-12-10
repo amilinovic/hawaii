@@ -1,5 +1,6 @@
 package eu.execom.hawaii.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import eu.execom.hawaii.model.Team;
 import lombok.Data;
 
@@ -14,7 +15,10 @@ public class TeamDto {
   private String name;
   private String emails;
   private boolean deleted;
+
+  @JsonIgnore
   private List<UserDto> users = new ArrayList<>();
+
   private List<UserDto> teamApprovers = new ArrayList<>();
 
   public TeamDto(Team team) {
