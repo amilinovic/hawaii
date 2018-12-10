@@ -1,13 +1,6 @@
 package eu.execom.hawaii.service;
 
-import eu.execom.hawaii.model.Absence;
-import eu.execom.hawaii.model.Allowance;
-import eu.execom.hawaii.model.Day;
-import eu.execom.hawaii.model.LeaveProfile;
-import eu.execom.hawaii.model.PublicHoliday;
-import eu.execom.hawaii.model.Request;
-import eu.execom.hawaii.model.Team;
-import eu.execom.hawaii.model.User;
+import eu.execom.hawaii.model.*;
 import eu.execom.hawaii.model.enumerations.AbsenceSubtype;
 import eu.execom.hawaii.model.enumerations.AbsenceType;
 import eu.execom.hawaii.model.enumerations.Duration;
@@ -93,11 +86,11 @@ public class EntityBuilder {
     return request;
   }
 
-  static Allowance allowance(User user) {
+  static Allowance allowance(User user, Year year) {
     var allowance = new Allowance();
     allowance.setId(1L);
     allowance.setUser(user);
-    allowance.setYear(2018);
+    allowance.setYear(year);
     allowance.setAnnual(160);
     allowance.setTakenAnnual(0);
     allowance.setSickness(0);

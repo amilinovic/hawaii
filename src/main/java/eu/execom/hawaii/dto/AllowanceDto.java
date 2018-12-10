@@ -1,13 +1,14 @@
 package eu.execom.hawaii.dto;
 
 import eu.execom.hawaii.model.Allowance;
+import eu.execom.hawaii.model.Year;
 import lombok.Data;
 
 @Data
 public class AllowanceDto {
 
   private Long userId;
-  private int year;
+  private Year year;
   private int annual;
   private int takenAnnual;
   private int pendingAnnual;

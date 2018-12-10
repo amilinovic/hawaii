@@ -158,6 +158,8 @@ public class UserServiceTest {
     verifyNoMoreInteractions(allMocks);
   }
 
+    //commented because createAllowance in UserService is commented
+/*
   @Test
   public void shouldCreateAllowanceForNewUser() {
     // given
@@ -176,8 +178,9 @@ public class UserServiceTest {
     verify(userRepository).save(any());
     verifyNoMoreInteractions(allMocks);
   }
-
-  @Test
+*/
+  //same
+/*  @Test
   public void shouldCreateAllowanceUserForNextYear() {
     // given
     var user = EntityBuilder.user(EntityBuilder.team());
@@ -200,8 +203,10 @@ public class UserServiceTest {
     verify(leaveProfileRepository).getOne(anyLong());
     verify(userRepository).save(any());
     verifyNoMoreInteractions(allMocks);
-  }
+  }*/
 
+  //same
+/*
   @Test
   public void shouldSkipCreationNewAllowanceForUserWithExistingYearAllowance() {
     // given
@@ -223,6 +228,6 @@ public class UserServiceTest {
         is(2019));
     verify(leaveProfileRepository).getOne(anyLong());
     verifyNoMoreInteractions(allMocks);
-  }
+  }*/
 
 }

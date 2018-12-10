@@ -266,6 +266,9 @@
       <column autoIncrement="true" name="id" type="BIGINT(19)">
         <constraints primaryKey="true"/>
       </column>
+      <column name="active" type="BIT(1)">
+        <constraints nullable="true"/>
+      </column>
       <column name="year" type="INT(10)"/>
     </createTable>
   </changeSet>

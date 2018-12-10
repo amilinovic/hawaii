@@ -1,10 +1,7 @@
 package eu.execom.hawaii.service;
 
 import eu.execom.hawaii.dto.CreateTokenDto;
-import eu.execom.hawaii.model.Allowance;
-import eu.execom.hawaii.model.LeaveProfile;
-import eu.execom.hawaii.model.User;
-import eu.execom.hawaii.model.UserPushToken;
+import eu.execom.hawaii.model.*;
 import eu.execom.hawaii.model.enumerations.UserStatusType;
 import eu.execom.hawaii.repository.AllowanceRepository;
 import eu.execom.hawaii.repository.LeaveProfileRepository;
@@ -150,7 +147,7 @@ public class UserService {
    *
    * @param user new User.
    */
-  public User createAllowanceForUser(User user, int year) {
+/*  public User createAllowanceForUser(User user, Year year) {
     var leaveProfile = leaveProfileRepository.getOne(user.getLeaveProfile().getId());
     var userAllowances = user.getAllowances();
 
@@ -181,7 +178,7 @@ public class UserService {
     allowanceRepository.save(allowance);
 
     return allowance;
-  }
+  }*/
 
   /**
    * Each active user receives increment of one year of service on every year, on 1st of January
