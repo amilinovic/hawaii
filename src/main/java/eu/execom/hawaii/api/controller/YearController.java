@@ -51,8 +51,8 @@ public class YearController {
     return new ResponseEntity<>(new YearDto(newYear), HttpStatus.CREATED);
   }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<YearDto> getYear(@PathVariable Long id) {
+  @GetMapping("/{id}")
+  public ResponseEntity<YearDto> getYear(@PathVariable Long id) {
     var year = yearService.getById(id);
     var yearDto = new YearDto(year);
 
