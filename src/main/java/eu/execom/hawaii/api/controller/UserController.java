@@ -1,7 +1,6 @@
 package eu.execom.hawaii.api.controller;
 
 import eu.execom.hawaii.dto.UserDto;
-import eu.execom.hawaii.model.Allowance;
 import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.enumerations.UserStatusType;
 import eu.execom.hawaii.service.UserService;
@@ -90,7 +89,7 @@ public class UserController {
     return new ResponseEntity<>(new UserDto(user), HttpStatus.OK);
   }
 
-  @PutMapping("/{userId}/allowance")
+ /* @PutMapping("/{userId}/allowance")
   public ResponseEntity<UserDto> createAllowanceForUserForNextYear(@PathVariable Long userId) {
     User user = userService.getUserById(userId);
     var userAllowances = user.getAllowances();
@@ -98,7 +97,7 @@ public class UserController {
     //user = userService.createAllowanceForUser(user, latestYear + 1);
 
     return new ResponseEntity<>(new UserDto(user), HttpStatus.OK);
-  }
+  }*/
 
   /*@PutMapping("/allowances/{year}")
   public ResponseEntity<List<UserDto>> createAllowanceForAllUsersForYear(@PathVariable int year) {
