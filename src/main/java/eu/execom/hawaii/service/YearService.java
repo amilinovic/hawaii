@@ -22,7 +22,8 @@ public class YearService {
   private AllowanceRepository allowanceRepository;
 
   @Autowired
-  public YearService(YearRepository yearRepository, UserRepository userRepository, AllowanceRepository allowanceRepository){
+  public YearService(YearRepository yearRepository, UserRepository userRepository,
+      AllowanceRepository allowanceRepository) {
     this.yearRepository = yearRepository;
     this.userRepository = userRepository;
     this.allowanceRepository = allowanceRepository;
@@ -46,7 +47,7 @@ public class YearService {
     yearRepository.deleteById(id);
   }
 
-  public void createAllowanceOnCreateYear(Year createdYear){
+  public void createAllowanceOnCreateYear(Year createdYear) {
     List<User> activeUsers = userRepository.findAllByUserStatusTypeIn(Collections.singletonList(UserStatusType.ACTIVE));
     for (User user : activeUsers) {
       LeaveProfile leaveProfile = user.getLeaveProfile();

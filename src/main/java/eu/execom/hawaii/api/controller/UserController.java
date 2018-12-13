@@ -88,28 +88,6 @@ public class UserController {
     return new ResponseEntity<>(new UserDto(user), HttpStatus.OK);
   }
 
- /* @PutMapping("/{userId}/allowance")
-  public ResponseEntity<UserDto> createAllowanceForUserForNextYear(@PathVariable Long userId) {
-    User user = userService.getUserById(userId);
-    var userAllowances = user.getAllowances();
-    int latestYear = userAllowances.stream().map(Allowance::getYear).reduce((a, b) -> b).orElse(0);
-    user = userService.createAllowanceForUser(user, latestYear + 1);
-
-    return new ResponseEntity<>(new UserDto(user), HttpStatus.OK);
-  }*/
-
-  /*@PutMapping("/allowances/{year}")
-  public ResponseEntity<List<UserDto>> createAllowanceForAllUsersForYear(@PathVariable int year) {
-    List<User> users = userService.findAllByUserStatusType(Collections.singletonList(UserStatusType.ACTIVE));
-
-    List<UserDto> userDtos = users.stream()
-                                  .map(user -> userService.createAllowanceForUser(user, year))
-                                  .map(UserDto::new)
-                                  .collect(Collectors.toList());
-
-    return new ResponseEntity<>(userDtos, HttpStatus.OK);
-  }*/
-
   @PutMapping("/{id}/activate")
   public ResponseEntity activateUser(@PathVariable Long id) {
     userService.activate(id);
@@ -123,5 +101,4 @@ public class UserController {
 
     return new ResponseEntity(HttpStatus.NO_CONTENT);
   }
-
 }

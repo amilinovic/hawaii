@@ -174,47 +174,9 @@ public class UserService {
   }
 
   /**
-   * Assign new allowance to User based on users leave profile.
-   *
-   * @param user new User.
-   */
-  /*public User createAllowanceForUser(User user, int year) {
-    var leaveProfile = leaveProfileRepository.getOne(user.getLeaveProfile().getId());
-    var userAllowances = user.getAllowances();
-
-    var userHasAllowanceForGivenYear = userAllowances.stream().anyMatch(allowance -> year == allowance.getYear());
-    if (userHasAllowanceForGivenYear) {
-      log.warn("User: {}, already has allowance for given year: {}", user.getEmail(), year);
-      return user;
-    }
-
-    if (userAllowances.isEmpty()) {
-      var currentYearAllowance = createAllowance(user, year, leaveProfile);
-      var nextYearAllowance = createAllowance(user, year + 1, leaveProfile);
-      userAllowances.addAll(List.of(currentYearAllowance, nextYearAllowance));
-
-    } else {
-      var allowance = createAllowance(user, year, leaveProfile);
-      userAllowances.add(allowance);
-    }
-    return save(user);
-  }
-
-  private Allowance createAllowance(User user, int year, LeaveProfile leaveProfile) {
-    Allowance allowance = new Allowance();
-    allowance.setUser(user);
-    allowance.setYear(year);
-    allowance.setAnnual(leaveProfile.getEntitlement());
-    allowance.setTraining(leaveProfile.getTraining());
-    allowanceRepository.save(allowance);
-
-    return allowance;
-  }*/
-
-  /**
    * Each active user receives increment of one year of service on every year, on 1st of January
    */
-  @Scheduled(cron = "0 0 0 1 1 *")
+  @Scheduled(cron = "0 1 1 * * *")
   public void addServiceYearsToUser() {
     List<User> users = userRepository.findAllByUserStatusTypeIn(Collections.singletonList(UserStatusType.ACTIVE));
     users.stream().forEach(user -> {
