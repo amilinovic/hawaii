@@ -1,10 +1,10 @@
 import request from 'superagent';
 
-export const tokenRequest = async accessToken => {
+export const tokenRequest = async userObj => {
   try {
     const response = await request
-      .get('/signin')
-      .set('Authorization', accessToken)
+      .get(`/users/${userObj.profileObj.email}`)
+      .set('X-ID-TOKEN', userObj.tokenId)
       .set('Accept', 'application/json');
 
     const [token, role, user] = [
@@ -13,9 +13,10 @@ export const tokenRequest = async accessToken => {
       response.body
     ];
 
-    sessionStorage.setItem('token', token);
-    sessionStorage.setItem('role', role);
-    sessionStorage.setItem('user', user);
+    // TODO vrackovic: Investigate `user` stored in sessionStorage and store it if needed in future
+    sessionStorage.setItem('token', userObj.tokenId);
+    sessionStorage.setItem('role', response.body.userRole);
+    // sessionStorage.setItem('user', user);
     return {
       token,
       role,
