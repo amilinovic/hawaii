@@ -1,22 +1,22 @@
 import React, { Component, Fragment } from 'react';
 import { Route, Switch } from 'react-router-dom';
-import Leave from '../../pages/Leave';
-import InformationHeader from '../header/InformationHeader';
-import LeaveHistory from '../../pages/LeaveHistory';
-import TeamCalendar from '../../pages/TeamCalendar';
-import ExecomCalendar from '../../pages/ExecomCalendar';
-import Sidebar from './Sidebar';
-import TopHeader from '../header/TopHeader';
-import Dashboard from '../dashboard/Dashboard';
+import Leave from '../pages/Leave';
+import InformationHeader from '../components/header/InformationHeader';
+import LeaveHistory from '../pages/LeaveHistory';
+import TeamCalendar from '../pages/TeamCalendar';
+import ExecomCalendar from '../pages/ExecomCalendar';
+import Sidebar from '../components/navigation/Sidebar';
+import TopHeader from '../components/header/TopHeader';
+import Dashboard from '../components/dashboard/Dashboard';
 
-export default class NavBar extends Component {
+export default class Login extends Component {
   render() {
     return (
       <Fragment>
-        <TopHeader />
         <div className="d-flex flex-grow-1">
           <Sidebar />
           <div className="d-flex w-100 flex-column">
+            <TopHeader />
             <InformationHeader />
             <Switch>
               <Route path="/leave" component={Leave} />
