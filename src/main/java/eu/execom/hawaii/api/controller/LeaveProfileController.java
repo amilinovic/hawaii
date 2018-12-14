@@ -58,8 +58,6 @@ public class LeaveProfileController {
   public ResponseEntity<LeaveProfileDto> updateLeaveProfile(@RequestBody LeaveProfileDto leaveProfileDto) {
     var leaveProfile = MAPPER.map(leaveProfileDto, LeaveProfile.class);
     leaveProfileService.save(leaveProfile);
-    /*List<User> users = userRepository.findAllByLeaveProfile(leaveProfile.getId());
-    allowanceService.updateUsersAllowances(users, leaveProfile.getId());*/
     return new ResponseEntity<>(new LeaveProfileDto(leaveProfile), HttpStatus.OK);
   }
 
@@ -68,5 +66,4 @@ public class LeaveProfileController {
     leaveProfileService.delete(id);
     return new ResponseEntity(HttpStatus.NO_CONTENT);
   }
-
 }

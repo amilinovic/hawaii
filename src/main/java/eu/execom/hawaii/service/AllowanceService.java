@@ -6,6 +6,7 @@ import eu.execom.hawaii.model.Day;
 import eu.execom.hawaii.model.LeaveProfile;
 import eu.execom.hawaii.model.PublicHoliday;
 import eu.execom.hawaii.model.Request;
+import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.enumerations.AbsenceSubtype;
 import eu.execom.hawaii.model.enumerations.AbsenceType;
 import eu.execom.hawaii.model.enumerations.Duration;
@@ -19,8 +20,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.IntSummaryStatistics;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -354,18 +358,18 @@ public class AllowanceService {
     }
   }
 
-  /*public Map<String, Integer> getFirstAndLastAllowancesYear(User authUser) {
+  public Map<String, Integer> getFirstAndLastAllowancesYear(User authUser) {
     List<Allowance> allowances = allowanceRepository.findAllByUserId(authUser.getId());
     Map<String, Integer> firstAndLastYear = new HashMap<>();
 
     IntSummaryStatistics firstAndLastAllowanceYear = allowances.stream()
-                                                               .map((allowance -> allowance.getYear()))
+                                                               .map((allowance -> allowance.getYear().getYear()))
                                                                .collect(Collectors.summarizingInt(Integer::intValue));
 
     firstAndLastYear.put("first", firstAndLastAllowanceYear.getMin());
     firstAndLastYear.put("last", firstAndLastAllowanceYear.getMax());
 
     return firstAndLastYear;
-  }*/
+  }
 
 }

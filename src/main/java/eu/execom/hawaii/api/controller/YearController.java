@@ -2,7 +2,6 @@ package eu.execom.hawaii.api.controller;
 
 import eu.execom.hawaii.dto.YearDto;
 import eu.execom.hawaii.model.Year;
-import eu.execom.hawaii.repository.YearRepository;
 import eu.execom.hawaii.service.YearService;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -28,25 +27,23 @@ public class YearController {
 
   private static final ModelMapper MAPPER = new ModelMapper();
 
-  private YearRepository yearRepository;
   private YearService yearService;
 
   @Autowired
-  public YearController(YearService yearService, YearRepository yearRepository) {
+  public YearController(YearService yearService) {
     this.yearService = yearService;
-    this.yearRepository = yearRepository;
   }
 
   @PostMapping
   public ResponseEntity<YearDto> createYear(@RequestBody YearDto yearDto) {
-    Year year = yearRepository.findOneByYear(yearDto.getYear());
+    Year year = yearService.findOneByYear(yearDto.getYear());
     Year newYear = new Year();
     if (year == null) {
       newYear = MAPPER.map(yearDto, Year.class);
       yearService.createAllowanceOnCreateYear(newYear);
-      yearService.saveYear(newYear);
+      yearService.save(newYear);
     } else {
-      log.error("Year already exists, cannot create same year twice!");
+      log.error("Year {} already exists, cannot create same year twice!", year.getYear());
     }
     return new ResponseEntity<>(new YearDto(newYear), HttpStatus.CREATED);
   }
@@ -70,7 +67,7 @@ public class YearController {
   @PutMapping
   public ResponseEntity<YearDto> updateYear(@RequestBody YearDto yearDto) {
     var year = MAPPER.map(yearDto, Year.class);
-    year = yearService.saveYear(year);
+    year = yearService.save(year);
 
     return new ResponseEntity<>(new YearDto(year), HttpStatus.OK);
   }
