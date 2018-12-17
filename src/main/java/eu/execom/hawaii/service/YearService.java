@@ -37,7 +37,11 @@ public class YearService {
     return yearRepository.getOne(id);
   }
 
-  public Year saveYear(Year year) {
+  public Year findOneByYear(int year) {
+    return yearRepository.findOneByYear(year);
+  }
+
+  public Year save(Year year) {
     return yearRepository.save(year);
   }
 

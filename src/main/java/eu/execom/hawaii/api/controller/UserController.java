@@ -76,7 +76,6 @@ public class UserController {
     User user = MAPPER.map(userDto, User.class);
     userService.save(user);
     user = userService.createAllowanceForUserOnCreateUser(user);
-
     return new ResponseEntity<>(new UserDto(user), HttpStatus.CREATED);
   }
 
