@@ -168,7 +168,6 @@ public class UserService {
     allowance.setYear(year);
     allowance.setAnnual(leaveProfile.getEntitlement());
     allowance.setTraining(leaveProfile.getTraining());
-    allowanceRepository.save(allowance);
 
     return allowance;
   }

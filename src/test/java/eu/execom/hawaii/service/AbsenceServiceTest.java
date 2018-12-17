@@ -1,26 +1,21 @@
-/*
 package eu.execom.hawaii.service;
 
-import static org.hamcrest.Matchers.is;
 import eu.execom.hawaii.model.Absence;
 import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.repository.AbsenceRepository;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.List;
-
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.ArgumentMatchers.any;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AbsenceServiceTest {
@@ -56,4 +51,3 @@ public class AbsenceServiceTest {
     verifyNoMoreInteractions(absenceRepository);
   }
 }
-*/
