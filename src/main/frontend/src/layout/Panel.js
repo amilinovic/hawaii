@@ -9,14 +9,22 @@ import Sidebar from '../components/navigation/Sidebar';
 import TopHeader from '../components/header/TopHeader';
 import Dashboard from '../components/dashboard/Dashboard';
 
+import { getUser } from '../store/selectors';
+import { requestUser } from '../store/actions/userActions';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 class Panel extends Component {
+  componentDidMount() {
+    // Will be removed after `/me` endpoint is created, so user info could be fetched and stored in userStore
+    this.props.requestUser(sessionStorage.getItem('userEmail'));
+  }
   render() {
     return (
       <Fragment>
         <div className="d-flex flex-grow-1">
           <Sidebar />
           <div className="d-flex w-100 flex-column">
-            <TopHeader />
+            <TopHeader user={this.props.user} />
             <InformationHeader />
             <Switch>
               <Route path="/leave" component={Leave} />
@@ -32,4 +40,19 @@ class Panel extends Component {
   }
 }
 
-export default Panel;
+const mapStateToProps = state => ({
+  user: getUser(state)
+});
+
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(
+    {
+      requestUser
+    },
+    dispatch
+  );
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Panel);
