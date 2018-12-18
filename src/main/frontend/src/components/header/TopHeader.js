@@ -5,12 +5,14 @@ import { bindActionCreators } from 'redux';
 import { requestApiData } from '../../store/actions/randomUserApiActions';
 import UserInfo from '../UserInfo';
 import { getEmployee, getFetching } from '../../store/selectors';
+import { getUser } from '../../store/selectors';
+import { requestUser } from '../../store/actions/userActions';
 
 class TopHeader extends Component {
   componentDidMount() {
     this.props.requestApiData();
+    this.props.requestUser(sessionStorage.getItem('userEmail'));
   }
-
   render() {
     return (
       // TODO change mocked data with actual data
@@ -41,12 +43,14 @@ class TopHeader extends Component {
 
 const mapStateToProps = state => ({
   employee: getEmployee(state),
-  fetching: getFetching(state)
+  fetching: getFetching(state),
+  user: getUser(state)
 });
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
+      requestUser,
       requestApiData
     },
     dispatch

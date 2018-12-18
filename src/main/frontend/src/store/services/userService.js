@@ -1,9 +1,10 @@
 import request from 'superagent';
 
-export const getTeamsApi = async () => {
+export const getUserApi = async email => {
+  console.log(email);
   try {
     return await request
-      .get('/teams')
+      .get(`/users/${email}`)
       .set('X-ID-TOKEN', sessionStorage.getItem('token'))
       .then(res => res.body)
       .catch(err => {

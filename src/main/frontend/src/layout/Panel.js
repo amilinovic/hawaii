@@ -9,7 +9,7 @@ import Sidebar from '../components/navigation/Sidebar';
 import TopHeader from '../components/header/TopHeader';
 import Dashboard from '../components/dashboard/Dashboard';
 
-export default class Login extends Component {
+class Panel extends Component {
   render() {
     return (
       <Fragment>
@@ -31,3 +31,5 @@ export default class Login extends Component {
     );
   }
 }
+
+export default Panel;
