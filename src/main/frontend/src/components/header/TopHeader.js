@@ -1,57 +1,58 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { Container, Row, Col } from 'reactstrap';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { requestApiData } from '../../store/actions/randomUserApiActions';
 import UserInfo from '../UserInfo';
-import { getEmployee, getFetching } from '../../store/selectors';
 import { getUser } from '../../store/selectors';
 import { requestUser } from '../../store/actions/userActions';
+import ExecomLogo from '../../img/execom_logo.png';
+import styled from 'styled-components';
 
+const NavHeader = styled.header`
+  width: 100%;
+  height: 50px;
+  background-color: #ededed;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: space-between;
+`;
+
+const LogoImage = styled.img`
+  height: 30px;
+`;
+
+const NavSpan = styled.span`
+  width: 100px;
+`;
 class TopHeader extends Component {
   componentDidMount() {
-    this.props.requestApiData();
     this.props.requestUser(sessionStorage.getItem('userEmail'));
   }
   render() {
     return (
-      // TODO change mocked data with actual data
-      <Container fluid>
-        <Row className="justify-content-between align-items-end py-2">
-          <Col xs="3">
-            <img
-              src="https://lh3.googleusercontent.com/Zeu3x2hWQxFtX6Mh8DYIgdqkkzN8EXI5C5regdIJm-lf0mCe2hKkQrs-kzSN7bTlY5IJbKuRI_N1Y5VLx6Z_0V51Ndk8fJ5oCIgmFg=h43"
-              alt="hawaii logo"
-            />
-          </Col>
-          <Col xs="3" className="text-center d-none d-lg-block">
-            <img
-              src="https://lh3.googleusercontent.com/Zeu3x2hWQxFtX6Mh8DYIgdqkkzN8EXI5C5regdIJm-lf0mCe2hKkQrs-kzSN7bTlY5IJbKuRI_N1Y5VLx6Z_0V51Ndk8fJ5oCIgmFg=h43"
-              alt="execom logo"
-            />
-          </Col>
-          <Col xs="3" className="justify-content-end d-none d-lg-inline-flex">
-            {this.props.fetching === '' ? null : (
-              <UserInfo employeeInfo={this.props.employee.results[0]} />
-            )}
-          </Col>
-        </Row>
-      </Container>
+      <Fragment>
+        <NavHeader>
+          <NavSpan />
+          <LogoImage src={ExecomLogo} />
+          <UserInfo
+            fullName={this.props.user.fullName}
+            userEmail={this.props.user.email}
+          />
+        </NavHeader>
+      </Fragment>
     );
   }
 }
 
 const mapStateToProps = state => ({
-  employee: getEmployee(state),
-  fetching: getFetching(state),
   user: getUser(state)
 });
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
-      requestUser,
-      requestApiData
+      requestUser
     },
     dispatch
   );
