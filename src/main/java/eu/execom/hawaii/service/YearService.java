@@ -48,7 +48,7 @@ public class YearService {
   public void delete(Long id) {
     var year = getById(id);
     year.setActive(false);
-    yearRepository.deleteById(id);
+    yearRepository.save(year);
   }
 
   public void createAllowanceOnCreateYear(Year createdYear) {
@@ -60,7 +60,6 @@ public class YearService {
       userAllowances.add(allowance);
       userRepository.save(user);
     }
-
   }
 
   public Allowance createAllowance(Year createdYear, LeaveProfile leaveProfile, User user) {
@@ -69,7 +68,6 @@ public class YearService {
     allowance.setYear(createdYear);
     allowance.setAnnual(leaveProfile.getEntitlement());
     allowance.setTraining(leaveProfile.getTraining());
-    allowanceRepository.save(allowance);
 
     return allowance;
   }

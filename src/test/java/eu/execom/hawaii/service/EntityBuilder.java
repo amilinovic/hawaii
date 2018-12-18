@@ -8,6 +8,7 @@ import eu.execom.hawaii.model.PublicHoliday;
 import eu.execom.hawaii.model.Request;
 import eu.execom.hawaii.model.Team;
 import eu.execom.hawaii.model.User;
+import eu.execom.hawaii.model.Year;
 import eu.execom.hawaii.model.enumerations.AbsenceSubtype;
 import eu.execom.hawaii.model.enumerations.AbsenceType;
 import eu.execom.hawaii.model.enumerations.Duration;
@@ -97,6 +98,7 @@ public class EntityBuilder {
     var allowance = new Allowance();
     allowance.setId(1L);
     allowance.setUser(user);
+    allowance.setYear(thisYear());
     allowance.getYear().setId(1L);
     allowance.setAnnual(160);
     allowance.setTakenAnnual(0);
@@ -108,6 +110,26 @@ public class EntityBuilder {
     allowance.setTakenTraining(0);
 
     return allowance;
+  }
+
+  static Year thisYear() {
+    var year = new Year();
+    year.setId(1L);
+    year.setActive(true);
+    year.setYear(2018);
+    year.setAllowances(new ArrayList<>());
+
+    return year;
+  }
+
+  static Year nextYear() {
+    var year = new Year();
+    year.setId(2L);
+    year.setActive(true);
+    year.setYear(2019);
+    year.setAllowances(new ArrayList<>());
+
+    return year;
   }
 
   static PublicHoliday publicholiday() {
@@ -168,5 +190,4 @@ public class EntityBuilder {
 
     return day;
   }
-
 }
