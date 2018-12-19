@@ -8,8 +8,9 @@ import { getAuthorization } from '../store/selectors';
 import store from '../store/store';
 import { push } from 'connected-react-router';
 import HawaiiWallpaper from '../img/hawaii_wallpaper.jpg';
-import styled, { withTheme } from 'styled-components';
-import { redirect } from '../store/sagas/getTokenFromSessionStorageSaga';
+import ExecomLogo from '../img/execom_logo.png';
+import styled from 'styled-components';
+import { MainLogo } from '../components/common/mainLogo';
 
 const loginButtonStyle = {
   padding: '0',
@@ -44,16 +45,23 @@ class Login extends Component {
             position: 'absolute',
             width: '500px',
             height: '200px',
-            backgroundColor: 'rgba(0,0,0,0.7)',
+            backgroundColor: 'rgba(50,50,52,0.7)',
             borderRadius: '10px',
             display: 'flex',
-            flexDirection: 'row',
+            flexDirection: 'column',
             justifyContent: 'space-evenly',
             alignItems: 'center',
-            color: 'white'
+            color: 'white',
+            border: '2px solid rgba(50,50,52)'
           }}
         >
-          <h1>Aloha</h1>
+          <MainLogo>
+            <p>Hawaii</p>
+            <span>
+              <img src={ExecomLogo} alt="execom" />
+              HR tool
+            </span>
+          </MainLogo>
           <GoogleLogin
             prompt="select_account"
             style={loginButtonStyle}
