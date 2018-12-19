@@ -6,7 +6,7 @@ const UserInfoContainer = styled.div`
   flex-direction: column;
   align-items: center;
   font-size: 12px;
-  padding-bottom: 5px;
+  padding: 5px;
 `;
 
 export default class UserInfo extends Component {

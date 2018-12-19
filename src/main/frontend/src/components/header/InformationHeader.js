@@ -1,48 +1,36 @@
 import React, { Component } from 'react';
-import { Container, Row, Col } from 'reactstrap';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import UserInfoComponent from '../UserInfoExtended';
-import { ShadowRow } from '../common/shadowRow';
-import { requestApiData } from '../../store/actions/randomUserApiActions';
-import { getEmployee, getFetching } from '../../store/selectors';
+import styled from 'styled-components';
+
+const UserInfoWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background-color: #ededed;
+  border-top: 1px solid #c0c0c3;
+  box-shadow: 0px -2px 10px 2px rgba(0, 0, 0, 0.35);
+  z-index: 1;
+`;
+
+const UserTeamInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  justify-content: center;
+`;
 
 class InformationHeader extends Component {
-  componentDidMount() {
-    this.props.requestApiData();
-  }
-
   render() {
-    // TODO change mocked data with actual data
     return (
-      <Container fluid>
-        <ShadowRow className="py-2">
-          {this.props.fetching === '' ? null : (
-            <UserInfoComponent employeeInfo={this.props.employee.results[0]} />
-          )}
-          <Col className="flex-column d-none d-xl-flex">
-            <Row className="h-100 align-items-center">
-              <Col>Team</Col>
-            </Row>
-            <Row className="h-100 align-items-center">
-              <Col>Hr manager</Col>
-            </Row>
-          </Col>
-        </ShadowRow>
-      </Container>
+      <UserInfoWrapper>
+        <UserInfoComponent userInfo={this.props.user} />
+        <UserTeamInfo>
+          <p>{this.props.user.teamName}</p>
+          <p>{this.props.user.userRole}</p>
+        </UserTeamInfo>
+      </UserInfoWrapper>
     );
   }
 }
 
-const mapStateToProps = state => ({
-  employee: getEmployee(state),
-  fetching: getFetching(state)
-});
-
-const mapDispatchToProps = dispatch =>
-  bindActionCreators({ requestApiData }, dispatch);
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(InformationHeader);
+export default InformationHeader;

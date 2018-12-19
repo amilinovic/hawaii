@@ -25,7 +25,7 @@ class Panel extends Component {
           <Sidebar />
           <div className="d-flex w-100 flex-column">
             <TopHeader user={this.props.user} />
-            <InformationHeader />
+            <InformationHeader user={this.props.user} />
             <Switch>
               <Route path="/leave" component={Leave} />
               <Route path="/leave-history" component={LeaveHistory} />
