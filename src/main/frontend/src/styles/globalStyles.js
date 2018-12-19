@@ -6,16 +6,32 @@ injectGlobal`
 *{
   user-select: none;	
 }	
-	
+
+html, body {
+  margin: 0;
+  padding: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+
 body {	
   font-family: 'Montserrat', sans-serif;
-  -webkit-font-smoothing: antialiased;	
+  -webkit-font-smoothing: antialiased;
 }
 
 #root {
+  width: 100%;
+  height: 100%;
+}
+
+.root-wrapper {
   display: flex;
-  min-height: 100vh;
-  flex-direction: column;
+  flex-direction: row;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
 }
 
 a {	

@@ -13,17 +13,24 @@ import { getUser } from '../store/selectors';
 import { requestUser } from '../store/actions/userActions';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import styled from 'styled-components';
+
+const PanelContent = styled.div`
+  flex-grow: 1;
+`;
+
 class Panel extends Component {
   componentDidMount() {
     // Will be removed after `/me` endpoint is created, so user info could be fetched and stored in userStore
     this.props.requestUser(sessionStorage.getItem('userEmail'));
   }
+
   render() {
     return (
       <Fragment>
-        <div className="d-flex flex-grow-1">
+        <div className="root-wrapper">
           <Sidebar />
-          <div className="d-flex w-100 flex-column">
+          <PanelContent>
             <TopHeader user={this.props.user} />
             <InformationHeader user={this.props.user} />
             <Switch>
@@ -33,7 +40,7 @@ class Panel extends Component {
               <Route path="/execom-calendar" component={ExecomCalendar} />
               <Route path="/dashboard" component={Dashboard} />
             </Switch>
-          </div>
+          </PanelContent>
         </div>
       </Fragment>
     );
