@@ -15,6 +15,13 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import styled from 'styled-components';
 
+const PanelContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  flex-grow: 1;
+`;
+
 const PanelContent = styled.div`
   flex-grow: 1;
 `;
@@ -30,17 +37,19 @@ class Panel extends Component {
       <Fragment>
         <div className="root-wrapper">
           <Sidebar />
-          <PanelContent>
+          <PanelContainer>
             <TopHeader user={this.props.user} />
             <InformationHeader user={this.props.user} />
-            <Switch>
-              <Route path="/leave" component={Leave} />
-              <Route path="/leave-history" component={LeaveHistory} />
-              <Route path="/team-calendar" component={TeamCalendar} />
-              <Route path="/execom-calendar" component={ExecomCalendar} />
-              <Route path="/dashboard" component={Dashboard} />
-            </Switch>
-          </PanelContent>
+            <PanelContent>
+              <Switch>
+                <Route path="/leave" component={Leave} />
+                <Route path="/leave-history" component={LeaveHistory} />
+                <Route path="/team-calendar" component={TeamCalendar} />
+                <Route path="/execom-calendar" component={ExecomCalendar} />
+                <Route path="/dashboard" component={Dashboard} />
+              </Switch>
+            </PanelContent>
+          </PanelContainer>
         </div>
       </Fragment>
     );
