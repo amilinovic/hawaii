@@ -10,6 +10,7 @@ const UserInfoWrapper = styled.div`
   border-top: 1px solid #c0c0c3;
   box-shadow: 0px -2px 10px 2px rgba(0, 0, 0, 0.35);
   z-index: 1;
+  font-size: 14px;
 `;
 
 const UserTeamInfo = styled.div`

@@ -11,6 +11,7 @@ const NavHeader = styled.header`
   align-items: flex-end;
   justify-content: space-between;
   z-index: 3;
+  padding-top: 5px;
 `;
 
 const LogoImage = styled.img`
