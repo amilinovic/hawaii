@@ -1,10 +1,29 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { NavLink } from 'react-router-dom';
+import Button from '../common/Button';
 import { requestTeams } from '../../store/actions/teamsActions';
 import { getTeams } from '../../store/selectors';
-import TeamItem from './TeamItem';
+import styled from 'styled-components';
+import TeamsTable from './TeamsTable';
+
+const TeamsContainer = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding: 30px;
+`;
+
+const ButtonContainer = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  padding-right: 20px;
+`;
 
 class Teams extends Component {
   componentDidMount() {
@@ -12,38 +31,18 @@ class Teams extends Component {
   }
 
   render() {
-    const teamItems = Object.keys(this.props.teams).map(key => {
-      return <TeamItem key={key} team={this.props.teams[key]} />;
-    });
-
     return (
-      <div className="container-fluid">
-        <div className="row">
-          <div className="col-md-12">
-            <NavLink to={'/teams/create-team'}>
-              <input
-                type="button"
-                value="Create Team"
-                className="btn btn-primary float-right"
-              />
-            </NavLink>
-          </div>
-        </div>
-        <div className="row">
-          <div className="col-md-12">
-            <table className="table table-hover">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Members</th>
-                  <th>Approvers</th>
-                </tr>
-              </thead>
-              <tbody>{teamItems}</tbody>
-            </table>
-          </div>
-        </div>
-      </div>
+      <TeamsContainer>
+        <ButtonContainer>
+          <Button
+            click={() => {
+              console.log('Button for team creation');
+            }}
+            title="Create Team"
+          />
+        </ButtonContainer>
+        {this.props.teams.length > 0 && <TeamsTable teams={this.props.teams} />}
+      </TeamsContainer>
     );
   }
 }
