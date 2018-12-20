@@ -1,4 +1,4 @@
-import { call, put, takeEvery } from 'redux-saga/effects';
+import { call, put, takeLatest } from 'redux-saga/effects';
 import {
   requestEmployees,
   receiveEmployees,
@@ -6,13 +6,13 @@ import {
 } from '../actions/employeesAction';
 import { getEmployeesApi } from '../services/employeesService';
 
-export const getEmployees = function*(action) {
+export const getEmployees = function*() {
   try {
-    const employeesInformation = yield call(getEmployeesApi, action.payload);
+    const employeesInformation = yield call(getEmployeesApi);
     yield put(receiveEmployees(employeesInformation));
   } catch (error) {
     yield put(errorReceivingEmployees(error));
   }
 };
 
-export const employeesSaga = [takeEvery(requestEmployees, getEmployeesApi)];
+export const employeesSaga = [takeLatest(requestEmployees, getEmployees)];

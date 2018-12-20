@@ -1,7 +1,7 @@
 import { handleActions } from 'redux-actions';
 import { receiveEmployees } from '../actions/employeesAction';
 
-export const initialState = {};
+export const initialState = [];
 
 const actionHandlers = {
   [receiveEmployees]: (state, action) => action.payload
