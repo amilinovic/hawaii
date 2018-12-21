@@ -24,12 +24,15 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
@@ -44,6 +47,9 @@ public class UserServiceTest {
 
   @Mock
   private YearRepository yearRepository;
+
+  @Mock
+  private EmailService emailService;
 
   @InjectMocks
   private UserService userService;
@@ -169,9 +175,9 @@ public class UserServiceTest {
     var leaveProfile = EntityBuilder.leaveProfile();
     var thisYear = EntityBuilder.thisYear();
     var nextYear = EntityBuilder.nextYear();
-    var openedYears = List.of(thisYear, nextYear);
+    var activeYears = List.of(thisYear, nextYear);
     given(leaveProfileRepository.getOne(1L)).willReturn(leaveProfile);
-    given(yearRepository.findAllByYearGreaterThanEqual(thisYear.getYear())).willReturn(openedYears);
+    given(yearRepository.findAllByYearGreaterThanEqual(thisYear.getYear())).willReturn(activeYears);
     given(userRepository.save(user)).willReturn(user);
 
     // when
@@ -179,10 +185,56 @@ public class UserServiceTest {
 
     // then
     assertThat("Expect to have two allowance created", userWithAllowance.getAllowances().size(), is(2));
+    assertThat("Expect that annual allowance for the first year is less than 160",
+        userWithAllowance.getAllowances().get(0).getTakenAnnual(), lessThan(160));
+
     assertThat("Expect to second allowance be for 2019 year",
         userWithAllowance.getAllowances().get(1).getYear().getYear(), is(2019));
+    assertThat("Expect that annual allowance for the second year is 160",
+        userWithAllowance.getAllowances().get(1).getAnnual(), is(160));
+
     verify(leaveProfileRepository).getOne(anyLong());
     verify(userRepository).save(any());
+    verifyNoMoreInteractions(allMocks);
+  }
+
+  /**
+   * Users started working date needs to be set to same month date as is today
+   * in order for test to work.
+   */
+  @Test
+  public void shouldAddServiceYearsToUser() {
+    // given
+    var user1 = EntityBuilder.user(EntityBuilder.team());
+    var user2 = EntityBuilder.approver();
+    var user1Allowance = EntityBuilder.allowance(mockUser);
+    var user2Allowance = EntityBuilder.allowanceII(mockUser);
+
+    user1.setAllowances(List.of(user1Allowance));
+    user2.setAllowances(List.of(user2Allowance));
+
+    var activeYears = List.of(EntityBuilder.thisYear(), EntityBuilder.nextYear());
+    var activeUsers = List.of(user1, user2);
+
+    given(userRepository.findAllByUserStatusTypeIn(any())).willReturn(activeUsers);
+    given(yearRepository.findAllByYearGreaterThanEqual(anyInt())).willReturn(activeYears);
+
+    // when
+    userService.addServiceYearsToUser();
+
+    //than
+    assertThat("Expect year of service to be incremented to 5", user1.getYearsOfService(), is(5));
+    assertThat("Expect annual allowance to be 168", user1.getAllowances().get(0).getAnnual(), is(168));
+    assertThat("Expect leave profile id to be 2", user1.getLeaveProfile().getId(), is(2L));
+
+    assertThat("Expect year of service to be incremented to 5", user2.getYearsOfService(), is(10));
+    assertThat("Expect annual allowance to be 176", user2.getAllowances().get(0).getAnnual(), is(176));
+    assertThat("Expect leave profile id to be 3", user2.getLeaveProfile().getId(), is(3L));
+
+    verify(userRepository).findAllByUserStatusTypeIn(any());
+    verify(yearRepository, times(2)).findAllByYearGreaterThanEqual(anyInt());
+    verify(emailService, times(2)).createLeaveProfileUpdateEmailAndSendForApproval(any());
+    verify(userRepository, times(4)).save(any());
     verifyNoMoreInteractions(allMocks);
   }
 }

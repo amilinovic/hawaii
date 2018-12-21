@@ -1,7 +1,6 @@
 package eu.execom.hawaii.service;
 
 import eu.execom.hawaii.model.Year;
-import eu.execom.hawaii.model.enumerations.UserStatusType;
 import eu.execom.hawaii.repository.UserRepository;
 import eu.execom.hawaii.repository.YearRepository;
 import org.junit.Before;
@@ -14,7 +13,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.Matchers.is;
@@ -84,7 +82,7 @@ public class YearServiceTest {
     given(yearRepository.save(mockYear)).willReturn(mockYear);
 
     // when
-    Year year = yearService.saveYear(mockYear);
+    Year year = yearService.save(mockYear);
 
     // then
     assertThat("Expect year to be 2018", year.getYear(), is(2018));
@@ -114,8 +112,7 @@ public class YearServiceTest {
     var user2 = EntityBuilder.approver();
     var activeUsers = List.of(user1, user2);
 
-    given(userRepository.findAllByUserStatusTypeIn(Collections.singletonList(UserStatusType.ACTIVE))).willReturn(
-        activeUsers);
+    given(userRepository.findAllByUserStatusTypeIn(any())).willReturn(activeUsers);
 
     // when
     yearService.createAllowanceOnCreateYear(EntityBuilder.nextYear());
@@ -128,7 +125,6 @@ public class YearServiceTest {
     verify(userRepository).findAllByUserStatusTypeIn(any());
     verify(userRepository, times(2)).save(any());
     verifyNoMoreInteractions(yearRepository);
-
   }
 }
 

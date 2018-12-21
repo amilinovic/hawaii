@@ -42,6 +42,9 @@ public class EntityBuilder {
     user.setEmail("aria.stark@gmail.com");
     user.setUserRole(UserRole.HR_MANAGER);
     user.setJobTitle("Developer");
+    user.setStartedWorkingAtExecomDate(LocalDate.of(2018, 2, 28));
+    user.setStartedWorkingDate(LocalDate.of(2016, 12, 20));
+    user.setYearsOfService(4);
     user.setUserStatusType(UserStatusType.ACTIVE);
     user.setApproverTeams(new ArrayList<>());
     user.setRequests(new ArrayList<>());
@@ -54,11 +57,14 @@ public class EntityBuilder {
     var approver = new User();
     approver.setId(3L);
     approver.setTeam(team());
-    approver.setLeaveProfile(leaveProfile());
+    approver.setLeaveProfile(leaveProfileII());
     approver.setFullName("Bruce Wayne");
     approver.setEmail("bruce.wayne@execom.eu");
     approver.setUserRole(UserRole.HR_MANAGER);
     approver.setJobTitle("Developer");
+    approver.setStartedWorkingDate(LocalDate.of(2015, 3, 3));
+    approver.setStartedWorkingDate(LocalDate.of(2015, 12, 20));
+    approver.setYearsOfService(9);
     approver.setUserStatusType(UserStatusType.ACTIVE);
     approver.setApproverTeams(new ArrayList<>());
     approver.setRequests(new ArrayList<>());
@@ -70,11 +76,25 @@ public class EntityBuilder {
   static LeaveProfile leaveProfile() {
     var leaveProfile = new LeaveProfile();
     leaveProfile.setId(1L);
-    leaveProfile.setName("Default");
+    leaveProfile.setName("Zero-Five");
     leaveProfile.setEntitlement(160);
     leaveProfile.setMaxCarriedOver(40);
     leaveProfile.setMaxBonusDays(40);
     leaveProfile.setTraining(16);
+    leaveProfile.setComment("No comment");
+    leaveProfile.setUsers(new ArrayList<>());
+
+    return leaveProfile;
+  }
+
+  static LeaveProfile leaveProfileII() {
+    var leaveProfile = new LeaveProfile();
+    leaveProfile.setId(2L);
+    leaveProfile.setName("Five-Ten");
+    leaveProfile.setEntitlement(168);
+    leaveProfile.setMaxCarriedOver(40);
+    leaveProfile.setMaxBonusDays(40);
+    leaveProfile.setTraining(24);
     leaveProfile.setComment("No comment");
     leaveProfile.setUsers(new ArrayList<>());
 
@@ -98,9 +118,29 @@ public class EntityBuilder {
     var allowance = new Allowance();
     allowance.setId(1L);
     allowance.setUser(user);
+    allowance.getUser().setId(1L);
     allowance.setYear(thisYear());
     allowance.getYear().setId(1L);
     allowance.setAnnual(160);
+    allowance.setTakenAnnual(0);
+    allowance.setSickness(0);
+    allowance.setBonus(0);
+    allowance.setCarriedOver(40);
+    allowance.setManualAdjust(0);
+    allowance.setTraining(16);
+    allowance.setTakenTraining(0);
+
+    return allowance;
+  }
+
+  static Allowance allowanceII(User user) {
+    var allowance = new Allowance();
+    allowance.setId(2L);
+    allowance.setUser(user);
+    allowance.getUser().setId(1L);
+    allowance.setYear(thisYear());
+    allowance.getYear().setId(1L);
+    allowance.setAnnual(168);
     allowance.setTakenAnnual(0);
     allowance.setSickness(0);
     allowance.setBonus(0);
