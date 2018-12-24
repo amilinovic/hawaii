@@ -18,9 +18,19 @@ const TableTh = styled.th`
   cursor: ${ifProp('disabled', 'no-drop')};
 `;
 
-const TableTd = TableTh;
+const TableTd = styled(TableTh)`
+  &:last-child {
+    border-right: 1px solid black;
+  }
+`;
 
-const TableTr = styled.tr``;
+const TableTr = styled.tr`
+  &:last-child {
+    ${TableTd}:not(:first-child) {
+      border-bottom: 1px solid black;
+    }
+  }
+`;
 
 class Calendar extends Component {
   createTableHeader = () => {

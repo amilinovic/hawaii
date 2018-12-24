@@ -16,7 +16,6 @@ const actionHandlers = {
     ...state,
     selectedYear: action.payload.selectedYear + 1,
     table: initiateTable({
-      ...state,
       selectedYear: action.payload.selectedYear + 1
     })
   }),
@@ -24,7 +23,6 @@ const actionHandlers = {
     ...state,
     selectedYear: action.payload.selectedYear - 1,
     table: initiateTable({
-      ...state,
       selectedYear: action.payload.selectedYear - 1
     })
   })
