@@ -1,5 +1,24 @@
 package eu.execom.hawaii.service;
 
+import eu.execom.hawaii.exceptions.InsufficientHoursException;
+import eu.execom.hawaii.model.Allowance;
+import eu.execom.hawaii.model.User;
+import eu.execom.hawaii.model.enumerations.AbsenceSubtype;
+import eu.execom.hawaii.model.enumerations.AbsenceType;
+import eu.execom.hawaii.model.enumerations.RequestStatus;
+import eu.execom.hawaii.repository.AllowanceRepository;
+import eu.execom.hawaii.repository.PublicHolidayRepository;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
+
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -9,27 +28,6 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-
-import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.List;
-
-import eu.execom.hawaii.repository.DayRepository;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
-import eu.execom.hawaii.exceptions.InsufficientHoursException;
-import eu.execom.hawaii.model.Allowance;
-import eu.execom.hawaii.model.User;
-import eu.execom.hawaii.model.enumerations.AbsenceSubtype;
-import eu.execom.hawaii.model.enumerations.AbsenceType;
-import eu.execom.hawaii.model.enumerations.RequestStatus;
-import eu.execom.hawaii.repository.AllowanceRepository;
-import eu.execom.hawaii.repository.PublicHolidayRepository;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AllowanceServiceTest {
@@ -417,4 +415,26 @@ public class AllowanceServiceTest {
     verifyNoMoreInteractions(allowanceRepository);
   }
 
+  @Test
+  public void shouldGetAllowancesForUser() {
+    currentYearAllowance.setTakenAnnual(100);
+    var nextYearAllowance = EntityBuilder.allowance(mockUser);
+    nextYearAllowance.setId(2L);
+    nextYearAllowance.setYear(2019);
+
+    given(allowanceRepository.findByUserIdAndYear(mockUser.getId(), 2018)).willReturn(currentYearAllowance);
+    given(allowanceRepository.findByUserIdAndYear(mockUser.getId(), 2019)).willReturn(nextYearAllowance);
+
+    // when
+    var allowanceForUserDto = allowanceService.getAllowancesForUser(mockUser);
+
+    //then
+    assertThat("Expect remaining annual hours to be 100", allowanceForUserDto.getRemainingAnnualHours(), is(100));
+    assertThat("Expect next year remaining annual hours to be 40",
+        allowanceForUserDto.getNextYearRemainingAnnualHours(), is(40));
+    assertThat("Expect remaining training hours to be 40", allowanceForUserDto.getRemainingTrainingHours(), is(16));
+
+    verify(allowanceRepository, times(2)).findByUserIdAndYear(anyLong(), anyInt());
+    verifyNoMoreInteractions(allowanceRepository);
+  }
 }
