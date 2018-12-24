@@ -114,7 +114,9 @@ class ExecomCalendar extends Component {
             </YearControlButton>
           </YearSelection>
           <CalendarContainer style={{}}>
-            {this.props.calendar && <Calendar calendar={this.props.calendar} />}
+            {this.props.calendar.table && (
+              <Calendar calendar={this.props.calendar} />
+            )}
           </CalendarContainer>
         </CalendarWrapper>
       </ExecomCalendarContainer>
