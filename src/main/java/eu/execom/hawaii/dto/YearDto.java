@@ -14,7 +14,7 @@ public class YearDto {
   private List<Allowance> allowances;
   private boolean active;
 
-  public YearDto(Year year){
+  public YearDto(Year year) {
     this.yearId = year.getId();
     this.year = year.getYear();
     this.allowances = year.getAllowances();
