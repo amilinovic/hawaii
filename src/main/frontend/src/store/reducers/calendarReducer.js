@@ -10,32 +10,39 @@ export const initialState = {};
 const actionHandlers = {
   [initDate]: (state, action) => ({
     ...action.payload,
-    table: initiateTable(action.payload)
+    table: setToday(action.payload, initiateTable(action.payload))
   }),
   [incrementYear]: (state, action) => ({
     ...state,
     selectedYear: action.payload.selectedYear + 1,
-    table: initiateTable({
-      selectedYear: action.payload.selectedYear + 1
-    })
+    table: setToday(
+      action.payload,
+      initiateTable({
+        ...action.payload,
+        selectedYear: action.payload.selectedYear + 1
+      })
+    )
   }),
   [decrementYear]: (state, action) => ({
     ...state,
     selectedYear: action.payload.selectedYear - 1,
-    table: initiateTable({
-      selectedYear: action.payload.selectedYear - 1
-    })
+    table: setToday(
+      action.payload,
+      initiateTable({
+        ...action.payload,
+        selectedYear: action.payload.selectedYear - 1
+      })
+    )
   })
 };
 
 const initiateTable = state => {
   const months = moment.months();
-  const monthsWithDays = monthName => ({
-    ...fillWithDays(monthName, months, state.selectedYear || state.year)
-  });
+  const monthsWithDays = monthName =>
+    fillWithDays(monthName, months, state.selectedYear || state.year);
   const monthObjects = months.map(monthName => ({
     name: monthName,
-    ...monthsWithDays(monthName)
+    days: [...monthsWithDays(monthName)]
   }));
   return monthObjects;
 };
@@ -48,39 +55,48 @@ const fillWithDays = (monthName, months, year) => {
     .endOf('month')
     .date();
 
-  let monthDays = {};
+  let monthDays = [];
 
   for (let i = 0; i < 31; i++) {
     i < monthLength
-      ? (monthDays[i + 1] = addMetaData(monthName, i, year))
-      : (monthDays[i + 1] = null);
+      ? (monthDays[i] = addMetaData(monthName, i, year))
+      : (monthDays[i] = null);
   }
 
   return monthDays;
 };
 
 const addMetaData = (monthName, date, year) => {
-  let dayObject = {};
+  let dayObject = { date: date + 1 };
   const dayOfWeek = moment(
     `${parseInt(date, 10) + 1}-${moment.months().indexOf(monthName) +
       1}-${parseInt(year, 10)}`,
     `DD-MM-YYYY`
   ).day();
 
-  if (moment().year() === year) {
-    if (
-      monthName === moment.months(moment().month()) &&
-      date === moment().date()
-    ) {
-      dayObject = { ...dayObject, today: true };
-    }
-  }
-
   if (dayOfWeek === 6 || dayOfWeek === 0) {
     dayObject = { ...dayObject, weekend: true };
   }
 
   return dayObject;
+};
+
+const setToday = (actionPayload, calendar) => {
+  const currentMonthObject = calendar.find(
+    month => month.name === actionPayload.currentMonth
+  );
+
+  const daysWithMarkedToday = currentMonthObject.days.map(
+    day =>
+      day.date === actionPayload.currentDay ? { ...day, today: true } : day
+  );
+
+  return calendar.map(
+    month =>
+      month.name === actionPayload.currentMonth
+        ? { name: month.name, days: daysWithMarkedToday }
+        : month
+  );
 };
 
 const reducer = handleActions(actionHandlers, initialState);

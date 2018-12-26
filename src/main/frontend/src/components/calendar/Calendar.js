@@ -48,29 +48,31 @@ class Calendar extends Component {
   };
 
   createTableRows = month => {
-    const { name, ...monthDays } = month;
+    const { name, days } = month;
 
     const tdRender = [];
+
     tdRender.push(
       <TableTd monthName key={name}>
         {name.substring(0, 3)}
       </TableTd>
     );
-    for (let i = 1; i <= 31; i++) {
-      if (monthDays[i] === null) {
-        tdRender.push(<TableTd key={`${i}.${name}`} disabled />);
+
+    days.map((day, index) => {
+      if (!day) {
+        tdRender.push(<TableTd key={`${index + 1}.${name}`} disabled />);
+      } else if (day.today) {
+        tdRender.push(<TableTd key={`${day.date}.${name}`} today />);
       } else {
         tdRender.push(
-          monthDays[i] && monthDays[i].today ? (
-            <TableTd today key={`${i}.${name}`} />
-          ) : monthDays[i].weekend ? (
-            <TableTd key={`${i}.${name}`} weekend />
+          day.weekend ? (
+            <TableTd key={`${day.date}.${name}`} weekend />
           ) : (
-            <TableTd key={`${i}.${name}`} />
+            <TableTd key={`${day.date}.${name}`} />
           )
         );
       }
-    }
+    });
 
     return <React.Fragment>{tdRender}</React.Fragment>;
   };
