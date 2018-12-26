@@ -43,7 +43,7 @@ public class YearController {
       yearService.createAllowanceOnCreateYear(newYear);
       yearService.save(newYear);
     } else {
-      log.error("Year {} already exists, cannot create same year twice!", year.getYear());
+      log.error("Year {} already exists. Will not create new one.", year.getYear());
     }
     return new ResponseEntity<>(new YearDto(newYear), HttpStatus.CREATED);
   }

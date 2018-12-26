@@ -74,7 +74,6 @@ public class UserController {
   @PostMapping
   public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto) {
     User user = MAPPER.map(userDto, User.class);
-    userService.save(user);
     user = userService.createAllowanceForUserOnCreateUser(user);
     return new ResponseEntity<>(new UserDto(user), HttpStatus.CREATED);
   }
