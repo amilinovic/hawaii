@@ -1,49 +1,13 @@
 import React, { Component } from 'react';
-import styled from 'styled-components';
-import { ifProp } from 'styled-tools';
-
-const TableTh = styled.th`
-  border: ${ifProp('header', '0px', '1px solid #c0c0c0')};
-  border: ${ifProp('monthName', '0px')};
-  border: ${ifProp('first', '0px')};
-  border-bottom: ${ifProp('header', '1px solid black')};
-  border-right: ${ifProp('monthName', '1px solid black')};
-  text-align: center;
-  padding: 5px 0px 5px 0px;
-  min-width: 20px;
-  font-size: 14px;
-  background-color: ${ifProp('disabled', '#9e9e9e')};
-  background-color: ${ifProp('weekend', '#cccccc')};
-  background-color: ${ifProp('today', 'red')};
-  cursor: ${ifProp('disabled', 'no-drop')};
-`;
-
-const TableTd = styled(TableTh)`
-  &:last-child {
-    border-right: 1px solid black;
-  }
-`;
-
-const TableTr = styled.tr`
-  &:last-child {
-    ${TableTd}:not(:first-child) {
-      border-bottom: 1px solid black;
-    }
-  }
-`;
+import { tableTd, tableTh, tableTr } from './CalendarTableElements';
 
 class Calendar extends Component {
   createTableHeader = () => {
     let thRender = [];
-    thRender.push(<TableTh first key="default" />);
+    thRender.push(tableTh('default', { first: true }));
     for (let i = 0; i < 31; i++) {
-      thRender.push(
-        <TableTh header key={i + 1}>
-          {i + 1}
-        </TableTh>
-      );
+      thRender.push(tableTh(i + 1, { header: true }, i + 1));
     }
-
     return thRender;
   };
 
@@ -52,29 +16,24 @@ class Calendar extends Component {
 
     const tdRender = [];
 
-    tdRender.push(
-      <TableTd monthName key={name}>
-        {name.substring(0, 3)}
-      </TableTd>
-    );
+    tdRender.push(tableTd(name, { monthName: true }, name.substring(0, 3)));
 
     days.map((day, index) => {
       if (!day) {
-        tdRender.push(<TableTd key={`${index + 1}.${name}`} disabled />);
+        tdRender.push(tableTd(`${index + 1}.${name}`, { disabled: true }));
       } else if (day.today) {
-        tdRender.push(<TableTd key={`${day.date}.${name}`} today />);
+        tdRender.push(tableTd(`${day.date}.${name}`, { today: true }));
       } else {
         tdRender.push(
-          day.weekend ? (
-            <TableTd key={`${day.date}.${name}`} weekend />
-          ) : (
-            <TableTd key={`${day.date}.${name}`} />
-          )
+          day.weekend
+            ? tableTd(`${day.date}.${name}`, { weekend: true })
+            : tableTd(`${day.date}.${name}`)
         );
       }
+      return day;
     });
 
-    return <React.Fragment>{tdRender}</React.Fragment>;
+    return tdRender;
   };
 
   render() {
@@ -86,13 +45,13 @@ class Calendar extends Component {
         }}
       >
         <thead>
-          <TableTr headerRow>{this.createTableHeader()}</TableTr>
+          {tableTr('monthNames', { headerRow: true }, this.createTableHeader())}
         </thead>
         <tbody>
           {this.props.calendar &&
-            this.props.calendar.table.map(month => (
-              <TableTr key={month.name}>{this.createTableRows(month)}</TableTr>
-            ))}
+            this.props.calendar.table.map(month =>
+              tableTr(month.name, {}, this.createTableRows(month))
+            )}
         </tbody>
       </table>
     );
