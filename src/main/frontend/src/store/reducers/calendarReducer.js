@@ -10,29 +10,23 @@ export const initialState = {};
 const actionHandlers = {
   [initDate]: (state, action) => ({
     ...action.payload,
-    table: setToday(action.payload, initiateTable(action.payload))
+    table: initiateTable(action.payload)
   }),
   [incrementYear]: (state, action) => ({
     ...state,
     selectedYear: action.payload.selectedYear + 1,
-    table: setToday(
-      action.payload,
-      initiateTable({
-        ...action.payload,
-        selectedYear: action.payload.selectedYear + 1
-      })
-    )
+    table: initiateTable({
+      ...state,
+      selectedYear: action.payload.selectedYear + 1
+    })
   }),
   [decrementYear]: (state, action) => ({
     ...state,
     selectedYear: action.payload.selectedYear - 1,
-    table: setToday(
-      action.payload,
-      initiateTable({
-        ...action.payload,
-        selectedYear: action.payload.selectedYear - 1
-      })
-    )
+    table: initiateTable({
+      ...state,
+      selectedYear: action.payload.selectedYear - 1
+    })
   })
 };
 
@@ -44,7 +38,10 @@ const initiateTable = state => {
     name: monthName,
     days: [...monthsWithDays(monthName)]
   }));
-  return monthObjects;
+
+  return state.selectedYear && state.selectedYear !== state.year
+    ? monthObjects
+    : setToday(state, monthObjects);
 };
 
 const fillWithDays = (monthName, months, year) => {
@@ -81,19 +78,18 @@ const addMetaData = (monthName, date, year) => {
   return dayObject;
 };
 
-const setToday = (actionPayload, calendar) => {
+const setToday = (payload, calendar) => {
   const currentMonthObject = calendar.find(
-    month => month.name === actionPayload.currentMonth
+    month => month.name === payload.currentMonth
   );
 
   const daysWithMarkedToday = currentMonthObject.days.map(
-    day =>
-      day.date === actionPayload.currentDay ? { ...day, today: true } : day
+    day => (day.date === payload.currentDay ? { ...day, today: true } : day)
   );
 
   return calendar.map(
     month =>
-      month.name === actionPayload.currentMonth
+      month.name === payload.currentMonth
         ? { name: month.name, days: daysWithMarkedToday }
         : month
   );
