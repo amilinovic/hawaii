@@ -10,16 +10,19 @@ import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.enumerations.AbsenceSubtype;
 import eu.execom.hawaii.model.enumerations.AbsenceType;
 import eu.execom.hawaii.model.enumerations.Duration;
+import eu.execom.hawaii.model.enumerations.UserStatusType;
 import eu.execom.hawaii.repository.AllowanceRepository;
 import eu.execom.hawaii.repository.PublicHolidayRepository;
 import eu.execom.hawaii.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.IntSummaryStatistics;
 import java.util.LinkedHashSet;
@@ -372,4 +375,26 @@ public class AllowanceService {
     return firstAndLastYear;
   }
 
+  /**
+   * Job that is happening every year on the 1st of January, one second after midnight
+   * For each active user it looks for any annual that is left in the previous year
+   * If there is some, it carries it over into the new year
+   * Max 5 days (40 hours) from previous year can be carried over into the following year
+   */
+  @Scheduled(cron = "1 0 0 1 1 *", zone = "Europe/Budapest")
+  public void addCarriedOverToUsers() {
+    List<User> users = userRepository.findAllByUserStatusTypeIn(Collections.singletonList(UserStatusType.ACTIVE));
+    int currentYear = LocalDate.now().getYear();
+    users.stream().forEach(user -> {
+      Allowance newYearAllowance = allowanceRepository.findByUserIdAndYear(user.getId(), currentYear);
+      Allowance lastYearAllowance = allowanceRepository.findByUserIdAndYear(user.getId(), currentYear - 1);
+      int remainingHours = calculateRemainingAnnualHours(lastYearAllowance);
+      if (remainingHours > 40) {
+        newYearAllowance.setCarriedOver(40);
+      } else {
+        newYearAllowance.setCarriedOver(remainingHours);
+      }
+      allowanceRepository.save(newYearAllowance);
+    });
+  }
 }
