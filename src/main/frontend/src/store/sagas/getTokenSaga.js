@@ -8,7 +8,7 @@ import { tokenRequest } from '../services/getTokenRequest';
 
 export const getToken = function*(action) {
   try {
-    const responseGoogle = yield call(tokenRequest, action.payload.accessToken);
+    const responseGoogle = yield call(tokenRequest, action.payload);
     yield put(receiveToken(responseGoogle));
   } catch (error) {
     yield put(receiveTokenError(error));
