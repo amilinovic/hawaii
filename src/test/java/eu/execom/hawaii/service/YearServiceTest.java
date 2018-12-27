@@ -84,7 +84,7 @@ public class YearServiceTest {
     given(yearRepository.save(mockYear)).willReturn(mockYear);
 
     // when
-    Year year = yearService.saveYear(mockYear);
+    Year year = yearService.save(mockYear);
 
     // then
     assertThat("Expect year to be 2018", year.getYear(), is(2018));
