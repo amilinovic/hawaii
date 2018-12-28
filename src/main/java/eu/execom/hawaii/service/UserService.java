@@ -7,7 +7,6 @@ import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.UserPushToken;
 import eu.execom.hawaii.model.Year;
 import eu.execom.hawaii.model.enumerations.UserStatusType;
-import eu.execom.hawaii.repository.AllowanceRepository;
 import eu.execom.hawaii.repository.LeaveProfileRepository;
 import eu.execom.hawaii.repository.UserPushTokensRepository;
 import eu.execom.hawaii.repository.UserRepository;
@@ -16,14 +15,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -36,17 +33,14 @@ public class UserService {
   private UserRepository userRepository;
   private LeaveProfileRepository leaveProfileRepository;
   private UserPushTokensRepository userPushTokensRepository;
-  private AllowanceRepository allowanceRepository;
   private YearRepository yearRepository;
 
   @Autowired
   public UserService(UserRepository userRepository, LeaveProfileRepository leaveProfileRepository,
-      UserPushTokensRepository userPushTokensRepository, AllowanceRepository allowanceRepository,
-      YearRepository yearRepository) {
+      UserPushTokensRepository userPushTokensRepository, YearRepository yearRepository) {
     this.userRepository = userRepository;
     this.leaveProfileRepository = leaveProfileRepository;
     this.userPushTokensRepository = userPushTokensRepository;
-    this.allowanceRepository = allowanceRepository;
     this.yearRepository = yearRepository;
   }
 
@@ -170,18 +164,6 @@ public class UserService {
     allowance.setTraining(leaveProfile.getTraining());
 
     return allowance;
-  }
-
-  /**
-   * Each active user receives increment of one year of service on every year, on 1st of January
-   */
-  @Scheduled(cron = "0 1 1 * * *")
-  public void addServiceYearsToUser() {
-    List<User> users = userRepository.findAllByUserStatusTypeIn(Collections.singletonList(UserStatusType.ACTIVE));
-    users.stream().forEach(user -> {
-      user.setYearsOfService(user.getYearsOfService() + 1);
-      userRepository.save(user);
-    });
   }
 
   /**

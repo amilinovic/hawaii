@@ -116,7 +116,7 @@ public class EntityBuilder {
     var year = new Year();
     year.setId(1L);
     year.setActive(true);
-    year.setYear(2018);
+    year.setYear(LocalDate.now().getYear());
     year.setAllowances(new ArrayList<>());
 
     return year;
@@ -126,7 +126,7 @@ public class EntityBuilder {
     var year = new Year();
     year.setId(2L);
     year.setActive(true);
-    year.setYear(2019);
+    year.setYear(LocalDate.now().getYear() + 1);
     year.setAllowances(new ArrayList<>());
 
     return year;

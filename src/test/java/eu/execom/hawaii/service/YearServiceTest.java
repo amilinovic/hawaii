@@ -12,7 +12,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -46,7 +45,7 @@ public class YearServiceTest {
     mockYear = EntityBuilder.thisYear();
     var mockNextYear = EntityBuilder.nextYear();
 
-    mockAllYears = new ArrayList<>(Arrays.asList(mockYear, mockNextYear));
+    mockAllYears = Arrays.asList(mockYear, mockNextYear);
   }
 
   @Test
@@ -59,7 +58,7 @@ public class YearServiceTest {
     Year year = yearService.getById(yearId);
 
     // then
-    assertThat("Expect year to be 2018", year.getYear(), is(2018));
+    assertThat("Expected year is current year", year.getYear(), is(EntityBuilder.thisYear()));
     verify(yearRepository).getOne(anyLong());
     verifyNoMoreInteractions(yearRepository);
   }
@@ -87,7 +86,7 @@ public class YearServiceTest {
     Year year = yearService.save(mockYear);
 
     // then
-    assertThat("Expect year to be 2018", year.getYear(), is(2018));
+    assertThat("Expected year is current year", year.getYear(), is(EntityBuilder.thisYear()));
     verify(yearRepository).save(ArgumentMatchers.any());
     verifyNoMoreInteractions(yearRepository);
   }
@@ -123,12 +122,13 @@ public class YearServiceTest {
     // then
     assertThat("Expect to have one allowance created for user 1", user1.getAllowances().size(), is(1));
     assertThat("Expect to have one allowance created for user 2", user2.getAllowances().size(), is(1));
-    assertThat(" Expect allowance to be for year 2019", user1.getAllowances().get(0).getYear().getYear(), is(2019));
-    assertThat("Expect allowance to be for year 2019", user2.getAllowances().get(0).getYear().getYear(), is(2019));
+    assertThat("Expect allowance to be for next year", user1.getAllowances().get(0).getYear().getYear(),
+        is(EntityBuilder.nextYear()));
+    assertThat("Expect allowance to be for next year", user2.getAllowances().get(0).getYear().getYear(),
+        is(EntityBuilder.nextYear()));
     verify(userRepository).findAllByUserStatusTypeIn(any());
     verify(userRepository, times(2)).save(any());
     verifyNoMoreInteractions(yearRepository);
-
   }
 }
 
