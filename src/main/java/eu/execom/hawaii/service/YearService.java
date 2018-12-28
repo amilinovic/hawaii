@@ -62,7 +62,7 @@ public class YearService {
     }
   }
 
-  public Allowance createAllowance(Year createdYear, LeaveProfile leaveProfile, User user) {
+  private Allowance createAllowance(Year createdYear, LeaveProfile leaveProfile, User user) {
     Allowance allowance = new Allowance();
     allowance.setUser(user);
     allowance.setYear(createdYear);
