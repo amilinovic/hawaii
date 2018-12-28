@@ -70,5 +70,4 @@ public class LeaveProfileController {
     leaveProfileService.delete(id);
     return new ResponseEntity(HttpStatus.NO_CONTENT);
   }
-
 }

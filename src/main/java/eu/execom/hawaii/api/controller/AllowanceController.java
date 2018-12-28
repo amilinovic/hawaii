@@ -30,5 +30,4 @@ public class AllowanceController {
     var firstAndLastAllowanceYear = allowanceService.getFirstAndLastAllowancesYear(authUser);
     return new ResponseEntity<>(firstAndLastAllowanceYear, HttpStatus.OK);
   }
-
 }

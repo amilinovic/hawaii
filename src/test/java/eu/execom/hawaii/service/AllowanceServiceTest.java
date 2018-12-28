@@ -1,27 +1,5 @@
 package eu.execom.hawaii.service;
 
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-
-import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.List;
-
-import eu.execom.hawaii.repository.DayRepository;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
 import eu.execom.hawaii.exceptions.InsufficientHoursException;
 import eu.execom.hawaii.model.Allowance;
 import eu.execom.hawaii.model.User;
@@ -30,6 +8,26 @@ import eu.execom.hawaii.model.enumerations.AbsenceType;
 import eu.execom.hawaii.model.enumerations.RequestStatus;
 import eu.execom.hawaii.repository.AllowanceRepository;
 import eu.execom.hawaii.repository.PublicHolidayRepository;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AllowanceServiceTest {
@@ -61,7 +59,7 @@ public class AllowanceServiceTest {
     Allowance allowance = allowanceService.getByUserAndYear(mockUser.getId(), 2018);
 
     // then
-    assertThat("Expected year to be 2018", allowance.getYear(), is(2018));
+    assertThat("Expected year to be 2018", allowance.getYear().getYear(), is(2018));
     verify(allowanceRepository).findByUserIdAndYear(anyLong(), anyInt());
     verifyNoMoreInteractions(allowanceRepository);
   }
@@ -77,7 +75,7 @@ public class AllowanceServiceTest {
     var endYearTo = LocalDate.of(2018, 12, 31);
     var nextYearAllowance = EntityBuilder.allowance(mockUser);
     nextYearAllowance.setId(2L);
-    nextYearAllowance.setYear(2019);
+    nextYearAllowance.setYear(EntityBuilder.nextYear());
 
     given(allowanceRepository.findByUserIdAndYear(mockUser.getId(), 2018)).willReturn(currentYearAllowance);
     given(allowanceRepository.findByUserIdAndYear(mockUser.getId(), 2019)).willReturn(nextYearAllowance);
@@ -105,7 +103,7 @@ public class AllowanceServiceTest {
     currentYearAllowance.setTakenAnnual(200);
     var nextYearAllowance = EntityBuilder.allowance(mockUser);
     nextYearAllowance.setId(2L);
-    nextYearAllowance.setYear(2019);
+    nextYearAllowance.setYear(EntityBuilder.nextYear());
 
     given(allowanceRepository.findByUserIdAndYear(mockUser.getId(), 2018)).willReturn(currentYearAllowance);
     given(allowanceRepository.findByUserIdAndYear(mockUser.getId(), 2019)).willReturn(nextYearAllowance);
@@ -129,7 +127,7 @@ public class AllowanceServiceTest {
     currentYearAllowance.setTakenAnnual(200);
     var nextYearAllowance = EntityBuilder.allowance(mockUser);
     nextYearAllowance.setId(2L);
-    nextYearAllowance.setYear(2019);
+    nextYearAllowance.setYear(EntityBuilder.nextYear());
 
     given(allowanceRepository.findByUserIdAndYear(mockUser.getId(), 2018)).willReturn(currentYearAllowance);
     given(allowanceRepository.findByUserIdAndYear(mockUser.getId(), 2019)).willReturn(nextYearAllowance);
@@ -153,7 +151,7 @@ public class AllowanceServiceTest {
     currentYearAllowance.setTakenAnnual(200);
     var nextYearAllowance = EntityBuilder.allowance(mockUser);
     nextYearAllowance.setId(2L);
-    nextYearAllowance.setYear(2019);
+    nextYearAllowance.setYear(EntityBuilder.nextYear());
     nextYearAllowance.setTakenAnnual(24);
 
     given(allowanceRepository.findByUserIdAndYear(mockUser.getId(), 2018)).willReturn(currentYearAllowance);
@@ -186,28 +184,28 @@ public class AllowanceServiceTest {
 
   @Test(expected = InsufficientHoursException.class)
   public void shouldFailToApplyAnnualRequestDueInsufficientHours() {
-      //given
-      var absence = EntityBuilder.absenceAnnual();
-      absence.setAbsenceSubtype(AbsenceSubtype.ANNUAL);
+    //given
+    var absence = EntityBuilder.absenceAnnual();
+    absence.setAbsenceSubtype(AbsenceSubtype.ANNUAL);
 
-      var allowance = EntityBuilder.allowance(mockUser);
-      allowance.setTakenAnnual(160);
-      allowance.setCarriedOver(0);
+    var allowance = EntityBuilder.allowance(mockUser);
+    allowance.setTakenAnnual(160);
+    allowance.setCarriedOver(0);
 
-      var nextYearAllownace = EntityBuilder.allowance(mockUser);
-      nextYearAllownace.setTakenAnnual(160);
-      nextYearAllownace.setCarriedOver(0);
+    var nextYearAllownace = EntityBuilder.allowance(mockUser);
+    nextYearAllownace.setTakenAnnual(160);
+    nextYearAllownace.setCarriedOver(0);
 
-      var dayOne = EntityBuilder.day(LocalDate.of(2018, 10, 17));
-      var dayTwo = EntityBuilder.day(LocalDate.of(2018, 10, 18));
+    var dayOne = EntityBuilder.day(LocalDate.of(2018, 10, 17));
+    var dayTwo = EntityBuilder.day(LocalDate.of(2018, 10, 18));
 
-      var request = EntityBuilder.request(absence, List.of(dayOne, dayTwo));
+    var request = EntityBuilder.request(absence, List.of(dayOne, dayTwo));
 
-      given(allowanceRepository.findByUserIdAndYear(mockUser.getId(), 2018)).willReturn(allowance);
-      given(allowanceRepository.findByUserIdAndYear(mockUser.getId(), 2019)).willReturn(nextYearAllownace);
+    given(allowanceRepository.findByUserIdAndYear(mockUser.getId(), 2018)).willReturn(allowance);
+    given(allowanceRepository.findByUserIdAndYear(mockUser.getId(), 2019)).willReturn(nextYearAllownace);
 
-      // when
-      allowanceService.applyRequest(request, false);
+    // when
+    allowanceService.applyRequest(request, false);
 
   }
 
@@ -240,7 +238,7 @@ public class AllowanceServiceTest {
     currentYearAllowance.setTakenAnnual(200);
     var nextYearAllowance = EntityBuilder.allowance(mockUser);
     nextYearAllowance.setId(2L);
-    nextYearAllowance.setYear(2019);
+    nextYearAllowance.setYear(EntityBuilder.nextYear());
     nextYearAllowance.setTakenAnnual(24);
 
     given(allowanceRepository.findByUserIdAndYear(mockUser.getId(), 2018)).willReturn(currentYearAllowance);
@@ -266,7 +264,7 @@ public class AllowanceServiceTest {
     currentYearAllowance.setTakenAnnual(160);
     var nextYearAllowance = EntityBuilder.allowance(mockUser);
     nextYearAllowance.setId(2L);
-    nextYearAllowance.setYear(2019);
+    nextYearAllowance.setYear(EntityBuilder.nextYear());
 
     given(allowanceRepository.findByUserIdAndYear(mockUser.getId(), 2018)).willReturn(currentYearAllowance);
     given(allowanceRepository.findByUserIdAndYear(mockUser.getId(), 2019)).willReturn(nextYearAllowance);
@@ -291,7 +289,7 @@ public class AllowanceServiceTest {
     currentYearAllowance.setTakenAnnual(200);
     var nextYearAllowance = EntityBuilder.allowance(mockUser);
     nextYearAllowance.setId(2L);
-    nextYearAllowance.setYear(2019);
+    nextYearAllowance.setYear(EntityBuilder.nextYear());
     nextYearAllowance.setPendingAnnual(8);
 
     given(allowanceRepository.findByUserIdAndYear(mockUser.getId(), 2018)).willReturn(currentYearAllowance);
@@ -317,7 +315,7 @@ public class AllowanceServiceTest {
     currentYearAllowance.setTakenAnnual(200);
     var nextYearAllowance = EntityBuilder.allowance(mockUser);
     nextYearAllowance.setId(2L);
-    nextYearAllowance.setYear(2019);
+    nextYearAllowance.setYear(EntityBuilder.nextYear());
     nextYearAllowance.setPendingAnnual(16);
 
     given(allowanceRepository.findByUserIdAndYear(mockUser.getId(), 2018)).willReturn(currentYearAllowance);
@@ -416,5 +414,4 @@ public class AllowanceServiceTest {
     verify(allowanceRepository).save(any());
     verifyNoMoreInteractions(allowanceRepository);
   }
-
 }
