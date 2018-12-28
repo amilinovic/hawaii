@@ -58,7 +58,7 @@ public class YearServiceTest {
     Year year = yearService.getById(yearId);
 
     // then
-    assertThat("Expected year is current year", year.getYear(), is(EntityBuilder.thisYear()));
+    assertThat("Expected year is current year", year.getYear(), is(EntityBuilder.thisYear().getYear()));
     verify(yearRepository).getOne(anyLong());
     verifyNoMoreInteractions(yearRepository);
   }
@@ -86,7 +86,7 @@ public class YearServiceTest {
     Year year = yearService.save(mockYear);
 
     // then
-    assertThat("Expected year is current year", year.getYear(), is(EntityBuilder.thisYear()));
+    assertThat("Expected year is current year", year.getYear(), is(EntityBuilder.thisYear().getYear()));
     verify(yearRepository).save(ArgumentMatchers.any());
     verifyNoMoreInteractions(yearRepository);
   }
@@ -123,9 +123,9 @@ public class YearServiceTest {
     assertThat("Expect to have one allowance created for user 1", user1.getAllowances().size(), is(1));
     assertThat("Expect to have one allowance created for user 2", user2.getAllowances().size(), is(1));
     assertThat("Expect allowance to be for next year", user1.getAllowances().get(0).getYear().getYear(),
-        is(EntityBuilder.nextYear()));
+        is(EntityBuilder.nextYear().getYear()));
     assertThat("Expect allowance to be for next year", user2.getAllowances().get(0).getYear().getYear(),
-        is(EntityBuilder.nextYear()));
+        is(EntityBuilder.nextYear().getYear()));
     verify(userRepository).findAllByUserStatusTypeIn(any());
     verify(userRepository, times(2)).save(any());
     verifyNoMoreInteractions(yearRepository);
