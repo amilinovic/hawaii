@@ -1,5 +1,12 @@
 import React, { Component } from 'react';
 import { tableTd, tableTh, tableTr } from './CalendarTableElements';
+import styled from 'styled-components';
+
+const Table = styled.table`
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0px;
+`;
 
 class Calendar extends Component {
   createTableHeader = () => {
@@ -11,18 +18,34 @@ class Calendar extends Component {
     return thRender;
   };
 
+  cellClickHandler = (e, monthName, selectedDay) => {
+    const selectedMonth = this.props.calendar.table.find(
+      month => month.name === monthName
+    );
+    const day = selectedMonth.days.find(day => day.date === selectedDay);
+    console.log(day);
+  };
+
   createTableRows = month => {
     const { name, days } = month;
 
     const tdRender = [];
 
+    const clickHandler = day => ({
+      click: e => this.cellClickHandler(e, name, day)
+    });
     tdRender.push(tableTd(name, { monthName: true }, name.substring(0, 3)));
 
     days.map((day, index) => {
       if (!day) {
         tdRender.push(tableTd(`${index + 1}.${name}`, { disabled: true }));
       } else if (day.today) {
-        tdRender.push(tableTd(`${day.date}.${name}`, { today: true }));
+        tdRender.push(
+          tableTd(`${day.date}.${name}`, {
+            today: true,
+            ...clickHandler(day.date)
+          })
+        );
       } else {
         tdRender.push(
           day.weekend
@@ -38,12 +61,7 @@ class Calendar extends Component {
 
   render() {
     return (
-      <table
-        style={{
-          borderCollapse: 'collapse',
-          width: '100%'
-        }}
-      >
+      <Table>
         <thead>
           {tableTr('monthNames', { headerRow: true }, this.createTableHeader())}
         </thead>
@@ -53,7 +71,7 @@ class Calendar extends Component {
               tableTr(month.name, {}, this.createTableRows(month))
             )}
         </tbody>
-      </table>
+      </Table>
     );
   }
 }
