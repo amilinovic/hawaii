@@ -18,12 +18,20 @@ class Calendar extends Component {
     return thRender;
   };
 
-  cellClickHandler = (e, monthName, selectedDay) => {
+  cellClickHandler = (e, monthName, clickedDay) => {
     const selectedMonth = this.props.calendar.table.find(
       month => month.name === monthName
     );
-    const day = selectedMonth.days.find(day => day.date === selectedDay);
-    console.log(day);
+    const selectedDay = selectedMonth.days.map(
+      day => (day.date === clickedDay ? { ...day, selected: true } : day)
+    );
+
+    const mappedCalendar = this.props.calendar.table.map(
+      month =>
+        monthName === month.name ? { ...month, days: selectedDay } : month
+    );
+
+    this.props.selectDay({ ...this.props.calendar, table: mappedCalendar });
   };
 
   createTableRows = month => {
@@ -34,16 +42,21 @@ class Calendar extends Component {
     const clickHandler = day => ({
       click: e => this.cellClickHandler(e, name, day)
     });
+
     tdRender.push(tableTd(name, { monthName: true }, name.substring(0, 3)));
 
     days.map((day, index) => {
+      // console.log(day && day.selected);
+      const selected =
+        day && day.selected ? { selected: true } : { selected: false };
       if (!day) {
         tdRender.push(tableTd(`${index + 1}.${name}`, { disabled: true }));
       } else if (day.today) {
         tdRender.push(
           tableTd(`${day.date}.${name}`, {
             today: true,
-            ...clickHandler(day.date)
+            ...clickHandler(day.date),
+            ...selected
           })
         );
       } else {

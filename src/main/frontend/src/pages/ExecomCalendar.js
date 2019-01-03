@@ -7,7 +7,8 @@ import { connect } from 'react-redux';
 import {
   initDate,
   incrementYear,
-  decrementYear
+  decrementYear,
+  selectDay
 } from '../store/actions/calendarActions';
 import moment from 'moment';
 
@@ -113,9 +114,12 @@ class ExecomCalendar extends Component {
               {'>'}
             </YearControlButton>
           </YearSelection>
-          <CalendarContainer style={{}}>
+          <CalendarContainer>
             {this.props.calendar.table && (
-              <Calendar calendar={this.props.calendar} />
+              <Calendar
+                calendar={this.props.calendar}
+                selectDay={this.props.selectDay}
+              />
             )}
           </CalendarContainer>
         </CalendarWrapper>
@@ -129,7 +133,10 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch =>
-  bindActionCreators({ initDate, incrementYear, decrementYear }, dispatch);
+  bindActionCreators(
+    { initDate, incrementYear, decrementYear, selectDay },
+    dispatch
+  );
 
 export default connect(
   mapStateToProps,

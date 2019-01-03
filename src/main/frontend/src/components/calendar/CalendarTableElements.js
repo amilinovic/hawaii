@@ -31,6 +31,7 @@ const TableTd = styled.td`
   background-color: ${ifProp('disabled', '#9e9e9e')};
   background-color: ${ifProp('weekend', '#cccccc')};
   background-color: ${ifProp('today', 'transparent')};
+  background-color: ${ifProp('selected', '#e45052')};
   cursor: ${ifProp('disabled', 'no-drop')};
   &:last-child {
     border-right: 1px solid black;
@@ -59,14 +60,11 @@ const TableTr = styled.tr`
   }
 `;
 
-export const tableTd = (key, props, children) => {
-  console.log(props);
-  return (
-    <TableTd key={key} {...props} onClick={props && props.click}>
-      {children}
-    </TableTd>
-  );
-};
+export const tableTd = (key, props, children) => (
+  <TableTd key={key} {...props} onClick={props && props.click}>
+    {children}
+  </TableTd>
+);
 
 export const tableTh = (key, props, children) => (
   <TableTh key={key} {...props}>

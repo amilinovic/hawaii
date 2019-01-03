@@ -2,7 +2,8 @@ import { handleActions } from 'redux-actions';
 import {
   initDate,
   incrementYear,
-  decrementYear
+  decrementYear,
+  selectDay
 } from '../actions/calendarActions';
 import moment from 'moment';
 export const initialState = {};
@@ -27,6 +28,10 @@ const actionHandlers = {
       ...state,
       selectedYear: action.payload.selectedYear - 1
     })
+  }),
+  [selectDay]: (state, action) => ({
+    ...state,
+    ...action.payload
   })
 };
 
@@ -83,9 +88,11 @@ const setToday = (payload, calendar) => {
     month => month.name === payload.currentMonth
   );
 
-  const daysWithMarkedToday = currentMonthObject.days.map(
-    day => (day.date === payload.currentDay ? { ...day, today: true } : day)
-  );
+  const daysWithMarkedToday =
+    currentMonthObject &&
+    currentMonthObject.days.map(
+      day => (day.date === payload.currentDay ? { ...day, today: true } : day)
+    );
 
   return calendar.map(
     month =>
