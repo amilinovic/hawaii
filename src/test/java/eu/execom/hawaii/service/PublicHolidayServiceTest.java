@@ -52,7 +52,7 @@ public class PublicHolidayServiceTest {
     PublicHoliday publicHoliday = publicHolidayService.getById(userId);
 
     // then
-    assertThat("Expect name to be New Year", publicHoliday.getName(), is("New year"));
+    assertThat("Expect name to be New year", publicHoliday.getName(), is("New year"));
     verify(publicHolidayRepository).getOne(anyLong());
     verifyNoMoreInteractions(publicHolidayRepository);
   }
@@ -81,7 +81,7 @@ public class PublicHolidayServiceTest {
     PublicHoliday publicHoliday = publicHolidayService.save(mockPublicHoliday);
 
     // then
-    assertThat("Expect name to be New Year", publicHoliday.getName(), is(mockPublicHoliday.getName()));
+    assertThat("Expect name to be New year", publicHoliday.getName(), is(mockPublicHoliday.getName()));
     verify(publicHolidayRepository).save(ArgumentMatchers.any());
     verifyNoMoreInteractions(publicHolidayRepository);
   }

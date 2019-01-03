@@ -1,12 +1,11 @@
 package eu.execom.hawaii.model;
 
-import java.io.Serializable;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
-
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import java.io.Serializable;
 
 /**
  * All integer field are represented in hour, beside year field.
@@ -21,7 +20,8 @@ public class Allowance extends BaseEntity implements Serializable {
   @ManyToOne
   private User user;
 
-  private int year;
+  @ManyToOne
+  private Year year;
 
   private int annual;
 

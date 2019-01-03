@@ -22,7 +22,7 @@ public class UserDto {
   private String jobTitle;
   private UserStatusType userStatusType;
   private int yearsOfService;
-  private List<AllowanceDto> allowances = new ArrayList<>();
+
   private List<UserPushTokenDto> userPushTokens = new ArrayList<>();
 
   public UserDto(User user) {
@@ -36,7 +36,6 @@ public class UserDto {
     this.jobTitle = user.getJobTitle();
     this.userStatusType = user.getUserStatusType();
     this.yearsOfService = user.getYearsOfService();
-    this.allowances = user.getAllowances().stream().map(AllowanceDto::new).collect(Collectors.toList());
     this.userPushTokens = user.getUserPushTokens().stream().map(UserPushTokenDto::new).collect(Collectors.toList());
   }
 
