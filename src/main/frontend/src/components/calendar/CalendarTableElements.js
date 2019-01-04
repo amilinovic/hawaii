@@ -20,18 +20,19 @@ const TableTd = styled.td`
   border: ${ifProp('first', '0px')};
   border-right: ${ifProp('monthName', '1px solid black', '0px')};
   border-right: ${ifProp('today', '1px')};
-  border-bottom: 0px;
   border-bottom: ${ifProp('today', '1px')};
   border: ${ifProp('today', '1px solid grey')};
   text-align: center;
   padding: 5px 0px 5px 0px;
   min-width: 20px;
   font-size: 14px;
-  border-color: ${ifProp('today', 'black', 'grey')};
+  border-bottom: 1px solid transparent;
+  border-right: 1px solid transparent;
+  border-color: ${ifProp('today', 'grey')};
   background-color: ${ifProp('disabled', '#9e9e9e')};
-  background-color: ${ifProp('weekend', '#cccccc')};
+  background-color: ${ifProp('weekend', '#E0E0E0')};
   background-color: ${ifProp('today', 'transparent')};
-  background-color: ${ifProp('selected', '#e45052')};
+  border-color: ${ifProp('selected', '#e45052')};
   cursor: ${ifProp('disabled', 'no-drop')};
   &:last-child {
     border-right: 1px solid black;
@@ -57,6 +58,9 @@ const TableTr = styled.tr`
     ${TableTd} {
       border-top: 0px;
     }
+  }
+  ${TableTd}:first-child + ${TableTd} {
+    border-left: 1px solid black;
   }
 `;
 

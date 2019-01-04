@@ -19,14 +19,15 @@ class Calendar extends Component {
   };
 
   cellClickHandler = (monthName, clickedDay) => {
-    // console.log(monthName, clickedDay);
     const selectedMonth = this.props.calendar.table.find(
       month => month.name === monthName
     );
     const selectedDay = selectedMonth.days.map(
-      day => (day && day.date === clickedDay ? { ...day, selected: true } : day)
+      day =>
+        day && day.date === clickedDay
+          ? { ...day, selected: !day.selected }
+          : day
     );
-
     const mappedCalendar = this.props.calendar.table.map(
       month =>
         monthName === month.name ? { ...month, days: selectedDay } : month
