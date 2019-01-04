@@ -48,9 +48,6 @@ public class UserServiceTest {
   @Mock
   private YearRepository yearRepository;
 
-  @Mock
-  private EmailService emailService;
-
   @InjectMocks
   private UserService userService;
 
@@ -69,7 +66,7 @@ public class UserServiceTest {
     mockUser2.setFullName("John Snow");
 
     initialUsers = new ArrayList<>(Arrays.asList(mockUser, mockUser2));
-    allMocks = new Object[] {userRepository, leaveProfileRepository};
+    allMocks = new Object[] {userRepository, leaveProfileRepository, yearRepository};
   }
 
   @Test
@@ -188,53 +185,40 @@ public class UserServiceTest {
     assertThat("Expect that annual allowance for the first year is less than 160",
         userWithAllowance.getAllowances().get(0).getTakenAnnual(), lessThan(160));
 
-    assertThat("Expect to second allowance be for 2019 year",
-        userWithAllowance.getAllowances().get(1).getYear().getYear(), is(2019));
+    assertThat("Expect second allowance to be for next year",
+        userWithAllowance.getAllowances().get(1).getYear().getYear(), is(EntityBuilder.nextYear().getYear()));
     assertThat("Expect that annual allowance for the second year is 160",
         userWithAllowance.getAllowances().get(1).getAnnual(), is(160));
 
     verify(leaveProfileRepository).getOne(anyLong());
     verify(userRepository).save(any());
+    verify(yearRepository).findAllByYearGreaterThanEqual(anyInt());
     verifyNoMoreInteractions(allMocks);
   }
 
-  /**
-   * Users started working date needs to be set to same month date as is today
-   * in order for test to work.
-   */
   @Test
-  public void shouldAddServiceYearsToUser() {
+  public void shouldUpdateAllowanceForUserOnLeaveProfileUpdate() {
     // given
     var user1 = EntityBuilder.user(EntityBuilder.team());
     var user2 = EntityBuilder.approver();
-    var user1Allowance = EntityBuilder.allowance(mockUser);
-    var user2Allowance = EntityBuilder.allowanceII(mockUser);
+    var user1Allowance = EntityBuilder.allowance(user1);
+    var user2Allowance = EntityBuilder.allowanceII(user2);
 
     user1.setAllowances(List.of(user1Allowance));
     user2.setAllowances(List.of(user2Allowance));
 
     var activeYears = List.of(EntityBuilder.thisYear(), EntityBuilder.nextYear());
-    var activeUsers = List.of(user1, user2);
-
-    given(userRepository.findAllByUserStatusTypeIn(any())).willReturn(activeUsers);
     given(yearRepository.findAllByYearGreaterThanEqual(anyInt())).willReturn(activeYears);
 
     // when
-    userService.addServiceYearsToUser();
+    userService.updateAllowanceForUserOnLeaveProfileUpdate(user1);
+    userService.updateAllowanceForUserOnLeaveProfileUpdate(user2);
 
     //than
-    assertThat("Expect year of service to be incremented to 5", user1.getYearsOfService(), is(5));
     assertThat("Expect annual allowance to be 168", user1.getAllowances().get(0).getAnnual(), is(168));
-    assertThat("Expect leave profile id to be 2", user1.getLeaveProfile().getId(), is(2L));
-
-    assertThat("Expect year of service to be incremented to 5", user2.getYearsOfService(), is(10));
     assertThat("Expect annual allowance to be 176", user2.getAllowances().get(0).getAnnual(), is(176));
-    assertThat("Expect leave profile id to be 3", user2.getLeaveProfile().getId(), is(3L));
-
-    verify(userRepository).findAllByUserStatusTypeIn(any());
     verify(yearRepository, times(2)).findAllByYearGreaterThanEqual(anyInt());
-    verify(emailService, times(2)).createLeaveProfileUpdateEmailAndSendForApproval(any());
-    verify(userRepository, times(4)).save(any());
+    verify(userRepository, times(2)).save(any());
     verifyNoMoreInteractions(allMocks);
   }
 }

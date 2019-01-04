@@ -1,6 +1,5 @@
 package eu.execom.hawaii.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.enumerations.UserRole;
 import eu.execom.hawaii.model.enumerations.UserStatusType;
@@ -27,9 +26,6 @@ public class UserDto {
   private LocalDate startedWorkingAtExecomDate;
   private int yearsOfService;
 
-  @JsonIgnore
-  private List<AllowanceDto> allowances = new ArrayList<>();
-
   private List<UserPushTokenDto> userPushTokens = new ArrayList<>();
 
   public UserDto(User user) {
@@ -45,7 +41,6 @@ public class UserDto {
     this.startedWorkingDate = user.getStartedWorkingDate();
     this.startedWorkingAtExecomDate = user.getStartedWorkingAtExecomDate();
     this.yearsOfService = user.getYearsOfService();
-    this.allowances = user.getAllowances().stream().map(AllowanceDto::new).collect(Collectors.toList());
     this.userPushTokens = user.getUserPushTokens().stream().map(UserPushTokenDto::new).collect(Collectors.toList());
   }
 

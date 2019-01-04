@@ -1,6 +1,5 @@
 package eu.execom.hawaii.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -18,7 +17,6 @@ public class Allowance extends BaseEntity implements Serializable {
 
   private static final long serialVersionUID = 4288980454836980764L;
 
-  @JsonIgnoreProperties("allowances")
   @ManyToOne
   private User user;
 

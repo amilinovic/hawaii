@@ -22,7 +22,7 @@ import java.util.List;
 
 public class EntityBuilder {
 
-  static Team team() {
+  public static Team team() {
     var team = new Team();
     team.setName("My team1");
     team.setDeleted(false);
@@ -33,7 +33,7 @@ public class EntityBuilder {
     return team;
   }
 
-  static User user(Team team) {
+  public static User user(Team team) {
     var user = new User();
     user.setId(1L);
     user.setTeam(team);
@@ -43,7 +43,7 @@ public class EntityBuilder {
     user.setUserRole(UserRole.HR_MANAGER);
     user.setJobTitle("Developer");
     user.setStartedWorkingAtExecomDate(LocalDate.of(2018, 2, 28));
-    user.setStartedWorkingDate(LocalDate.of(2016, 12, 20));
+    user.setStartedWorkingDate(LocalDate.of(2016, 1, 4));
     user.setYearsOfService(4);
     user.setUserStatusType(UserStatusType.ACTIVE);
     user.setApproverTeams(new ArrayList<>());
@@ -53,7 +53,7 @@ public class EntityBuilder {
     return user;
   }
 
-  static User approver() {
+  public static User approver() {
     var approver = new User();
     approver.setId(3L);
     approver.setTeam(team());
@@ -62,8 +62,8 @@ public class EntityBuilder {
     approver.setEmail("bruce.wayne@execom.eu");
     approver.setUserRole(UserRole.HR_MANAGER);
     approver.setJobTitle("Developer");
-    approver.setStartedWorkingDate(LocalDate.of(2015, 3, 3));
-    approver.setStartedWorkingDate(LocalDate.of(2015, 12, 20));
+    approver.setStartedWorkingAtExecomDate(LocalDate.of(2016, 3, 3));
+    approver.setStartedWorkingDate(LocalDate.of(2015, 1, 4));
     approver.setYearsOfService(9);
     approver.setUserStatusType(UserStatusType.ACTIVE);
     approver.setApproverTeams(new ArrayList<>());
@@ -87,7 +87,7 @@ public class EntityBuilder {
     return leaveProfile;
   }
 
-  static LeaveProfile leaveProfileII() {
+  private static LeaveProfile leaveProfileII() {
     var leaveProfile = new LeaveProfile();
     leaveProfile.setId(2L);
     leaveProfile.setName("Five-Ten");
@@ -156,7 +156,7 @@ public class EntityBuilder {
     var year = new Year();
     year.setId(1L);
     year.setActive(true);
-    year.setYear(2018);
+    year.setYear(LocalDate.now().getYear());
     year.setAllowances(new ArrayList<>());
 
     return year;
@@ -166,7 +166,7 @@ public class EntityBuilder {
     var year = new Year();
     year.setId(2L);
     year.setActive(true);
-    year.setYear(2019);
+    year.setYear(LocalDate.now().getYear() + 1);
     year.setAllowances(new ArrayList<>());
 
     return year;

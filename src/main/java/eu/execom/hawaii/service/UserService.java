@@ -15,20 +15,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.MonthDay;
 import java.time.temporal.ChronoUnit;
-import java.util.Collections;
 import java.util.List;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 
@@ -41,25 +35,19 @@ public class UserService {
 
   private static final int HALF_DAY = 4;
   private static final int FULL_DAY = 8;
-  private static final int FIVE_YEARS = 5;
-  private static final int TEN_YEARS = 10;
-  private static final int FIFTEEN_YEARS = 15;
-  private static final MonthDay FEBRUARY_TWENTY_NINE = MonthDay.of(2, 29);
 
   private UserRepository userRepository;
   private LeaveProfileRepository leaveProfileRepository;
   private UserPushTokensRepository userPushTokensRepository;
   private YearRepository yearRepository;
-  private EmailService emailService;
 
   @Autowired
   public UserService(UserRepository userRepository, LeaveProfileRepository leaveProfileRepository,
-      UserPushTokensRepository userPushTokensRepository, YearRepository yearRepository, EmailService emailService) {
+      UserPushTokensRepository userPushTokensRepository, YearRepository yearRepository) {
     this.userRepository = userRepository;
     this.leaveProfileRepository = leaveProfileRepository;
     this.userPushTokensRepository = userPushTokensRepository;
     this.yearRepository = yearRepository;
-    this.emailService = emailService;
   }
 
   /**
@@ -179,12 +167,25 @@ public class UserService {
   }
 
   /**
+   * Updates values for allowances for active years. Since Leave Profile was just updated, values
+   * for already created allowances for currently active years need to be updated as well.
+   */
+  public void updateAllowanceForUserOnLeaveProfileUpdate(User user) {
+    var openedActiveYears = yearRepository.findAllByYearGreaterThanEqual(LocalDate.now().getYear());
+    var userAllowances = user.getAllowances();
+    for (Year year : openedActiveYears) {
+      userAllowances.stream()
+                    .filter(allowance1 -> allowance1.getYear().equals(year))
+                    .forEach(allowance1 -> allowance1.setAnnual(allowance1.getAnnual() + FULL_DAY));
+    }
+    userRepository.save(user);
+  }
+
+  /**
    * If year when user started working at execom is not the same as current year that means
    * that next year is open, and allowances are created solely based on  users leave profile.
-   *
    * If year is same as current than this is the year when user started working at execom and
    * allowances are created based on remaining days in this year in reference to users leave profile.
-   *
    * Allowance is rounded to 4h witch is half a day, because that's the smallest period of time that can be
    * taken as annual leave.
    */
@@ -209,62 +210,6 @@ public class UserService {
     }
 
     return allowance;
-  }
-
-  /**
-   * Updates values for allowances for active years. Since Leave Profile was just updated, values
-   * for already created allowances for currently active years need to be updated as well.
-   */
-  private void updateAllowanceForUserOnLeaveProfileUpdate(User user) {
-    var openedActiveYears = yearRepository.findAllByYearGreaterThanEqual(LocalDate.now().getYear());
-    var userAllowances = user.getAllowances();
-    for (Year year : openedActiveYears) {
-      userAllowances.stream()
-                    .filter(allowance1 -> allowance1.getYear().equals(year))
-                    .forEach(allowance1 -> allowance1.setAnnual(allowance1.getAnnual() + FULL_DAY));
-    }
-    userRepository.save(user);
-  }
-
-  /**
-   * Check every day at 6:00 am to see if years of service needs to be incremented.
-   * If user reaches 5, 10, 15 years... Update leave profile, save, send update mail.
-   */
-  @Scheduled(cron = "0 0 6 * * *")
-  public void addServiceYearsToUser() {
-    List<User> users = userRepository.findAllByUserStatusTypeIn(Collections.singletonList(UserStatusType.ACTIVE));
-
-    Supplier<Stream<User>> userStream = () -> users.stream()
-                                                   .filter(user -> startedWorkingToday(
-                                                       MonthDay.from(user.getStartedWorkingDate())));
-
-    userStream.get()
-              .forEach(user -> {
-                          user.setYearsOfService(user.getYearsOfService() + 1);
-                          userRepository.save(user);
-    });
-
-    userStream.get()
-              .filter(shouldUpdateLeaveProfile())
-              .forEach(user -> {
-                          user.getLeaveProfile().setId(user.getLeaveProfile().getId() + 1);
-                          emailService.createLeaveProfileUpdateEmailAndSendForApproval(user);
-                          updateAllowanceForUserOnLeaveProfileUpdate(user);
-    });
-  }
-
-  private boolean startedWorkingToday(MonthDay startedWorkingDate) {
-    if ((startedWorkingDate == FEBRUARY_TWENTY_NINE) && !LocalDate.now().isLeapYear()) {
-      return MonthDay.of(2, 28).equals(MonthDay.from(LocalDate.now()));
-    } else {
-      return startedWorkingDate.equals(MonthDay.from(LocalDate.now()));
-    }
-  }
-
-  private Predicate<User> shouldUpdateLeaveProfile() {
-    return user -> user.getYearsOfService() == FIVE_YEARS ||
-                   user.getYearsOfService() == TEN_YEARS  ||
-                   user.getYearsOfService() == FIFTEEN_YEARS;
   }
 
   /**

@@ -59,7 +59,8 @@ public class AllowanceServiceTest {
     Allowance allowance = allowanceService.getByUserAndYear(mockUser.getId(), 2018);
 
     // then
-    assertThat("Expected year to be 2018", allowance.getYear().getYear(), is(2018));
+    assertThat("Expected year to be is this year", allowance.getYear().getYear(),
+        is(EntityBuilder.thisYear().getYear()));
     verify(allowanceRepository).findByUserIdAndYear(anyLong(), anyInt());
     verifyNoMoreInteractions(allowanceRepository);
   }
