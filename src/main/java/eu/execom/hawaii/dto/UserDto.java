@@ -5,6 +5,7 @@ import eu.execom.hawaii.model.enumerations.UserRole;
 import eu.execom.hawaii.model.enumerations.UserStatusType;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,6 +22,8 @@ public class UserDto {
   private UserRole userRole;
   private String jobTitle;
   private UserStatusType userStatusType;
+  private LocalDate startedWorkingDate;
+  private LocalDate startedWorkingAtExecomDate;
   private int yearsOfService;
 
   private List<UserPushTokenDto> userPushTokens = new ArrayList<>();
@@ -35,6 +38,8 @@ public class UserDto {
     this.userRole = user.getUserRole();
     this.jobTitle = user.getJobTitle();
     this.userStatusType = user.getUserStatusType();
+    this.startedWorkingDate = user.getStartedWorkingDate();
+    this.startedWorkingAtExecomDate = user.getStartedWorkingAtExecomDate();
     this.yearsOfService = user.getYearsOfService();
     this.userPushTokens = user.getUserPushTokens().stream().map(UserPushTokenDto::new).collect(Collectors.toList());
   }

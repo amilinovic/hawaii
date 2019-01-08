@@ -18,6 +18,7 @@ import javax.persistence.OneToMany;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -52,6 +53,13 @@ public class User extends BaseEntity implements Serializable {
   @Enumerated(EnumType.STRING)
   private UserStatusType userStatusType;
 
+  @NotNull
+  private LocalDate startedWorkingDate;
+
+  @NotNull
+  private LocalDate startedWorkingAtExecomDate;
+
+  @NotNull
   private int yearsOfService;
 
   @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
