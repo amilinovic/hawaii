@@ -4,6 +4,7 @@ import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.enumerations.UserStatusType;
 import eu.execom.hawaii.repository.LeaveProfileRepository;
 import eu.execom.hawaii.repository.UserRepository;
+import eu.execom.hawaii.repository.YearRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,12 +24,15 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
@@ -40,6 +44,9 @@ public class UserServiceTest {
 
   @Mock
   private LeaveProfileRepository leaveProfileRepository;
+
+  @Mock
+  private YearRepository yearRepository;
 
   @InjectMocks
   private UserService userService;
@@ -59,7 +66,7 @@ public class UserServiceTest {
     mockUser2.setFullName("John Snow");
 
     initialUsers = new ArrayList<>(Arrays.asList(mockUser, mockUser2));
-    allMocks = new Object[] {userRepository, leaveProfileRepository};
+    allMocks = new Object[] {userRepository, leaveProfileRepository, yearRepository};
   }
 
   @Test
@@ -163,66 +170,55 @@ public class UserServiceTest {
     // given
     var user = EntityBuilder.user(EntityBuilder.team());
     var leaveProfile = EntityBuilder.leaveProfile();
+    var thisYear = EntityBuilder.thisYear();
+    var nextYear = EntityBuilder.nextYear();
+    var activeYears = List.of(thisYear, nextYear);
     given(leaveProfileRepository.getOne(1L)).willReturn(leaveProfile);
+    given(yearRepository.findAllByYearGreaterThanEqual(thisYear.getYear())).willReturn(activeYears);
     given(userRepository.save(user)).willReturn(user);
 
     // when
-    User userWithAllowance = userService.createAllowanceForUser(user, 2018);
+    User userWithAllowance = userService.createAllowanceForUserOnCreateUser(user);
 
     // then
     assertThat("Expect to have two allowance created", userWithAllowance.getAllowances().size(), is(2));
-    assertThat("Expect to second allowance be for 2019 year", userWithAllowance.getAllowances().get(1).getYear(), is(2019));
+    assertThat("Expect that annual allowance for the first year is less than 160",
+        userWithAllowance.getAllowances().get(0).getTakenAnnual(), lessThan(160));
+
+    assertThat("Expect second allowance to be for next year",
+        userWithAllowance.getAllowances().get(1).getYear().getYear(), is(EntityBuilder.nextYear().getYear()));
+    assertThat("Expect that annual allowance for the second year is 160",
+        userWithAllowance.getAllowances().get(1).getAnnual(), is(160));
+
     verify(leaveProfileRepository).getOne(anyLong());
     verify(userRepository).save(any());
+    verify(yearRepository).findAllByYearGreaterThanEqual(anyInt());
     verifyNoMoreInteractions(allMocks);
   }
 
   @Test
-  public void shouldCreateAllowanceUserForNextYear() {
+  public void shouldUpdateAllowanceForUserOnLeaveProfileUpdate() {
     // given
-    var user = EntityBuilder.user(EntityBuilder.team());
-    var allowanceOne = EntityBuilder.allowance(user);
-    var allowanceTwo = EntityBuilder.allowance(user);
-    allowanceTwo.setYear(2019);
-    user.setAllowances(new ArrayList<>(List.of(allowanceOne, allowanceTwo)));
+    var user1 = EntityBuilder.user(EntityBuilder.team());
+    var user2 = EntityBuilder.approver();
+    var user1Allowance = EntityBuilder.allowance(user1);
+    var user2Allowance = EntityBuilder.allowanceII(user2);
 
-    var leaveProfile = EntityBuilder.leaveProfile();
-    given(leaveProfileRepository.getOne(1L)).willReturn(leaveProfile);
-    given(userRepository.save(user)).willReturn(user);
+    user1.setAllowances(List.of(user1Allowance));
+    user2.setAllowances(List.of(user2Allowance));
+
+    var activeYears = List.of(EntityBuilder.thisYear(), EntityBuilder.nextYear());
+    given(yearRepository.findAllByYearGreaterThanEqual(anyInt())).willReturn(activeYears);
 
     // when
-    User userWithAllowance = userService.createAllowanceForUser(user, 2020);
+    userService.updateAllowanceForUserOnLeaveProfileUpdate(user1);
+    userService.updateAllowanceForUserOnLeaveProfileUpdate(user2);
 
-    // then
-    assertThat("Expect to have three allowance created", userWithAllowance.getAllowances().size(), is(3));
-    assertThat("Expect to third allowance be for 2020 year", userWithAllowance.getAllowances().get(2).getYear(),
-        is(2020));
-    verify(leaveProfileRepository).getOne(anyLong());
-    verify(userRepository).save(any());
+    //than
+    assertThat("Expect annual allowance to be 168", user1.getAllowances().get(0).getAnnual(), is(168));
+    assertThat("Expect annual allowance to be 176", user2.getAllowances().get(0).getAnnual(), is(176));
+    verify(yearRepository, times(2)).findAllByYearGreaterThanEqual(anyInt());
+    verify(userRepository, times(2)).save(any());
     verifyNoMoreInteractions(allMocks);
   }
-
-  @Test
-  public void shouldSkipCreationNewAllowanceForUserWithExistingYearAllowance() {
-    // given
-    var user = EntityBuilder.user(EntityBuilder.team());
-    var allowanceOne = EntityBuilder.allowance(user);
-    var allowanceTwo = EntityBuilder.allowance(user);
-    allowanceTwo.setYear(2019);
-    user.setAllowances(List.of(allowanceOne, allowanceTwo));
-
-    var leaveProfile = EntityBuilder.leaveProfile();
-    given(leaveProfileRepository.getOne(1L)).willReturn(leaveProfile);
-
-    // when
-    User userWithAllowance = userService.createAllowanceForUser(user, 2019);
-
-    // then
-    assertThat("Expect to have three allowance created", userWithAllowance.getAllowances().size(), is(2));
-    assertThat("Expect to third allowance be for 2020 year", userWithAllowance.getAllowances().get(1).getYear(),
-        is(2019));
-    verify(leaveProfileRepository).getOne(anyLong());
-    verifyNoMoreInteractions(allMocks);
-  }
-
 }

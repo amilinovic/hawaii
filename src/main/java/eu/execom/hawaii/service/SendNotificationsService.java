@@ -102,7 +102,6 @@ public class SendNotificationsService {
     NotificationDataDto data = new NotificationDataDto();
 
     notification.setPriority("high");
-    notification.setClickAction("requestNotification");
     data.setPriority("high");
     data.setRequestStatus(requestStatus);
 
