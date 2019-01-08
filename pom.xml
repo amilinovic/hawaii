@@ -153,6 +153,13 @@
                 <groupId>com.github.jeluard</groupId>
                 <artifactId>plantuml-maven-plugin</artifactId>
                 <version>${plantuml-maven-plugin-version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>net.sourceforge.plantuml</groupId>
+                        <artifactId>plantuml</artifactId>
+                        <version>8059</version>
+                    </dependency>
+                </dependencies>
                 <configuration>
                     <sourceFiles>
                         <directory>${basedir}/plantuml</directory>
