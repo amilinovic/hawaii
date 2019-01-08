@@ -69,10 +69,8 @@ public class IncrementServiceYearsJobTest {
     //than
     assertThat("Expect year of service to be incremented to 5", user1.getYearsOfService(), is(5));
     assertThat("Expect leave profile id to be 2", user1.getLeaveProfile().getId(), is(2L));
-
     assertThat("Expect year of service to be incremented to 5", user2.getYearsOfService(), is(10));
     assertThat("Expect leave profile id to be 3", user2.getLeaveProfile().getId(), is(3L));
-
     verify(userRepository).findAllByUserStatusTypeIn(any());
     verify(emailService, times(2)).createLeaveProfileUpdateEmailAndSendForApproval(any());
     verify(userRepository, times(2)).save(any());

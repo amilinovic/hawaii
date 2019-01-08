@@ -43,7 +43,7 @@ public class EntityBuilder {
     user.setUserRole(UserRole.HR_MANAGER);
     user.setJobTitle("Developer");
     user.setStartedWorkingAtExecomDate(LocalDate.of(2018, 2, 28));
-    user.setStartedWorkingDate(LocalDate.of(2016, 1, 4));
+    user.setStartedWorkingDate(LocalDate.of(2016, 1, 8));
     user.setYearsOfService(4);
     user.setUserStatusType(UserStatusType.ACTIVE);
     user.setApproverTeams(new ArrayList<>());
@@ -63,7 +63,7 @@ public class EntityBuilder {
     approver.setUserRole(UserRole.HR_MANAGER);
     approver.setJobTitle("Developer");
     approver.setStartedWorkingAtExecomDate(LocalDate.of(2016, 3, 3));
-    approver.setStartedWorkingDate(LocalDate.of(2015, 1, 4));
+    approver.setStartedWorkingDate(LocalDate.of(2015, 1, 8));
     approver.setYearsOfService(9);
     approver.setUserStatusType(UserStatusType.ACTIVE);
     approver.setApproverTeams(new ArrayList<>());
@@ -114,7 +114,7 @@ public class EntityBuilder {
     return request;
   }
 
-  static Allowance allowance(User user) {
+  public static Allowance allowance(User user) {
     var allowance = new Allowance();
     allowance.setId(1L);
     allowance.setUser(user);
@@ -125,7 +125,7 @@ public class EntityBuilder {
     allowance.setTakenAnnual(0);
     allowance.setSickness(0);
     allowance.setBonus(0);
-    allowance.setCarriedOver(40);
+    allowance.setCarriedOver(15);
     allowance.setManualAdjust(0);
     allowance.setTraining(16);
     allowance.setTakenTraining(0);
