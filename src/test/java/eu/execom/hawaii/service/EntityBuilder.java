@@ -125,7 +125,7 @@ public class EntityBuilder {
     allowance.setTakenAnnual(0);
     allowance.setSickness(0);
     allowance.setBonus(0);
-    allowance.setCarriedOver(15);
+    allowance.setCarriedOver(40);
     allowance.setManualAdjust(0);
     allowance.setTraining(16);
     allowance.setTakenTraining(0);
