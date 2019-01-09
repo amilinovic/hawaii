@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -96,7 +98,13 @@ public class UserController {
   @DeleteMapping("/{id}")
   public ResponseEntity deleteUser(@PathVariable Long id) {
     userService.delete(id);
-
     return new ResponseEntity(HttpStatus.NO_CONTENT);
   }
+
+  @GetMapping("/me")
+  public ResponseEntity<UserDto> me(@ApiIgnore @AuthenticationPrincipal User authUser)
+  {
+    return new ResponseEntity<>(new UserDto(authUser),HttpStatus.OK);
+  }
+
 }

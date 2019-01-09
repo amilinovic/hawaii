@@ -16,6 +16,7 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.Null;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Optional;
@@ -54,7 +55,6 @@ public class IdTokenVerifierFilter extends OncePerRequestFilter {
     }
 
     User user = userService.findByEmail(userIdentity.get());
-    user.getUserPushTokens();
 
     if (user == null) {
       httpServletResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
@@ -62,7 +62,12 @@ public class IdTokenVerifierFilter extends OncePerRequestFilter {
       return;
     }
 
-    if (!user.getUserStatusType().equals(UserStatusType.ACTIVE)) {
+    user.getUserPushTokens();
+
+    System.out.println("-------------");
+    System.out.println(user);
+
+    if (user.getUserStatusType()== null || !user.getUserStatusType().equals(UserStatusType.ACTIVE)) {
       httpServletResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
       log.error("User {} found in database, but is not active", userIdentity.get());
       return;

@@ -43,6 +43,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         .sessionManagement().sessionCreationPolicy(STATELESS)
           .and()
             .authorizeRequests()
+              .antMatchers("/api/users/me").permitAll()
               .antMatchers("/api/users", "/api/users/**", "/api/teams", "/api/teams/**", "/api/leavetypes", "/api/leavetypes/**", "/api/leaveprofiles",
                 "/api/leaveprofiles/**", "/api/requests/**").hasAuthority("HR_MANAGER")
               .antMatchers("/api/**").permitAll()
