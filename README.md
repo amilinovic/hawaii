@@ -112,6 +112,8 @@ yarn start or npm start
 
 Then open http://localhost:3000/ to see your app
 
+Install Redux DevTools plugin for your browser
+
 #### Swagger
 
 Always you can check endpoints on url:

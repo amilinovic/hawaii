@@ -13,7 +13,6 @@ public class UserPushTokenDto {
   private String name;
   private Platform platform;
   private LocalDateTime createDateTime;
-  private String userRole;
 
   public UserPushTokenDto(UserPushToken userPushToken) {
     this.pushTokenId = userPushToken.getId();
