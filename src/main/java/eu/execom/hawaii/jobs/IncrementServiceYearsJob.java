@@ -48,7 +48,6 @@ public class IncrementServiceYearsJob {
     userStream.get()
               .forEach(user -> {
                        user.setYearsOfService(user.getYearsOfService() + 1);
-                       System.out.println(user.getYearsOfService());
                        userRepository.save(user);
               });
 
