@@ -63,7 +63,7 @@ public class IdTokenVerifierFilter extends OncePerRequestFilter {
 
     user.getUserPushTokens();
 
-    if (user.getUserStatusType()== null || !user.getUserStatusType().equals(UserStatusType.ACTIVE)) {
+    if (!UserStatusType.ACTIVE.equals(user.getUserStatusType())) {
       httpServletResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
       log.error("User {} found in database, but is not active", userIdentity.get());
       return;
