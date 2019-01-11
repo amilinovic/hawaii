@@ -11,13 +11,13 @@ public class YearDto {
 
   private Long yearId;
   private int year;
-  private List<AllowanceDto> allowances;
+  private List<AllowanceWithoutYearDto> allowances;
   private boolean active;
 
   public YearDto(Year year) {
     this.yearId = year.getId();
     this.year = year.getYear();
-    this.allowances = year.getAllowances().stream().map(AllowanceDto::new).collect(Collectors.toList());
+    this.allowances = year.getAllowances().stream().map(AllowanceWithoutYearDto::new).collect(Collectors.toList());
     this.active = year.isActive();
   }
 }

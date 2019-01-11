@@ -54,7 +54,7 @@ public class CarryOverVacationJobTest {
     Allowance allowance = EntityBuilder.allowance(mockUser);
     var activeUsers = List.of(mockUser);
     given(userRepository.findAllByUserStatusTypeIn(any())).willReturn(activeUsers);
-    given(allowanceRepository.findByUserIdAndYear(any(), anyInt())).willReturn(allowance);
+    given(allowanceRepository.findByUserIdAndYearYear(any(), anyInt())).willReturn(allowance);
     given(allowanceService.calculateRemainingAnnualHours(allowance)).willReturn(100);
 
     //when
@@ -63,7 +63,7 @@ public class CarryOverVacationJobTest {
     //than
     assertThat("Expect carried over is 40 hours", allowance.getCarriedOver(), is(40));
     verify(userRepository).findAllByUserStatusTypeIn(any());
-    verify(allowanceRepository, times(2)).findByUserIdAndYear(any(), anyInt());
+    verify(allowanceRepository, times(2)).findByUserIdAndYearYear(any(), anyInt());
     verify(allowanceService).calculateRemainingAnnualHours(any());
     verify(allowanceRepository).save(any());
     verifyNoMoreInteractions(allMocks);

@@ -89,7 +89,7 @@ public class AllowanceService {
    * @return Allowance.
    */
   Allowance getByUserAndYear(Long userId, int year) {
-    return allowanceRepository.findByUserIdAndYear(userId, year);
+    return allowanceRepository.findByUserIdAndYearYear(userId, year);
   }
 
   private void cancelPendingAnnual(Allowance currentYearAllowance, Allowance nextYearAllowance, int requestedHours) {

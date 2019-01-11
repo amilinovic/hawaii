@@ -39,8 +39,8 @@ public class CarryOverVacationJob {
     List<User> users = userRepository.findAllByUserStatusTypeIn(Collections.singletonList(UserStatusType.ACTIVE));
     int currentYear = LocalDate.now().getYear();
     users.forEach(user -> {
-      Allowance thisYearAllowance = allowanceRepository.findByUserIdAndYear(user.getId(), currentYear);
-      Allowance lastYearAllowance = allowanceRepository.findByUserIdAndYear(user.getId(), currentYear - 1);
+      Allowance thisYearAllowance = allowanceRepository.findByUserIdAndYearYear(user.getId(), currentYear);
+      Allowance lastYearAllowance = allowanceRepository.findByUserIdAndYearYear(user.getId(), currentYear - 1);
       int remainingHours = allowanceService.calculateRemainingAnnualHours(lastYearAllowance);
 
       if (remainingHours > user.getLeaveProfile().getMaxCarriedOver()) {
