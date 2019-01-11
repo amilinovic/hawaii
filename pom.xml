@@ -30,6 +30,8 @@
 
         <liquibase-maven-plugin-version>3.6.2</liquibase-maven-plugin-version>
         <plantuml-maven-plugin-version>1.2</plantuml-maven-plugin-version>
+        <plantuml-version>8059</plantuml-version>
+
     </properties>
 
     <dependencies>
@@ -157,7 +159,7 @@
                     <dependency>
                         <groupId>net.sourceforge.plantuml</groupId>
                         <artifactId>plantuml</artifactId>
-                        <version>8059</version>
+                        <version>${plantuml-version}</version>
                     </dependency>
                 </dependencies>
                 <configuration>

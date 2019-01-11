@@ -10,12 +10,14 @@ export const history = createBrowserHistory();
 const sagaMiddleware = createSagaMiddleware();
 const reactRouterMiddleware = routerMiddleware(history);
 
+var compose_args = [applyMiddleware(sagaMiddleware, reactRouterMiddleware)];
+if (process.env.NODE_ENV === 'development')
+  if (window.__REDUX_DEVTOOLS_EXTENSION__)
+    compose_args.push(window.__REDUX_DEVTOOLS_EXTENSION__());
+
 export default createStore(
   connectRouter(history)(reducer),
-  compose(
-    applyMiddleware(sagaMiddleware, reactRouterMiddleware),
-    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
-  )
+  compose.apply(this, compose_args)
 );
 
 sagaMiddleware.run(saga);

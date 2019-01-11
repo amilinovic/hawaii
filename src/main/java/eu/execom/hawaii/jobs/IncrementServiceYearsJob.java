@@ -45,7 +45,6 @@ public class IncrementServiceYearsJob {
     Supplier<Stream<User>> userStream = () -> users.stream()
                                                    .filter(user -> startedWorkingToday(
                                                        MonthDay.from(user.getStartedWorkingDate())));
-
     userStream.get()
               .forEach(user -> {
                        user.setYearsOfService(user.getYearsOfService() + 1);

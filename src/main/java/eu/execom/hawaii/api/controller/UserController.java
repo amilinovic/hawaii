@@ -11,7 +11,9 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,7 +24,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import springfox.documentation.annotations.ApiIgnore;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.nio.file.Files;
+import java.sql.Blob;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -86,6 +95,16 @@ public class UserController {
     return new ResponseEntity<>(new UserDto(user), HttpStatus.OK);
   }
 
+  @GetMapping("/image/{id}")
+  public ResponseEntity<byte[]> getUserImage(@PathVariable Long id)  {
+      User user = userService.getUserById(id);
+      HttpHeaders headers = new HttpHeaders();
+      headers.setContentType(MediaType.IMAGE_JPEG);
+      headers.setContentLength(user.getImage().length);
+
+      return new ResponseEntity<>(user.getImage(), headers, HttpStatus.OK);
+  }
+
   @PutMapping("/{id}/activate")
   public ResponseEntity activateUser(@PathVariable Long id) {
     userService.activate(id);
@@ -96,7 +115,13 @@ public class UserController {
   @DeleteMapping("/{id}")
   public ResponseEntity deleteUser(@PathVariable Long id) {
     userService.delete(id);
-
     return new ResponseEntity(HttpStatus.NO_CONTENT);
   }
+
+  @GetMapping("/me")
+  public ResponseEntity<UserDto> me(@ApiIgnore @AuthenticationPrincipal User authUser)
+  {
+    return new ResponseEntity<>(new UserDto(authUser),HttpStatus.OK);
+  }
+
 }
