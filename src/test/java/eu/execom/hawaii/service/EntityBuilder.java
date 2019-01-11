@@ -42,8 +42,8 @@ public class EntityBuilder {
     user.setEmail("aria.stark@gmail.com");
     user.setUserRole(UserRole.HR_MANAGER);
     user.setJobTitle("Developer");
-    user.setStartedWorkingAtExecomDate(LocalDate.of(2018, 2, 28));
-    user.setStartedWorkingDate(LocalDate.of(2016, 1, 8));
+    user.setStartedWorkingAtExecomDate(LocalDate.of(2019, 2, 28));
+    user.setStartedWorkingDate(LocalDate.of(2016, LocalDate.now().getMonth(), LocalDate.now().getDayOfMonth()));
     user.setYearsOfService(4);
     user.setUserStatusType(UserStatusType.ACTIVE);
     user.setApproverTeams(new ArrayList<>());
@@ -63,7 +63,7 @@ public class EntityBuilder {
     approver.setUserRole(UserRole.HR_MANAGER);
     approver.setJobTitle("Developer");
     approver.setStartedWorkingAtExecomDate(LocalDate.of(2016, 3, 3));
-    approver.setStartedWorkingDate(LocalDate.of(2015, 1, 8));
+    approver.setStartedWorkingDate(LocalDate.of(2015, LocalDate.now().getMonth(), LocalDate.now().getDayOfMonth()));
     approver.setYearsOfService(9);
     approver.setUserStatusType(UserStatusType.ACTIVE);
     approver.setApproverTeams(new ArrayList<>());
