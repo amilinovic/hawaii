@@ -4,10 +4,9 @@ import eu.execom.hawaii.model.Allowance;
 import lombok.Data;
 
 @Data
-public class AllowanceDto {
+public class AllowanceWithoutYearDto {
 
   private Long userId;
-  private YearDto year;
   private int annual;
   private int takenAnnual;
   private int pendingAnnual;
@@ -19,9 +18,8 @@ public class AllowanceDto {
   private int takenTraining;
   private int pendingTraining;
 
-  public AllowanceDto(Allowance allowance) {
+  public AllowanceWithoutYearDto(Allowance allowance) {
     this.userId = allowance.getUser().getId();
-    this.year = new YearDto(allowance.getYear());
     this.annual = allowance.getAnnual();
     this.takenAnnual = allowance.getTakenAnnual();
     this.pendingAnnual = allowance.getPendingAnnual();
