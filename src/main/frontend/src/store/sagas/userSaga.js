@@ -6,9 +6,9 @@ import {
 } from '../actions/userActions';
 import { getUserApi } from '../services/userService';
 
-export const getUser = function*(action) {
+export const getUser = function*() {
   try {
-    const userInformation = yield call(getUserApi, action.payload);
+    const userInformation = yield call(getUserApi);
     yield put(receiveUser(userInformation));
   } catch (error) {
     yield put(errorReceivingUser(error));
