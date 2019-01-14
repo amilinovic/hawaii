@@ -41,6 +41,19 @@ public class LeaveProfileService {
   }
 
   /**
+   * Creates the provided leave profile to repository.
+   *
+   * @param leaveProfile the LeaveProfile entity to be persisted.
+   */
+  public LeaveProfile create(LeaveProfile leaveProfile) {
+    if (leaveProfileRepository.existsByLeaveProfileType(leaveProfile.getLeaveProfileType())) {
+      throw new IllegalArgumentException("Profile with same type already exists.");
+    }
+
+    return leaveProfileRepository.save(leaveProfile);
+  }
+
+  /**
    * Saves the provided leave profile to repository.
    *
    * @param leaveProfile the LeaveProfile entity to be persisted.

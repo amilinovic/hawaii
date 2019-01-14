@@ -84,7 +84,7 @@
       <column name="leave_profile_type" type="VARCHAR(255)">
         <constraints nullable="false"/>
       </column>
-      <column name="upgradable" type="BIT(1)">
+      <column name="upgradeable" type="BIT(1)">
         <constraints nullable="false"/>
       </column>
       <column name="comment" type="VARCHAR(255)"/>
