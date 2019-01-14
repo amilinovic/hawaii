@@ -30,7 +30,7 @@ class TopHeader extends Component {
           </Col>
           <Col xs="3" className="justify-content-end d-none d-lg-inline-flex">
             {this.props.fetching === '' ? null : (
-              <UserInfo employeeInfo={this.props.employee.results[0]} />
+              <UserInfo employeeInfo={this.props.employee} />
             )}
           </Col>
         </Row>

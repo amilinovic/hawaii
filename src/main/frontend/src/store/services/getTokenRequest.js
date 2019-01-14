@@ -1,4 +1,5 @@
 import request from 'superagent';
+import { getTokenFromSessionStorage } from './getTokenFromSessionStorage';
 
 export const tokenRequest = async userObj => {
   try {
@@ -13,10 +14,9 @@ export const tokenRequest = async userObj => {
       response.body
     ];
 
-    // TODO vrackovic: Investigate `user` stored in sessionStorage and store it if needed in future
     sessionStorage.setItem('token', userObj.tokenId);
     sessionStorage.setItem('role', response.body.userRole);
-    // sessionStorage.setItem('user', user);
+    sessionStorage.setItem('user', JSON.stringify(response.body));
     return {
       token,
       role,

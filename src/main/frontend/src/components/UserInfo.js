@@ -5,9 +5,9 @@ export default class UserInfo extends Component {
   render() {
     return (
       <div className="d-inline-flex align-items-center">
-        <UserImage image={this.props.employeeInfo.picture.large} />
+        <UserImage />
         <div>
-          <span>{this.props.employeeInfo.name.first}</span>
+          <span>{this.props.employeeInfo.fullName}</span>
         </div>
       </div>
     );

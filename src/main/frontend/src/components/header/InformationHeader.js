@@ -18,7 +18,7 @@ class InformationHeader extends Component {
       <Container fluid>
         <ShadowRow className="py-2">
           {this.props.fetching === '' ? null : (
-            <UserInfoComponent employeeInfo={this.props.employee.results[0]} />
+            <UserInfoComponent employeeInfo={this.props.employee} />
           )}
           <Col className="flex-column d-none d-xl-flex">
             <Row className="h-100 align-items-center">

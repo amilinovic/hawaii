@@ -9,7 +9,8 @@ import { randomUserApiRequest } from '../services/randomUserApiRequest';
 export const getApiData = function*() {
   try {
     const employeeInformation = yield call(randomUserApiRequest);
-    yield put(receiveApiData(employeeInformation));
+    var tmp = JSON.parse(sessionStorage.user);
+    yield put(receiveApiData(tmp));
   } catch (error) {
     yield put(errorReceivingApiData(error));
   }
