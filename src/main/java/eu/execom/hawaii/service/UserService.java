@@ -182,6 +182,22 @@ public class UserService {
   }
 
   /**
+   * Updates values for allowances for active years. Since Leave Profile was just updated, values
+   * for already created allowances for currently active years need to be updated as well.
+   */
+  public void updateAllowanceForUserOnLeaveProfileUpdate(User user, LeaveProfile previousLeaveProfile) {
+    var openedActiveYears = yearRepository.findAllByYearGreaterThanEqual(LocalDate.now().getYear());
+    var userAllowances = user.getAllowances();
+    var allowanceDelta = user.getLeaveProfile().getEntitlement() - previousLeaveProfile.getEntitlement();
+    for (Year year : openedActiveYears) {
+      userAllowances.stream()
+                    .filter(allowance -> allowance.getYear().equals(year))
+                    .forEach(allowance -> allowance.setAnnual(allowance.getAnnual() + allowanceDelta));
+    }
+    userRepository.save(user);
+  }
+
+  /**
    * If year when user started working at execom is not the same as current year that means
    * that next year is open, and allowances are created solely based on  users leave profile.
    * If year is same as current than this is the year when user started working at execom and

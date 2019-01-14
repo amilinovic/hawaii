@@ -1,7 +1,10 @@
 package eu.execom.hawaii.jobs;
 
+import eu.execom.hawaii.model.LeaveProfile;
 import eu.execom.hawaii.model.User;
+import eu.execom.hawaii.model.enumerations.LeaveProfileType;
 import eu.execom.hawaii.model.enumerations.UserStatusType;
+import eu.execom.hawaii.repository.LeaveProfileRepository;
 import eu.execom.hawaii.repository.UserRepository;
 import eu.execom.hawaii.service.EmailService;
 import eu.execom.hawaii.service.UserService;
@@ -18,18 +21,19 @@ import java.util.stream.Stream;
 
 public class IncrementServiceYearsJob {
 
-  private static final int FIVE_YEARS = 5;
-  private static final int TEN_YEARS = 10;
-  private static final int FIFTEEN_YEARS = 15;
+  private static final int UPDATE_THRESHOLD = 5;
   private static final MonthDay FEBRUARY_TWENTY_NINE = MonthDay.of(2, 29);
 
   private UserRepository userRepository;
+  private LeaveProfileRepository leaveProfileRepository;
   private EmailService emailService;
   private UserService userService;
 
   @Autowired
-  public IncrementServiceYearsJob(UserRepository userRepository, EmailService emailService, UserService userService) {
+  public IncrementServiceYearsJob(UserRepository userRepository, LeaveProfileRepository leaveProfileRepository,
+      EmailService emailService, UserService userService) {
     this.userRepository = userRepository;
+    this.leaveProfileRepository = leaveProfileRepository;
     this.emailService = emailService;
     this.userService = userService;
   }
@@ -45,18 +49,19 @@ public class IncrementServiceYearsJob {
     Supplier<Stream<User>> userStream = () -> users.stream()
                                                    .filter(user -> startedWorkingToday(
                                                        MonthDay.from(user.getStartedWorkingDate())));
-    userStream.get()
-              .forEach(user -> {
-                       user.setYearsOfService(user.getYearsOfService() + 1);
-                       userRepository.save(user);
-              });
+    userStream.get().forEach(user -> {
+      user.setYearsOfService(user.getYearsOfService() + 1);
+      userRepository.save(user);
+    });
 
     userStream.get()
+              .filter(user -> user.getLeaveProfile().isUpgradeable())
               .filter(shouldUpdateLeaveProfile())
               .forEach(user -> {
-                       user.getLeaveProfile().setId(user.getLeaveProfile().getId() + 1);
-                       emailService.createLeaveProfileUpdateEmailAndSendForApproval(user);
-                       userService.updateAllowanceForUserOnLeaveProfileUpdate(user);
+                var leaveProfile = user.getLeaveProfile();
+                user.setLeaveProfile(nextLeaveProfile(leaveProfile));
+                emailService.createLeaveProfileUpdateEmailAndSendForApproval(user);
+                userService.updateAllowanceForUserOnLeaveProfileUpdate(user, leaveProfile);
               });
   }
 
@@ -69,8 +74,39 @@ public class IncrementServiceYearsJob {
   }
 
   private Predicate<User> shouldUpdateLeaveProfile() {
-    return user -> user.getYearsOfService() == FIVE_YEARS ||
-                   user.getYearsOfService() == TEN_YEARS  ||
-                   user.getYearsOfService() == FIFTEEN_YEARS;
+    return user -> user.getYearsOfService() % UPDATE_THRESHOLD == 0;
+  }
+
+  private LeaveProfile nextLeaveProfile(LeaveProfile currentLeaveProfile) {
+    LeaveProfileType nextLeaveProfileType;
+    var leaveProfileType = currentLeaveProfile.getLeaveProfileType();
+
+    switch (leaveProfileType) {
+      case ZERO_TO_FIVE_YEARS:
+        nextLeaveProfileType = LeaveProfileType.FIVE_TO_TEN_YEARS;
+        break;
+      case FIVE_TO_TEN_YEARS:
+        nextLeaveProfileType = LeaveProfileType.TEN_TO_FIFTEEN_YEARS;
+        break;
+      case TEN_TO_FIFTEEN_YEARS:
+        nextLeaveProfileType = LeaveProfileType.FIFTEEN_TO_TWENTY_YEARS;
+        break;
+      case FIFTEEN_TO_TWENTY_YEARS:
+        nextLeaveProfileType = LeaveProfileType.TWENTY_TO_TWENTYFIVE_YEARS;
+        break;
+      case TWENTY_TO_TWENTYFIVE_YEARS:
+        nextLeaveProfileType = LeaveProfileType.TWENTYFIVE_TO_THIRTY_YEARS;
+        break;
+      case TWENTYFIVE_TO_THIRTY_YEARS:
+        nextLeaveProfileType = LeaveProfileType.THIRTY_TO_THIRTYFIVE_YEARS;
+        break;
+      case THIRTY_TO_THIRTYFIVE_YEARS:
+        nextLeaveProfileType = LeaveProfileType.THIRTYFIVE_TO_FORTY_YEARS;
+        break;
+      default:
+        return currentLeaveProfile;
+    }
+
+    return leaveProfileRepository.findOneByLeaveProfileType(nextLeaveProfileType);
   }
 }
