@@ -4,6 +4,7 @@ import { all } from 'redux-saga/effects';
 import { authenticateSaga } from './getTokenFromSessionStorageSaga';
 import { teamsSaga } from './teamsSaga';
 import { userSaga } from './userSaga';
+import { publicHolidaysSaga } from './publicHolidaySaga';
 
 export default function* saga() {
   yield all([
@@ -11,6 +12,7 @@ export default function* saga() {
     ...getTokenSaga,
     ...authenticateSaga,
     ...teamsSaga,
-    ...userSaga
+    ...userSaga,
+    ...publicHolidaysSaga
   ]);
 }

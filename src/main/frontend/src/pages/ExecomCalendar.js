@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Calendar from '../components/calendar/Calendar';
 import styled from 'styled-components';
-import { getCalendar } from '../store/selectors';
+import { getCalendar, getPublicHolidays } from '../store/selectors';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import {
@@ -10,6 +10,7 @@ import {
   decrementYear,
   selectDay
 } from '../store/actions/calendarActions';
+import { requestPublicHolidays } from '../store/actions/publicHolidayActions';
 import moment from 'moment';
 
 const ExecomCalendarContainer = styled.div`
@@ -69,15 +70,25 @@ class ExecomCalendar extends Component {
       months: moment.months(),
       year: now.year(),
       currentMonth: moment.months(now.month()),
-      currentDay: moment().date()
+      currentDay: moment().date(),
+      publicHolidays: this.getPublicHolidays()
+      // todo vrackovic: Public holidays should be triggered first, and calendar needs to be initiated after all public holidays are fetched
     });
   }
+
+  getPublicHolidays = async () => {
+    if (!this.props.publicHolidays || this.props.publicHolidays.length < 1) {
+      await this.props.requestPublicHolidays();
+      return this.props.publicHolidays;
+    }
+    return this.props.publicHolidays;
+  };
 
   render() {
     return (
       <ExecomCalendarContainer>
         <CalendarWrapper>
-          {/* Change button styling from /common/button */}
+          {/* Change button styling to Button from '/common/button' */}
           <button
             style={{
               backgroundColor: '#fb4b4f',
@@ -119,6 +130,7 @@ class ExecomCalendar extends Component {
               <Calendar
                 calendar={this.props.calendar}
                 selectDay={this.props.selectDay}
+                publicHolidays={this.props.publicHolidays}
               />
             )}
           </CalendarContainer>
@@ -129,12 +141,19 @@ class ExecomCalendar extends Component {
 }
 
 const mapStateToProps = state => ({
-  calendar: getCalendar(state)
+  calendar: getCalendar(state),
+  publicHolidays: getPublicHolidays(state)
 });
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
-    { initDate, incrementYear, decrementYear, selectDay },
+    {
+      initDate,
+      incrementYear,
+      decrementYear,
+      selectDay,
+      requestPublicHolidays
+    },
     dispatch
   );
 
