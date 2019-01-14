@@ -81,6 +81,12 @@
       <column autoIncrement="true" name="id" type="BIGINT(19)">
         <constraints primaryKey="true"/>
       </column>
+      <column name="leave_profile_type" type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="upgradable" type="BIT(1)">
+        <constraints nullable="false"/>
+      </column>
       <column name="comment" type="VARCHAR(255)"/>
       <column name="entitlement" type="INT(10)">
         <constraints nullable="false"/>
@@ -164,6 +170,7 @@
       <column name="user_status_type" type="VARCHAR(255)">
         <constraints nullable="false"/>
       </column>
+      <column name="image" type="MEDIUMBLOB"/>
       <column name="email" type="VARCHAR(255)">
         <constraints nullable="false"/>
       </column>
@@ -174,10 +181,10 @@
       <column name="user_role" type="VARCHAR(255)">
         <constraints nullable="false"/>
       </column>
-      <column name="started_working" type="date">
+      <column name="started_working_date" type="date">
         <constraints nullable="false"/>
       </column>
-      <column name="started_working_at_execom" type="date">
+      <column name="started_working_at_execom_date" type="date">
         <constraints nullable="false"/>
       </column>
       <column name="years_of_service" type="INT(10)">
