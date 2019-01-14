@@ -3,6 +3,9 @@ package eu.execom.hawaii.service;
 import eu.execom.hawaii.model.Email;
 import eu.execom.hawaii.model.Request;
 import eu.execom.hawaii.model.User;
+import eu.execom.hawaii.model.enumerations.UserRole;
+import eu.execom.hawaii.model.enumerations.UserStatusType;
+import eu.execom.hawaii.repository.UserRepository;
 import eu.execom.hawaii.util.EmailSubjectProvider;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -45,10 +48,13 @@ public class EmailService {
 
   private Configuration freemarkerConfig;
 
+  private UserRepository userRepository;
+
   @Autowired
-  public EmailService(JavaMailSender emailSender, Configuration freemarkerConfig) {
+  public EmailService(JavaMailSender emailSender, Configuration freemarkerConfig, UserRepository userRepository) {
     this.emailSender = emailSender;
     this.freemarkerConfig = freemarkerConfig;
+    this.userRepository = userRepository;
   }
 
   /**
@@ -77,6 +83,26 @@ public class EmailService {
         END_DATE, endDate, NUMBER_OF_REQUESTED_DAYS, numberOfRequestedDays, REASON, reason);
 
     sendEmail(new Email(approversEmail, subject, templateData), "createRequestEmail.ftl");
+  }
+
+  /**
+   * Create email to send notification that user's leave profile was updated
+   *
+   * @param user the User.
+   */
+  @Async
+  public void createLeaveProfileUpdateEmailAndSendForApproval(User user) {
+    List<User> users = userRepository.findAllByUserStatusTypeIn(Collections.singletonList(UserStatusType.ACTIVE));
+    List<String> approversEmail = users.stream()
+                                       .filter(approvers -> approvers.getUserRole().equals(UserRole.HR_MANAGER))
+                                       .map(User::getEmail)
+                                       .collect(Collectors.toList());
+
+    String subject = EmailSubjectProvider.USER_LEAVE_PROFILE_UPDATE;
+    String userName = user.getFullName();
+    Map<String, Object> templateData = Map.of(USER_NAME, userName);
+
+    sendEmail(new Email(approversEmail, subject, templateData), "userLeaveProfileUpdate.ftl");
   }
 
   /**

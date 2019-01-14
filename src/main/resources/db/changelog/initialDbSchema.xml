@@ -56,9 +56,7 @@
       <column name="training" type="INT(10)">
         <constraints nullable="false"/>
       </column>
-      <column name="year" type="INT(10)">
-        <constraints nullable="false"/>
-      </column>
+      <column name="year_id" type="BIGINT(19)"/>
       <column name="user_id" type="BIGINT(19)"/>
     </createTable>
   </changeSet>
@@ -166,6 +164,7 @@
       <column name="user_status_type" type="VARCHAR(255)">
         <constraints nullable="false"/>
       </column>
+      <column name="image" type="MEDIUMBLOB"/>
       <column name="email" type="VARCHAR(255)">
         <constraints nullable="false"/>
       </column>
@@ -174,6 +173,12 @@
       </column>
       <column name="job_title" type="VARCHAR(255)"/>
       <column name="user_role" type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="started_working_date" type="date">
+        <constraints nullable="false"/>
+      </column>
+      <column name="started_working_at_execom_date" type="date">
         <constraints nullable="false"/>
       </column>
       <column name="years_of_service" type="INT(10)">
@@ -260,6 +265,23 @@
   <changeSet author="admin" id="{initialId}-21">
     <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="user_push_token"
                              constraintName="FK_user_push_token_user" deferrable="false" initiallyDeferred="false"
+                             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                             referencedTableName="user"/>
+  </changeSet>
+  <changeSet author="admin" id="{initialId}-22">
+    <createTable tableName="year">
+      <column autoIncrement="true" name="id" type="BIGINT(19)">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="active" type="BIT(1)">
+        <constraints nullable="true"/>
+      </column>
+      <column name="year" type="INT(10)"/>
+    </createTable>
+  </changeSet>
+  <changeSet author="admin" id="{initialId}-23">
+    <addForeignKeyConstraint baseColumnNames="year_id" baseTableName="allowance"
+                             constraintName="FK_allowance_year" deferrable="false" initiallyDeferred="false"
                              onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
                              referencedTableName="user"/>
   </changeSet>
