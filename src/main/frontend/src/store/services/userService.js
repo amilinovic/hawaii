@@ -1,9 +1,9 @@
 import request from 'superagent';
 
-export const getUserApi = async email => {
+export const getUserApi = () => {
   try {
-    return await request
-      .get(`/users/${email}`)
+    return request
+      .get(`/users/me`)
       .set('X-ID-TOKEN', sessionStorage.getItem('token'))
       .then(res => res.body)
       .catch(err => {
