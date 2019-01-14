@@ -13,6 +13,8 @@ public final class EmailSubjectProvider {
 
   private static final String LEAVE_REQUEST_NOTIFICATION_SUBJECT = "Leave Request %s";
 
+  public static final String USER_LEAVE_PROFILE_UPDATE = "Leave Profile Update Notification";
+
   public static String getLeaveRequestNotificationSubject(String status) {
     return String.format(LEAVE_REQUEST_NOTIFICATION_SUBJECT, status);
   }

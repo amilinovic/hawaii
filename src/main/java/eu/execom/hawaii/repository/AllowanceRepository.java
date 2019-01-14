@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface AllowanceRepository extends JpaRepository<Allowance, Long> {
 
-  Allowance findByUserIdAndYear(Long userId, int year);
+  Allowance findByUserIdAndYearYear(Long userId, int year);
   List<Allowance> findAllByUserId(Long userId);
 
 }

@@ -54,7 +54,6 @@ public class IdTokenVerifierFilter extends OncePerRequestFilter {
     }
 
     User user = userService.findByEmail(userIdentity.get());
-    user.getUserPushTokens();
 
     if (user == null) {
       httpServletResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
@@ -62,7 +61,9 @@ public class IdTokenVerifierFilter extends OncePerRequestFilter {
       return;
     }
 
-    if (!user.getUserStatusType().equals(UserStatusType.ACTIVE)) {
+    user.getUserPushTokens();
+
+    if (!UserStatusType.ACTIVE.equals(user.getUserStatusType())) {
       httpServletResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
       log.error("User {} found in database, but is not active", userIdentity.get());
       return;

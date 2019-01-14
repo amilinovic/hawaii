@@ -164,6 +164,7 @@
       <column name="user_status_type" type="VARCHAR(255)">
         <constraints nullable="false"/>
       </column>
+      <column name="image" type="MEDIUMBLOB"/>
       <column name="email" type="VARCHAR(255)">
         <constraints nullable="false"/>
       </column>
@@ -172,6 +173,12 @@
       </column>
       <column name="job_title" type="VARCHAR(255)"/>
       <column name="user_role" type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="started_working_date" type="date">
+        <constraints nullable="false"/>
+      </column>
+      <column name="started_working_at_execom_date" type="date">
         <constraints nullable="false"/>
       </column>
       <column name="years_of_service" type="INT(10)">

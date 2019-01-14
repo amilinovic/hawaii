@@ -65,6 +65,7 @@ public class RequestServiceTest {
     @InjectMocks
     private RequestService requestService;
 
+    private int thisYear;
     private User mockUser;
     private Day dayOne;
     private Day dayTwo;
@@ -79,14 +80,15 @@ public class RequestServiceTest {
 
     @Before
     public void setUp() {
+        thisYear = EntityBuilder.thisYear().getYear();
         mockUser = EntityBuilder.user(EntityBuilder.team());
 
         absenceAnnual = EntityBuilder.absenceAnnual();
         absenceTraining = EntityBuilder.absenceTraining();
 
-        dayOne = EntityBuilder.day(LocalDate.of(2018, 11, 20));
-        dayTwo = EntityBuilder.day(LocalDate.of(2018, 11, 21));
-        dayThree = EntityBuilder.day(LocalDate.of(2018, 11, 22));
+        dayOne = EntityBuilder.day(LocalDate.of(thisYear, 11, 20));
+        dayTwo = EntityBuilder.day(LocalDate.of(thisYear, 11, 21));
+        dayThree = EntityBuilder.day(LocalDate.of(thisYear, 11, 22));
 
         dayFromDifferentYear = EntityBuilder.day(LocalDate.of(2021, 1, 15));
 
@@ -102,8 +104,8 @@ public class RequestServiceTest {
     public void shouldFindAllByDateRange() {
         //given
         given(requestRepository.findAll()).willReturn(mockRequests);
-        var startDate = LocalDate.of(2018, 11, 1);
-        var endDate = LocalDate.of(2018, 12, 1);
+        var startDate = LocalDate.of(thisYear, 11, 1);
+        var endDate = LocalDate.of(thisYear, 12, 1);
 
         //when
         List<Request> requests = requestService.findAllByDateRange(startDate, endDate);
@@ -118,8 +120,8 @@ public class RequestServiceTest {
     public void shouldFailToFindAnyByDateRange() {
         //given
         given(requestRepository.findAll()).willReturn(mockRequests);
-        var startDate = LocalDate.of(2018, 11, 1);
-        var endDate = LocalDate.of(2018, 11, 10);
+        var startDate = LocalDate.of(thisYear, 11, 1);
+        var endDate = LocalDate.of(thisYear, 11, 10);
 
         //when
         List<Request> requests = requestService.findAllByDateRange(startDate, endDate);
@@ -135,15 +137,15 @@ public class RequestServiceTest {
         // given
         given(userRepository.getOne(1L)).willReturn(mockUser);
         given(requestRepository.findAllByUser(mockUser)).willReturn(mockRequests);
-        var startDate = LocalDate.of(2018, 11, 18);
-        var endDate = LocalDate.of(2018, 11, 20);
+        var startDate = LocalDate.of(thisYear, 11, 18);
+        var endDate = LocalDate.of(thisYear, 11, 20);
 
         // when
         List<Request> requests = requestService.findAllByUserWithinDates(startDate, endDate, 1L);
 
         // then
         assertThat("Expect to list size be one ", requests.size(), is(1));
-        assertThat("Expect to request date be 2018-11-20", requests.get(0).getDays().get(0).getDate(), is(endDate));
+        assertThat("Expect to request date be thisYear-11-20", requests.get(0).getDays().get(0).getDate(), is(endDate));
         verify(userRepository).getOne(anyLong());
         verify(requestRepository).findAllByUser(any());
         verifyNoMoreInteractions(allMocks);
@@ -154,8 +156,8 @@ public class RequestServiceTest {
         // given
         given(userRepository.getOne(1L)).willReturn(mockUser);
         given(requestRepository.findAllByUser(mockUser)).willReturn(mockRequests);
-        var startDate = LocalDate.of(2018, 11, 18);
-        var endDate = LocalDate.of(2018, 11, 18);
+        var startDate = LocalDate.of(thisYear, 11, 18);
+        var endDate = LocalDate.of(thisYear, 11, 18);
 
         // when
         List<Request> requests = requestService.findAllByUserWithinDates(startDate, endDate, 1L);
@@ -262,8 +264,8 @@ public class RequestServiceTest {
 
         // then
         assertThat("Expect to request is just for one day", request.getDays().size(), is(1));
-        assertThat("Expect to request date is 2018-11-20", request.getDays().get(0).getDate(),
-                is(LocalDate.of(2018, 11, 20)));
+        assertThat("Expect to request date is thisYear-11-20", request.getDays().get(0).getDate(),
+                is(LocalDate.of(thisYear, 11, 20)));
         verify(requestRepository).getOne(anyLong());
         verifyNoMoreInteractions(allMocks);
     }
@@ -597,7 +599,7 @@ public class RequestServiceTest {
         given(requestRepository.findAllByUser(userTwo)).willReturn(List.of(requestTwo));
 
         // when
-        List<Request> requests = requestService.findAllByTeamByMonthOfYear(1L, LocalDate.of(2018, 11, 25));
+        List<Request> requests = requestService.findAllByTeamByMonthOfYear(1L, LocalDate.of(thisYear, 11, 25));
 
         // then
         assertThat("Expect to size of requests be two", requests.size(), is(2));
@@ -626,7 +628,7 @@ public class RequestServiceTest {
         given(requestRepository.findAllByUser(userTwo)).willReturn(List.of(requestTwo));
 
         // when
-        List<Request> requests = requestService.findAllByTeamByMonthOfYear(1L, LocalDate.of(2018, 1, 25));
+        List<Request> requests = requestService.findAllByTeamByMonthOfYear(1L, LocalDate.of(thisYear, 1, 25));
 
         // then
         assertThat("Expect to list of request be empty", requests.isEmpty(), is(true));
