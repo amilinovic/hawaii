@@ -62,19 +62,21 @@ public class IncrementServiceYearsJobTest {
     var user2 = EntityBuilder.approver();
     var activeUsers = List.of(user1, user2);
     given(userRepository.findAllByUserStatusTypeIn(any())).willReturn(activeUsers);
+    given(leaveProfileRepository.findOneByLeaveProfileType(any())).willReturn(EntityBuilder.leaveProfileIII());
 
     // when
     incrementServiceYearsJob.addServiceYearsToUser();
 
     //than
-    assertThat("Expect year of service to be incremented to 5", user1.getYearsOfService(), is(5));
-    assertThat("Expect leave profile id to be 2", user1.getLeaveProfile().getId(), is(2L));
-    assertThat("Expect year of service to be incremented to 5", user2.getYearsOfService(), is(10));
+    assertThat("Expect years of service to be incremented to 5", user1.getYearsOfService(), is(5));
+    assertThat("Expect leave profile id to be 1", user1.getLeaveProfile().getId(), is(1L));
+    assertThat("Expect years of service to be incremented to 10", user2.getYearsOfService(), is(10));
     assertThat("Expect leave profile id to be 3", user2.getLeaveProfile().getId(), is(3L));
     verify(userRepository).findAllByUserStatusTypeIn(any());
-    verify(emailService, times(2)).createLeaveProfileUpdateEmailAndSendForApproval(any());
+    verify(leaveProfileRepository).findOneByLeaveProfileType(any());
+    verify(emailService).createLeaveProfileUpdateEmailAndSendForApproval(any());
     verify(userRepository, times(2)).save(any());
-    verify(userService,times(2)).updateAllowanceForUserOnLeaveProfileUpdate(any());
+    verify(userService).updateAllowanceForUserOnLeaveProfileUpdate(any(), any());
     verifyNoMoreInteractions(allMocks);
   }
 }
