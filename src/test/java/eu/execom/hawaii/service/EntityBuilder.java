@@ -8,6 +8,7 @@ import eu.execom.hawaii.model.PublicHoliday;
 import eu.execom.hawaii.model.Request;
 import eu.execom.hawaii.model.Team;
 import eu.execom.hawaii.model.User;
+import eu.execom.hawaii.model.Year;
 import eu.execom.hawaii.model.enumerations.AbsenceSubtype;
 import eu.execom.hawaii.model.enumerations.AbsenceType;
 import eu.execom.hawaii.model.enumerations.Duration;
@@ -21,7 +22,7 @@ import java.util.List;
 
 public class EntityBuilder {
 
-  static Team team() {
+  public static Team team() {
     var team = new Team();
     team.setName("My team1");
     team.setDeleted(false);
@@ -32,7 +33,7 @@ public class EntityBuilder {
     return team;
   }
 
-  static User user(Team team) {
+  public static User user(Team team) {
     var user = new User();
     user.setId(1L);
     user.setTeam(team);
@@ -41,6 +42,9 @@ public class EntityBuilder {
     user.setEmail("aria.stark@gmail.com");
     user.setUserRole(UserRole.HR_MANAGER);
     user.setJobTitle("Developer");
+    user.setStartedWorkingAtExecomDate(LocalDate.of(2019, 2, 28));
+    user.setStartedWorkingDate(LocalDate.of(2016, LocalDate.now().getMonth(), LocalDate.now().getDayOfMonth()));
+    user.setYearsOfService(4);
     user.setUserStatusType(UserStatusType.ACTIVE);
     user.setApproverTeams(new ArrayList<>());
     user.setRequests(new ArrayList<>());
@@ -49,15 +53,18 @@ public class EntityBuilder {
     return user;
   }
 
-  static User approver() {
+  public static User approver() {
     var approver = new User();
     approver.setId(3L);
     approver.setTeam(team());
-    approver.setLeaveProfile(leaveProfile());
+    approver.setLeaveProfile(leaveProfileII());
     approver.setFullName("Bruce Wayne");
     approver.setEmail("bruce.wayne@execom.eu");
     approver.setUserRole(UserRole.HR_MANAGER);
     approver.setJobTitle("Developer");
+    approver.setStartedWorkingAtExecomDate(LocalDate.of(2016, 3, 3));
+    approver.setStartedWorkingDate(LocalDate.of(2015, LocalDate.now().getMonth(), LocalDate.now().getDayOfMonth()));
+    approver.setYearsOfService(9);
     approver.setUserStatusType(UserStatusType.ACTIVE);
     approver.setApproverTeams(new ArrayList<>());
     approver.setRequests(new ArrayList<>());
@@ -69,11 +76,25 @@ public class EntityBuilder {
   static LeaveProfile leaveProfile() {
     var leaveProfile = new LeaveProfile();
     leaveProfile.setId(1L);
-    leaveProfile.setName("Default");
+    leaveProfile.setName("Zero-Five");
     leaveProfile.setEntitlement(160);
     leaveProfile.setMaxCarriedOver(40);
     leaveProfile.setMaxBonusDays(40);
     leaveProfile.setTraining(16);
+    leaveProfile.setComment("No comment");
+    leaveProfile.setUsers(new ArrayList<>());
+
+    return leaveProfile;
+  }
+
+  private static LeaveProfile leaveProfileII() {
+    var leaveProfile = new LeaveProfile();
+    leaveProfile.setId(2L);
+    leaveProfile.setName("Five-Ten");
+    leaveProfile.setEntitlement(168);
+    leaveProfile.setMaxCarriedOver(40);
+    leaveProfile.setMaxBonusDays(40);
+    leaveProfile.setTraining(24);
     leaveProfile.setComment("No comment");
     leaveProfile.setUsers(new ArrayList<>());
 
@@ -93,11 +114,13 @@ public class EntityBuilder {
     return request;
   }
 
-  static Allowance allowance(User user) {
+  public static Allowance allowance(User user) {
     var allowance = new Allowance();
     allowance.setId(1L);
     allowance.setUser(user);
-    allowance.setYear(2018);
+    allowance.getUser().setId(1L);
+    allowance.setYear(thisYear());
+    allowance.getYear().setId(1L);
     allowance.setAnnual(160);
     allowance.setTakenAnnual(0);
     allowance.setSickness(0);
@@ -108,6 +131,45 @@ public class EntityBuilder {
     allowance.setTakenTraining(0);
 
     return allowance;
+  }
+
+  static Allowance allowanceII(User user) {
+    var allowance = new Allowance();
+    allowance.setId(2L);
+    allowance.setUser(user);
+    allowance.getUser().setId(1L);
+    allowance.setYear(thisYear());
+    allowance.getYear().setId(1L);
+    allowance.setAnnual(168);
+    allowance.setTakenAnnual(0);
+    allowance.setSickness(0);
+    allowance.setBonus(0);
+    allowance.setCarriedOver(40);
+    allowance.setManualAdjust(0);
+    allowance.setTraining(16);
+    allowance.setTakenTraining(0);
+
+    return allowance;
+  }
+
+  static Year thisYear() {
+    var year = new Year();
+    year.setId(1L);
+    year.setActive(true);
+    year.setYear(LocalDate.now().getYear());
+    year.setAllowances(new ArrayList<>());
+
+    return year;
+  }
+
+  static Year nextYear() {
+    var year = new Year();
+    year.setId(2L);
+    year.setActive(true);
+    year.setYear(LocalDate.now().getYear() + 1);
+    year.setAllowances(new ArrayList<>());
+
+    return year;
   }
 
   static PublicHoliday publicholiday() {
@@ -168,5 +230,4 @@ public class EntityBuilder {
 
     return day;
   }
-
 }

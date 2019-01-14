@@ -57,3 +57,5 @@ yarn-error.log*
 **/service_account.json
 
 **/images/hawaii.png
+
+**/application.properties

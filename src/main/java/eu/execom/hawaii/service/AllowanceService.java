@@ -1,5 +1,6 @@
 package eu.execom.hawaii.service;
 
+import eu.execom.hawaii.dto.AllowanceForUserDto;
 import eu.execom.hawaii.exceptions.InsufficientHoursException;
 import eu.execom.hawaii.model.Allowance;
 import eu.execom.hawaii.model.Day;
@@ -12,7 +13,6 @@ import eu.execom.hawaii.model.enumerations.AbsenceType;
 import eu.execom.hawaii.model.enumerations.Duration;
 import eu.execom.hawaii.repository.AllowanceRepository;
 import eu.execom.hawaii.repository.PublicHolidayRepository;
-import eu.execom.hawaii.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,14 +39,11 @@ public class AllowanceService {
 
   private AllowanceRepository allowanceRepository;
   private PublicHolidayRepository publicHolidayRepository;
-  private UserRepository userRepository;
 
   @Autowired
-  public AllowanceService(AllowanceRepository allowanceRepository, PublicHolidayRepository publicHolidayRepository,
-      UserRepository userRepository) {
+  public AllowanceService(AllowanceRepository allowanceRepository, PublicHolidayRepository publicHolidayRepository) {
     this.allowanceRepository = allowanceRepository;
     this.publicHolidayRepository = publicHolidayRepository;
-    this.userRepository = userRepository;
   }
 
   /**
@@ -92,7 +89,7 @@ public class AllowanceService {
    * @return Allowance.
    */
   Allowance getByUserAndYear(Long userId, int year) {
-    return allowanceRepository.findByUserIdAndYear(userId, year);
+    return allowanceRepository.findByUserIdAndYearYear(userId, year);
   }
 
   private void cancelPendingAnnual(Allowance currentYearAllowance, Allowance nextYearAllowance, int requestedHours) {
@@ -306,7 +303,7 @@ public class AllowanceService {
     }
   }
 
-  private int calculateRemainingAnnualHours(Allowance allowance) {
+  public int calculateRemainingAnnualHours(Allowance allowance) {
     var totalHours =
         allowance.getAnnual() + allowance.getBonus() + allowance.getCarriedOver() + allowance.getManualAdjust();
     var takenAnnual = allowance.getTakenAnnual();
@@ -358,12 +355,26 @@ public class AllowanceService {
     }
   }
 
+  public AllowanceForUserDto getAllowancesForUser(User user) {
+    AllowanceForUserDto allowanceForUserDto = new AllowanceForUserDto();
+
+    var yearOfRequest = LocalDate.now().getYear();
+    var currentYearAllowance = getByUserAndYear(user.getId(), yearOfRequest);
+    var nextYearAllowance = getByUserAndYear(user.getId(), yearOfRequest + 1);
+
+    allowanceForUserDto.setRemainingAnnualHours(calculateRemainingAnnualHours(currentYearAllowance));
+    allowanceForUserDto.setNextYearRemainingAnnualHours(calculateNextYearRemainingAnnualHours(nextYearAllowance));
+    allowanceForUserDto.setRemainingTrainingHours(calculateRemainingTrainingHours(currentYearAllowance));
+
+    return allowanceForUserDto;
+  }
+
   public Map<String, Integer> getFirstAndLastAllowancesYear(User authUser) {
     List<Allowance> allowances = allowanceRepository.findAllByUserId(authUser.getId());
     Map<String, Integer> firstAndLastYear = new HashMap<>();
 
     IntSummaryStatistics firstAndLastAllowanceYear = allowances.stream()
-                                                               .map((allowance -> allowance.getYear()))
+                                                               .map((allowance -> allowance.getYear().getYear()))
                                                                .collect(Collectors.summarizingInt(Integer::intValue));
 
     firstAndLastYear.put("first", firstAndLastAllowanceYear.getMin());
@@ -371,5 +382,4 @@ public class AllowanceService {
 
     return firstAndLastYear;
   }
-
 }
