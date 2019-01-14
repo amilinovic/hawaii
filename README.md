@@ -46,7 +46,9 @@ Password: root
 project_root
 ```
 
-2 . Generate war file <br/>
+2 . Make a copy of application.properties.example in src/main/resources named application.properties and change to mached desired config
+
+3 . Generate war file <br/>
 ```
 mvn clean install
 ```
@@ -111,6 +113,8 @@ yarn start or npm start
 ```
 
 Then open http://localhost:3000/ to see your app
+
+Install Redux DevTools plugin for your browser
 
 #### Swagger
 

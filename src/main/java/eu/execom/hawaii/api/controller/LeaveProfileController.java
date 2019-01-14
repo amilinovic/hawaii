@@ -2,6 +2,7 @@ package eu.execom.hawaii.api.controller;
 
 import eu.execom.hawaii.dto.LeaveProfileDto;
 import eu.execom.hawaii.model.LeaveProfile;
+import eu.execom.hawaii.repository.LeaveProfileRepository;
 import eu.execom.hawaii.service.LeaveProfileService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,10 +27,13 @@ public class LeaveProfileController {
   private static final ModelMapper MAPPER = new ModelMapper();
 
   private LeaveProfileService leaveProfileService;
+  private LeaveProfileRepository leaveProfileRepository;
 
   @Autowired
-  public LeaveProfileController(LeaveProfileService leaveProfileService) {
+  public LeaveProfileController(LeaveProfileService leaveProfileService,
+      LeaveProfileRepository leaveProfileRepository) {
     this.leaveProfileService = leaveProfileService;
+    this.leaveProfileRepository = leaveProfileRepository;
   }
 
   @GetMapping
@@ -56,9 +60,9 @@ public class LeaveProfileController {
 
   @PutMapping
   public ResponseEntity<LeaveProfileDto> updateLeaveProfile(@RequestBody LeaveProfileDto leaveProfileDto) {
-    var leaveProfile = MAPPER.map(leaveProfileDto, LeaveProfile.class);
-    var leaveProfileDtoResponse = new LeaveProfileDto(leaveProfile);
-    return new ResponseEntity<>(leaveProfileDtoResponse, HttpStatus.OK);
+    LeaveProfile leaveProfile = MAPPER.map(leaveProfileDto, LeaveProfile.class);
+    leaveProfile = leaveProfileRepository.save(leaveProfile);
+    return new ResponseEntity<>(new LeaveProfileDto(leaveProfile), HttpStatus.OK);
   }
 
   @DeleteMapping("/{id}")
@@ -66,5 +70,4 @@ public class LeaveProfileController {
     leaveProfileService.delete(id);
     return new ResponseEntity(HttpStatus.NO_CONTENT);
   }
-
 }

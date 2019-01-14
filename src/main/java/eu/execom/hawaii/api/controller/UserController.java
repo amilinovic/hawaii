@@ -1,7 +1,6 @@
 package eu.execom.hawaii.api.controller;
 
 import eu.execom.hawaii.dto.UserDto;
-import eu.execom.hawaii.model.Allowance;
 import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.enumerations.UserStatusType;
 import eu.execom.hawaii.service.UserService;
@@ -12,8 +11,11 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,9 +25,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import springfox.documentation.annotations.ApiIgnore;
 
-import java.time.LocalDate;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -77,8 +78,7 @@ public class UserController {
   @PostMapping
   public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto) {
     User user = MAPPER.map(userDto, User.class);
-    user = userService.createAllowanceForUser(user, LocalDate.now().getYear());
-
+    user = userService.createAllowanceForUserOnCreateUser(user);
     return new ResponseEntity<>(new UserDto(user), HttpStatus.CREATED);
   }
 
@@ -90,26 +90,14 @@ public class UserController {
     return new ResponseEntity<>(new UserDto(user), HttpStatus.OK);
   }
 
-  @PutMapping("/{userId}/allowance")
-  public ResponseEntity<UserDto> createAllowanceForUserForNextYear(@PathVariable Long userId) {
-    User user = userService.getUserById(userId);
-    var userAllowances = user.getAllowances();
-    int latestYear = userAllowances.stream().map(Allowance::getYear).reduce((a, b) -> b).orElse(0);
-    user = userService.createAllowanceForUser(user, latestYear + 1);
+  @GetMapping("/image/{id}")
+  public ResponseEntity<byte[]> getUserImage(@PathVariable Long id)  {
+      User user = userService.getUserById(id);
+      HttpHeaders headers = new HttpHeaders();
+      headers.setContentType(MediaType.IMAGE_JPEG);
+      headers.setContentLength(user.getImage().length);
 
-    return new ResponseEntity<>(new UserDto(user), HttpStatus.OK);
-  }
-
-  @PutMapping("/allowances/{year}")
-  public ResponseEntity<List<UserDto>> createAllowanceForAllUsersForYear(@PathVariable int year) {
-    List<User> users = userService.findAllByUserStatusType(Collections.singletonList(UserStatusType.ACTIVE));
-
-    List<UserDto> userDtos = users.stream()
-                                  .map(user -> userService.createAllowanceForUser(user, year))
-                                  .map(UserDto::new)
-                                  .collect(Collectors.toList());
-
-    return new ResponseEntity<>(userDtos, HttpStatus.OK);
+      return new ResponseEntity<>(user.getImage(), headers, HttpStatus.OK);
   }
 
   @PutMapping("/{id}/activate")
@@ -122,8 +110,13 @@ public class UserController {
   @DeleteMapping("/{id}")
   public ResponseEntity deleteUser(@PathVariable Long id) {
     userService.delete(id);
-
     return new ResponseEntity(HttpStatus.NO_CONTENT);
+  }
+
+  @GetMapping("/me")
+  public ResponseEntity<UserDto> me(@ApiIgnore @AuthenticationPrincipal User authUser)
+  {
+    return new ResponseEntity<>(new UserDto(authUser),HttpStatus.OK);
   }
 
 }
