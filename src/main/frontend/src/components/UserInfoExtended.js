@@ -18,7 +18,7 @@ export default class UserInfoComponent extends Component {
 
     return (
       <UserInfoExtended>
-        {/* Replace hardcoded image when blob storage for users is implemented on backend */}
+        {/* TODO vrackovic: Replace hardcoded image when blob storage for users is implemented on backend */}
         <UserImage
           image="https://randomuser.me/api/portraits/men/85.jpg"
           size="100px"
