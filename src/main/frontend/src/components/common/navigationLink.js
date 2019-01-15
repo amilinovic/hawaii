@@ -7,13 +7,4 @@ export const NavigationLink = styled.span`
   // background: ${prop('background', '#FA4C50')};
   display: ${prop('display', 'inline-block')};
   font-weight: 500;
-  &:before {
-    // content: '';
-    background-image: url('${prop('icon', 'none')}');
-    // width: ${ifProp('icon', '20px', 'auto')};
-    // height: ${ifProp('icon', '20px', 'auto')};
-    // float: left;
-    // background-size: cover;
-    // margin-right: ${ifProp('icon', '10px', '0')};
-  }
 `;
