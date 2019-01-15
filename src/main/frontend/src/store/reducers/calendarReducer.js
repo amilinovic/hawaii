@@ -38,18 +38,67 @@ const actionHandlers = {
 const initiateTable = state => {
   const months = moment.months();
   const monthsWithDays = monthName =>
-    fillWithDays(monthName, months, state.selectedYear || state.year);
+    fillWithDays(
+      monthName,
+      months,
+      state.selectedYear || state.year,
+      state.publicHolidays
+    );
   const monthObjects = months.map(monthName => ({
     name: monthName,
     days: [...monthsWithDays(monthName)]
   }));
 
+  const publicHolidays = state.publicHolidays.map(holiday => ({
+    date: moment(`${holiday.date}`, 'YYYY-MM-DD').date(),
+    month: moment(`${holiday.date}`, 'YYYY-MM-DD').month(),
+    year: moment(`${holiday.date}`, 'YYYY-MM-DD').year(),
+    name: holiday.name
+  }));
+
+  const currentYearHolidays = publicHolidays.filter(
+    holiday => holiday.year === (state.selectedYear || state.year)
+  );
+
+  const monthsWithMappedPublicHolidays = publicHolidayMetadata(
+    monthObjects,
+    currentYearHolidays
+  );
+
   return state.selectedYear && state.selectedYear !== state.year
-    ? monthObjects
-    : setToday(state, monthObjects);
+    ? monthsWithMappedPublicHolidays
+    : setToday(state, monthsWithMappedPublicHolidays);
+  // TODO vrackovic: Create function for addition of metadata when public holidays
 };
 
-const fillWithDays = (monthName, months, year) => {
+const publicHolidayMetadata = (calendarObject, currentYearHolidays) => {
+  const mappedHolidays = calendarObject.reduce((acc, month) => {
+    let mappedMonth = { ...month };
+    currentYearHolidays.map(holiday => {
+      if (
+        moment()
+          .month(holiday.month)
+          .format('MMMM') === month.name
+      ) {
+        mappedMonth = {
+          ...month,
+          days: mappedMonth.days.map(
+            dayObj =>
+              dayObj && dayObj.date === holiday.date
+                ? { ...dayObj, publicHoliday: holiday.name }
+                : dayObj
+          )
+        };
+      }
+      return holiday;
+    });
+
+    return acc.concat(mappedMonth || month);
+  }, []);
+  return mappedHolidays;
+};
+
+const fillWithDays = (monthName, months, year, publicHolidays) => {
   const monthLength = moment(
     `01-${months.indexOf(monthName) + 1}-${parseInt(year, 10)}`,
     `DD-MM-YYYY`
@@ -61,14 +110,14 @@ const fillWithDays = (monthName, months, year) => {
 
   for (let i = 0; i < 31; i++) {
     i < monthLength
-      ? (monthDays[i] = addMetaData(monthName, i, year))
+      ? (monthDays[i] = addMetaData(monthName, i, year, publicHolidays))
       : (monthDays[i] = null);
   }
 
   return monthDays;
 };
 
-const addMetaData = (monthName, date, year) => {
+const addMetaData = (monthName, date, year, publicHolidays) => {
   let dayObject = { date: date + 1 };
   const dayOfWeek = moment(
     `${parseInt(date, 10) + 1}-${moment.months().indexOf(monthName) +

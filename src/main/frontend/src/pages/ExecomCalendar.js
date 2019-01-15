@@ -5,13 +5,11 @@ import { getCalendar, getPublicHolidays } from '../store/selectors';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import {
-  initDate,
   incrementYear,
   decrementYear,
   selectDay
 } from '../store/actions/calendarActions';
 import { requestPublicHolidays } from '../store/actions/publicHolidayActions';
-import moment from 'moment';
 
 const ExecomCalendarContainer = styled.div`
   display: flex;
@@ -64,16 +62,7 @@ const CalendarContainer = styled.div`
 
 class ExecomCalendar extends Component {
   componentDidMount() {
-    const now = moment();
-    this.props.initDate({
-      now: now,
-      months: moment.months(),
-      year: now.year(),
-      currentMonth: moment.months(now.month()),
-      currentDay: moment().date(),
-      publicHolidays: this.getPublicHolidays()
-      // todo vrackovic: Public holidays should be triggered first, and calendar needs to be initiated after all public holidays are fetched
-    });
+    this.props.requestPublicHolidays();
   }
 
   getPublicHolidays = async () => {
@@ -148,7 +137,6 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
-      initDate,
       incrementYear,
       decrementYear,
       selectDay,
