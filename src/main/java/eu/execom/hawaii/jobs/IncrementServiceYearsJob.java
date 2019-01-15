@@ -5,7 +5,6 @@ import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.enumerations.LeaveProfileType;
 import eu.execom.hawaii.model.enumerations.UserStatusType;
 import eu.execom.hawaii.repository.LeaveProfileRepository;
-import eu.execom.hawaii.repository.UserRepository;
 import eu.execom.hawaii.service.EmailService;
 import eu.execom.hawaii.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,15 +23,13 @@ public class IncrementServiceYearsJob {
   private static final int UPDATE_THRESHOLD = 5;
   private static final MonthDay FEBRUARY_TWENTY_NINE = MonthDay.of(2, 29);
 
-  private UserRepository userRepository;
   private LeaveProfileRepository leaveProfileRepository;
   private EmailService emailService;
   private UserService userService;
 
   @Autowired
-  public IncrementServiceYearsJob(UserRepository userRepository, LeaveProfileRepository leaveProfileRepository,
-      EmailService emailService, UserService userService) {
-    this.userRepository = userRepository;
+  public IncrementServiceYearsJob(LeaveProfileRepository leaveProfileRepository, EmailService emailService,
+      UserService userService) {
     this.leaveProfileRepository = leaveProfileRepository;
     this.emailService = emailService;
     this.userService = userService;
@@ -44,14 +41,14 @@ public class IncrementServiceYearsJob {
    */
   @Scheduled(cron = "0 0 6 * * *")
   public void addServiceYearsToUser() {
-    List<User> users = userRepository.findAllByUserStatusTypeIn(Collections.singletonList(UserStatusType.ACTIVE));
+    List<User> users = userService.findAllByUserStatusType(Collections.singletonList(UserStatusType.ACTIVE));
 
     Supplier<Stream<User>> userStream = () -> users.stream()
                                                    .filter(user -> startedWorkingToday(
                                                        MonthDay.from(user.getStartedWorkingDate())));
     userStream.get().forEach(user -> {
       user.setYearsOfService(user.getYearsOfService() + 1);
-      userRepository.save(user);
+      userService.save(user);
     });
     userStream.get()
               .filter(user -> user.getLeaveProfile().isUpgradeable())
