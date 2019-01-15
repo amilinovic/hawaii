@@ -1,11 +1,17 @@
 import React, { Component } from 'react';
 import { tableTd, tableTh, tableTr } from './CalendarTableElements';
 import styled from 'styled-components';
+import HolidayImg from '../../img/holiday.svg';
 
 const Table = styled.table`
   width: 100%;
   border-collapse: separate;
   border-spacing: 0px;
+`;
+
+const Image = styled.img`
+  width: 15px;
+  height: 15px;
 `;
 
 class Calendar extends Component {
@@ -64,10 +70,18 @@ class Calendar extends Component {
         tdRender.push(
           day.weekend
             ? tableTd(`${day.date}.${name}`, { weekend: true })
-            : tableTd(`${day.date}.${name}`, {
-                ...clickHandler(day.date),
-                ...selected
-              })
+            : day.publicHoliday
+              ? tableTd(
+                  `${day.date}.${name}`,
+                  {
+                    publicHoliday: day.publicHoliday
+                  },
+                  <Image src={HolidayImg} />
+                )
+              : tableTd(`${day.date}.${name}`, {
+                  ...clickHandler(day.date),
+                  ...selected
+                })
         );
       }
       return day;
