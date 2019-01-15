@@ -53,7 +53,6 @@ public class IncrementServiceYearsJob {
       user.setYearsOfService(user.getYearsOfService() + 1);
       userRepository.save(user);
     });
-
     userStream.get()
               .filter(user -> user.getLeaveProfile().isUpgradeable())
               .filter(shouldUpdateLeaveProfile())
