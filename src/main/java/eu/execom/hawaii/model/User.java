@@ -64,6 +64,8 @@ public class User extends BaseEntity implements Serializable {
   @NotNull
   private int yearsOfService;
 
+  private LocalDate yearsOfServiceSetOnDate;
+
   @Lob
   @Basic(fetch = FetchType.LAZY)
   @Column(columnDefinition="MEDIUMBLOB")
