@@ -1,6 +1,6 @@
 import { call, put, takeLatest } from 'redux-saga/effects';
 import {
-  REQUEST_API_DATA,
+  requestApiData,
   receiveApiData,
   errorReceivingApiData
 } from '../actions/randomUserApiActions';
@@ -15,4 +15,4 @@ export const getApiData = function*() {
   }
 };
 
-export const randomUserApiSaga = [takeLatest(REQUEST_API_DATA, getApiData)];
+export const randomUserApiSaga = [takeLatest(requestApiData, getApiData)];

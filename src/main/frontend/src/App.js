@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Switch, Route } from 'react-router-dom';
-import Login from './pages/Login';
-import NavBar from './components/navigation/NavBar';
+import Login from './layout/Login';
+import Panel from './layout/Panel';
 import { ConnectedRouter } from 'connected-react-router';
 import { history } from './store/store';
 import { bindActionCreators } from 'redux';
@@ -18,7 +18,7 @@ class App extends Component {
       <ConnectedRouter history={history}>
         <Switch>
           <Route path="/login" component={Login} />
-          <Route path="/" component={NavBar} />
+          <Route path="/" component={Panel} />
         </Switch>
       </ConnectedRouter>
     );

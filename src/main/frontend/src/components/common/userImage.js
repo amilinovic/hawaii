@@ -17,5 +17,6 @@ export const UserImage = styled.div`
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
+  border: 1px solid #323234;
   margin-right: 15px;
 `;
