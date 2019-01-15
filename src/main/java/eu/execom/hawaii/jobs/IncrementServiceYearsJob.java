@@ -44,10 +44,12 @@ public class IncrementServiceYearsJob {
     List<User> users = userService.findAllByUserStatusType(Collections.singletonList(UserStatusType.ACTIVE));
 
     Supplier<Stream<User>> userStream = () -> users.stream()
-                                                   .filter(user -> startedWorkingToday(
-                                                       MonthDay.from(user.getStartedWorkingDate())));
+                                                   .filter(user -> shouldUpdateYearsOfService(
+                                                       MonthDay.from(user.getStartedWorkingDate()),
+                                                       user.getYearsOfServiceSetOnDate()));
     userStream.get().forEach(user -> {
       user.setYearsOfService(user.getYearsOfService() + 1);
+      user.setYearsOfServiceSetOnDate(LocalDate.now());
       userService.save(user);
     });
     userStream.get()
@@ -61,11 +63,12 @@ public class IncrementServiceYearsJob {
               });
   }
 
-  private boolean startedWorkingToday(MonthDay startedWorkingDate) {
+  private boolean shouldUpdateYearsOfService(MonthDay startedWorkingDate, LocalDate yearsOfServiceSetOnDate) {
     if ((startedWorkingDate == FEBRUARY_TWENTY_NINE) && !LocalDate.now().isLeapYear()) {
       return MonthDay.of(2, 28).equals(MonthDay.from(LocalDate.now()));
     } else {
-      return startedWorkingDate.equals(MonthDay.from(LocalDate.now()));
+      return startedWorkingDate.equals(MonthDay.from(LocalDate.now())) ||
+             yearsOfServiceSetOnDate.isBefore(LocalDate.now().minusYears(1));
     }
   }
 
