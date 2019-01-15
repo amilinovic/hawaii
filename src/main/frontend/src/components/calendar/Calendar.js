@@ -55,33 +55,39 @@ class Calendar extends Component {
 
     days.map((day, index) => {
       const selected =
-        day && day.selected ? { selected: true } : { selected: false };
+        day && (day.selected && !day.publicHoliday)
+          ? { selected: true }
+          : { selected: false };
       if (!day) {
         tdRender.push(tableTd(`${index + 1}.${name}`, { disabled: true }));
       } else if (day.today) {
         tdRender.push(
-          tableTd(`${day.date}.${name}`, {
-            today: true,
-            ...clickHandler(day.date),
-            ...selected
-          })
+          tableTd(
+            `${day.date}.${name}`,
+            {
+              today: true,
+              ...clickHandler(day.date),
+              ...selected
+            },
+            day.publicHoliday && <Image src={HolidayImg} />
+          )
         );
       } else {
         tdRender.push(
           day.weekend
-            ? tableTd(`${day.date}.${name}`, { weekend: true })
-            : day.publicHoliday
-              ? tableTd(
-                  `${day.date}.${name}`,
-                  {
-                    publicHoliday: day.publicHoliday
-                  },
-                  <Image src={HolidayImg} />
-                )
-              : tableTd(`${day.date}.${name}`, {
+            ? tableTd(
+                `${day.date}.${name}`,
+                { weekend: true },
+                day.publicHoliday && <Image src={HolidayImg} />
+              )
+            : tableTd(
+                `${day.date}.${name}`,
+                {
                   ...clickHandler(day.date),
                   ...selected
-                })
+                },
+                day.publicHoliday && <Image src={HolidayImg} />
+              )
         );
       }
       return day;

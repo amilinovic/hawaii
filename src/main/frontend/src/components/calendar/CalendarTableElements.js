@@ -23,7 +23,7 @@ const TableTd = styled.td`
   border-bottom: ${ifProp('today', '1px')};
   border: ${ifProp('today', '1px solid grey')};
   text-align: center;
-  padding: 5px 0px 5px 0px;
+  padding: ${ifProp('publicHoliday', '', '5px 0px 5px 0px')};
   min-width: 20px;
   font-size: 14px;
   border-bottom: 1px solid transparent;
@@ -33,6 +33,7 @@ const TableTd = styled.td`
   background-color: ${ifProp('weekend', '#E0E0E0')};
   background-color: ${ifProp('today', 'transparent')};
   border-color: ${ifProp('selected', '#e45052')};
+  vertical-align: middle;
   cursor: ${ifProp('disabled', 'no-drop')};
   &:last-child {
     border-right: 1px solid black;
@@ -56,7 +57,7 @@ const TableTr = styled.tr`
       border-left: 0px;
     }
     ${TableTd} {
-      border-top: 0px;
+      border-top: 1px solid transparent;
     }
   }
   ${TableTd}:first-child + ${TableTd} {
