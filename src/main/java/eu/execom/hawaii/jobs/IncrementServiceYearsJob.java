@@ -66,17 +66,13 @@ public class IncrementServiceYearsJob {
   }
 
   private boolean shouldUpdateYearsOfService(MonthDay startedWorkingDate, LocalDate yearsOfServiceSetOnDate) {
+    LocalDate todaysDate = LocalDate.now();
 
-    if (yearsOfServiceSetOnDate == null) {
-      yearsOfServiceSetOnDate = LocalDate.of(LocalDate.now().getYear() - 1, startedWorkingDate.getMonth(),
-          startedWorkingDate.getDayOfMonth());
-    }
-
-    if ((startedWorkingDate == FEBRUARY_TWENTY_NINE) && !LocalDate.now().isLeapYear()) {
-      return MonthDay.of(2, 28).equals(MonthDay.from(LocalDate.now()));
+    if (startedWorkingDate.equals(FEBRUARY_TWENTY_NINE) && !todaysDate.isLeapYear()) {
+      return MonthDay.of(2, 28).equals(MonthDay.from(todaysDate));
     } else {
-      return startedWorkingDate.equals(MonthDay.from(LocalDate.now())) ||
-             yearsOfServiceSetOnDate.isBefore(LocalDate.now().minusYears(1));
+      return startedWorkingDate.equals(MonthDay.from(todaysDate)) || yearsOfServiceSetOnDate.isBefore(
+          todaysDate.minusYears(1));
     }
   }
 
