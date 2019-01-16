@@ -34,7 +34,6 @@ import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 public class UserService {
 
   private static final int HALF_DAY = 4;
-  private static final int FULL_DAY = 8;
 
   private UserRepository userRepository;
   private LeaveProfileRepository leaveProfileRepository;
@@ -170,13 +169,14 @@ public class UserService {
    * Updates values for allowances for active years. Since Leave Profile was just updated, values
    * for already created allowances for currently active years need to be updated as well.
    */
-  public void updateAllowanceForUserOnLeaveProfileUpdate(User user) {
+  public void updateAllowanceForUserOnLeaveProfileUpdate(User user, LeaveProfile previousLeaveProfile) {
     var openedActiveYears = yearRepository.findAllByYearGreaterThanEqual(LocalDate.now().getYear());
     var userAllowances = user.getAllowances();
+    var allowanceDelta = user.getLeaveProfile().getEntitlement() - previousLeaveProfile.getEntitlement();
     for (Year year : openedActiveYears) {
       userAllowances.stream()
-                    .filter(allowance1 -> allowance1.getYear().equals(year))
-                    .forEach(allowance1 -> allowance1.setAnnual(allowance1.getAnnual() + FULL_DAY));
+                    .filter(allowance -> allowance.getYear().equals(year))
+                    .forEach(allowance -> allowance.setAnnual(allowance.getAnnual() + allowanceDelta));
     }
     userRepository.save(user);
   }

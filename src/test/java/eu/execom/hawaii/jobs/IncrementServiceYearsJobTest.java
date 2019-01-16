@@ -1,8 +1,6 @@
 package eu.execom.hawaii.jobs;
 
 import eu.execom.hawaii.repository.LeaveProfileRepository;
-import eu.execom.hawaii.repository.UserRepository;
-import eu.execom.hawaii.repository.YearRepository;
 import eu.execom.hawaii.service.EmailService;
 import eu.execom.hawaii.service.EntityBuilder;
 import eu.execom.hawaii.service.UserService;
@@ -27,13 +25,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 public class IncrementServiceYearsJobTest {
 
   @Mock
-  private UserRepository userRepository;
-
-  @Mock
   private LeaveProfileRepository leaveProfileRepository;
-
-  @Mock
-  private YearRepository yearRepository;
 
   @Mock
   private EmailService emailService;
@@ -48,7 +40,7 @@ public class IncrementServiceYearsJobTest {
 
   @Before
   public void setUp() {
-    allMocks = new Object[] {userRepository, leaveProfileRepository, yearRepository, emailService};
+    allMocks = new Object[] {leaveProfileRepository, emailService, userService};
   }
 
   /**
@@ -61,20 +53,22 @@ public class IncrementServiceYearsJobTest {
     var user1 = EntityBuilder.user(EntityBuilder.team());
     var user2 = EntityBuilder.approver();
     var activeUsers = List.of(user1, user2);
-    given(userRepository.findAllByUserStatusTypeIn(any())).willReturn(activeUsers);
+    given(userService.findAllByUserStatusType(any())).willReturn(activeUsers);
+    given(leaveProfileRepository.findOneByLeaveProfileType(any())).willReturn(EntityBuilder.leaveProfileIII());
 
     // when
     incrementServiceYearsJob.addServiceYearsToUser();
 
     //than
-    assertThat("Expect year of service to be incremented to 5", user1.getYearsOfService(), is(5));
-    assertThat("Expect leave profile id to be 2", user1.getLeaveProfile().getId(), is(2L));
-    assertThat("Expect year of service to be incremented to 5", user2.getYearsOfService(), is(10));
+    assertThat("Expect years of service to be incremented to 5", user1.getYearsOfService(), is(5));
+    assertThat("Expect leave profile id to be 1", user1.getLeaveProfile().getId(), is(1L));
+    assertThat("Expect years of service to be incremented to 10", user2.getYearsOfService(), is(10));
     assertThat("Expect leave profile id to be 3", user2.getLeaveProfile().getId(), is(3L));
-    verify(userRepository).findAllByUserStatusTypeIn(any());
-    verify(emailService, times(2)).createLeaveProfileUpdateEmailAndSendForApproval(any());
-    verify(userRepository, times(2)).save(any());
-    verify(userService,times(2)).updateAllowanceForUserOnLeaveProfileUpdate(any());
+    verify(userService).findAllByUserStatusType(any());
+    verify(leaveProfileRepository).findOneByLeaveProfileType(any());
+    verify(emailService).createLeaveProfileUpdateEmailAndSendForApproval(any());
+    verify(userService, times(2)).save(any());
+    verify(userService).updateAllowanceForUserOnLeaveProfileUpdate(any(), any());
     verifyNoMoreInteractions(allMocks);
   }
 }

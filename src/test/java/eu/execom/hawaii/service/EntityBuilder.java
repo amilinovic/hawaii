@@ -12,6 +12,7 @@ import eu.execom.hawaii.model.Year;
 import eu.execom.hawaii.model.enumerations.AbsenceSubtype;
 import eu.execom.hawaii.model.enumerations.AbsenceType;
 import eu.execom.hawaii.model.enumerations.Duration;
+import eu.execom.hawaii.model.enumerations.LeaveProfileType;
 import eu.execom.hawaii.model.enumerations.RequestStatus;
 import eu.execom.hawaii.model.enumerations.UserRole;
 import eu.execom.hawaii.model.enumerations.UserStatusType;
@@ -76,18 +77,20 @@ public class EntityBuilder {
   static LeaveProfile leaveProfile() {
     var leaveProfile = new LeaveProfile();
     leaveProfile.setId(1L);
-    leaveProfile.setName("Zero-Five");
+    leaveProfile.setName("Default");
     leaveProfile.setEntitlement(160);
     leaveProfile.setMaxCarriedOver(40);
     leaveProfile.setMaxBonusDays(40);
     leaveProfile.setTraining(16);
+    leaveProfile.setUpgradeable(false);
+    leaveProfile.setLeaveProfileType(LeaveProfileType.DEFAULT);
     leaveProfile.setComment("No comment");
     leaveProfile.setUsers(new ArrayList<>());
 
     return leaveProfile;
   }
 
-  private static LeaveProfile leaveProfileII() {
+  static LeaveProfile leaveProfileII() {
     var leaveProfile = new LeaveProfile();
     leaveProfile.setId(2L);
     leaveProfile.setName("Five-Ten");
@@ -95,6 +98,23 @@ public class EntityBuilder {
     leaveProfile.setMaxCarriedOver(40);
     leaveProfile.setMaxBonusDays(40);
     leaveProfile.setTraining(24);
+    leaveProfile.setUpgradeable(true);
+    leaveProfile.setLeaveProfileType(LeaveProfileType.FIVE_TO_TEN_YEARS);
+    leaveProfile.setComment("No comment");
+    leaveProfile.setUsers(new ArrayList<>());
+
+    return leaveProfile;
+  }
+
+  public static LeaveProfile leaveProfileIII() {
+    var leaveProfile = new LeaveProfile();
+    leaveProfile.setId(3L);
+    leaveProfile.setName("Ten-Fifteen");
+    leaveProfile.setEntitlement(176);
+    leaveProfile.setMaxCarriedOver(40);
+    leaveProfile.setTraining(24);
+    leaveProfile.setUpgradeable(true);
+    leaveProfile.setLeaveProfileType(LeaveProfileType.TEN_TO_FIFTEEN_YEARS);
     leaveProfile.setComment("No comment");
     leaveProfile.setUsers(new ArrayList<>());
 

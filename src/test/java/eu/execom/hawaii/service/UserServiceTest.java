@@ -32,7 +32,6 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
@@ -199,26 +198,21 @@ public class UserServiceTest {
   @Test
   public void shouldUpdateAllowanceForUserOnLeaveProfileUpdate() {
     // given
-    var user1 = EntityBuilder.user(EntityBuilder.team());
-    var user2 = EntityBuilder.approver();
-    var user1Allowance = EntityBuilder.allowance(user1);
-    var user2Allowance = EntityBuilder.allowanceII(user2);
-
-    user1.setAllowances(List.of(user1Allowance));
-    user2.setAllowances(List.of(user2Allowance));
+    var user = EntityBuilder.approver();
+    var allowance = EntityBuilder.allowanceII(user);
+    user.setLeaveProfile(EntityBuilder.leaveProfileIII());
+    user.setAllowances(List.of(allowance));
 
     var activeYears = List.of(EntityBuilder.thisYear(), EntityBuilder.nextYear());
     given(yearRepository.findAllByYearGreaterThanEqual(anyInt())).willReturn(activeYears);
 
     // when
-    userService.updateAllowanceForUserOnLeaveProfileUpdate(user1);
-    userService.updateAllowanceForUserOnLeaveProfileUpdate(user2);
+    userService.updateAllowanceForUserOnLeaveProfileUpdate(user, EntityBuilder.leaveProfileII());
 
     //than
-    assertThat("Expect annual allowance to be 168", user1.getAllowances().get(0).getAnnual(), is(168));
-    assertThat("Expect annual allowance to be 176", user2.getAllowances().get(0).getAnnual(), is(176));
-    verify(yearRepository, times(2)).findAllByYearGreaterThanEqual(anyInt());
-    verify(userRepository, times(2)).save(any());
+    assertThat("Expect annual allowance to be 176", user.getAllowances().get(0).getAnnual(), is(176));
+    verify(yearRepository).findAllByYearGreaterThanEqual(anyInt());
+    verify(userRepository).save(any());
     verifyNoMoreInteractions(allMocks);
   }
 }
