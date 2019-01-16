@@ -69,9 +69,9 @@ public class UserController {
   public ResponseEntity<List<UserRestrictedDto>> allUsersRestrictedList(
       @RequestParam(required = false) LocalDate startTime, @RequestParam(required = false) LocalDate endTime) {
 
-    Pair<LocalDate, LocalDate> newDates = assignDefaultDates(startTime, endTime);
-    startTime = newDates.getLeft();
-    endTime = newDates.getRight();
+    LocalDate[] newDates = this.assignDefaultDates(startTime, endTime);
+    startTime = newDates[0];
+    endTime = newDates[1];
 
     List<UserStatusType> statuses = new ArrayList<UserStatusType>();
     statuses.add(UserStatusType.ACTIVE);
@@ -87,9 +87,9 @@ public class UserController {
       @ApiIgnore @AuthenticationPrincipal User authUser, @RequestParam(required = false) LocalDate startTime,
       @RequestParam(required = false) LocalDate endTime) {
 
-    Pair<LocalDate, LocalDate> newDates = assignDefaultDates(startTime, endTime);
-    startTime = newDates.getLeft();
-    endTime = newDates.getRight();
+    LocalDate[] newDates = this.assignDefaultDates(startTime, endTime);
+    startTime = newDates[0];
+    endTime = newDates[1];
 
     Team team = authUser.getTeam();
 
@@ -99,7 +99,7 @@ public class UserController {
     return new ResponseEntity<>(userDtos, HttpStatus.OK);
   }
 
-  private Pair<LocalDate, LocalDate> assignDefaultDates(LocalDate startTime, LocalDate endTime) {
+  private LocalDate[] assignDefaultDates(LocalDate startTime, LocalDate endTime) {
     if (startTime == null && endTime == null) {
       startTime = LocalDate.now().with(DayOfWeek.MONDAY);
       endTime = LocalDate.now().with(DayOfWeek.SUNDAY);
@@ -108,7 +108,7 @@ public class UserController {
     } else {
       endTime = startTime.plusDays(7);
     }
-    return new Pair<>(startTime, endTime);
+    return new LocalDate[]{startTime, endTime};
   }
 
   private List<UserRestrictedDto> createUserRestrictedDtosFromUsers(List<User> users, LocalDate startTime,
