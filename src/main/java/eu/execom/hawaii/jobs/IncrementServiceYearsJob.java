@@ -9,6 +9,7 @@ import eu.execom.hawaii.service.EmailService;
 import eu.execom.hawaii.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.MonthDay;
@@ -40,6 +41,7 @@ public class IncrementServiceYearsJob {
    * If user reaches 5, 10, 15 years... Update leave profile, save, send update mail.
    */
   @Scheduled(cron = "0 0 6 * * *")
+  @Transactional
   public void addServiceYearsToUser() {
     List<User> users = userService.findAllByUserStatusType(Collections.singletonList(UserStatusType.ACTIVE));
 
@@ -57,7 +59,7 @@ public class IncrementServiceYearsJob {
               .filter(shouldUpdateLeaveProfile())
               .forEach(user -> {
                 var leaveProfile = user.getLeaveProfile();
-                user.setLeaveProfile(nextLeaveProfile(leaveProfile));
+                user.setLeaveProfile(findNextLeaveProfile(leaveProfile));
                 emailService.createLeaveProfileUpdateEmailAndSendForApproval(user);
                 userService.updateAllowanceForUserOnLeaveProfileUpdate(user, leaveProfile);
               });
@@ -82,7 +84,7 @@ public class IncrementServiceYearsJob {
     return user -> user.getYearsOfService() % UPDATE_THRESHOLD == 0;
   }
 
-  private LeaveProfile nextLeaveProfile(LeaveProfile currentLeaveProfile) {
+  private LeaveProfile findNextLeaveProfile(LeaveProfile currentLeaveProfile) {
     LeaveProfileType nextLeaveProfileType;
     var leaveProfileType = currentLeaveProfile.getLeaveProfileType();
 
