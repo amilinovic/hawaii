@@ -55,7 +55,7 @@ public class IncrementServiceYearsJob {
               .filter(shouldUpdateLeaveProfile())
               .forEach(user -> {
                 var leaveProfile = user.getLeaveProfile();
-                user.setLeaveProfile(nextLeaveProfile(leaveProfile));
+                user.setLeaveProfile(findNextLeaveProfile(leaveProfile));
                 emailService.createLeaveProfileUpdateEmailAndSendForApproval(user);
                 userService.updateAllowanceForUserOnLeaveProfileUpdate(user, leaveProfile);
               });
@@ -73,7 +73,7 @@ public class IncrementServiceYearsJob {
     return user -> user.getYearsOfService() % UPDATE_THRESHOLD == 0;
   }
 
-  private LeaveProfile nextLeaveProfile(LeaveProfile currentLeaveProfile) {
+  private LeaveProfile findNextLeaveProfile(LeaveProfile currentLeaveProfile) {
     LeaveProfileType nextLeaveProfileType;
     var leaveProfileType = currentLeaveProfile.getLeaveProfileType();
 
