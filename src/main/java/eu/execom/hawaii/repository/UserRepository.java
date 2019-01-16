@@ -1,5 +1,6 @@
 package eu.execom.hawaii.repository;
 
+import eu.execom.hawaii.model.Team;
 import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.enumerations.UserStatusType;
 import org.springframework.data.domain.Page;
@@ -19,5 +20,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
   Page<User> findAllByUserStatusTypeAndEmailContainingOrFullNameContaining(UserStatusType userStatusType, String email,
       String fullName, Pageable pageable);
+
+  List<User> findAllByUserStatusTypeAndTeam(UserStatusType userStatusType, Team team);
 
 }
