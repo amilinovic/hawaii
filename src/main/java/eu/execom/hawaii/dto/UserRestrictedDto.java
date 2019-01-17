@@ -19,8 +19,6 @@ public class UserRestrictedDto {
   private String jobTitle;
   private List<DayDto> days;
 
-  private List<UserPushTokenDto> userPushTokens = new ArrayList<>();
-
   public UserRestrictedDto(User user) {
     this.id = user.getId();
     this.teamId = (user.getTeam().getId());
@@ -32,7 +30,6 @@ public class UserRestrictedDto {
   }
 
   public UserRestrictedDto(User user, List<Day> days) {
-
     this(user);
     this.days = days.stream().map(DayDto::new).collect(Collectors.toList());
 
