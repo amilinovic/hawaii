@@ -5,6 +5,7 @@ import { teamsSaga } from './teamsSaga';
 import { userSaga } from './userSaga';
 import { publicHolidaysSaga } from './publicHolidaySaga';
 import { employeesSaga } from './employeesSaga';
+import { leaveTypesSaga } from './leaveTypesSaga';
 
 export default function* saga() {
   yield all([
@@ -13,6 +14,7 @@ export default function* saga() {
     ...teamsSaga,
     ...userSaga,
     ...publicHolidaysSaga,
-    ...employeesSaga
+    ...employeesSaga,
+    ...leaveTypesSaga
   ]);
 }

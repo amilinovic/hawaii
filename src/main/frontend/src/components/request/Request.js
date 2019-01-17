@@ -4,7 +4,8 @@ import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { closeRequestPopup } from '../../store/actions/requestPopupAction';
-import { getRequestPopup } from '../../store/selectors';
+import { getRequestPopup, getLeaveTypes } from '../../store/selectors';
+import { requestLeaveTypes } from '../../store/actions/leaveTypesActions';
 
 const RequestWrapper = styled.div`
   display: flex;
@@ -15,6 +16,10 @@ const RequestWrapper = styled.div`
 `;
 
 class Request extends Component {
+  componentDidMount() {
+    this.props.requestLeaveTypes();
+  }
+
   render() {
     return (
       <Backdrop title="New Request" closePopup={this.props.closeRequestPopup}>
@@ -25,13 +30,15 @@ class Request extends Component {
 }
 
 const mapStateToProps = state => ({
-  requestPopup: getRequestPopup(state)
+  requestPopup: getRequestPopup(state),
+  leaveTypes: getLeaveTypes(state)
 });
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
-      closeRequestPopup
+      closeRequestPopup,
+      requestLeaveTypes
     },
     dispatch
   );
