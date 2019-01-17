@@ -1,7 +1,9 @@
 package eu.execom.hawaii.api.controller;
 
+import eu.execom.hawaii.dto.DayDto;
 import eu.execom.hawaii.dto.UserDto;
 import eu.execom.hawaii.dto.UserRestrictedDto;
+import eu.execom.hawaii.model.Day;
 import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.enumerations.UserStatusType;
 import eu.execom.hawaii.model.Team;
@@ -65,7 +67,7 @@ public class UserController {
     return new ResponseEntity<>(userDtos, HttpStatus.OK);
   }
 
-  @GetMapping("/restricted/all_users")
+  @GetMapping("/restricted/allUsers")
   public ResponseEntity<List<UserRestrictedDto>> allUsersRestrictedList(
       @RequestParam(required = false) LocalDate startTime, @RequestParam(required = false) LocalDate endTime) {
 
@@ -82,7 +84,7 @@ public class UserController {
     return new ResponseEntity<>(userDtos, HttpStatus.OK);
   }
 
-  @GetMapping("/restricted/team_users")
+  @GetMapping("/restricted/teamUsers")
   public ResponseEntity<List<UserRestrictedDto>> teamUsersRestrictedList(
       @ApiIgnore @AuthenticationPrincipal User authUser, @RequestParam(required = false) LocalDate startTime,
       @RequestParam(required = false) LocalDate endTime) {
@@ -97,6 +99,22 @@ public class UserController {
     List<UserRestrictedDto> userDtos = createUserRestrictedDtosFromUsers(users, startTime, endTime);
 
     return new ResponseEntity<>(userDtos, HttpStatus.OK);
+  }
+
+  @GetMapping("/restricted/myDays")
+  public ResponseEntity<List<DayDto>> myDays(
+      @ApiIgnore @AuthenticationPrincipal User authUser, @RequestParam(required = false) LocalDate startTime,
+      @RequestParam(required = false) LocalDate endTime
+  )
+  {
+    LocalDate[] newDates = this.assignDefaultDates(startTime, endTime);
+    startTime = newDates[0];
+    endTime = newDates[1];
+
+    List<Day> days = dayService.getUserAbsencesDays(authUser,startTime,endTime);
+    List<DayDto> daysDto = days.stream().map(DayDto::new).collect(Collectors.toList());
+
+    return new ResponseEntity<>(daysDto,HttpStatus.OK);
   }
 
   private LocalDate[] assignDefaultDates(LocalDate startTime, LocalDate endTime) {
