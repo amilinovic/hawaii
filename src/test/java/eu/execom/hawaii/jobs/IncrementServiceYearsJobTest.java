@@ -43,12 +43,9 @@ public class IncrementServiceYearsJobTest {
     allMocks = new Object[] {leaveProfileRepository, emailService, userService};
   }
 
-  /**
-   * Users started working date needs to be set to same month date as is today
-   * in order for test to work.
-   */
+
   @Test
-  public void addServiceYearsToUser() {
+  public void shouldAddServiceYearsToUser() {
     // given
     var user1 = EntityBuilder.user(EntityBuilder.team());
     var user2 = EntityBuilder.approver();

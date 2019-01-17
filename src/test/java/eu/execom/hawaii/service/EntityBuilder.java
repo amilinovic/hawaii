@@ -23,6 +23,8 @@ import java.util.List;
 
 public class EntityBuilder {
 
+  private static LocalDate TODAYS_DATE = LocalDate.now();
+
   public static Team team() {
     var team = new Team();
     team.setName("My team1");
@@ -44,7 +46,7 @@ public class EntityBuilder {
     user.setUserRole(UserRole.HR_MANAGER);
     user.setJobTitle("Developer");
     user.setStartedWorkingAtExecomDate(LocalDate.of(2019, 2, 28));
-    user.setStartedWorkingDate(LocalDate.of(2016, LocalDate.now().getMonth(), LocalDate.now().getDayOfMonth()));
+    user.setStartedWorkingDate(TODAYS_DATE.minusYears(2));
     user.setYearsOfService(4);
     user.setUserStatusType(UserStatusType.ACTIVE);
     user.setApproverTeams(new ArrayList<>());
@@ -64,7 +66,8 @@ public class EntityBuilder {
     approver.setUserRole(UserRole.HR_MANAGER);
     approver.setJobTitle("Developer");
     approver.setStartedWorkingAtExecomDate(LocalDate.of(2016, 3, 3));
-    approver.setStartedWorkingDate(LocalDate.of(2015, LocalDate.now().getMonth(), LocalDate.now().getDayOfMonth()));
+    approver.setStartedWorkingDate(TODAYS_DATE.minusYears(1).plusDays(1));
+    approver.setYearsOfServiceSetOnDate(TODAYS_DATE.minusYears(1).minusDays(1));
     approver.setYearsOfService(9);
     approver.setUserStatusType(UserStatusType.ACTIVE);
     approver.setApproverTeams(new ArrayList<>());
@@ -176,7 +179,7 @@ public class EntityBuilder {
     var year = new Year();
     year.setId(1L);
     year.setActive(true);
-    year.setYear(LocalDate.now().getYear());
+    year.setYear(TODAYS_DATE.getYear());
     year.setAllowances(new ArrayList<>());
 
     return year;
@@ -186,7 +189,7 @@ public class EntityBuilder {
     var year = new Year();
     year.setId(2L);
     year.setActive(true);
-    year.setYear(LocalDate.now().getYear() + 1);
+    year.setYear(TODAYS_DATE.getYear() + 1);
     year.setAllowances(new ArrayList<>());
 
     return year;

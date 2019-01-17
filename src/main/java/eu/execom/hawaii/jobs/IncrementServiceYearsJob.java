@@ -16,13 +16,11 @@ import java.time.MonthDay;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 public class IncrementServiceYearsJob {
 
   private static final int UPDATE_THRESHOLD = 5;
-  private static final MonthDay FEBRUARY_TWENTY_NINE = MonthDay.of(2, 29);
+  private static LocalDate TODAYS_DATE = LocalDate.now();
 
   private LeaveProfileRepository leaveProfileRepository;
   private EmailService emailService;
@@ -45,39 +43,36 @@ public class IncrementServiceYearsJob {
   public void addServiceYearsToUser() {
     List<User> users = userService.findAllByUserStatusType(Collections.singletonList(UserStatusType.ACTIVE));
 
-    Supplier<Stream<User>> userStream = () -> users.stream()
-                                                   .filter(user -> shouldUpdateYearsOfService(
-                                                       MonthDay.from(user.getStartedWorkingDate()),
-                                                       user.getYearsOfServiceSetOnDate()));
-    userStream.get().forEach(user -> {
-      user.setYearsOfService(user.getYearsOfService() + 1);
-      user.setYearsOfServiceSetOnDate(LocalDate.now());
-      userService.save(user);
-    });
-    userStream.get()
-              .filter(user -> user.getLeaveProfile().isUpgradeable())
-              .filter(shouldUpdateLeaveProfile())
-              .forEach(user -> {
-                var leaveProfile = user.getLeaveProfile();
-                user.setLeaveProfile(findNextLeaveProfile(leaveProfile));
-                emailService.createLeaveProfileUpdateEmailAndSendForApproval(user);
-                userService.updateAllowanceForUserOnLeaveProfileUpdate(user, leaveProfile);
-              });
+    users.stream()
+         .filter(shouldIncrementYearsOfService())
+         .forEach(user -> {
+           incrementYearsOfService(user);
+           updateLeaveProfile(user);
+         });
   }
 
-  private boolean shouldUpdateYearsOfService(MonthDay startedWorkingDate, LocalDate yearsOfServiceSetOnDate) {
-    LocalDate todaysDate = LocalDate.now();
+  private Predicate<User> shouldIncrementYearsOfService() {
+    return user -> MonthDay.from(user.getStartedWorkingDate()).equals(MonthDay.from(TODAYS_DATE)) ||
+                   user.getYearsOfServiceSetOnDate().isBefore(TODAYS_DATE.minusYears(1));
+  }
 
-    if (startedWorkingDate.equals(FEBRUARY_TWENTY_NINE) && !todaysDate.isLeapYear()) {
-      return MonthDay.of(2, 28).equals(MonthDay.from(todaysDate));
-    } else {
-      return startedWorkingDate.equals(MonthDay.from(todaysDate)) || yearsOfServiceSetOnDate.isBefore(
-          todaysDate.minusYears(1));
+  private void incrementYearsOfService(User user) {
+    user.setYearsOfService(user.getYearsOfService() + 1);
+    user.setYearsOfServiceSetOnDate(TODAYS_DATE);
+    userService.save(user);
+  }
+
+  private void updateLeaveProfile(User user) {
+    if (user.getLeaveProfile().isUpgradeable() && shouldUpdateLeaveProfile(user)) {
+      var previousLeaveProfile = user.getLeaveProfile();
+      user.setLeaveProfile(findNextLeaveProfile(previousLeaveProfile));
+      emailService.createLeaveProfileUpdateEmailAndSendForApproval(user);
+      userService.updateAllowanceForUserOnLeaveProfileUpdate(user, previousLeaveProfile);
     }
   }
 
-  private Predicate<User> shouldUpdateLeaveProfile() {
-    return user -> user.getYearsOfService() % UPDATE_THRESHOLD == 0;
+  private boolean shouldUpdateLeaveProfile(User user) {
+    return user.getYearsOfService() % UPDATE_THRESHOLD == 0;
   }
 
   private LeaveProfile findNextLeaveProfile(LeaveProfile currentLeaveProfile) {

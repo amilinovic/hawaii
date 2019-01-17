@@ -22,6 +22,7 @@ import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
@@ -157,11 +158,12 @@ public class UserService {
   public User createAllowanceForUserOnCreateUser(User user) {
     var leaveProfile = leaveProfileRepository.getOne(user.getLeaveProfile().getId());
     var openedActiveYears = yearRepository.findAllByYearGreaterThanEqual(LocalDate.now().getYear());
-    var userAllowances = user.getAllowances();
+    List<Allowance> userAllowances = new ArrayList<>();
     for (Year year : openedActiveYears) {
       Allowance allowance = createAllowance(user, year, leaveProfile);
       userAllowances.add(allowance);
     }
+    user.setAllowances(userAllowances);
     return save(user);
   }
 
