@@ -10,6 +10,7 @@ import {
   selectDay
 } from '../store/actions/calendarActions';
 import { requestPublicHolidays } from '../store/actions/publicHolidayActions';
+import Request from '../components/request/Request';
 
 const ExecomCalendarContainer = styled.div`
   display: flex;
@@ -124,6 +125,7 @@ class ExecomCalendar extends Component {
             )}
           </CalendarContainer>
         </CalendarWrapper>
+        <Request />
       </ExecomCalendarContainer>
     );
   }
