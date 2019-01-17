@@ -1,7 +1,11 @@
 import React, { Component } from 'react';
 import Calendar from '../components/calendar/Calendar';
 import styled from 'styled-components';
-import { getCalendar, getPublicHolidays } from '../store/selectors';
+import {
+  getCalendar,
+  getPublicHolidays,
+  getRequestPopup
+} from '../store/selectors';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import {
@@ -11,6 +15,7 @@ import {
 } from '../store/actions/calendarActions';
 import { requestPublicHolidays } from '../store/actions/publicHolidayActions';
 import Request from '../components/request/Request';
+import { openRequestPopup } from '../store/actions/requestPopupAction';
 
 const ExecomCalendarContainer = styled.div`
   display: flex;
@@ -66,14 +71,6 @@ class ExecomCalendar extends Component {
     this.props.requestPublicHolidays();
   }
 
-  getPublicHolidays = async () => {
-    if (!this.props.publicHolidays || this.props.publicHolidays.length < 1) {
-      await this.props.requestPublicHolidays();
-      return this.props.publicHolidays;
-    }
-    return this.props.publicHolidays;
-  };
-
   render() {
     return (
       <ExecomCalendarContainer>
@@ -87,6 +84,7 @@ class ExecomCalendar extends Component {
               borderRadius: 5,
               alignSelf: 'flex-end'
             }}
+            onClick={this.props.openRequestPopup}
           >
             + New Request
           </button>
@@ -125,7 +123,7 @@ class ExecomCalendar extends Component {
             )}
           </CalendarContainer>
         </CalendarWrapper>
-        <Request />
+        {this.props.requestPopup && <Request />}
       </ExecomCalendarContainer>
     );
   }
@@ -133,7 +131,8 @@ class ExecomCalendar extends Component {
 
 const mapStateToProps = state => ({
   calendar: getCalendar(state),
-  publicHolidays: getPublicHolidays(state)
+  publicHolidays: getPublicHolidays(state),
+  requestPopup: getRequestPopup(state)
 });
 
 const mapDispatchToProps = dispatch =>
@@ -142,7 +141,8 @@ const mapDispatchToProps = dispatch =>
       incrementYear,
       decrementYear,
       selectDay,
-      requestPublicHolidays
+      requestPublicHolidays,
+      openRequestPopup
     },
     dispatch
   );

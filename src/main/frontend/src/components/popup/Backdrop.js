@@ -32,26 +32,36 @@ const PopupNavigation = styled.div`
   justify-content: space-between;
   p {
   }
-  button {
-    background-color: transparent;
-    border: none;
-    color: white;
-    font-weight: 600;
-    padding: 15px 20px;
-  }
   span {
     padding: 15px 25px;
   }
 `;
+const PopupButtonWrapper = styled.div`
+  font-weight: 800;
+  padding: 15px 20px;
+`;
 
 const PopupContent = styled.div``;
+
+const PopupButton = styled.button`
+  background-color: transparent;
+  border: none;
+  color: white;
+  border-radius: 5px;
+  border: 1px solid transparent;
+  &:hover {
+    border: 1px solid white;
+  }
+`;
 
 const Backdrop = props => {
   return (
     <PopupBackdrop>
       <PopupContainer>
         <PopupNavigation>
-          <button>x</button>
+          <PopupButtonWrapper>
+            <PopupButton onClick={props.closePopup}>x</PopupButton>
+          </PopupButtonWrapper>
           <p>{props.title}</p>
           <span />
         </PopupNavigation>
