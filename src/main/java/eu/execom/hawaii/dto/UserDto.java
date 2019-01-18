@@ -25,7 +25,6 @@ public class UserDto {
   private LocalDate startedWorkingDate;
   private LocalDate startedWorkingAtExecomDate;
   private int yearsOfService;
-  private LocalDate yearsOfServiceSetOnDate;
 
   private List<UserPushTokenDto> userPushTokens = new ArrayList<>();
 

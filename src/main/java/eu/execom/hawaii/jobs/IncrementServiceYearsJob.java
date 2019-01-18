@@ -12,7 +12,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.MonthDay;
+import java.time.Period;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
@@ -43,22 +43,22 @@ public class IncrementServiceYearsJob {
   public void addServiceYearsToUser() {
     List<User> users = userService.findAllByUserStatusType(Collections.singletonList(UserStatusType.ACTIVE));
 
+    LocalDate todaysDate = LocalDate.now();
+
     users.stream()
-         .filter(shouldIncrementYearsOfService())
+         .filter(yearsOfServiceUpToDate(todaysDate))
          .forEach(user -> {
-           incrementYearsOfService(user);
+           incrementYearsOfService(user, todaysDate);
            updateLeaveProfile(user);
          });
   }
 
-  private Predicate<User> shouldIncrementYearsOfService() {
-    return user -> MonthDay.from(user.getStartedWorkingDate()).equals(MonthDay.from(TODAYS_DATE)) ||
-                   user.getYearsOfServiceSetOnDate().isBefore(TODAYS_DATE.minusYears(1));
+  private Predicate<User> yearsOfServiceUpToDate(LocalDate todaysDate) {
+    return user -> Period.between(user.getStartedWorkingDate(), todaysDate).getYears() != user.getYearsOfService();
   }
 
-  private void incrementYearsOfService(User user) {
-    user.setYearsOfService(user.getYearsOfService() + 1);
-    user.setYearsOfServiceSetOnDate(TODAYS_DATE);
+  private void incrementYearsOfService(User user, LocalDate todaysDate) {
+    user.setYearsOfService(Period.between(user.getStartedWorkingDate(), todaysDate).getYears());
     userService.save(user);
   }
 

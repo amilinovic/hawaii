@@ -46,7 +46,7 @@ public class EntityBuilder {
     user.setUserRole(UserRole.HR_MANAGER);
     user.setJobTitle("Developer");
     user.setStartedWorkingAtExecomDate(LocalDate.of(2019, 2, 28));
-    user.setStartedWorkingDate(TODAYS_DATE.minusYears(2));
+    user.setStartedWorkingDate(TODAYS_DATE.minusYears(5));
     user.setYearsOfService(4);
     user.setUserStatusType(UserStatusType.ACTIVE);
     user.setApproverTeams(new ArrayList<>());
@@ -66,8 +66,7 @@ public class EntityBuilder {
     approver.setUserRole(UserRole.HR_MANAGER);
     approver.setJobTitle("Developer");
     approver.setStartedWorkingAtExecomDate(LocalDate.of(2016, 3, 3));
-    approver.setStartedWorkingDate(TODAYS_DATE.minusYears(1).plusDays(1));
-    approver.setYearsOfServiceSetOnDate(TODAYS_DATE.minusYears(1).minusDays(1));
+    approver.setStartedWorkingDate(TODAYS_DATE.minusYears(10));
     approver.setYearsOfService(9);
     approver.setUserStatusType(UserStatusType.ACTIVE);
     approver.setApproverTeams(new ArrayList<>());
