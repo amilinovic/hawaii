@@ -1,5 +1,6 @@
 package eu.execom.hawaii.service;
 
+import eu.execom.hawaii.dto.AllowanceForUserDto;
 import eu.execom.hawaii.exceptions.InsufficientHoursException;
 import eu.execom.hawaii.model.Allowance;
 import eu.execom.hawaii.model.Day;
@@ -88,7 +89,7 @@ public class AllowanceService {
    * @return Allowance.
    */
   Allowance getByUserAndYear(Long userId, int year) {
-    return allowanceRepository.findByUserIdAndYear(userId, year);
+    return allowanceRepository.findByUserIdAndYearYear(userId, year);
   }
 
   private void cancelPendingAnnual(Allowance currentYearAllowance, Allowance nextYearAllowance, int requestedHours) {
@@ -352,6 +353,20 @@ public class AllowanceService {
     if (requestedHours > remainingBonusHours) {
       throw new InsufficientHoursException();
     }
+  }
+
+  public AllowanceForUserDto getAllowancesForUser(User user) {
+    AllowanceForUserDto allowanceForUserDto = new AllowanceForUserDto();
+
+    var yearOfRequest = LocalDate.now().getYear();
+    var currentYearAllowance = getByUserAndYear(user.getId(), yearOfRequest);
+    var nextYearAllowance = getByUserAndYear(user.getId(), yearOfRequest + 1);
+
+    allowanceForUserDto.setRemainingAnnualHours(calculateRemainingAnnualHours(currentYearAllowance));
+    allowanceForUserDto.setNextYearRemainingAnnualHours(calculateNextYearRemainingAnnualHours(nextYearAllowance));
+    allowanceForUserDto.setRemainingTrainingHours(calculateRemainingTrainingHours(currentYearAllowance));
+
+    return allowanceForUserDto;
   }
 
   public Map<String, Integer> getFirstAndLastAllowancesYear(User authUser) {
