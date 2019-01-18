@@ -5,7 +5,6 @@ import styled from 'styled-components';
 
 const NavHeader = styled.header`
   width: 100%;
-  height: 50px;
   background-color: #ededed;
   display: flex;
   flex-direction: row;
