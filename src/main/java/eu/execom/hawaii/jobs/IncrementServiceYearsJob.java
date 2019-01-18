@@ -20,7 +20,6 @@ import java.util.function.Predicate;
 public class IncrementServiceYearsJob {
 
   private static final int UPDATE_THRESHOLD = 5;
-  private static LocalDate TODAYS_DATE = LocalDate.now();
 
   private LeaveProfileRepository leaveProfileRepository;
   private EmailService emailService;
