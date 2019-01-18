@@ -13,27 +13,44 @@ import { getUser } from '../store/selectors';
 import { requestUser } from '../store/actions/userActions';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import styled from 'styled-components';
+
+const PanelContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  flex-grow: 1;
+`;
+
+const PanelContent = styled.div`
+  flex-grow: 1;
+  height: 100%;
+`;
+
 class Panel extends Component {
   componentDidMount() {
     // Will be removed after `/me` endpoint is created, so user info could be fetched and stored in userStore
     this.props.requestUser(sessionStorage.getItem('userEmail'));
   }
+
   render() {
     return (
       <Fragment>
-        <div className="d-flex flex-grow-1">
+        <div className="root-wrapper">
           <Sidebar />
-          <div className="d-flex w-100 flex-column">
+          <PanelContainer>
             <TopHeader user={this.props.user} />
             <InformationHeader user={this.props.user} />
-            <Switch>
-              <Route path="/leave" component={Leave} />
-              <Route path="/leave-history" component={LeaveHistory} />
-              <Route path="/team-calendar" component={TeamCalendar} />
-              <Route path="/execom-calendar" component={ExecomCalendar} />
-              <Route path="/dashboard" component={Dashboard} />
-            </Switch>
-          </div>
+            <PanelContent>
+              <Switch>
+                <Route path="/leave" component={Leave} />
+                <Route path="/leave-history" component={LeaveHistory} />
+                <Route path="/team-calendar" component={TeamCalendar} />
+                <Route path="/execom-calendar" component={ExecomCalendar} />
+                <Route path="/dashboard" component={Dashboard} />
+              </Switch>
+            </PanelContent>
+          </PanelContainer>
         </div>
       </Fragment>
     );

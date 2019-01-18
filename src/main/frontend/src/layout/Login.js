@@ -7,11 +7,28 @@ import { requestToken } from '../store/actions/getTokenActions';
 import { getAuthorization } from '../store/selectors';
 import store from '../store/store';
 import { push } from 'connected-react-router';
+import HawaiiWallpaper from '../img/hawaii_wallpaper.jpg';
+import ExecomLogo from '../img/execom_logo.png';
+import styled from 'styled-components';
+import { MainLogo } from '../components/common/mainLogo';
 
 const loginButtonStyle = {
   padding: '0',
-  cursor: 'pointer'
+  cursor: 'pointer',
+  backgroundColor: '#E45052'
 };
+
+const LoginContainer = styled.div`
+  background: url(${HawaiiWallpaper});
+  height: 100%;
+  width: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+`;
 
 class Login extends Component {
   componentDidUpdate() {
@@ -22,20 +39,42 @@ class Login extends Component {
 
   render() {
     return (
-      <div className="align-items-center justify-content-center d-flex flex-grow-1 flex-column">
-        <h1>Hello Hawaii</h1>
-        <GoogleLogin
-          prompt="select_account"
-          style={loginButtonStyle}
-          disabledStyle
-          clientId="91011414864-oscjl6qmm6qds4kuvvh1j991rgvker3h.apps.googleusercontent.com"
-          onSuccess={this.props.requestToken}
-          // TODO error handling
-          // onFailure={this.props.receiveGoogleData}
+      <LoginContainer>
+        <div
+          style={{
+            position: 'absolute',
+            width: '500px',
+            height: '200px',
+            backgroundColor: 'rgba(50,50,52,0.7)',
+            borderRadius: '10px',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-evenly',
+            alignItems: 'center',
+            color: 'white',
+            border: '2px solid rgba(50,50,52)'
+          }}
         >
-          <NavigationLink>Log in</NavigationLink>
-        </GoogleLogin>
-      </div>
+          <MainLogo>
+            <p>Hawaii</p>
+            <span>
+              <img src={ExecomLogo} alt="execom" />
+              HR tool
+            </span>
+          </MainLogo>
+          <GoogleLogin
+            prompt="select_account"
+            style={loginButtonStyle}
+            disabledStyle
+            clientId="91011414864-oscjl6qmm6qds4kuvvh1j991rgvker3h.apps.googleusercontent.com"
+            onSuccess={this.props.requestToken}
+            // TODO error handling
+            // onFailure={this.props.receiveGoogleData}
+          >
+            <NavigationLink>Log in</NavigationLink>
+          </GoogleLogin>
+        </div>
+      </LoginContainer>
     );
   }
 }

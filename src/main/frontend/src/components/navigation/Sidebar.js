@@ -7,7 +7,6 @@ import ExecomLogo from '../../img/execom_logo.png';
 
 const Aside = styled.aside`
   background-color: #323234;
-  order: -1;
   width: 250px;
   display: flex;
   flex-direction: column;
