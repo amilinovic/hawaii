@@ -53,7 +53,7 @@ public class LeaveProfileController {
   @PostMapping
   public ResponseEntity<LeaveProfileDto> createLeaveProfile(@RequestBody LeaveProfileDto leaveProfileDto) {
     var leaveProfile = MAPPER.map(leaveProfileDto, LeaveProfile.class);
-    leaveProfile = leaveProfileService.save(leaveProfile);
+    leaveProfile = leaveProfileService.create(leaveProfile);
     var leaveProfileDtoResponse = new LeaveProfileDto(leaveProfile);
     return new ResponseEntity<>(leaveProfileDtoResponse, HttpStatus.CREATED);
   }
