@@ -4,7 +4,8 @@ import styled from 'styled-components';
 import {
   getCalendar,
   getPublicHolidays,
-  getRequestPopup
+  getRequestPopup,
+  getLeaveTypes
 } from '../store/selectors';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -16,6 +17,7 @@ import {
 import { requestPublicHolidays } from '../store/actions/publicHolidayActions';
 import Request from '../components/request/Request';
 import { openRequestPopup } from '../store/actions/requestPopupAction';
+import { requestLeaveTypes } from '../store/actions/leaveTypesActions';
 
 const ExecomCalendarContainer = styled.div`
   display: flex;
@@ -69,6 +71,7 @@ const CalendarContainer = styled.div`
 class ExecomCalendar extends Component {
   componentDidMount() {
     this.props.requestPublicHolidays();
+    this.props.requestLeaveTypes();
   }
 
   render() {
@@ -123,7 +126,9 @@ class ExecomCalendar extends Component {
             )}
           </CalendarContainer>
         </CalendarWrapper>
-        {this.props.requestPopup && <Request />}
+        {this.props.requestPopup && (
+          <Request leaveTypes={this.props.leaveTypes} />
+        )}
       </ExecomCalendarContainer>
     );
   }
@@ -132,7 +137,8 @@ class ExecomCalendar extends Component {
 const mapStateToProps = state => ({
   calendar: getCalendar(state),
   publicHolidays: getPublicHolidays(state),
-  requestPopup: getRequestPopup(state)
+  requestPopup: getRequestPopup(state),
+  leaveTypes: getLeaveTypes(state)
 });
 
 const mapDispatchToProps = dispatch =>
@@ -142,7 +148,8 @@ const mapDispatchToProps = dispatch =>
       decrementYear,
       selectDay,
       requestPublicHolidays,
-      openRequestPopup
+      openRequestPopup,
+      requestLeaveTypes
     },
     dispatch
   );
