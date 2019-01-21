@@ -41,7 +41,6 @@ public class UserDto {
     this.startedWorkingDate = user.getStartedWorkingDate();
     this.startedWorkingAtExecomDate = user.getStartedWorkingAtExecomDate();
     this.yearsOfService = user.getYearsOfService();
-    this.yearsOfServiceSetOnDate = startedWorkingDate.minusYears(1);
     this.userPushTokens = user.getUserPushTokens().stream().map(UserPushTokenDto::new).collect(Collectors.toList());
   }
 
