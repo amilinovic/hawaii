@@ -1,9 +1,9 @@
 import request from 'superagent';
 
-export const getUserApi = () => {
+export const getPublicHolidaysApi = async () => {
   try {
-    return request
-      .get(`/users/me`)
+    return await request
+      .get('/publicholidays?deleted=false')
       .set('X-ID-TOKEN', sessionStorage.getItem('token'))
       .then(res => res.body)
       .catch(err => {

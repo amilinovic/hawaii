@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import Tab from '../tabs/Tab';
 
 const TabsWrapper = styled.div`
-  flex: 1;
   display: flex;
   flex-direction: column;
 `;
