@@ -15,6 +15,15 @@ const EmployeeContainer = styled.div`
   margin-top: 10px;
 `;
 
+const EmployeeInfoWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-start;
+  width: 30%;
+  padding-left: 30;
+  align-items: center;
+`;
+
 const EmployeesName = styled.p`
   font-weight: 500;
 `;
@@ -43,19 +52,10 @@ const EmployeeInfo = employee => {
   return (
     <EmployeeContainer>
       {/* User picture should be rendered here */}
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'space-start',
-          width: '30%',
-          paddingLeft: 30,
-          alignItems: 'center'
-        }}
-      >
+      <EmployeeInfoWrapper>
         <EmployeesImage />
         <EmployeesName>{fullName}</EmployeesName>
-      </div>
+      </EmployeeInfoWrapper>
       <EmployeesAdditionalInfo>
         <p>{jobTitle}</p>
         <p>{email}</p>
