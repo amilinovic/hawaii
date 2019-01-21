@@ -3,7 +3,7 @@ import request from 'superagent';
 export const getMyPersonalDaysApi = async () => {
   try {
     return await request
-      .get('/users/restricted/myDays')
+      .get('/users/myDays')
       .set('X-ID-TOKEN', sessionStorage.getItem('token'))
       .then(res => res.body)
       .catch(err => {
