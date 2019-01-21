@@ -60,7 +60,7 @@ const EmployeeInfo = employee => {
         <p>{jobTitle}</p>
         <p>{email}</p>
         <p>Years of Service: {yearsOfService}</p>
-        <Button click={() => {}} title="View Profile" />
+        <Button title="View Profile" />
       </EmployeesAdditionalInfo>
     </EmployeeContainer>
   );
