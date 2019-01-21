@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { ifProp } from 'styled-tools';
+import { ifProp, prop, switchProp } from 'styled-tools';
 
 const TableTh = styled.th`
   border: ${ifProp('header', '0px', '1px solid #c0c0c0')};
@@ -40,6 +40,11 @@ const TableTd = styled.td`
   &:hover {
     background-color: rgba(0, 0, 0, 0.5);
   }
+  background-color: ${switchProp(prop('requestStatus'), {
+    APPROVED: 'green',
+    PENDING: 'orange'
+  })}
+  content: ${prop('requestStatus')}
 `;
 
 const TableTr = styled.tr`

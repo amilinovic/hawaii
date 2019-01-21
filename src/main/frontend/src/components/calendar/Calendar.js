@@ -65,7 +65,12 @@ class Calendar extends Component {
               ...clickHandler(day.date),
               ...selected
             },
-            day.publicHoliday && <Image src={HolidayImg} />
+            <React.Fragment>
+              {day.publicHoliday && <Image src={HolidayImg} />}
+              {!day.publicHoliday && day.personalDay && (
+                <Image src={day.personalDay.icon_url} />
+              )}
+            </React.Fragment>
           )
         );
       } else {
@@ -80,7 +85,16 @@ class Calendar extends Component {
                 `${day.date}.${name}`,
                 {
                   ...clickHandler(day.date),
-                  ...selected
+                  ...selected,
+                  requestStatus: day.personalDay
+                    ? day.personalDay.requestStatus
+                    : null,
+                  absenceType: day.personalDay
+                    ? day.personalDay.absenceType
+                    : null,
+                  absenceSybtype: day.personalDay
+                    ? day.personalDay.absencesubtype
+                    : null
                 },
                 <React.Fragment>
                   {day.publicHoliday && <Image src={HolidayImg} />}
