@@ -4,12 +4,11 @@ import eu.execom.hawaii.model.Day;
 import eu.execom.hawaii.model.User;
 import lombok.Data;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Data
-public class UserRestrictedDto {
+public class UserWithDaysDto {
 
   private Long id;
   private Long teamId;
@@ -19,7 +18,7 @@ public class UserRestrictedDto {
   private String jobTitle;
   private List<DayDto> days;
 
-  public UserRestrictedDto(User user) {
+  public UserWithDaysDto(User user) {
     this.id = user.getId();
     this.teamId = (user.getTeam().getId());
     this.teamName = (user.getTeam().getName());
@@ -29,7 +28,7 @@ public class UserRestrictedDto {
 
   }
 
-  public UserRestrictedDto(User user, List<Day> days) {
+  public UserWithDaysDto(User user, List<Day> days) {
     this(user);
     this.days = days.stream().map(DayDto::new).collect(Collectors.toList());
 
