@@ -16,7 +16,6 @@ const RequestWrapper = styled.div`
   align-items: center;
   justify-content: center;
   width: 50vw;
-  height: 100px;
   padding: 20px 40px 20px 40px;
   box-sizing: content-box;
 `;
@@ -33,11 +32,18 @@ const LeaveWrapper = styled.div`
   display: flex;
   align-items: center;
   flex-direction: column;
+  p {
+    padding: 10px;
+  }
 `;
 
 const IconWrapper = styled.div`
   border: 1px solid black;
   padding: 10px;
+  transition: ease-in 100ms;
+  &:hover {
+    transform: scale(1.1);
+  }
 `;
 
 class Request extends Component {
@@ -46,6 +52,8 @@ class Request extends Component {
     label: type.name
   }));
 
+  // TODO: Apply react-transition-group for popup enter and popup leave
+
   render() {
     return (
       <Backdrop title="New Request" closePopup={this.props.closeRequestPopup}>
@@ -53,26 +61,27 @@ class Request extends Component {
           <ButtonsWrapper>
             <LeaveWrapper>
               <IconWrapper>
+                {/* TODO vrackovic: Remove this icons when designed icons are ready (screenshots currently applied) */}
                 <img src={LeaveIcon} alt="leave_icon" />
               </IconWrapper>
-              Leave
+              <p>Leave</p>
             </LeaveWrapper>
             <LeaveWrapper>
               <IconWrapper>
                 <img src={BonusIcon} alt="leave_icon" />
               </IconWrapper>
-              Bonus
+              <p>Bonus</p>
             </LeaveWrapper>
             <LeaveWrapper>
               <IconWrapper>
                 <img src={SicknessIcon} alt="leave_icon" />
               </IconWrapper>
-              Sickness
+              <p>Sickness</p>
             </LeaveWrapper>
           </ButtonsWrapper>
-          {this.props.leaveTypes && (
+          {/* {this.props.leaveTypes && (
             <Select options={this.mapLeaveTypesForSelect} />
-          )}
+          )} */}
         </RequestWrapper>
       </Backdrop>
     );

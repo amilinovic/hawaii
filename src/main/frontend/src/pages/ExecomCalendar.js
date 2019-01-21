@@ -87,7 +87,8 @@ class ExecomCalendar extends Component {
               borderRadius: 5,
               alignSelf: 'flex-end'
             }}
-            onClick={this.props.openRequestPopup}
+            // passing event as payload significantly decreases performance
+            onClick={() => this.props.openRequestPopup()}
           >
             + New Request
           </button>
