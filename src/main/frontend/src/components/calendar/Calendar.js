@@ -82,10 +82,16 @@ class Calendar extends Component {
                   ...clickHandler(day.date),
                   ...selected
                 },
-                day.publicHoliday && <Image src={HolidayImg} />
+                <React.Fragment>
+                  {day.publicHoliday && <Image src={HolidayImg} />}
+                  {!day.publicHoliday && day.personalDay && (
+                    <Image src={day.personalDay.icon_url} />
+                  )}
+                </React.Fragment>
               )
         );
       }
+
       return day;
     });
 
@@ -96,7 +102,13 @@ class Calendar extends Component {
     return (
       <Table>
         <thead>
-          {tableTr('monthNames', { headerRow: true }, this.createTableHeader())}
+          {tableTr(
+            'monthNames',
+            {
+              headerRow: true
+            },
+            this.createTableHeader()
+          )}
         </thead>
         <tbody>
           {this.props.calendar &&

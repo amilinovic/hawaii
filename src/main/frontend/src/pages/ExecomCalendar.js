@@ -67,14 +67,8 @@ const CalendarContainer = styled.div`
 
 class ExecomCalendar extends Component {
   componentDidMount() {
-    console.log('11111');
-    console.log(this.props.publicHolidays);
     this.props.requestPublicHolidays();
-    console.log('22222');
-    console.log(this.props.publicHolidays);
     this.props.requestMyPersonalDays();
-    console.log('33333');
-    console.log(this.props.publicHolidays);
   }
 
   getPublicHolidays = async () => {

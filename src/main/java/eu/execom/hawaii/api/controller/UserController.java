@@ -119,12 +119,12 @@ public class UserController {
 
   private LocalDate[] assignDefaultDates(LocalDate startTime, LocalDate endTime) {
     if (startTime == null && endTime == null) {
-      startTime = LocalDate.now().with(DayOfWeek.MONDAY);
-      endTime = LocalDate.now().with(DayOfWeek.SUNDAY);
+      startTime = LocalDate.of(LocalDate.now().getYear(),1,1);
+      endTime = LocalDate.of(LocalDate.now().getYear(),12,31);
     } else if (startTime == null) {
-      startTime = endTime.minusDays(7);
+      startTime = endTime.minusDays(365);
     } else {
-      endTime = startTime.plusDays(7);
+      endTime = startTime.plusDays(365);
     }
     return new LocalDate[]{startTime, endTime};
   }
