@@ -104,10 +104,9 @@ public class UserController {
   private LocalDate assignDefaultStartDate(LocalDate startDate, LocalDate endDate) {
     if (startDate == null && endDate == null) {
       startDate = LocalDate.of(LocalDate.now().getYear(), 1, 1);
-    } else if (startDate == null){
+    } else if (startDate == null) {
       startDate = endDate.minusYears(1);
     }
-
 
     return startDate;
   }
