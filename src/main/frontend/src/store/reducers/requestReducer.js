@@ -3,12 +3,16 @@ import {
   openRequestPopup,
   closeRequestPopup,
   selectRequestType,
-  selectAbsenceType
+  selectAbsenceType,
+  selectStartDate,
+  selectEndDate
 } from '../actions/requestActions';
 
 export const initialState = {
   openPopup: false,
-  data: {}
+  data: {},
+  startDate: new Date(),
+  endDate: new Date()
 };
 
 const actionHandlers = {
@@ -21,7 +25,12 @@ const actionHandlers = {
   [selectAbsenceType]: (state, action) => ({
     ...state,
     data: { ...state.data, absence: action.payload }
-  })
+  }),
+  [selectStartDate]: (state, action) => ({
+    ...state,
+    startDate: action.payload
+  }),
+  [selectEndDate]: (state, action) => ({ ...state, endDate: action.payload })
 };
 
 const reducer = handleActions(actionHandlers, initialState);

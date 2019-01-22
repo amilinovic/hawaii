@@ -6,12 +6,14 @@ import { bindActionCreators } from 'redux';
 import {
   closeRequestPopup,
   selectRequestType,
-  selectAbsenceType
+  selectAbsenceType,
+  selectStartDate,
+  selectEndDate
 } from '../../store/actions/requestActions';
 import { getRequest } from '../../store/selectors';
-import Select from '../common/Select';
 import RequestType from './RequestType';
 import RequestTypeConstants from './requestTypeConstants';
+import RequestDetails from './RequestDetails';
 
 const RequestWrapper = styled.div`
   display: flex;
@@ -43,7 +45,7 @@ class Request extends Component {
     }
 
     return (
-      <Select
+      <RequestDetails
         options={selectedAbsenceTypes.map(type => ({
           value: type.id,
           label: type.name
@@ -53,6 +55,14 @@ class Request extends Component {
             this.props.leaveTypes.find(type => type.id === selection.value)
           )
         }
+        startDate={{
+          date: this.props.request.startDate,
+          changeHandler: this.props.selectStartDate
+        }}
+        endDate={{
+          date: this.props.request.endDate,
+          changeHandler: this.props.selectEndDate
+        }}
       />
     );
   };
@@ -83,7 +93,9 @@ const mapDispatchToProps = dispatch =>
     {
       closeRequestPopup,
       selectRequestType,
-      selectAbsenceType
+      selectAbsenceType,
+      selectStartDate,
+      selectEndDate
     },
     dispatch
   );
