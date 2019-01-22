@@ -8,7 +8,9 @@ import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.enumerations.UserStatusType;
 import eu.execom.hawaii.model.Team;
 import eu.execom.hawaii.service.DayService;
+import eu.execom.hawaii.service.TeamService;
 import eu.execom.hawaii.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -39,17 +41,20 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/users")
+@Slf4j
 public class UserController {
 
   private static final ModelMapper MAPPER = new ModelMapper();
 
   private UserService userService;
   private DayService dayService;
+  private TeamService teamService;
 
   @Autowired
-  public UserController(UserService userService, DayService dayService) {
+  public UserController(UserService userService, DayService dayService, TeamService teamService) {
     this.userService = userService;
     this.dayService = dayService;
+    this.teamService = teamService;
   }
 
   @GetMapping
@@ -80,10 +85,21 @@ public class UserController {
   @GetMapping("/teamUsers")
   public ResponseEntity<List<UserWithDaysDto>> teamUsersRestrictedList(
       @ApiIgnore @AuthenticationPrincipal User authUser, @RequestParam(required = false) LocalDate startDate,
-      @RequestParam(required = false) LocalDate endDate) {
+      @RequestParam(required = false) LocalDate endDate, @RequestParam(required = false) Long teamId) {
     startDate = assignDefaultStartDate(startDate, endDate);
     endDate = assignDefaultEndDate(startDate, endDate);
-    Team team = authUser.getTeam();
+    Team team;
+    if (teamId != null) {
+      team = teamService.getById(teamId);
+      if (!authUser.getApproverTeams().contains(team) && authUser.getTeam() != team) {
+        log.error("User: {} is neither a member of this team nor a team approver for the team {} ", authUser.getEmail(),
+            team.getName());
+        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+      }
+    } else {
+      team = authUser.getTeam();
+    }
+
     List<User> users = userService.findAllActiveUsersByTeam(team);
     List<UserWithDaysDto> userDtos = createUserRestrictedDtosFromUsers(users, startDate, endDate);
 
