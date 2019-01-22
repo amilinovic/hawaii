@@ -1,8 +1,13 @@
 package eu.execom.hawaii.api.controller;
 
+import eu.execom.hawaii.dto.DayDto;
 import eu.execom.hawaii.dto.UserDto;
+import eu.execom.hawaii.dto.UserWithDaysDto;
+import eu.execom.hawaii.model.Day;
 import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.enumerations.UserStatusType;
+import eu.execom.hawaii.model.Team;
+import eu.execom.hawaii.service.DayService;
 import eu.execom.hawaii.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +32,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
 
+import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,10 +44,12 @@ public class UserController {
   private static final ModelMapper MAPPER = new ModelMapper();
 
   private UserService userService;
+  private DayService dayService;
 
   @Autowired
-  public UserController(UserService userService) {
+  public UserController(UserService userService, DayService dayService) {
     this.userService = userService;
+    this.dayService = dayService;
   }
 
   @GetMapping
@@ -54,6 +63,69 @@ public class UserController {
     List<UserDto> userDtos = users.stream().map(UserDto::new).collect(Collectors.toList());
 
     return new ResponseEntity<>(userDtos, HttpStatus.OK);
+  }
+
+  @GetMapping("/allUsers")
+  public ResponseEntity<List<UserWithDaysDto>> allUsersRestrictedList(
+      @RequestParam(required = false) LocalDate startDate, @RequestParam(required = false) LocalDate endDate) {
+    startDate = assignDefaultStartDate(startDate, endDate);
+    endDate = assignDefaultEndDate(startDate, endDate);
+    List<UserStatusType> statuses = Arrays.asList(UserStatusType.ACTIVE);
+    List<User> users = userService.findAllByUserStatusType(statuses);
+    List<UserWithDaysDto> userDtos = createUserRestrictedDtosFromUsers(users, startDate, endDate);
+
+    return new ResponseEntity<>(userDtos, HttpStatus.OK);
+  }
+
+  @GetMapping("/teamUsers")
+  public ResponseEntity<List<UserWithDaysDto>> teamUsersRestrictedList(
+      @ApiIgnore @AuthenticationPrincipal User authUser, @RequestParam(required = false) LocalDate startDate,
+      @RequestParam(required = false) LocalDate endDate) {
+    startDate = assignDefaultStartDate(startDate, endDate);
+    endDate = assignDefaultEndDate(startDate, endDate);
+    Team team = authUser.getTeam();
+    List<User> users = userService.findAllActiveUsersByTeam(team);
+    List<UserWithDaysDto> userDtos = createUserRestrictedDtosFromUsers(users, startDate, endDate);
+
+    return new ResponseEntity<>(userDtos, HttpStatus.OK);
+  }
+
+  @GetMapping("/myDays")
+  public ResponseEntity<List<DayDto>> myDays(@ApiIgnore @AuthenticationPrincipal User authUser,
+      @RequestParam(required = false) LocalDate startDate, @RequestParam(required = false) LocalDate endDate) {
+    startDate = assignDefaultStartDate(startDate, endDate);
+    endDate = assignDefaultEndDate(startDate, endDate);
+    List<Day> days = dayService.getUserAbsencesDays(authUser, startDate, endDate);
+    List<DayDto> daysDto = days.stream().map(DayDto::new).collect(Collectors.toList());
+
+    return new ResponseEntity<>(daysDto, HttpStatus.OK);
+  }
+
+  private LocalDate assignDefaultStartDate(LocalDate startDate, LocalDate endDate) {
+    if (startDate == null && endDate == null) {
+      startDate = LocalDate.of(LocalDate.now().getYear(), 1, 1);
+    } else if (startDate == null) {
+      startDate = endDate.minusYears(1);
+    }
+
+    return startDate;
+  }
+
+  private LocalDate assignDefaultEndDate(LocalDate startDate, LocalDate endDate) {
+    if (startDate == null && endDate == null) {
+      endDate = LocalDate.of(LocalDate.now().getYear(), 12, 31);
+    } else if (endDate == null) {
+      endDate = startDate.plusYears(1);
+    }
+
+    return endDate;
+  }
+
+  private List<UserWithDaysDto> createUserRestrictedDtosFromUsers(List<User> users, LocalDate startDate,
+      LocalDate endDate) {
+    return users.stream()
+                .map(u -> new UserWithDaysDto(u, dayService.getUserAbsencesDays(u, startDate, endDate)))
+                .collect(Collectors.toList());
   }
 
   @GetMapping("/search")
@@ -91,13 +163,13 @@ public class UserController {
   }
 
   @GetMapping("/image/{id}")
-  public ResponseEntity<byte[]> getUserImage(@PathVariable Long id)  {
-      User user = userService.getUserById(id);
-      HttpHeaders headers = new HttpHeaders();
-      headers.setContentType(MediaType.IMAGE_JPEG);
-      headers.setContentLength(user.getImage().length);
+  public ResponseEntity<byte[]> getUserImage(@PathVariable Long id) {
+    User user = userService.getUserById(id);
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.IMAGE_JPEG);
+    headers.setContentLength(user.getImage().length);
 
-      return new ResponseEntity<>(user.getImage(), headers, HttpStatus.OK);
+    return new ResponseEntity<>(user.getImage(), headers, HttpStatus.OK);
   }
 
   @PutMapping("/{id}/activate")
@@ -114,9 +186,8 @@ public class UserController {
   }
 
   @GetMapping("/me")
-  public ResponseEntity<UserDto> me(@ApiIgnore @AuthenticationPrincipal User authUser)
-  {
-    return new ResponseEntity<>(new UserDto(authUser),HttpStatus.OK);
+  public ResponseEntity<UserDto> me(@ApiIgnore @AuthenticationPrincipal User authUser) {
+    return new ResponseEntity<>(new UserDto(authUser), HttpStatus.OK);
   }
 
 }
