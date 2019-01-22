@@ -3,8 +3,8 @@ import Backdrop from '../popup/Backdrop';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { closeRequestPopup } from '../../store/actions/requestPopupAction';
-import { getRequestPopup } from '../../store/selectors';
+import { closeRequestPopup } from '../../store/actions/requestActions';
+import { getRequest } from '../../store/selectors';
 import Select from '../common/Select';
 import BonusIcon from '../../img/icons/bonus_ss.png';
 import LeaveIcon from '../../img/icons/leave_ss.png';
@@ -15,13 +15,10 @@ const RequestWrapper = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  width: 50vw;
-  padding: 20px 40px 20px 40px;
   box-sizing: content-box;
 `;
 
 const ButtonsWrapper = styled.div`
-  width: 100%;
   display: flex;
   padding: 0px 100px 0px 100px;
   flex-direction: row;
@@ -32,6 +29,8 @@ const LeaveWrapper = styled.div`
   display: flex;
   align-items: center;
   flex-direction: column;
+  margin: 20px;
+
   p {
     padding: 10px;
   }
@@ -89,7 +88,7 @@ class Request extends Component {
 }
 
 const mapStateToProps = state => ({
-  requestPopup: getRequestPopup(state)
+  request: getRequest(state)
 });
 
 const mapDispatchToProps = dispatch =>

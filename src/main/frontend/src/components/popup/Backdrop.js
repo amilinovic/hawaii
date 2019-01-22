@@ -60,7 +60,7 @@ const Backdrop = props => {
       <PopupContainer>
         <PopupNavigation>
           <PopupButtonWrapper>
-            <PopupButton onClick={props.closePopup}>x</PopupButton>
+            <PopupButton onClick={() => props.closePopup()}>x</PopupButton>
           </PopupButtonWrapper>
           <p>{props.title}</p>
           <span />

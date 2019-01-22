@@ -6,7 +6,7 @@ import user from './userReducer';
 import calendar from './calendarReducer';
 import publicHolidays from './publicHolidayReducer';
 import employees from './employeesReducer';
-import requestPopup from './requestPopupReducer';
+import request from './requestReducer';
 import leaveTypes from './leaveTypesReducer';
 
 export default combineReducers({
@@ -16,6 +16,6 @@ export default combineReducers({
   calendar,
   publicHolidays,
   employees,
-  requestPopup,
+  request,
   leaveTypes
 });

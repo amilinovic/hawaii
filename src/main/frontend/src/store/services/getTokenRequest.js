@@ -2,7 +2,6 @@ import request from 'superagent';
 
 export const tokenRequest = async userObj => {
   try {
-    console.log(userObj);
     const response = await request
       .get(`/users/me`)
       .set('X-ID-TOKEN', userObj.tokenId)

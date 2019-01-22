@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import {
   getCalendar,
   getPublicHolidays,
-  getRequestPopup,
+  getRequest,
   getLeaveTypes
 } from '../store/selectors';
 import { bindActionCreators } from 'redux';
@@ -16,7 +16,7 @@ import {
 } from '../store/actions/calendarActions';
 import { requestPublicHolidays } from '../store/actions/publicHolidayActions';
 import Request from '../components/request/Request';
-import { openRequestPopup } from '../store/actions/requestPopupAction';
+import { openRequestPopup } from '../store/actions/requestActions';
 import { requestLeaveTypes } from '../store/actions/leaveTypesActions';
 
 const ExecomCalendarContainer = styled.div`
@@ -127,7 +127,7 @@ class ExecomCalendar extends Component {
             )}
           </CalendarContainer>
         </CalendarWrapper>
-        {this.props.requestPopup && (
+        {this.props.request.openPopup && (
           <Request leaveTypes={this.props.leaveTypes} />
         )}
       </ExecomCalendarContainer>
@@ -138,7 +138,7 @@ class ExecomCalendar extends Component {
 const mapStateToProps = state => ({
   calendar: getCalendar(state),
   publicHolidays: getPublicHolidays(state),
-  requestPopup: getRequestPopup(state),
+  request: getRequest(state),
   leaveTypes: getLeaveTypes(state)
 });
 
