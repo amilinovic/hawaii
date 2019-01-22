@@ -18,7 +18,7 @@ class Employees extends Component {
   render() {
     return (
       <EmployeesContainer>
-        {this.props.employees.length > 1 &&
+        {this.props.employees &&
           this.props.employees.map(employee => (
             <EmployeeInfo {...employee} key={employee.id} />
           ))}
