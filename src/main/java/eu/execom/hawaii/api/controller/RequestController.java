@@ -160,8 +160,10 @@ public class RequestController {
   }
 
   @PostMapping
-  public ResponseEntity<RequestDto> createRequest(@RequestBody RequestDto requestDto) {
+  public ResponseEntity<RequestDto> createRequest(@ApiIgnore @AuthenticationPrincipal User authUser,
+      @RequestBody RequestDto requestDto) {
     var request = MAPPER.map(requestDto, Request.class);
+    request.setUser(authUser);
     request = requestService.create(request);
 
     return new ResponseEntity<>(new RequestDto(request), HttpStatus.OK);
