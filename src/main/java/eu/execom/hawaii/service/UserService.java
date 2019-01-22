@@ -65,7 +65,7 @@ public class UserService {
    * @param team Team a user belongs to
    * @return a list of all active users belonging to a given team
    */
-  public List<User> findAllActiveUserByTeam(Team team) {
+  public List<User> findAllActiveUsersByTeam(Team team) {
     return userRepository.findAllByUserStatusTypeAndTeam(UserStatusType.ACTIVE, team);
   }
 

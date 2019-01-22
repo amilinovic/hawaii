@@ -17,7 +17,7 @@ public class DayDto {
   private LocalDate date;
   private Duration duration;
   private RequestStatus requestStatus;
-  private String icon_url;
+  private String iconUrl;
   private AbsenceType absenceType;
   private AbsenceSubtype absenceSubtype;
 
@@ -30,7 +30,7 @@ public class DayDto {
     this.requestStatus = day.getRequest().getRequestStatus();
     this.absenceType = day.getRequest().getAbsence().getAbsenceType();
     this.absenceSubtype = day.getRequest().getAbsence().getAbsenceSubtype();
-    this.icon_url = day.getRequest().getAbsence().getIconUrl();
+    this.iconUrl = day.getRequest().getAbsence().getIconUrl();
   }
 
 }

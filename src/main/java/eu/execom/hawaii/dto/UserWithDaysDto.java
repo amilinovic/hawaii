@@ -18,18 +18,13 @@ public class UserWithDaysDto {
   private String jobTitle;
   private List<DayDto> days;
 
-  public UserWithDaysDto(User user) {
+  public UserWithDaysDto(User user, List<Day> days) {
     this.id = user.getId();
     this.teamId = (user.getTeam().getId());
     this.teamName = (user.getTeam().getName());
     this.fullName = user.getFullName();
     this.email = user.getEmail();
     this.jobTitle = user.getJobTitle();
-
-  }
-
-  public UserWithDaysDto(User user, List<Day> days) {
-    this(user);
     this.days = days.stream().map(DayDto::new).collect(Collectors.toList());
 
   }

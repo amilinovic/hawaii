@@ -36,7 +36,7 @@ public class DayService {
    */
   public List<Day> getUserAbsencesDays(User user, LocalDate startDate, LocalDate endDate) {
 
-    List<Request> requests = this.requestRepository.findAllByUser(user);
+    List<Request> requests = requestRepository.findAllByUser(user);
 
     return dayRepository.findAllByRequestInAndDateIsBetween(requests, startDate, endDate);
   }
