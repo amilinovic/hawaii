@@ -20,8 +20,8 @@ public class UserWithDaysDto {
 
   public UserWithDaysDto(User user, List<Day> days) {
     this.id = user.getId();
-    this.teamId = (user.getTeam().getId());
-    this.teamName = (user.getTeam().getName());
+    this.teamId = user.getTeam().getId();
+    this.teamName = user.getTeam().getName();
     this.fullName = user.getFullName();
     this.email = user.getEmail();
     this.jobTitle = user.getJobTitle();
