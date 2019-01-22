@@ -120,9 +120,9 @@ public class UserController {
       startTime = LocalDate.of(LocalDate.now().getYear(),1,1);
       endTime = LocalDate.of(LocalDate.now().getYear(),12,31);
     } else if (startTime == null) {
-      startTime = endTime.minusDays(365);
+      startTime = endTime.minusYears(1);
     } else {
-      endTime = startTime.plusDays(365);
+      endTime = startTime.plusYears(1);
     }
     return new LocalDate[]{startTime, endTime};
   }
