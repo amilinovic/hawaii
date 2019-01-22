@@ -1,14 +1,11 @@
 import request from 'superagent';
 
-export const getUserApi = () => {
+export const getEmployeesApi = async () => {
   try {
-    return request
-      .get(`/users/me`)
+    return await request
+      .get('/users')
       .set('X-ID-TOKEN', sessionStorage.getItem('token'))
-      .then(res => res.body)
-      .catch(err => {
-        console.log(err);
-      });
+      .then(res => res.body);
   } catch (e) {
     // TODO error handling
     console.log(e);
