@@ -5,7 +5,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import {
   closeRequestPopup,
-  selectRequestType
+  selectRequestType,
+  selectAbsenceType
 } from '../../store/actions/requestActions';
 import { getRequest } from '../../store/selectors';
 import Select from '../common/Select';
@@ -22,20 +23,38 @@ const RequestWrapper = styled.div`
 
 class Request extends Component {
   filterLeaveTypesBySelectedType = () => {
-    const selectedAbsenceTypes = this.props.leaveTypes
-      .filter(
-        type =>
-          type.absenceType === this.props.request.requestType
-            ? type
-            : type.absenceType !== RequestTypeConstants.SICKNESS &&
-              type.absenceType !== RequestTypeConstants.BONUS_DAYS
-      )
-      .map(type => ({
-        value: type.id,
-        label: type.name
-      }));
+    let selectedAbsenceTypes = [];
 
-    return <Select options={selectedAbsenceTypes} />;
+    if (
+      this.props.request.requestType === RequestTypeConstants.SICKNESS ||
+      this.props.request.requestType === RequestTypeConstants.BONUS_DAYS
+    ) {
+      selectedAbsenceTypes = this.props.leaveTypes.filter(
+        type =>
+          type.absenceType ===
+          RequestTypeConstants[this.props.request.requestType]
+      );
+    } else {
+      selectedAbsenceTypes = this.props.leaveTypes.filter(
+        type =>
+          type.absenceType !== RequestTypeConstants.SICKNESS &&
+          type.absenceType !== RequestTypeConstants.BONUS_DAYS
+      );
+    }
+
+    return (
+      <Select
+        options={selectedAbsenceTypes.map(type => ({
+          value: type.id,
+          label: type.name
+        }))}
+        change={selection =>
+          this.props.selectAbsenceType(
+            this.props.leaveTypes.find(type => type.id === selection.value)
+          )
+        }
+      />
+    );
   };
 
   // TODO: Apply react-transition-group for popup enter and popup leave
@@ -63,7 +82,8 @@ const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
       closeRequestPopup,
-      selectRequestType
+      selectRequestType,
+      selectAbsenceType
     },
     dispatch
   );

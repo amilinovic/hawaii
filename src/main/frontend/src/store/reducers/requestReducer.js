@@ -2,7 +2,8 @@ import { handleActions } from 'redux-actions';
 import {
   openRequestPopup,
   closeRequestPopup,
-  selectRequestType
+  selectRequestType,
+  selectAbsenceType
 } from '../actions/requestActions';
 
 export const initialState = {
@@ -11,11 +12,15 @@ export const initialState = {
 };
 
 const actionHandlers = {
-  [openRequestPopup]: (state, action) => ({ ...state, openPopup: true }),
-  [closeRequestPopup]: (state, action) => ({ ...state, openPopup: false }),
+  [openRequestPopup]: state => ({ ...state, openPopup: true }),
+  [closeRequestPopup]: () => ({ ...initialState }),
   [selectRequestType]: (state, action) => ({
     ...state,
     requestType: action.payload
+  }),
+  [selectAbsenceType]: (state, action) => ({
+    ...state,
+    data: { ...state.data, absence: action.payload }
   })
 };
 
