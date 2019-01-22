@@ -67,70 +67,67 @@ public class UserController {
 
   @GetMapping("/allUsers")
   public ResponseEntity<List<UserWithDaysDto>> allUsersRestrictedList(
-      @RequestParam(required = false) LocalDate startTime, @RequestParam(required = false) LocalDate endTime) {
+      @RequestParam(required = false) LocalDate startDate, @RequestParam(required = false) LocalDate endDate) {
 
-    LocalDate[] newDates = this.assignDefaultDates(startTime, endTime);
-    startTime = newDates[0];
-    endTime = newDates[1];
+    LocalDate[] newDates = this.assignDefaultDates(startDate, endDate);
+    startDate = newDates[0];
+    endDate = newDates[1];
 
     List<UserStatusType> statuses = new ArrayList<UserStatusType>();
     statuses.add(UserStatusType.ACTIVE);
     List<User> users = userService.findAllByUserStatusType(statuses);
 
-    List<UserWithDaysDto> userDtos = createUserRestrictedDtosFromUsers(users, startTime, endTime);
+    List<UserWithDaysDto> userDtos = createUserRestrictedDtosFromUsers(users, startDate, endDate);
 
     return new ResponseEntity<>(userDtos, HttpStatus.OK);
   }
 
   @GetMapping("/teamUsers")
   public ResponseEntity<List<UserWithDaysDto>> teamUsersRestrictedList(
-      @ApiIgnore @AuthenticationPrincipal User authUser, @RequestParam(required = false) LocalDate startTime,
-      @RequestParam(required = false) LocalDate endTime) {
+      @ApiIgnore @AuthenticationPrincipal User authUser, @RequestParam(required = false) LocalDate startDate,
+      @RequestParam(required = false) LocalDate endDate) {
 
-    LocalDate[] newDates = this.assignDefaultDates(startTime, endTime);
-    startTime = newDates[0];
-    endTime = newDates[1];
+    LocalDate[] newDates = this.assignDefaultDates(startDate, endDate);
+    startDate = newDates[0];
+    endDate = newDates[1];
 
     Team team = authUser.getTeam();
 
     List<User> users = userService.findAllActiveUserByTeam(team);
-    List<UserWithDaysDto> userDtos = createUserRestrictedDtosFromUsers(users, startTime, endTime);
+    List<UserWithDaysDto> userDtos = createUserRestrictedDtosFromUsers(users, startDate, endDate);
 
     return new ResponseEntity<>(userDtos, HttpStatus.OK);
   }
 
   @GetMapping("/myDays")
-  public ResponseEntity<List<DayDto>> myDays(
-      @ApiIgnore @AuthenticationPrincipal User authUser, @RequestParam(required = false) LocalDate startTime,
-      @RequestParam(required = false) LocalDate endTime
-  )
-  {
-    LocalDate[] newDates = this.assignDefaultDates(startTime, endTime);
-    startTime = newDates[0];
-    endTime = newDates[1];
+  public ResponseEntity<List<DayDto>> myDays(@ApiIgnore @AuthenticationPrincipal User authUser,
+      @RequestParam(required = false) LocalDate startDate, @RequestParam(required = false) LocalDate endDate) {
+    LocalDate[] newDates = this.assignDefaultDates(startDate, endDate);
+    startDate = newDates[0];
+    endDate = newDates[1]; 
 
-    List<Day> days = dayService.getUserAbsencesDays(authUser,startTime,endTime);
+    List<Day> days = dayService.getUserAbsencesDays(authUser, startDate, endDate);
     List<DayDto> daysDto = days.stream().map(DayDto::new).collect(Collectors.toList());
 
-    return new ResponseEntity<>(daysDto,HttpStatus.OK);
+    return new ResponseEntity<>(daysDto, HttpStatus.OK);
   }
 
-  private LocalDate[] assignDefaultDates(LocalDate startTime, LocalDate endTime) {
-    if (startTime == null && endTime == null) {
-      startTime = LocalDate.of(LocalDate.now().getYear(),1,1);
-      endTime = LocalDate.of(LocalDate.now().getYear(),12,31);
-    } else if (startTime == null) {
-      startTime = endTime.minusYears(1);
+  private LocalDate[] assignDefaultDates(LocalDate startDate, LocalDate endDate) {
+    if (startDate == null && endDate == null) { 
+      startDate = LocalDate.of(LocalDate.now().getYear(), 1, 1);
+      endDate = LocalDate.of(LocalDate.now().getYear(), 12, 31);
+    } else if (startDate == null) {
+      startDate = endDate.minusYears(1);
     } else {
-      endTime = startTime.plusYears(1);
+      endDate = startDate.plusYears(1);
     }
-    return new LocalDate[]{startTime, endTime};
+    return new LocalDate[] {startDate, endDate};
   }
 
-  private List<UserWithDaysDto> createUserRestrictedDtosFromUsers(List<User> users, LocalDate startTime,
-      LocalDate endTime) {
+  private List<UserWithDaysDto> createUserRestrictedDtosFromUsers(List<User> users, LocalDate startDate,
+      LocalDate endDate) {
     return users.stream()
-                .map(u -> new UserWithDaysDto(u, this.dayService.getUserAbsencesDays(u, startTime, endTime)))
+                .map(u -> new UserWithDaysDto(u, this.dayService.getUserAbsencesDays(u, startDate, endDate)))
                 .collect(Collectors.toList());
   }
 
