@@ -30,10 +30,16 @@ class RequestDetails extends React.Component {
         <DatePickerContainer>
           <DatePicker
             selected={startDate.date}
+            selectsStart
             onChange={startDate.changeHandler}
+            startDate={startDate.date}
+            endDate={endDate.date}
           />
           <DatePicker
             selected={endDate.date}
+            selectsEnd
+            startDate={startDate.date}
+            endDate={endDate.date}
             onChange={endDate.changeHandler}
           />
         </DatePickerContainer>

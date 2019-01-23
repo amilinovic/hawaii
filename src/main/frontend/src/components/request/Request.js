@@ -14,6 +14,7 @@ import { getRequest } from '../../store/selectors';
 import RequestType from './RequestType';
 import RequestTypeConstants from './requestTypeConstants';
 import RequestDetails from './RequestDetails';
+import moment from 'moment';
 
 const RequestWrapper = styled.div`
   display: flex;
@@ -57,14 +58,29 @@ class Request extends Component {
         }
         startDate={{
           date: this.props.request.startDate,
-          changeHandler: this.props.selectStartDate
+          changeHandler: this.selectStartDateHandler
         }}
         endDate={{
           date: this.props.request.endDate,
-          changeHandler: this.props.selectEndDate
+          changeHandler: this.selectEndDateHandler
         }}
       />
     );
+  };
+
+  selectStartDateHandler = startDate => this.handleDates({ startDate });
+  selectEndDateHandler = endDate => this.handleDates({ endDate });
+
+  handleDates = ({ startDate, endDate }) => {
+    const start = startDate || this.props.request.startDate;
+    let end = endDate || this.props.request.endDate;
+
+    if (moment(start).isAfter(moment(end))) {
+      end = start;
+    }
+
+    this.props.selectStartDate(start);
+    this.props.selectEndDate(end);
   };
 
   // TODO: Apply react-transition-group for popup enter and popup leave
