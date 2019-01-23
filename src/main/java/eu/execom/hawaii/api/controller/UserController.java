@@ -91,7 +91,7 @@ public class UserController {
     Team team;
     if (teamId != null) {
       team = teamService.getById(teamId);
-      if (!authUser.getApproverTeams().contains(team) && authUser.getTeam() != team) {
+      if (!authUser.getApproverTeams().contains(team) && !authUser.getTeam().equals(team)) {
         log.debug("User: '{}' is neither a member of this team nor a team approver for the team '{}' ",
             authUser.getEmail(), team.getName());
         return new ResponseEntity<>(HttpStatus.FORBIDDEN);
