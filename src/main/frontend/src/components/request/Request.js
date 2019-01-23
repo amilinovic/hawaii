@@ -27,21 +27,19 @@ const RequestWrapper = styled.div`
 class Request extends Component {
   filterLeaveTypesBySelectedType = () => {
     let selectedAbsenceTypes = [];
+    const { request } = this.props;
+    const { SICKNESS, BONUS_DAYS } = RequestTypeConstants;
 
     if (
-      this.props.request.requestType === RequestTypeConstants.SICKNESS ||
-      this.props.request.requestType === RequestTypeConstants.BONUS_DAYS
+      request.requestType === SICKNESS ||
+      request.requestType === BONUS_DAYS
     ) {
       selectedAbsenceTypes = this.props.leaveTypes.filter(
-        type =>
-          type.absenceType ===
-          RequestTypeConstants[this.props.request.requestType]
+        type => type.absenceType === RequestTypeConstants[request.requestType]
       );
     } else {
       selectedAbsenceTypes = this.props.leaveTypes.filter(
-        type =>
-          type.absenceType !== RequestTypeConstants.SICKNESS &&
-          type.absenceType !== RequestTypeConstants.BONUS_DAYS
+        type => type.absenceType !== SICKNESS && type.absenceType !== BONUS_DAYS
       );
     }
 
