@@ -17,7 +17,16 @@ const LeaveWrapper = styled.div`
   align-items: center;
   flex-direction: column;
   margin: 20px;
-
+  img,
+  p {
+    transition: opacity ease-in 100ms;
+  }
+  &:hover {
+    img,
+    p {
+      opacity: 0.4;
+    }
+  }
   p {
     padding: 10px;
   }
@@ -27,9 +36,6 @@ const IconWrapper = styled.div`
   border: 1px solid black;
   padding: 10px;
   transition: ease-in 100ms;
-  &:hover {
-    transform: scale(1.1);
-  }
 `;
 
 const RequestType = props => {
@@ -45,20 +51,20 @@ const RequestType = props => {
         <p>Leave</p>
       </LeaveWrapper>
       <LeaveWrapper
-        onClick={() => props.selectRequestType(RequestTypeConstants.BONUS_DAYS)}
-      >
-        <IconWrapper>
-          <img src={BonusIcon} alt="bonus_icon" />
-        </IconWrapper>
-        <p>Bonus</p>
-      </LeaveWrapper>
-      <LeaveWrapper
         onClick={() => props.selectRequestType(RequestTypeConstants.SICKNESS)}
       >
         <IconWrapper>
           <img src={SicknessIcon} alt="sickness_icon" />
         </IconWrapper>
         <p>Sickness</p>
+      </LeaveWrapper>
+      <LeaveWrapper
+        onClick={() => props.selectRequestType(RequestTypeConstants.BONUS_DAYS)}
+      >
+        <IconWrapper>
+          <img src={BonusIcon} alt="bonus_icon" />
+        </IconWrapper>
+        <p>Bonus</p>
       </LeaveWrapper>
     </RequestContainer>
   );
