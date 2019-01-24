@@ -1,11 +1,14 @@
 package eu.execom.hawaii.model;
 
+import eu.execom.hawaii.model.enumerations.LeaveProfileType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -31,6 +34,12 @@ public class LeaveProfile extends BaseEntity implements Serializable {
   private int training;
 
   private boolean deleted;
+
+  private boolean upgradeable;
+
+  @NotNull
+  @Enumerated(EnumType.STRING)
+  private LeaveProfileType leaveProfileType;
 
   private String comment;
 

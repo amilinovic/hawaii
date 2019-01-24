@@ -5,10 +5,7 @@ export const getEmployeesApi = async () => {
     return await request
       .get('/users')
       .set('X-ID-TOKEN', sessionStorage.getItem('token'))
-      .then(res => res.body)
-      .catch(err => {
-        console.log(err);
-      });
+      .then(res => res.body);
   } catch (e) {
     // TODO error handling
     console.log(e);
