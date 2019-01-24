@@ -6,6 +6,7 @@ import eu.execom.hawaii.model.LeaveProfile;
 import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.UserPushToken;
 import eu.execom.hawaii.model.Year;
+import eu.execom.hawaii.model.Team;
 import eu.execom.hawaii.model.enumerations.UserStatusType;
 import eu.execom.hawaii.repository.LeaveProfileRepository;
 import eu.execom.hawaii.repository.UserPushTokensRepository;
@@ -56,6 +57,16 @@ public class UserService {
    */
   public List<User> findAllUsers() {
     return userRepository.findAll();
+  }
+
+  /**
+   * Retrieves a list of all active users from repository with a matching team.
+   *
+   * @param team Team a user belongs to
+   * @return a list of all active users belonging to a given team
+   */
+  public List<User> findAllActiveUsersByTeam(Team team) {
+    return userRepository.findAllByUserStatusTypeAndTeam(UserStatusType.ACTIVE, team);
   }
 
   /**
