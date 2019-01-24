@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.MonthDay;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +36,7 @@ import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 public class UserService {
 
   private static final int HALF_DAY = 4;
+  private static final MonthDay HALF_YEAR_DATE = MonthDay.of(6, 30);
 
   private UserRepository userRepository;
   private LeaveProfileRepository leaveProfileRepository;
@@ -170,15 +172,30 @@ public class UserService {
   /**
    * Updates values for allowances for active years. Since Leave Profile was just updated, values
    * for already created allowances for currently active years need to be updated as well.
+   * If date of Leave Profile update was before half year mark, only half of allowance bonus should
+   * be added, and full amount if it was afterwards. Following years allowances receive full amount.
+   *
+   * @param user                 the User entity for witch allowances should be updated.
+   * @param previousLeaveProfile the LeaveProfile entity necessary for determining difference in allowance.
+   * @param todaysDate           year, month and date for today.
    */
-  public void updateAllowanceForUserOnLeaveProfileUpdate(User user, LeaveProfile previousLeaveProfile) {
-    var openedActiveYears = yearRepository.findAllByYearGreaterThanEqual(LocalDate.now().getYear());
+  public void updateAllowanceForUserOnLeaveProfileUpdate(User user, LeaveProfile previousLeaveProfile,
+      LocalDate todaysDate) {
+    var openedActiveYears = yearRepository.findAllByYearGreaterThanEqual(todaysDate.getYear());
     var userAllowances = user.getAllowances();
-    var allowanceDelta = user.getLeaveProfile().getEntitlement() - previousLeaveProfile.getEntitlement();
+    var nextYearBonus = user.getLeaveProfile().getEntitlement() - previousLeaveProfile.getEntitlement();
+    int thisYearBonus = (MonthDay.from(todaysDate).isBefore(HALF_YEAR_DATE)) ? (nextYearBonus / 2) : nextYearBonus;
+
     for (Year year : openedActiveYears) {
-      userAllowances.stream()
-                    .filter(allowance -> allowance.getYear().equals(year))
-                    .forEach(allowance -> allowance.setAnnual(allowance.getAnnual() + allowanceDelta));
+      for (Allowance allowance : userAllowances) {
+
+        if (todaysDate.getYear() == year.getYear() && allowance.getYear().equals(year)) {
+          allowance.setAnnual(allowance.getAnnual() + thisYearBonus);
+
+        } else if (todaysDate.getYear() != year.getYear() && allowance.getYear().equals(year)) {
+          allowance.setAnnual(allowance.getAnnual() + nextYearBonus);
+        }
+      }
     }
     userRepository.save(user);
   }

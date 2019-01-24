@@ -48,7 +48,7 @@ public class IncrementServiceYearsJob {
          .filter(yearsOfServiceUpToDate(todaysDate))
          .forEach(user -> {
            incrementYearsOfService(user, todaysDate);
-           updateLeaveProfile(user);
+           updateLeaveProfile(user, todaysDate);
          });
   }
 
@@ -61,12 +61,12 @@ public class IncrementServiceYearsJob {
     userService.save(user);
   }
 
-  private void updateLeaveProfile(User user) {
+  private void updateLeaveProfile(User user, LocalDate todaysDate) {
     if (user.getLeaveProfile().isUpgradeable() && shouldUpdateLeaveProfile(user)) {
       var previousLeaveProfile = user.getLeaveProfile();
       user.setLeaveProfile(findNextLeaveProfile(previousLeaveProfile));
       emailService.createLeaveProfileUpdateEmailAndSendForApproval(user);
-      userService.updateAllowanceForUserOnLeaveProfileUpdate(user, previousLeaveProfile);
+      userService.updateAllowanceForUserOnLeaveProfileUpdate(user, previousLeaveProfile, todaysDate);
     }
   }
 

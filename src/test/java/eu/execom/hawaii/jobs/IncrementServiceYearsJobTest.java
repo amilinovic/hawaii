@@ -43,7 +43,6 @@ public class IncrementServiceYearsJobTest {
     allMocks = new Object[] {leaveProfileRepository, emailService, userService};
   }
 
-
   @Test
   public void shouldAddServiceYearsToUser() {
     // given
@@ -65,7 +64,7 @@ public class IncrementServiceYearsJobTest {
     verify(leaveProfileRepository).findOneByLeaveProfileType(any());
     verify(emailService).createLeaveProfileUpdateEmailAndSendForApproval(any());
     verify(userService, times(2)).save(any());
-    verify(userService).updateAllowanceForUserOnLeaveProfileUpdate(any(), any());
+    verify(userService).updateAllowanceForUserOnLeaveProfileUpdate(any(), any(), any());
     verifyNoMoreInteractions(allMocks);
   }
 }
