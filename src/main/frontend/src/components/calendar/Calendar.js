@@ -28,6 +28,7 @@ class Calendar extends Component {
     const selectedMonth = this.props.calendar.table.find(
       month => month.name === monthName
     );
+
     const selectedDay = selectedMonth.days.map(day =>
       day && day.date === clickedDay ? { ...day, selected: !day.selected } : day
     );
@@ -85,6 +86,7 @@ class Calendar extends Component {
                 `${day.date}.${name}`,
                 {
                   ...clickHandler(day.date),
+
                   ...selected,
                   requestStatus: day.personalDay
                     ? day.personalDay.requestStatus
@@ -99,7 +101,7 @@ class Calendar extends Component {
                 <React.Fragment>
                   {day.publicHoliday && <Image src={HolidayImg} />}
                   {!day.publicHoliday && day.personalDay && (
-                    <Image src={day.personalDay.icon_url} />
+                    <Image src={day.personalDay.iconUrl} />
                   )}
                 </React.Fragment>
               )
@@ -116,13 +118,7 @@ class Calendar extends Component {
     return (
       <Table>
         <thead>
-          {tableTr(
-            'monthNames',
-            {
-              headerRow: true
-            },
-            this.createTableHeader()
-          )}
+          {tableTr('monthNames', { headerRow: true }, this.createTableHeader())}
         </thead>
         <tbody>
           {this.props.calendar &&

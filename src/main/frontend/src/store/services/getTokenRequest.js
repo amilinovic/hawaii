@@ -16,7 +16,7 @@ export const tokenRequest = async userObj => {
     // TODO vrackovic: Investigate `user` stored in sessionStorage and store it if needed in future
     sessionStorage.setItem('token', userObj.tokenId);
     sessionStorage.setItem('role', response.body.userRole);
-    sessionStorage.setItem('userEmail', response.body.email);
+    sessionStorage.setItem('userImageUrl', userObj.profileObj.imageUrl);
     return {
       token,
       role,

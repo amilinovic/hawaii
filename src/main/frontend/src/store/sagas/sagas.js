@@ -6,6 +6,7 @@ import { userSaga } from './userSaga';
 import { publicHolidaysSaga } from './publicHolidaySaga';
 import { employeesSaga } from './employeesSaga';
 import { myPersonalDaysSaga } from './myPersonalDays';
+import { leaveTypesSaga } from './leaveTypesSaga';
 
 export default function* saga() {
   yield all([
@@ -15,6 +16,7 @@ export default function* saga() {
     ...userSaga,
     ...publicHolidaysSaga,
     ...myPersonalDaysSaga,
-    ...employeesSaga
+    ...employeesSaga,
+    ...leaveTypesSaga
   ]);
 }

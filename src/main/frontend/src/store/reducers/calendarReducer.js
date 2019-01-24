@@ -12,7 +12,7 @@ const actionHandlers = {
   [initDate]: (state, action) => ({
     ...action.payload,
     ...state,
-    table: initiateTable(Object.assign(action.payload, state))
+    table: initiateTable({ ...action.payload, ...state })
   }),
   [incrementYear]: (state, action) => ({
     ...state,
@@ -67,6 +67,7 @@ const initiateTable = state => {
     monthObjects,
     currentYearHolidays
   );
+
   const monthsWithMappedPublicHolidaysAndPersonalDays = state.myPersonalDays
     ? personalDayMetadata(monthsWithMappedPublicHolidays, state.myPersonalDays)
     : monthsWithMappedPublicHolidays;

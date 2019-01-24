@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+
 import { ifProp, prop, switchProp } from 'styled-tools';
 
 const TableTh = styled.th`
@@ -12,6 +13,7 @@ const TableTh = styled.th`
   min-width: 20px;
   font-size: 14px;
   cursor: ${ifProp('disabled', 'no-drop')};
+
   border-style: double;
 `;
 
@@ -45,6 +47,7 @@ const TableTd = styled.td`
     PENDING: 'orange'
   })}
   content: ${prop('requestStatus')}
+
 `;
 
 const TableTr = styled.tr`

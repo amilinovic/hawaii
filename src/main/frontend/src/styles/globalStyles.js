@@ -68,5 +68,36 @@ textarea {
   &:active {	
     outline: none;	
   }	
-}	
+}
+
+/* Styles for react-datepicker library */
+.react-datepicker__month {
+  .react-datepicker__week {
+    .react-datepicker__day:hover {
+      color: #cccccc;
+      background-color: #e45052;
+      opacity: 0.4;
+    }
+    .react-datepicker__day--selected, .react-datepicker__day--in-selecting-range, .react-datepicker__day--in-range, .react-datepicker__day--range-start {
+      background-color: #e45052;
+    }
+    .react-datepicker__day--in-range {
+      color: #ffffff;
+      background-color: #e45052;
+      opacity: 0.7;
+    }
+
+    .react-datepicker__day--today {
+      background-color: lightgrey;
+      border-radius: 5px;
+      &.react-datepicker__day--in-range {
+        background-color: #e45052;
+      }
+    }
+    .react-datepicker__day--range-start, .react-datepicker__day--range-end {
+      border-radius: 5px;
+      color: #ffffff;
+    }
+  }
+}
 `;

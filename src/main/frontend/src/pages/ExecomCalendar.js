@@ -4,7 +4,9 @@ import styled from 'styled-components';
 import {
   getCalendar,
   getPublicHolidays,
-  getMyPersonalDays
+  getMyPersonalDays,
+  getRequest,
+  getLeaveTypes
 } from '../store/selectors';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -15,6 +17,9 @@ import {
 } from '../store/actions/calendarActions';
 import { requestPublicHolidays } from '../store/actions/publicHolidayActions';
 import { requestMyPersonalDays } from '../store/actions/myPersonalDaysActions';
+import Request from '../components/request/Request';
+import { openRequestPopup } from '../store/actions/requestActions';
+import { requestLeaveTypes } from '../store/actions/leaveTypesActions';
 
 const ExecomCalendarContainer = styled.div`
   display: flex;
@@ -69,6 +74,7 @@ class ExecomCalendar extends Component {
   componentDidMount() {
     this.props.requestPublicHolidays();
     this.props.requestMyPersonalDays();
+    this.props.requestLeaveTypes();
   }
 
   getPublicHolidays = async () => {
@@ -104,6 +110,8 @@ class ExecomCalendar extends Component {
               borderRadius: 5,
               alignSelf: 'flex-end'
             }}
+            // passing event as payload significantly decreases performance
+            onClick={() => this.props.openRequestPopup()}
           >
             + New Request
           </button>
@@ -143,6 +151,9 @@ class ExecomCalendar extends Component {
             )}
           </CalendarContainer>
         </CalendarWrapper>
+        {this.props.request.openPopup && (
+          <Request leaveTypes={this.props.leaveTypes} />
+        )}
       </ExecomCalendarContainer>
     );
   }
@@ -151,7 +162,9 @@ class ExecomCalendar extends Component {
 const mapStateToProps = state => ({
   calendar: getCalendar(state),
   publicHolidays: getPublicHolidays(state),
-  myPersonalDays: getMyPersonalDays(state)
+  myPersonalDays: getMyPersonalDays(state),
+  request: getRequest(state),
+  leaveTypes: getLeaveTypes(state)
 });
 
 const mapDispatchToProps = dispatch =>
@@ -161,7 +174,9 @@ const mapDispatchToProps = dispatch =>
       decrementYear,
       selectDay,
       requestPublicHolidays,
-      requestMyPersonalDays
+      requestMyPersonalDays,
+      openRequestPopup,
+      requestLeaveTypes
     },
     dispatch
   );
