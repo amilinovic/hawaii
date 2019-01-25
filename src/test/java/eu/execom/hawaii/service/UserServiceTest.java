@@ -17,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -196,20 +197,41 @@ public class UserServiceTest {
   }
 
   @Test
-  public void shouldUpdateAllowanceForUserOnLeaveProfileUpdate() {
+  public void shouldUpdateHalfAllowanceForUserOnLeaveProfileUpdate() {
     // given
     var user = EntityBuilder.approver();
-    var allowance = EntityBuilder.allowanceII(user);
+    var userAllowance = EntityBuilder.allowanceII(user);
     user.setLeaveProfile(EntityBuilder.leaveProfileIII());
-    user.setAllowances(List.of(allowance));
-
+    user.setAllowances(List.of(userAllowance));
+    var beforeHalfYearDate = LocalDate.of(EntityBuilder.thisYear().getYear(), 1, 1);
     var activeYears = List.of(EntityBuilder.thisYear(), EntityBuilder.nextYear());
     given(yearRepository.findAllByYearGreaterThanEqual(anyInt())).willReturn(activeYears);
 
     // when
-    userService.updateAllowanceForUserOnLeaveProfileUpdate(user, EntityBuilder.leaveProfileII());
+    userService.updateAllowanceForUserOnLeaveProfileUpdate(user, EntityBuilder.leaveProfileII(), beforeHalfYearDate);
 
-    //than
+    //then
+    assertThat("Expect annual allowance to be 172", user.getAllowances().get(0).getAnnual(), is(172));
+    verify(yearRepository).findAllByYearGreaterThanEqual(anyInt());
+    verify(userRepository).save(any());
+    verifyNoMoreInteractions(allMocks);
+  }
+
+  @Test
+  public void shouldUpdateFullAllowanceForUserOnLeaveProfileUpdate() {
+    // given
+    var user = EntityBuilder.approver();
+    var userAllowance = EntityBuilder.allowanceII(user);
+    user.setLeaveProfile(EntityBuilder.leaveProfileIII());
+    user.setAllowances(List.of(userAllowance));
+    var afterHalfYearDate = LocalDate.of(EntityBuilder.thisYear().getYear(), 7, 1);
+    var activeYears = List.of(EntityBuilder.thisYear(), EntityBuilder.nextYear());
+    given(yearRepository.findAllByYearGreaterThanEqual(anyInt())).willReturn(activeYears);
+
+    // when
+    userService.updateAllowanceForUserOnLeaveProfileUpdate(user, EntityBuilder.leaveProfileII(), afterHalfYearDate);
+
+    // then
     assertThat("Expect annual allowance to be 176", user.getAllowances().get(0).getAnnual(), is(176));
     verify(yearRepository).findAllByYearGreaterThanEqual(anyInt());
     verify(userRepository).save(any());
