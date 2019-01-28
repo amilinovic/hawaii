@@ -36,12 +36,16 @@ const PopupNavigation = styled.div`
     padding: 15px 25px;
   }
 `;
+
 const PopupButtonWrapper = styled.div`
   font-weight: 800;
   padding: 15px 20px;
 `;
 
-const PopupContent = styled.div``;
+const PopupContent = styled.div`
+  width: 100%;
+  height: 100%;
+`;
 
 const PopupButton = styled.button`
   background-color: transparent;

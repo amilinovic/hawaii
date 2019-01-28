@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import { ifProp, prop, switchProp } from 'styled-tools';
 
-const TableTh = styled.th`
+const TableHeading = styled.th`
   border: ${ifProp('header', '0px', '1px solid #c0c0c0')};
   border: ${ifProp('monthName', '0px')};
   border: ${ifProp('first', '0px')};
@@ -17,7 +17,7 @@ const TableTh = styled.th`
   border-style: double;
 `;
 
-const TableTd = styled.td`
+const TableCell = styled.td`
   border: ${ifProp('header', '0px', '1px solid #c0c0c0')};
   border: ${ifProp('monthName', '0px')};
   border: ${ifProp('first', '0px')};
@@ -45,44 +45,43 @@ const TableTd = styled.td`
   background-color: ${switchProp(prop('requestStatus'), {
     APPROVED: 'green',
     PENDING: 'orange'
-  })}
-  content: ${prop('requestStatus')}
-
+  })};
+  content: ${prop('requestStatus')};
 `;
 
-const TableTr = styled.tr`
+const TableRow = styled.tr`
   &:last-child {
-    ${TableTd}:not(:first-child) {
+    ${TableCell}:not(:first-child) {
       border-bottom: 1px solid black;
     }
-    ${TableTd} {
+    ${TableCell} {
       border: ${ifProp('today', '1px solid red')};
     }
   }
   &:first-child {
-    ${TableTd}:first-child {
+    ${TableCell}:first-child {
       border-left: 0px;
     }
   }
-  ${TableTd}:first-child + ${TableTd} {
+  ${TableCell}:first-child + ${TableCell} {
     border-left: 1px solid black;
   }
 `;
 
-export const tableTd = (key, props, children) => (
-  <TableTd key={key} {...props} onClick={props && props.click}>
+export const tableCell = (key, props, children) => (
+  <TableCell key={key} {...props} onClick={props && props.click}>
     {children}
-  </TableTd>
+  </TableCell>
 );
 
-export const tableTh = (key, props, children) => (
-  <TableTh key={key} {...props}>
+export const tableHeading = (key, props, children) => (
+  <TableHeading key={key} {...props}>
     {children}
-  </TableTh>
+  </TableHeading>
 );
 
-export const tableTr = (key, props, children) => (
-  <TableTr key={key} {...props}>
+export const tableRow = (key, props, children) => (
+  <TableRow key={key} {...props}>
     {children}
-  </TableTr>
+  </TableRow>
 );

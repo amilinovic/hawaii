@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Calendar from '../components/calendar/Calendar';
+import YearlyCalendar from '../components/calendar/YearlyCalendar';
 import styled from 'styled-components';
 import {
   getCalendar,
@@ -20,6 +20,7 @@ import { requestMyPersonalDays } from '../store/actions/myPersonalDaysActions';
 import Request from '../components/request/Request';
 import { openRequestPopup } from '../store/actions/requestActions';
 import { requestLeaveTypes } from '../store/actions/leaveTypesActions';
+import Button from '../components/common/Button';
 
 const ExecomCalendarContainer = styled.div`
   display: flex;
@@ -77,23 +78,13 @@ class ExecomCalendar extends Component {
     this.props.requestLeaveTypes();
   }
 
-  getPublicHolidays = async () => {
-    if (
-      !this.props.publicHolidays ||
-      1 ||
-      (this.props.publicHolidays && this.props.publicHolidays.length) < 1
-    ) {
-      await this.props.requestPublicHolidays();
-      return this.props.publicHolidays;
-    }
+  getPublicHolidays = () => {
+    this.props.requestPublicHolidays();
     return this.props.publicHolidays;
   };
 
-  getMyPersonalDays = async () => {
-    if (!this.props.myPersonalDays || this.props.myPersonalDays.length < 1) {
-      await this.props.requestMyPersonalDays();
-      return this.props.myPersonalDays;
-    }
+  getMyPersonalDays = () => {
+    this.props.requestMyPersonalDays();
     return this.props.myPersonalDays;
   };
 
@@ -102,19 +93,12 @@ class ExecomCalendar extends Component {
       <ExecomCalendarContainer>
         <CalendarWrapper>
           {/* Change button styling to Button from '/common/button' */}
-          <button
-            style={{
-              backgroundColor: '#fb4b4f',
-              color: 'white',
-              padding: 10,
-              borderRadius: 5,
-              alignSelf: 'flex-end'
-            }}
+          <Button
             // passing event as payload significantly decreases performance
-            onClick={() => this.props.openRequestPopup()}
-          >
-            + New Request
-          </button>
+            align="flex-end"
+            click={() => this.props.openRequestPopup()}
+            title="+ New Request"
+          />
           <YearSelection>
             <YearControlButton
               onClick={() =>
@@ -142,7 +126,7 @@ class ExecomCalendar extends Component {
           </YearSelection>
           <CalendarContainer>
             {this.props.calendar.table && (
-              <Calendar
+              <YearlyCalendar
                 calendar={this.props.calendar}
                 selectDay={this.props.selectDay}
                 publicHolidays={this.props.publicHolidays}

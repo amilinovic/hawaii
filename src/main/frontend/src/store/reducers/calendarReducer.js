@@ -9,30 +9,30 @@ import moment from 'moment';
 export const initialState = {};
 
 const actionHandlers = {
-  [initDate]: (state, action) => ({
-    ...action.payload,
+  [initDate]: (state, { payload }) => ({
+    ...payload,
     ...state,
-    table: initiateTable({ ...action.payload, ...state })
+    table: initiateTable({ ...payload, ...state })
   }),
-  [incrementYear]: (state, action) => ({
+  [incrementYear]: (state, { payload }) => ({
     ...state,
-    selectedYear: action.payload.selectedYear + 1,
+    selectedYear: payload.selectedYear + 1,
     table: initiateTable({
       ...state,
-      selectedYear: action.payload.selectedYear + 1
+      selectedYear: payload.selectedYear + 1
     })
   }),
-  [decrementYear]: (state, action) => ({
+  [decrementYear]: (state, { payload }) => ({
     ...state,
-    selectedYear: action.payload.selectedYear - 1,
+    selectedYear: payload.selectedYear - 1,
     table: initiateTable({
       ...state,
-      selectedYear: action.payload.selectedYear - 1
+      selectedYear: payload.selectedYear - 1
     })
   }),
-  [selectDay]: (state, action) => ({
+  [selectDay]: (state, { payload }) => ({
     ...state,
-    ...action.payload
+    ...payload
   })
 };
 
@@ -108,10 +108,11 @@ const publicHolidayMetadata = (calendarObject, currentYearHolidays) => {
       ) {
         mappedMonth = {
           ...month,
-          days: mappedMonth.days.map(dayObj =>
-            dayObj && dayObj.date === holiday.date
-              ? { ...dayObj, publicHoliday: holiday.name }
-              : dayObj
+          days: mappedMonth.days.map(
+            dayObj =>
+              dayObj && dayObj.date === holiday.date
+                ? { ...dayObj, publicHoliday: holiday.name }
+                : dayObj
           )
         };
       }
@@ -174,14 +175,15 @@ const setToday = (payload, calendar) => {
 
   const daysWithMarkedToday =
     currentMonthObject &&
-    currentMonthObject.days.map(day =>
-      day.date === payload.currentDay ? { ...day, today: true } : day
+    currentMonthObject.days.map(
+      day => (day.date === payload.currentDay ? { ...day, today: true } : day)
     );
 
-  return calendar.map(month =>
-    month.name === payload.currentMonth
-      ? { name: month.name, days: daysWithMarkedToday }
-      : month
+  return calendar.map(
+    month =>
+      month.name === payload.currentMonth
+        ? { name: month.name, days: daysWithMarkedToday }
+        : month
   );
 };
 

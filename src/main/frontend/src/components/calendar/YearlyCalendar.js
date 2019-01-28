@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { tableTd, tableTh, tableTr } from './CalendarTableElements';
+import { tableCell, tableHeading, tableRow } from './CalendarTableElements';
 import styled from 'styled-components';
 import HolidayImg from '../../img/holiday.svg';
 
@@ -14,14 +14,14 @@ const Image = styled.img`
   height: 15px;
 `;
 
-class Calendar extends Component {
+class YearlyCalendar extends Component {
   createTableHeader = () => {
-    let thRender = [];
-    thRender.push(tableTh('default', { first: true }));
+    let headerRow = [];
+    headerRow.push(tableHeading('default', { first: true }));
     for (let i = 0; i < 31; i++) {
-      thRender.push(tableTh(i + 1, { header: true }, i + 1));
+      headerRow.push(tableHeading(i + 1, { header: true }, i + 1));
     }
-    return thRender;
+    return headerRow;
   };
 
   cellClickHandler = (monthName, clickedDay) => {
@@ -29,11 +29,17 @@ class Calendar extends Component {
       month => month.name === monthName
     );
 
-    const selectedDay = selectedMonth.days.map(day =>
-      day && day.date === clickedDay ? { ...day, selected: !day.selected } : day
-    );
-    const mappedCalendar = this.props.calendar.table.map(month =>
-      monthName === month.name ? { ...month, days: selectedDay } : month
+    const selectedMonthDays =
+      selectedMonth.days &&
+      selectedMonth.days.map(
+        day =>
+          day && day.date === clickedDay
+            ? { ...day, selected: !day.selected }
+            : day
+      );
+    const mappedCalendar = this.props.calendar.table.map(
+      month =>
+        monthName === month.name ? { ...month, days: selectedMonthDays } : month
     );
 
     this.props.selectDay({ ...this.props.calendar, table: mappedCalendar });
@@ -42,50 +48,51 @@ class Calendar extends Component {
   createTableRows = month => {
     const { name, days } = month;
 
-    const tdRender = [];
+    const monthRow = [];
 
-    const clickHandler = day => ({
-      click: () => this.cellClickHandler(name, day)
-    });
+    const clickHandler = day => () => this.cellClickHandler(name, day);
 
-    tdRender.push(tableTd(name, { monthName: true }, name.substring(0, 3)));
+    monthRow.push(tableCell(name, { monthName: true }, name.substring(0, 3)));
 
     days.map((day, index) => {
+      if (!day) {
+        return monthRow.push(
+          tableCell(`${index + 1}.${name}`, { disabled: true })
+        );
+      }
+
       const selected =
-        day && (day.selected && !day.publicHoliday)
+        day.selected && !day.publicHoliday
           ? { selected: true }
           : { selected: false };
-      if (!day) {
-        tdRender.push(tableTd(`${index + 1}.${name}`, { disabled: true }));
-      } else if (day.today) {
-        tdRender.push(
-          tableTd(
+      if (day.today) {
+        monthRow.push(
+          tableCell(
             `${day.date}.${name}`,
             {
               today: true,
-              ...clickHandler(day.date),
+              click: clickHandler(day.date),
               ...selected
             },
             <React.Fragment>
               {day.publicHoliday && <Image src={HolidayImg} />}
-              {!day.publicHoliday && day.personalDay && (
-                <Image src={day.personalDay.icon_url} />
-              )}
+              {!day.publicHoliday &&
+                day.personalDay && <Image src={day.personalDay.icon_url} />}
             </React.Fragment>
           )
         );
       } else {
-        tdRender.push(
+        monthRow.push(
           day.weekend
-            ? tableTd(
+            ? tableCell(
                 `${day.date}.${name}`,
                 { weekend: true },
                 day.publicHoliday && <Image src={HolidayImg} />
               )
-            : tableTd(
+            : tableCell(
                 `${day.date}.${name}`,
                 {
-                  ...clickHandler(day.date),
+                  click: clickHandler(day.date),
 
                   ...selected,
                   requestStatus: day.personalDay
@@ -100,9 +107,8 @@ class Calendar extends Component {
                 },
                 <React.Fragment>
                   {day.publicHoliday && <Image src={HolidayImg} />}
-                  {!day.publicHoliday && day.personalDay && (
-                    <Image src={day.personalDay.iconUrl} />
-                  )}
+                  {!day.publicHoliday &&
+                    day.personalDay && <Image src={day.personalDay.iconUrl} />}
                 </React.Fragment>
               )
         );
@@ -111,24 +117,27 @@ class Calendar extends Component {
       return day;
     });
 
-    return tdRender;
+    return monthRow;
   };
 
   render() {
     return (
       <Table>
         <thead>
-          {tableTr('monthNames', { headerRow: true }, this.createTableHeader())}
+          {tableRow(
+            'monthNames',
+            { headerRow: true },
+            this.createTableHeader()
+          )}
         </thead>
         <tbody>
-          {this.props.calendar &&
-            this.props.calendar.table.map(month =>
-              tableTr(month.name, {}, this.createTableRows(month))
-            )}
+          {this.props.calendar.table.map(month =>
+            tableRow(month.name, {}, this.createTableRows(month))
+          )}
         </tbody>
       </Table>
     );
   }
 }
 
-export default Calendar;
+export default YearlyCalendar;

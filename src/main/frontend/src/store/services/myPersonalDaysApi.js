@@ -5,10 +5,7 @@ export const getMyPersonalDaysApi = async () => {
     return await request
       .get('/users/myDays')
       .set('X-ID-TOKEN', sessionStorage.getItem('token'))
-      .then(res => res.body)
-      .catch(err => {
-        console.log(err);
-      });
+      .then(res => res.body);
   } catch (e) {
     // TODO error handling
     console.log(e);

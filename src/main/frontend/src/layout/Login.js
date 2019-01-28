@@ -30,6 +30,20 @@ const LoginContainer = styled.div`
   justify-content: center;
 `;
 
+const LogoContainer = styled.div`
+  position: absolute;
+  width: 500px;
+  height: 200px;
+  background-color: rgba(50, 50, 52, 0.7);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  color: white;
+  border: 2px solid rgba(50, 50, 52);
+`;
+
 class Login extends Component {
   componentDidUpdate() {
     if (this.props.authorization) {
@@ -40,21 +54,7 @@ class Login extends Component {
   render() {
     return (
       <LoginContainer>
-        <div
-          style={{
-            position: 'absolute',
-            width: '500px',
-            height: '200px',
-            backgroundColor: 'rgba(50,50,52,0.7)',
-            borderRadius: '10px',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-evenly',
-            alignItems: 'center',
-            color: 'white',
-            border: '2px solid rgba(50,50,52)'
-          }}
-        >
+        <LogoContainer>
           <MainLogo>
             <p>Hawaii</p>
             <span>
@@ -73,7 +73,7 @@ class Login extends Component {
           >
             <NavigationLink>Log in</NavigationLink>
           </GoogleLogin>
-        </div>
+        </LogoContainer>
       </LoginContainer>
     );
   }

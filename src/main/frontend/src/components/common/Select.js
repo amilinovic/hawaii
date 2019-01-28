@@ -13,10 +13,6 @@ const defaultStyles = {
     ':hover': {
       border: '1px solid #b3b3b3'
     }
-  }),
-  menuList: (base, state) => ({
-    ...base
-    // backgroundColor: state.isSelected ? '#b3b3b3' : 'red'
   })
 };
 
