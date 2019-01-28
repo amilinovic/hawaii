@@ -1,11 +1,8 @@
-import request from 'superagent';
+import { get } from './request';
 
 export const getLeaveTypesService = async () => {
   try {
-    return await request
-      .get('/leavetypes')
-      .set('X-ID-TOKEN', sessionStorage.getItem('token'))
-      .then(res => res.body);
+    return await get('/leavetypes');
   } catch (e) {
     // TODO error handling
     console.log(e);

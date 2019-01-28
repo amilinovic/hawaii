@@ -1,11 +1,8 @@
-import request from 'superagent';
+import { get } from './request';
 
 export const getUserApi = () => {
   try {
-    return request
-      .get(`/users/me`)
-      .set('X-ID-TOKEN', sessionStorage.getItem('token'))
-      .then(res => res.body);
+    return get(`/users/me`);
   } catch (e) {
     // TODO error handling
     console.log(e);

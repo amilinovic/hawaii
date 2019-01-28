@@ -1,11 +1,8 @@
-import request from 'superagent';
+import { get } from './request';
 
 export const getMyPersonalDaysApi = async () => {
   try {
-    return await request
-      .get('/users/myDays')
-      .set('X-ID-TOKEN', sessionStorage.getItem('token'))
-      .then(res => res.body);
+    return await get('/users/myDays');
   } catch (e) {
     // TODO error handling
     console.log(e);

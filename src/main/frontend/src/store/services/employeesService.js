@@ -1,11 +1,8 @@
-import request from 'superagent';
+import { get } from './request';
 
 export const getEmployeesApi = async () => {
   try {
-    return await request
-      .get('/users')
-      .set('X-ID-TOKEN', sessionStorage.getItem('token'))
-      .then(res => res.body);
+    return await get('/users');
   } catch (e) {
     // TODO error handling
     console.log(e);
