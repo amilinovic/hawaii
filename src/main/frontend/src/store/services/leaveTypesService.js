@@ -1,9 +1,9 @@
 import request from 'superagent';
 
-export const getEmployeesApi = async () => {
+export const getLeaveTypesService = async () => {
   try {
     return await request
-      .get('/users')
+      .get('/leavetypes')
       .set('X-ID-TOKEN', sessionStorage.getItem('token'))
       .then(res => res.body)
       .catch(err => {

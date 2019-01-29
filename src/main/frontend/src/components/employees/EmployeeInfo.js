@@ -52,10 +52,21 @@ const EmployeeInfo = employee => {
   return (
     <EmployeeContainer>
       {/* User picture should be rendered here */}
-      <EmployeeInfoWrapper>
+
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-start',
+          width: '30%',
+          paddingLeft: 30,
+          alignItems: 'center'
+        }}
+      >
         <EmployeesImage />
         <EmployeesName>{fullName}</EmployeesName>
-      </EmployeeInfoWrapper>
+      </div>
+
       <EmployeesAdditionalInfo>
         <p>{jobTitle}</p>
         <p>{email}</p>

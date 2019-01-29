@@ -25,6 +25,7 @@ const PanelContainer = styled.div`
 const PanelContent = styled.div`
   flex-grow: 1;
   height: 100%;
+  overflow: auto;
 `;
 
 class Panel extends Component {
