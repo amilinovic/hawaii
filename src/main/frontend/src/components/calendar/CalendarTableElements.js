@@ -3,6 +3,8 @@ import styled from 'styled-components';
 
 import { ifProp, prop, switchProp } from 'styled-tools';
 
+// TODO: Refactor styles so that we have 1 parent element inherited by children
+
 const TableHeading = styled.th`
   border: ${ifProp('header', '0px', '1px solid #c0c0c0')};
   border: ${ifProp('monthName', '0px')};

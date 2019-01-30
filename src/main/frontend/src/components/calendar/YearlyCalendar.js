@@ -15,6 +15,10 @@ const Image = styled.img`
 `;
 
 class YearlyCalendar extends Component {
+  componentDidMount() {
+    this.props.publicHolidays();
+  }
+
   createTableHeader = () => {
     let headerRow = [];
     headerRow.push(tableHeading('default', { first: true }));
@@ -47,75 +51,77 @@ class YearlyCalendar extends Component {
 
   createTableRows = month => {
     const { name, days } = month;
-
     const monthRow = [];
 
     const clickHandler = day => () => this.cellClickHandler(name, day);
 
-    monthRow.push(tableCell(name, { monthName: true }, name.substring(0, 3)));
+    monthRow.push(tableCell(name, { monthName: true }, name));
 
-    days.map((day, index) => {
-      if (!day) {
-        return monthRow.push(
-          tableCell(`${index + 1}.${name}`, { disabled: true })
-        );
-      }
+    days &&
+      days.map((day, index) => {
+        if (!day) {
+          return monthRow.push(
+            tableCell(`${index + 1}.${name}`, { disabled: true })
+          );
+        }
 
-      const selected =
-        day.selected && !day.publicHoliday
-          ? { selected: true }
-          : { selected: false };
-      if (day.today) {
-        monthRow.push(
-          tableCell(
-            `${day.date}.${name}`,
-            {
-              today: true,
-              click: clickHandler(day.date),
-              ...selected
-            },
-            <React.Fragment>
-              {day.publicHoliday && <Image src={HolidayImg} />}
-              {!day.publicHoliday &&
-                day.personalDay && <Image src={day.personalDay.icon_url} />}
-            </React.Fragment>
-          )
-        );
-      } else {
-        monthRow.push(
-          day.weekend
-            ? tableCell(
-                `${day.date}.${name}`,
-                { weekend: true },
-                day.publicHoliday && <Image src={HolidayImg} />
-              )
-            : tableCell(
-                `${day.date}.${name}`,
-                {
-                  click: clickHandler(day.date),
+        const selected =
+          day.selected && !day.publicHoliday
+            ? { selected: true }
+            : { selected: false };
+        if (day.today) {
+          monthRow.push(
+            tableCell(
+              `${day.date}.${name}`,
+              {
+                today: true,
+                click: clickHandler(day.date),
+                ...selected
+              },
+              <React.Fragment>
+                {day.publicHoliday && <Image src={HolidayImg} />}
+                {!day.publicHoliday &&
+                  day.personalDay && <Image src={day.personalDay.icon_url} />}
+              </React.Fragment>
+            )
+          );
+        } else {
+          monthRow.push(
+            day.weekend
+              ? tableCell(
+                  `${day.date}.${name}`,
+                  { weekend: true },
+                  day.publicHoliday && <Image src={HolidayImg} />
+                )
+              : tableCell(
+                  `${day.date}.${name}`,
+                  {
+                    click: clickHandler(day.date),
 
-                  ...selected,
-                  requestStatus: day.personalDay
-                    ? day.personalDay.requestStatus
-                    : null,
-                  absenceType: day.personalDay
-                    ? day.personalDay.absenceType
-                    : null,
-                  absenceSybtype: day.personalDay
-                    ? day.personalDay.absencesubtype
-                    : null
-                },
-                <React.Fragment>
-                  {day.publicHoliday && <Image src={HolidayImg} />}
-                  {!day.publicHoliday &&
-                    day.personalDay && <Image src={day.personalDay.iconUrl} />}
-                </React.Fragment>
-              )
-        );
-      }
+                    ...selected,
+                    requestStatus: day.personalDay
+                      ? day.personalDay.requestStatus
+                      : null,
+                    absenceType: day.personalDay
+                      ? day.personalDay.absenceType
+                      : null,
+                    absenceSybtype: day.personalDay
+                      ? day.personalDay.absencesubtype
+                      : null
+                  },
+                  <React.Fragment>
+                    {day.publicHoliday && <Image src={HolidayImg} />}
+                    {!day.publicHoliday &&
+                      day.personalDay && (
+                        <Image src={day.personalDay.iconUrl} />
+                      )}
+                  </React.Fragment>
+                )
+          );
+        }
 
-      return day;
-    });
+        return day;
+      });
 
     return monthRow;
   };
@@ -131,7 +137,7 @@ class YearlyCalendar extends Component {
           )}
         </thead>
         <tbody>
-          {this.props.calendar.table.map(month =>
+          {this.props.calendar.map(month =>
             tableRow(month.name, {}, this.createTableRows(month))
           )}
         </tbody>

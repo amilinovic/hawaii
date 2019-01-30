@@ -21,6 +21,11 @@ import Request from '../components/request/Request';
 import { openRequestPopup } from '../store/actions/requestActions';
 import { requestLeaveTypes } from '../store/actions/leaveTypesActions';
 import Button from '../components/common/Button';
+import {
+  fillWithMonthsAndDays,
+  filterExistingDays,
+  convertPublicDatesToMoment
+} from '../components/calendar/calendarUtils';
 
 const ExecomCalendarContainer = styled.div`
   display: flex;
@@ -72,15 +77,28 @@ const CalendarContainer = styled.div`
 `;
 
 class ExecomCalendar extends Component {
+  state = {
+    months: fillWithMonthsAndDays()
+  };
+
   componentDidMount() {
     this.props.requestPublicHolidays();
     this.props.requestMyPersonalDays();
     this.props.requestLeaveTypes();
   }
 
-  getPublicHolidays = () => {
-    this.props.requestPublicHolidays();
-    return this.props.publicHolidays;
+  fetchPublicHolidayAndAddMetadata = () => {
+    this.props.publicHolidays.length < 1 && this.props.requestPublicHolidays();
+    this.setState({
+      ...this.state,
+      months: filterExistingDays(
+        this.state.months,
+        {
+          publicHolidays: convertPublicDatesToMoment(this.props.publicHolidays)
+        },
+        2019
+      )
+    });
   };
 
   getMyPersonalDays = () => {
@@ -92,9 +110,7 @@ class ExecomCalendar extends Component {
     return (
       <ExecomCalendarContainer>
         <CalendarWrapper>
-          {/* Change button styling to Button from '/common/button' */}
           <Button
-            // passing event as payload significantly decreases performance
             align="flex-end"
             click={() => this.props.openRequestPopup()}
             title="+ New Request"
@@ -125,14 +141,13 @@ class ExecomCalendar extends Component {
             </YearControlButton>
           </YearSelection>
           <CalendarContainer>
-            {this.props.calendar.table && (
-              <YearlyCalendar
-                calendar={this.props.calendar}
-                selectDay={this.props.selectDay}
-                publicHolidays={this.props.publicHolidays}
-                myPersonalDays={this.props.myPersonalDays}
-              />
-            )}
+            <YearlyCalendar
+              calendar={this.state.months}
+              selectDay={this.props.selectDay}
+              // publicHolidays={this.props.publicHolidays}
+              publicHolidays={this.fetchPublicHolidayAndAddMetadata}
+              myPersonalDays={this.props.myPersonalDays}
+            />
           </CalendarContainer>
         </CalendarWrapper>
         {this.props.request.openPopup && (
