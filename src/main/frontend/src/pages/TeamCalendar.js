@@ -18,6 +18,30 @@ import sicknessImg from '../img/icons/sickness_ss.png';
 import moment from 'moment';
 import { requestPublicHolidays } from '../store/actions/publicHolidayActions';
 import { ifProp, prop, switchProp } from 'styled-tools';
+import {
+  TeamCalendarUser,
+  TeamCalendarUserName,
+  TeamCalendarUserTh,
+  TeamCalendarUserTd,
+  TeamCalendarDay,
+  TeamCalendarUserTr,
+  TeamCalendarTotalsTd,
+  GridLeaveImage,
+  TeamCalendarGridTd,
+  TeamCalendarWrapper,
+  TeamCalendarMenus,
+  TeamCalendarViewButton,
+  TeamCalendarNavButton,
+  TeamCalendarNavSelect,
+  TeamCalendarContainer,
+  TeamUsersContainer,
+  TeamDaysTable,
+  TeamTotalsTable,
+  TeamCalendarTotalsTh,
+  TeamCalendarGridContainer,
+  TeamCalendarUserImage,
+} from '../components/teamCalendar/TeamCalendarComponents'
+
 
 const leaveTypes = {
   DEDUCTED_LEAVE: leaveImg,
@@ -26,148 +50,17 @@ const leaveTypes = {
   NON_DEDUCTED_LEAVE: leaveImg
 };
 
-const weekDays = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+const weekDays = ['S', 'M', 'T', 'W', 'T', 'F', 'S',];
 
-const TeamCalendarWrapper = styled.div``;
 
-const TeamCalendarContainer = styled.div`
-  display: flex;
-  width: 100%;
-`;
-
-const TeamDaysTable = styled.table``;
-
-const TeamTotalsTable = styled.table`
-  background: lightblue;
-  width: 225px;
-`;
-
-const TeamCalendarMenus = styled.div`
-  background: yellow;
-  width: 100%;
-  height: 100px;
-`;
-
-const TeamUsersContainer = styled.div`
-  width: 225px;
-  padding-top: 35px;
-`;
-
-const TeamCalendarUser = styled.div`
-  text-overflow: clip;
-  width: 100%;
-  height: 40px;
-  margin-bottom: 10px;
-  padding-left: 5px;
-`;
-
-const TeamCalendarUserImage = styled.div`
-  width: 40px;
-  height: 40px;
-  background-image: url('https://lh4.googleusercontent.com/-C_koQKFWl2Y/AAAAAAAAAAI/AAAAAAAAAAc/apR_5I8dYng/s96-c/photo.jpg');
-  background-size: 100%;
-  margin-bottom: 10px;
-  border-radius: 20px;
-  display: inline-box;
-`;
-
-const TeamCalendarUserName = styled.div`
-  font-size: 13px;
-  vertical-align: top;
-  margin-top: 13px;
-  margin-left: 10px;
-  display: inline-box;
-  text-overflow: clip;
-`;
-
-const TeamCalendarUserTh = styled.th`
-  width: 28px;
-  text-align: center;
-  vertical-align: middle;
-  height: 35px;
-  font-size:14px;
-`;
-
-const TeamCalendarUserTr = styled.tr``;
-
-const TeamCalendarUserTd = styled.td`
-  vertical-align: middle;
-  text-align: center;
-  font-size: 13px;
-  height: 50px;
-  padding-bottom: 10px;
-`;
-const TeamCalendarDay = styled.div`
-  background: ${switchProp(prop('weekDay'), {
-    S: 'lightgrey'
-  })};
-  background: ${switchProp(prop('requestStatus'), {
-    APPROVED: 'lightgreen',
-    PENDING: 'orange'
-  })};
-  height: 25px;
-  vertical-align: middle;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  img {
-    width: 15px;
-  }
-`;
-
-const TeamCalendarTotalsTh = styled.th`
-  font-size: 10px;
-  border: 1px solid red;
-  height: 35px;
-  text-align: center;
-  vertical-align: middle;
-  width: 55px;
-`;
-
-const TeamCalendarTotalsTd = styled.td`
-  font-size: 13px;
-  height: 50px;
-  vertical-align: middle;
-  text-align: center;
-  padding-bottom: 10px;
-`;
-
-const TeamCalendarViewButton = styled.button`
-  margin: 5px;
-  padding: 10px;
-  padding-left: 10px;
-  border-radius: 5px;
-  background: red;
-  color: white;
-  padding-left: 30px;
-`;
-
-const TeamCalendarNavButton = styled.button`
-  margin: 5px;
-  padding: 10px;
-  padding-left: 10px;
-  border-radius: 5px;
-  background: light-grey !important;
-`;
-
-const TeamCalendarNavSelect = styled.select`
-  margin-left: -5px;
-  margin-right: -5px;
-`;
-
-const TeamCalendarGridTd = styled.td`
-  height: 150px;
-  width: 160px;
-  border: 1px solid red;
-  &:first-child {
-    width: 180px;
-  }
-`;
 
 class TeamCalendar extends Component {
-  currentMonth = (new Date()).getMonth();
-  currentYear = (new Date()).getFullYear();
-
+  
+  state = {
+    currentMonth : moment().month() +1,
+    currentYear : moment().year(),
+    viewMode : 'LIST',
+  }
   componentDidMount() {
     this.props.requestUsers();
     this.props.requestPublicHolidays();
@@ -198,7 +91,7 @@ class TeamCalendar extends Component {
     this.props.users.forEach(user => {
       users.push(
         <TeamCalendarUser key={'TeamCalendarUser' + user.id}>
-          <TeamCalendarUserImage key={'TeamCalendarUserImage' + user.id} />
+          <TeamCalendarUserImage key={'TeamCalendarUserImage' + user.id} uid={user.id} />
           <TeamCalendarUserName key={'TeamCalendarUserName' + user.id}>
             {user.fullName}
           </TeamCalendarUserName>
@@ -212,14 +105,10 @@ class TeamCalendar extends Component {
   renderDaysHeader = () => {
     var days = [];
 
-    for (
-      var i = 1;
-      i <= new Date(this.currentYear, this.currentMonth, 0).getDate();
-      i++
-    ) {
+    for ( var i = 1; i <= new Date(this.state.currentYear, this.state.currentMonth , 0).getDate(); i++) {
       days.push(
         <TeamCalendarUserTh key={'TeamCalendarUserTh' + i}>
-          {weekDays[new Date(this.currentYear, this.currentMonth, i).getDay()]}
+          {weekDays[new Date(this.state.currentYear, this.state.currentMonth - 1, i).getDay()]}
         </TeamCalendarUserTh>
       );
     }
@@ -233,7 +122,7 @@ class TeamCalendar extends Component {
       var line = [];
       for (
         var j = 1;
-        j <= new Date(this.currentYear, this.currentMonth, 0).getDate();
+        j <= new Date(this.state.currentYear, this.state.currentMonth, 0).getDate();
         j++
       ) {
         var personalDay = null;
@@ -241,7 +130,7 @@ class TeamCalendar extends Component {
         user.days.forEach(day => {
           if (
             day.date ===
-            moment(new Date(this.currentYear, this.currentMonth - 1, j)).format(
+            moment(new Date(this.state.currentYear, this.state.currentMonth - 1, j)).format(
               'YYYY-MM-DD'
             )
           ) {
@@ -251,7 +140,7 @@ class TeamCalendar extends Component {
         this.props.publicHolidays.forEach(day => {
           if (
             day.date ===
-            moment(new Date(this.currentYear, this.currentMonth - 1, j)).format(
+            moment(new Date(this.state.currentYear, this.state.currentMonth - 1, j)).format(
               'YYYY-MM-DD'
             )
           ) {
@@ -264,7 +153,7 @@ class TeamCalendar extends Component {
             <TeamCalendarDay
               weekDay={
                 weekDays[
-                  new Date(this.currentYear, this.currentMonth, j).getDay()
+                  new Date(this.state.currentYear, this.state.currentMonth - 1, j).getDay()
                 ]
               }
               requestStatus={personalDay && personalDay.requestStatus}
@@ -292,35 +181,89 @@ class TeamCalendar extends Component {
 
   renderTotals = () => {
     var totals = [];
+
+
     this.props.users.forEach(user => {
+      var total_deducted = 0;
+      var total_non_deducted = 0;
+      var total_sick = 0;
+      var total_bonus = 0;
+
+      user.days.forEach(day => {
+          if ( day.requestStatus === 'APPROVED' ){
+            switch (day.absenceType)
+            {
+              case 'SICKNESS' :
+                total_sick++;
+                break;
+              case 'DEDUCTED_LEAVE' :
+                total_deducted++;
+                break;
+              case 'NON_DEDUCTED_LEAVE' :
+                total_non_deducted++;
+                break;
+              case 'BONUS_DAYS' :
+                total_bonus++;
+                break;
+            }
+          }
+
+
+      })
+
       totals.push(
         <tr key={'TotalsTr' + user.id}>
-          <TeamCalendarTotalsTd key={'TeamCalendarTotalsTd0' + user.id}>
-            0
-          </TeamCalendarTotalsTd>
           <TeamCalendarTotalsTd key={'TeamCalendarTotalsTd1' + user.id}>
-            0
+            {total_deducted}
           </TeamCalendarTotalsTd>
           <TeamCalendarTotalsTd key={'TeamCalendarTotalsTd2' + user.id}>
-            0
+            {total_non_deducted}
           </TeamCalendarTotalsTd>
           <TeamCalendarTotalsTd key={'TeamCalendarTotalsTd3' + user.id}>
-            0
+            {total_sick}
+          </TeamCalendarTotalsTd>
+          <TeamCalendarTotalsTd key={'TeamCalendarTotalsTd4' + user.id}>
+            {total_bonus}
           </TeamCalendarTotalsTd>
         </tr>
       );
     });
     return totals;
   }
+  renderGridCalendarUsers = (year,month,d) =>
+  {
+    var users = []
+    var cnt = 0;
+    this.props.users.forEach( user => {
+      user.days.forEach(day => {
+          cnt++;
+          if (cnt <= 5 && moment(new Date(year,month-1 , d)).format("YYYY-MM-DD") === day.date){
+            users.push(
+                <div key={'GridCalendarDayUser'+day.date+'-'+user.id}>
+                  <GridLeaveImage requestStatus={day.requestStatus}>
+                    <img src={leaveTypes[day.absenceType]} />
+                  </GridLeaveImage>
+                  {user.fullName}
+                </div>)
+          }
+      })
+
+    });
+      return users;
+  }
   renderGridCalendar = () => {
     var grid = [];
-    for (var j = 0; j < 31; ) {
+    for (var j = 1 - new Date(this.state.currentYear,this.state.currentMonth - 1,1).getDay(); j <= 35 - new Date().getDay(); ) {
       var row = [];
       for (var i = 0; i < 7; i++) {
         j++;
         row.push(
           <TeamCalendarGridTd key={'TeamCalendarGridTd' + i}>
-            /* {i == 0 ? <div /> : ''} */
+            <div>{new Date(this.state.currentYear,this.state.currentMonth - 1,j).getDate()}</div>
+            {this.renderGridCalendarUsers(
+                  this.state.currentYear,
+                  this.state.currentMonth,
+                  j)}
           </TeamCalendarGridTd>
         );
       }
@@ -329,7 +272,44 @@ class TeamCalendar extends Component {
     return grid;
   }
 
+  prevMonth = () => {
+    if (--this.state.currentMonth < 1){
+      this.state.currentMonth = 12;
+      this.state.currentYear--;
+    }
+
+    this.forceUpdate();
+  }
+
+  nextMonth = () => {
+    if (++this.state.currentMonth > 12){
+      this.state.currentMonth = 1;
+      this.state.currentYear++;
+    }
+
+    this.forceUpdate();
+  }
+
   render = () => {
+
+    var monthsOptions = [];
+    var y = 2019;
+    var m = 1;
+
+    while ( y < moment().year() + 2 )
+    {
+      monthsOptions.push(
+          <option key={'monthOption'+y+m} value={y*100 + m} >
+            {moment(new Date(y,m - 1,1)).format('MMMM')} {y}
+          </option>
+      );
+      if (++m > 12)
+      {
+        m=1;
+        y++;
+      }
+    }
+
     return (
       <TeamCalendarWrapper>
         <TeamCalendarMenus>
@@ -338,18 +318,41 @@ class TeamCalendar extends Component {
             <option>My Team</option>
           </select>
 
-          <TeamCalendarViewButton> List View </TeamCalendarViewButton>
-          <TeamCalendarViewButton> Calendar View </TeamCalendarViewButton>
+          <TeamCalendarViewButton onClick={() => {this.state.viewMode = 'LIST'; this.forceUpdate()}}> List View </TeamCalendarViewButton>
+          <TeamCalendarViewButton onClick={() => {this.state.viewMode = 'GRID';this.forceUpdate();}}> Calendar View </TeamCalendarViewButton>
 
-          <TeamCalendarNavButton> {'<'} </TeamCalendarNavButton>
-          <TeamCalendarNavSelect>
-            <option>January 2019</option>
-            <option>Febriary 2019</option>
+          <TeamCalendarNavButton onClick={ this.prevMonth }> {'<'} </TeamCalendarNavButton>
+          <TeamCalendarNavSelect defaultValue={this.state.currentYear*100 + this.state.currentMonth}>
+                {monthsOptions}
           </TeamCalendarNavSelect>
-          <TeamCalendarNavButton> {'>'} </TeamCalendarNavButton>
+          <TeamCalendarNavButton onClick={ this.nextMonth }> {'>'} </TeamCalendarNavButton>
         </TeamCalendarMenus>
 
-        <TeamCalendarContainer>
+        { this.state.viewMode === 'LIST' ?
+
+          <TeamCalendarContainer>
+            <TeamUsersContainer>{this.renderTeamUsers()}</TeamUsersContainer>
+              <TeamDaysTable>
+                <tbody>
+                  <tr>{this.renderDaysHeader()}</tr>
+                  {this.renderDays()}
+                </tbody>
+              </TeamDaysTable>
+              <TeamTotalsTable>
+                <tbody>
+                 <tr>
+                  <TeamCalendarTotalsTh> Deducted Days </TeamCalendarTotalsTh>
+                  <TeamCalendarTotalsTh> Non Deducted Days </TeamCalendarTotalsTh>
+                  <TeamCalendarTotalsTh> Sick Days </TeamCalendarTotalsTh>
+                  <TeamCalendarTotalsTh> Bonus Days </TeamCalendarTotalsTh>
+                 </tr>
+                  {this.renderTotals()}
+                </tbody>
+               </TeamTotalsTable>
+            </TeamCalendarContainer>
+
+        :
+        <TeamCalendarGridContainer>
           <table>
             <tbody>
               <tr>
@@ -364,36 +367,11 @@ class TeamCalendar extends Component {
               {this.renderGridCalendar()}
             </tbody>
           </table>
-        </TeamCalendarContainer>
-
-        <TeamCalendarContainer>
-          <TeamUsersContainer>{this.renderTeamUsers()}</TeamUsersContainer>
-          <TeamDaysTable>
-            <tbody>
-              <tr>{this.renderDaysHeader()}</tr>
-              {this.renderDays()}
-            </tbody>
-          </TeamDaysTable>
-
-          <TeamTotalsTable>
-            <tbody>
-              <tr>
-                <TeamCalendarTotalsTh>
-                  {' '}
-                  Total Working Days{' '}
-                </TeamCalendarTotalsTh>
-                <TeamCalendarTotalsTh> Total Leave Days </TeamCalendarTotalsTh>
-                <TeamCalendarTotalsTh>
-                  {' '}
-                  Total Non Deducted Days{' '}
-                </TeamCalendarTotalsTh>
-                <TeamCalendarTotalsTh> Total Sick Days </TeamCalendarTotalsTh>
-              </tr>
-              {this.renderTotals()}
-            </tbody>
-          </TeamTotalsTable>
-        </TeamCalendarContainer>
+        </TeamCalendarGridContainer>
+        }
       </TeamCalendarWrapper>
+
+
     );
   }
 }
