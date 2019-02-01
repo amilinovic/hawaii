@@ -5,26 +5,44 @@ const year = now.year();
 const months = moment.months();
 const MOMENT_DATE_FORMAT = 'YYYY-MM-DD';
 
-export const fillWithMonthsAndDays = (selectedYear = year, publicHolidays) => [
+export const fillWithMonthsAndDays = (
+  selectedYear = year,
+  publicHolidays,
+  personalData
+) => [
   ...months.map(month => ({
     name: month,
-    days: createDaysFromEmptyArray(selectedYear, month, publicHolidays)
+    days: createDaysFromEmptyArray(
+      selectedYear,
+      month,
+      publicHolidays,
+      personalData
+    )
   }))
 ];
 
-const createDaysFromEmptyArray = (year, month, publicHolidays) => {
-  const calendarObject = new Array(31)
-    .fill([{}], 0)
-    .map(
-      (date, index) =>
-        addMetadata(
-          checkDateValidity(convertDateToMomentObject(year, month, index + 1))
-        ),
-      publicHolidays
-    );
-  return publicHolidays && publicHolidays.length > 0
-    ? addPublicHolidays(calendarObject, publicHolidays, year)
-    : calendarObject;
+const createDaysFromEmptyArray = (
+  year,
+  month,
+  publicHolidays,
+  personalData
+) => {
+  let calendarObject = new Array(31).fill([{}], 0).map((date, index) =>
+    // TODO: Apply Composition
+    addMetadata(
+      checkDateValidity(convertDateToMomentObject(year, month, index + 1))
+    )
+  );
+
+  if (publicHolidays) {
+    calendarObject = addPublicHolidays(calendarObject, publicHolidays, year);
+  }
+
+  if (personalData) {
+    // TODO: add personal data to calendar object
+  }
+
+  return calendarObject;
 };
 // TODO: Apply composition
 

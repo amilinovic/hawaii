@@ -15,10 +15,6 @@ const Image = styled.img`
 `;
 
 class YearlyCalendar extends Component {
-  componentDidMount() {
-    this.props.publicHolidays();
-  }
-
   createTableHeader = () => {
     let headerRow = [];
     headerRow.push(tableHeading('default', { first: true }));

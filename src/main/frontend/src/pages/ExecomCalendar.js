@@ -75,12 +75,16 @@ const CalendarContainer = styled.div`
 
 class ExecomCalendar extends Component {
   state = {
-    months: fillWithMonthsAndDays(),
+    months: [],
     selectedYear: moment().year()
   };
 
   componentDidMount() {
-    this.props.requestPublicHolidays();
+    this.setState({
+      ...this.state,
+      months: fillWithMonthsAndDays()
+    });
+    this.state.months && this.fetchPublicHolidayAndAddMetadata();
     this.props.requestMyPersonalDays();
     this.props.requestLeaveTypes();
   }
@@ -132,12 +136,13 @@ class ExecomCalendar extends Component {
             </YearControlButton>
           </YearSelection>
           <CalendarContainer>
-            <YearlyCalendar
-              calendar={this.state.months}
-              selectDay={this.props.selectDay}
-              publicHolidays={this.fetchPublicHolidayAndAddMetadata}
-              myPersonalDays={this.props.myPersonalDays}
-            />
+            {this.state.months && (
+              <YearlyCalendar
+                calendar={this.state.months}
+                selectDay={this.props.selectDay}
+                myPersonalDays={this.props.myPersonalDays}
+              />
+            )}
           </CalendarContainer>
         </CalendarWrapper>
         {this.props.request.openPopup && (
