@@ -5,22 +5,37 @@ const year = now.year();
 const months = moment.months();
 const MOMENT_DATE_FORMAT = 'YYYY-MM-DD';
 
-export const fillWithMonthsAndDays = () => [
+export const fillWithMonthsAndDays = (selectedYear = year, publicHolidays) => [
   ...months.map(month => ({
     name: month,
-    days: createDaysFromEmptyArray(year, month)
+    days: createDaysFromEmptyArray(selectedYear, month, publicHolidays)
   }))
 ];
 
-const createDaysFromEmptyArray = (year, month) =>
-  new Array(31)
+const createDaysFromEmptyArray = (year, month, publicHolidays) => {
+  const calendarObject = new Array(31)
     .fill([{}], 0)
-    .map((date, index) =>
-      addMetadata(
-        checkDateValidity(convertDateToMomentObject(year, month, index + 1))
-      )
+    .map(
+      (date, index) =>
+        addMetadata(
+          checkDateValidity(convertDateToMomentObject(year, month, index + 1))
+        ),
+      publicHolidays
     );
+  return publicHolidays && publicHolidays.length > 0
+    ? addPublicHolidays(calendarObject, publicHolidays, year)
+    : calendarObject;
+};
 // TODO: Apply composition
+
+const addPublicHolidays = (month, publicHolidays, selectedYear) => {
+  if (!publicHolidays) return month;
+  const momentPublicHolidays = convertPublicDatesToMoment(
+    publicHolidays
+  ).filter(holiday => holiday.date.year() === selectedYear);
+
+  return month.map(day => (day ? addMetadata(day, momentPublicHolidays) : day));
+};
 
 const convertDateToMomentObject = (year, month, date) => ({
   date: moment(
@@ -33,13 +48,12 @@ const convertDateToMomentObject = (year, month, date) => ({
 
 const checkDateValidity = day => (day.date.isValid() ? day : null);
 
-const addMetadata = dayObject => {
+const addMetadata = (dayObject, publicHolidays) => {
   if (!dayObject) return dayObject;
-  let dayMetadata = { ...dayObject };
+  let dayWithMetadata = { ...dayObject };
+  dayWithMetadata = checkIfToday(checkIfWeekend(dayWithMetadata));
 
-  dayMetadata = checkIfToday(checkIfWeekend(dayMetadata));
-
-  return dayMetadata;
+  return checkForPublicHolidays(dayWithMetadata, publicHolidays);
 };
 
 const checkIfWeekend = day =>
@@ -52,47 +66,18 @@ const checkIfToday = day =>
     ? { ...day, today: true }
     : day;
 
-export const filterExistingDays = (calendar, filterParameter, selectedYear) => {
-  const { publicHolidays, personalData } = filterParameter;
-  if (publicHolidays) {
-    const selectedYearHolidays = publicHolidays.filter(
-      holiday => holiday.date.year() === selectedYear
-    );
-    return findDatesInCalendarAndAddMetadata(calendar, selectedYearHolidays);
-  }
-  return calendar;
+const checkForPublicHolidays = (day, publicHolidays) => {
+  if (!publicHolidays) return day;
+
+  const publicHolidayCheck = publicHolidays.find(holiday =>
+    holiday.date.isSame(day.date, 'day')
+  );
+  return publicHolidayCheck
+    ? { ...day, publicHoliday: publicHolidayCheck.name }
+    : day;
 };
 
-const findDatesInCalendarAndAddMetadata = (calendarObject, dates) =>
-  dates.reduce((acc, holiday) => {
-    const foundMonth =
-      acc.length > 0
-        ? acc.find(month => month.name === holiday.date.format('MMMM'))
-        : calendarObject.find(
-            month => month.name === holiday.date.format('MMMM')
-          );
-
-    const replacedDayFromFoundMonth = addHolidayMetadataToDay(
-      foundMonth.days,
-      holiday
-    );
-    return calendarObject.map(
-      month =>
-        month.name === foundMonth.name
-          ? { name: foundMonth.name, days: [...replacedDayFromFoundMonth] }
-          : month
-    );
-  }, []);
-
-const addHolidayMetadataToDay = (month, holiday) =>
-  month.map(
-    day =>
-      day.date.isSame(holiday.date, 'day')
-        ? { ...day, publicHoliday: holiday.name }
-        : day
-  );
-
-export const convertPublicDatesToMoment = publicHolidays =>
+const convertPublicDatesToMoment = publicHolidays =>
   publicHolidays.map(holiday => ({
     name: holiday.name,
     date: moment(holiday.date, MOMENT_DATE_FORMAT)

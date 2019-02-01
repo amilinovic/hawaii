@@ -5,7 +5,6 @@ import {
   decrementYear,
   selectDay
 } from '../actions/calendarActions';
-import moment from 'moment';
 export const initialState = {};
 
 const actionHandlers = {

@@ -21,11 +21,8 @@ import Request from '../components/request/Request';
 import { openRequestPopup } from '../store/actions/requestActions';
 import { requestLeaveTypes } from '../store/actions/leaveTypesActions';
 import Button from '../components/common/Button';
-import {
-  fillWithMonthsAndDays,
-  filterExistingDays,
-  convertPublicDatesToMoment
-} from '../components/calendar/calendarUtils';
+import { fillWithMonthsAndDays } from '../components/calendar/calendarUtils';
+import moment from 'moment';
 
 const ExecomCalendarContainer = styled.div`
   display: flex;
@@ -78,7 +75,8 @@ const CalendarContainer = styled.div`
 
 class ExecomCalendar extends Component {
   state = {
-    months: fillWithMonthsAndDays()
+    months: fillWithMonthsAndDays(),
+    selectedYear: moment().year()
   };
 
   componentDidMount() {
@@ -87,23 +85,28 @@ class ExecomCalendar extends Component {
     this.props.requestLeaveTypes();
   }
 
-  fetchPublicHolidayAndAddMetadata = () => {
+  fetchPublicHolidayAndAddMetadata = (
+    selectedYear = this.state.selectedYear
+  ) => {
     this.props.publicHolidays.length < 1 && this.props.requestPublicHolidays();
-    this.setState({
-      ...this.state,
-      months: filterExistingDays(
-        this.state.months,
-        {
-          publicHolidays: convertPublicDatesToMoment(this.props.publicHolidays)
-        },
-        2019
-      )
-    });
+    const calendarWithPublicHolidays = fillWithMonthsAndDays(
+      selectedYear,
+      this.props.publicHolidays
+    );
+    this.setState({ ...this.state, months: [...calendarWithPublicHolidays] });
   };
 
-  getMyPersonalDays = () => {
-    this.props.requestMyPersonalDays();
-    return this.props.myPersonalDays;
+  // getMyPersonalDays = () => {
+  //   this.props.requestMyPersonalDays();
+  //   return this.props.myPersonalDays;
+  // };
+
+  handleYearChange = selectedYear => {
+    this.setState({
+      ...this.state,
+      months: fillWithMonthsAndDays(selectedYear, this.props.publicHolidays),
+      selectedYear: selectedYear
+    });
   };
 
   render() {
@@ -117,25 +120,13 @@ class ExecomCalendar extends Component {
           />
           <YearSelection>
             <YearControlButton
-              onClick={() =>
-                this.props.decrementYear({
-                  selectedYear:
-                    this.props.calendar.selectedYear || this.props.calendar.year
-                })
-              }
+              onClick={() => this.handleYearChange(this.state.selectedYear - 1)}
             >
               {'<'}
             </YearControlButton>
-            <p>
-              {this.props.calendar.selectedYear || this.props.calendar.year}
-            </p>
+            <p>{this.state.selectedYear}</p>
             <YearControlButton
-              onClick={() =>
-                this.props.incrementYear({
-                  selectedYear:
-                    this.props.calendar.selectedYear || this.props.calendar.year
-                })
-              }
+              onClick={() => this.handleYearChange(this.state.selectedYear + 1)}
             >
               {'>'}
             </YearControlButton>
@@ -144,7 +135,6 @@ class ExecomCalendar extends Component {
             <YearlyCalendar
               calendar={this.state.months}
               selectDay={this.props.selectDay}
-              // publicHolidays={this.props.publicHolidays}
               publicHolidays={this.fetchPublicHolidayAndAddMetadata}
               myPersonalDays={this.props.myPersonalDays}
             />
