@@ -1,6 +1,6 @@
 import { get } from './request';
 
-export const getMyPersonalDaysApi = async () => {
+export const getPersonalDaysApi = async () => {
   try {
     return await get('/users/myDays');
   } catch (e) {

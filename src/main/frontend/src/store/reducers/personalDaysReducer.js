@@ -1,10 +1,10 @@
 import { handleActions } from 'redux-actions';
-import { receiveMyPersonalDays } from '../actions/myPersonalDaysActions';
+import { receivePersonalDays } from '../actions/personalDaysActions';
 
 export const initialState = [];
 
 const actionHandlers = {
-  [receiveMyPersonalDays]: (state, action) => action.payload
+  [receivePersonalDays]: (state, action) => action.payload
 };
 
 const reducer = handleActions(actionHandlers, initialState);

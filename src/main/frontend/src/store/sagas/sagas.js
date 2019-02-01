@@ -5,7 +5,7 @@ import { teamsSaga } from './teamsSaga';
 import { userSaga } from './userSaga';
 import { publicHolidaysSaga } from './publicHolidaySaga';
 import { employeesSaga } from './employeesSaga';
-import { myPersonalDaysSaga } from './myPersonalDays';
+import { personalDaysSaga } from './personalDays';
 import { leaveTypesSaga } from './leaveTypesSaga';
 
 export default function* saga() {
@@ -15,7 +15,7 @@ export default function* saga() {
     ...teamsSaga,
     ...userSaga,
     ...publicHolidaysSaga,
-    ...myPersonalDaysSaga,
+    ...personalDaysSaga,
     ...employeesSaga,
     ...leaveTypesSaga
   ]);

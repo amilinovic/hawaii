@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import {
   getCalendar,
   getPublicHolidays,
-  getMyPersonalDays,
+  getPersonalDays,
   getRequest,
   getLeaveTypes
 } from '../store/selectors';
@@ -16,7 +16,7 @@ import {
   selectDay
 } from '../store/actions/calendarActions';
 import { requestPublicHolidays } from '../store/actions/publicHolidayActions';
-import { requestMyPersonalDays } from '../store/actions/myPersonalDaysActions';
+import { requestPersonalDays } from '../store/actions/personalDaysActions';
 import Request from '../components/request/Request';
 import { openRequestPopup } from '../store/actions/requestActions';
 import { requestLeaveTypes } from '../store/actions/leaveTypesActions';
@@ -85,7 +85,7 @@ class ExecomCalendar extends Component {
       months: fillWithMonthsAndDays()
     });
     this.state.months && this.fetchPublicHolidayAndAddMetadata();
-    this.props.requestMyPersonalDays();
+    this.state.months && this.fetchPersonalDaysAndAddMetadata();
     this.props.requestLeaveTypes();
   }
 
@@ -98,6 +98,12 @@ class ExecomCalendar extends Component {
       this.props.publicHolidays
     );
     this.setState({ ...this.state, months: [...calendarWithPublicHolidays] });
+  };
+
+  fetchPersonalDaysAndAddMetadata = (
+    selectedYear = this.state.selectedYear
+  ) => {
+    this.props.personalDays.length < 1 && this.props.requestPersonalDays();
   };
 
   // getMyPersonalDays = () => {
@@ -140,7 +146,7 @@ class ExecomCalendar extends Component {
               <YearlyCalendar
                 calendar={this.state.months}
                 selectDay={this.props.selectDay}
-                myPersonalDays={this.props.myPersonalDays}
+                personalDays={this.props.personalDays}
               />
             )}
           </CalendarContainer>
@@ -156,7 +162,7 @@ class ExecomCalendar extends Component {
 const mapStateToProps = state => ({
   calendar: getCalendar(state),
   publicHolidays: getPublicHolidays(state),
-  myPersonalDays: getMyPersonalDays(state),
+  personalDays: getPersonalDays(state),
   request: getRequest(state),
   leaveTypes: getLeaveTypes(state)
 });
@@ -168,7 +174,7 @@ const mapDispatchToProps = dispatch =>
       decrementYear,
       selectDay,
       requestPublicHolidays,
-      requestMyPersonalDays,
+      requestPersonalDays,
       openRequestPopup,
       requestLeaveTypes
     },
