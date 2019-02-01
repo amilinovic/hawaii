@@ -48,6 +48,9 @@ public class UserServiceTest {
   @Mock
   private YearRepository yearRepository;
 
+  @Mock
+  private AuditInformationService auditInformationService;
+
   @InjectMocks
   private UserService userService;
 
@@ -157,10 +160,11 @@ public class UserServiceTest {
     given(userRepository.getOne(userId)).willReturn(mockUser);
 
     // when
-    userService.delete(userId);
+    userService.delete(userId, any());
 
     // then
     verify(userRepository).getOne(anyLong());
+    verify(auditInformationService).saveAudit(any(), any(), any(), any(), any());
     verify(userRepository).save(any());
     verifyNoMoreInteractions(allMocks);
   }

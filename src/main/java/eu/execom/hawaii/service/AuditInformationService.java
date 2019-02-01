@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import eu.execom.hawaii.model.AuditInformation;
 import eu.execom.hawaii.model.User;
-import eu.execom.hawaii.model.enumerations.AuditedEntity;
+import eu.execom.hawaii.model.audit.Audit;
 import eu.execom.hawaii.model.enumerations.OperationPerformed;
 import eu.execom.hawaii.repository.AuditInformationRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -38,22 +38,21 @@ public class AuditInformationService {
   }
 
   /**
-   * Build audit information and save it.
+   * Save audit information.
    *
    * @param operationPerformed what operation was performed (CREATE, REMOVE, UPDATE, DELETE, ACTIVATE).
-   * @param entity             on witch entity was the operation performed (USER, TEAM, REQUEST).
    * @param modifiedByUser     user that made change on that entity.
    * @param modifiedUser       user on witch change was performed.
    * @param previousState      state of the object before the change.
    * @param currentState       state of the object after the change.
    */
-  public void buildAuditInformation(OperationPerformed operationPerformed, AuditedEntity entity, User modifiedByUser,
-      User modifiedUser, Object previousState, Object currentState) {
+  public void saveAudit(OperationPerformed operationPerformed, User modifiedByUser, User modifiedUser,
+      Audit previousState, Audit currentState) {
 
     AuditInformation auditInformation = new AuditInformation();
 
     auditInformation.setOperationPerformed(operationPerformed);
-    auditInformation.setAuditedEntity(entity);
+    auditInformation.setAuditedEntity(currentState.getAuditedEntity());
     auditInformation.setModifiedDateTime(LocalDateTime.now());
     auditInformation.setModifiedByUser(modifiedByUser);
     auditInformation.setModifiedUser(modifiedUser);
@@ -68,7 +67,7 @@ public class AuditInformationService {
    *
    * @param objectForSerialization previous or current state of the object.
    */
-  private String convertToJSON(Object objectForSerialization) {
+  private String convertToJSON(Audit objectForSerialization) {
     OBJECT_MAPPER.registerModule(new JavaTimeModule());
     OBJECT_MAPPER.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     String currentValue = null;
@@ -77,7 +76,6 @@ public class AuditInformationService {
       currentValue = OBJECT_MAPPER.writeValueAsString(objectForSerialization);
     } catch (JsonProcessingException e) {
       log.error("Failed to map object of class '{}' as string", objectForSerialization.getClass());
-      e.printStackTrace();
     }
 
     return currentValue;

@@ -3,9 +3,7 @@ package eu.execom.hawaii.api.controller;
 import eu.execom.hawaii.dto.TeamDto;
 import eu.execom.hawaii.model.Team;
 import eu.execom.hawaii.model.User;
-import eu.execom.hawaii.model.enumerations.AuditedEntity;
 import eu.execom.hawaii.model.enumerations.OperationPerformed;
-import eu.execom.hawaii.service.AuditInformationService;
 import eu.execom.hawaii.service.TeamService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,12 +29,10 @@ import java.util.stream.Collectors;
 public class TeamController {
 
   private TeamService teamService;
-  private AuditInformationService auditInformationService;
 
   @Autowired
-  public TeamController(TeamService teamService, AuditInformationService auditInformationService) {
+  public TeamController(TeamService teamService) {
     this.teamService = teamService;
-    this.auditInformationService = auditInformationService;
   }
 
   private static final ModelMapper MAPPER = new ModelMapper();
@@ -59,8 +55,7 @@ public class TeamController {
   public ResponseEntity<TeamDto> createTeam(@ApiIgnore @AuthenticationPrincipal User authUser,
       @RequestBody TeamDto teamDto) {
     var team = MAPPER.map(teamDto, Team.class);
-    team = teamService.save(team);
-    sendAuditInformation(OperationPerformed.CREATE, authUser, team.getUsers(), null, teamDto);
+    team = teamService.save(team, authUser, OperationPerformed.CREATE);
 
     return new ResponseEntity<>(new TeamDto(team), HttpStatus.CREATED);
   }
@@ -68,36 +63,17 @@ public class TeamController {
   @PutMapping
   public ResponseEntity<TeamDto> updateTeam(@ApiIgnore @AuthenticationPrincipal User authUser,
       @RequestBody TeamDto teamDto) {
-    var oldTeam = teamService.getById(teamDto.getId());
     var team = MAPPER.map(teamDto, Team.class);
-    sendAuditInformation(OperationPerformed.UPDATE, authUser, oldTeam.getUsers(), new TeamDto(oldTeam), teamDto);
-    team = teamService.save(team);
+    team = teamService.save(team, authUser, OperationPerformed.UPDATE);
 
     return new ResponseEntity<>(new TeamDto(team), HttpStatus.OK);
   }
 
   @DeleteMapping("/{id}")
   public ResponseEntity deleteTeam(@ApiIgnore @AuthenticationPrincipal User authUser, @PathVariable Long id) {
-    var oldTeam = teamService.getById(id);
-    TeamDto team = new TeamDto(oldTeam);
-    team.setDeleted(true);
-    sendAuditInformation(OperationPerformed.DELETE, authUser, oldTeam.getUsers(), new TeamDto(oldTeam), team);
-    teamService.delete(id);
+    teamService.delete(id, authUser);
 
     return new ResponseEntity(HttpStatus.NO_CONTENT);
-  }
-
-  private void sendAuditInformation(OperationPerformed operationPerformed, User authUser, List<User> users,
-      TeamDto previousState, TeamDto currentState) {
-
-    if (users.isEmpty()) {
-      auditInformationService.buildAuditInformation(operationPerformed, AuditedEntity.TEAM, authUser, null,
-          previousState, currentState);
-    } else {
-      users.forEach(
-          user -> auditInformationService.buildAuditInformation(operationPerformed, AuditedEntity.TEAM, authUser, user,
-              previousState, currentState));
-    }
   }
 
   private List<Team> getTeamsByStatus(Boolean deleted) {

@@ -1,6 +1,7 @@
 package eu.execom.hawaii.service;
 
 import eu.execom.hawaii.model.Team;
+import eu.execom.hawaii.model.enumerations.OperationPerformed;
 import eu.execom.hawaii.repository.TeamRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,6 +29,9 @@ public class TeamServiceTest {
 
   @Mock
   private TeamRepository teamRepository;
+
+  @Mock
+  private AuditInformationService auditInformationService;
 
   @InjectMocks
   private TeamService teamService;
@@ -78,14 +82,15 @@ public class TeamServiceTest {
   @Test
   public void shouldSaveTeam() {
     // given
-
+    var user = EntityBuilder.approver();
     given(teamRepository.save(mockTeam)).willReturn(mockTeam);
 
     // when
-    var team = teamService.save(mockTeam);
+    var team = teamService.save(mockTeam, user, OperationPerformed.CREATE);
 
     // then
     assertNotNull(team);
+    verify(auditInformationService).saveAudit(any(), any(), any(), any(), any());
     verify(teamRepository).save(mockTeam);
     verifyNoMoreInteractions(teamRepository);
   }
@@ -97,10 +102,11 @@ public class TeamServiceTest {
     given(teamRepository.getOne(teamId)).willReturn(mockTeam);
 
     // when
-    teamService.delete(teamId);
+    teamService.delete(teamId, any());
 
     // then
     verify(teamRepository).getOne(anyLong());
+    verify(auditInformationService).saveAudit(any(), any(), any(), any(), any());
     verify(teamRepository).save(any());
     verifyNoMoreInteractions(teamRepository);
   }

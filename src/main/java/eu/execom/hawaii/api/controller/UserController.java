@@ -6,10 +6,9 @@ import eu.execom.hawaii.dto.UserWithDaysDto;
 import eu.execom.hawaii.model.Day;
 import eu.execom.hawaii.model.Team;
 import eu.execom.hawaii.model.User;
-import eu.execom.hawaii.model.enumerations.AuditedEntity;
+import eu.execom.hawaii.model.audit.UserAudit;
 import eu.execom.hawaii.model.enumerations.OperationPerformed;
 import eu.execom.hawaii.model.enumerations.UserStatusType;
-import eu.execom.hawaii.service.AuditInformationService;
 import eu.execom.hawaii.service.DayService;
 import eu.execom.hawaii.service.TeamService;
 import eu.execom.hawaii.service.UserService;
@@ -51,15 +50,12 @@ public class UserController {
 
   private UserService userService;
   private DayService dayService;
-  private AuditInformationService auditInformationService;
   private TeamService teamService;
 
   @Autowired
-  public UserController(UserService userService, DayService dayService, AuditInformationService auditInformationService,
-      TeamService teamService) {
+  public UserController(UserService userService, DayService dayService, TeamService teamService) {
     this.userService = userService;
     this.dayService = dayService;
-    this.auditInformationService = auditInformationService;
     this.teamService = teamService;
   }
 
@@ -174,7 +170,7 @@ public class UserController {
       @RequestBody UserDto userDto) {
     User user = MAPPER.map(userDto, User.class);
     user = userService.createAllowanceForUserOnCreateUser(user);
-    sendAuditInformationForUpdate(OperationPerformed.CREATE, authUser, user, null, userDto);
+    userService.saveAuditInformation(OperationPerformed.CREATE, authUser, user, null);
 
     return new ResponseEntity<>(new UserDto(user), HttpStatus.CREATED);
   }
@@ -182,9 +178,9 @@ public class UserController {
   @PutMapping
   public ResponseEntity<UserDto> updateUser(@ApiIgnore @AuthenticationPrincipal User authUser,
       @RequestBody UserDto userDto) {
-    var oldUser = userService.getUserById(userDto.getId());
     var user = MAPPER.map(userDto, User.class);
-    sendAuditInformationForUpdate(OperationPerformed.UPDATE, authUser, user, new UserDto(oldUser), userDto);
+    var previousUserState = UserAudit.createUserAuditEntity(userService.getUserById(user.getId()));
+    userService.saveAuditInformation(OperationPerformed.UPDATE, authUser, user, previousUserState);
     user = userService.save(user);
 
     return new ResponseEntity<>(new UserDto(user), HttpStatus.OK);
@@ -192,31 +188,16 @@ public class UserController {
 
   @PutMapping("/{id}/activate")
   public ResponseEntity activateUser(@ApiIgnore @AuthenticationPrincipal User authUser, @PathVariable Long id) {
-    var oldUser = userService.getUserById(id);
-    UserDto userDto = new UserDto(oldUser);
-    userDto.setUserStatusType(UserStatusType.ACTIVE);
-    sendAuditInformationForUpdate(OperationPerformed.ACTIVATE, authUser, oldUser, new UserDto(oldUser), userDto);
-    userService.activate(id);
+    userService.activate(id, authUser);
 
     return new ResponseEntity(HttpStatus.OK);
   }
 
   @DeleteMapping("/{id}")
   public ResponseEntity deleteUser(@ApiIgnore @AuthenticationPrincipal User authUser, @PathVariable Long id) {
-    var oldUser = userService.getUserById(id);
-    UserDto userDto = new UserDto(oldUser);
-    userDto.setUserStatusType(UserStatusType.DELETED);
-    sendAuditInformationForUpdate(OperationPerformed.DELETE, authUser, oldUser, new UserDto(oldUser), userDto);
-    userService.delete(id);
+    userService.delete(id, authUser);
 
     return new ResponseEntity(HttpStatus.NO_CONTENT);
-  }
-
-  private void sendAuditInformationForUpdate(OperationPerformed operationPerformed, User authUser, User modifiedUser,
-      UserDto previousState, UserDto currentState) {
-
-    auditInformationService.buildAuditInformation(operationPerformed, AuditedEntity.USER, authUser, modifiedUser,
-        previousState, currentState);
   }
 
   @GetMapping("/image/{id}")

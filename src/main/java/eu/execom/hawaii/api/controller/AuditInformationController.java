@@ -33,7 +33,7 @@ public class AuditInformationController {
   }
 
   @GetMapping
-  public ResponseEntity<List<AuditInformationDto>> getAllAuditInformations() {
+  public ResponseEntity<List<AuditInformationDto>> getAllAuditInformation() {
     var allAuditInformation = auditInformationService.getAll();
     var allAuditInformationDto = allAuditInformation.stream()
                                                     .map(AuditInformationDto::new)

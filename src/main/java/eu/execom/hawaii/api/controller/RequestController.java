@@ -4,13 +4,11 @@ import eu.execom.hawaii.dto.RequestDto;
 import eu.execom.hawaii.model.Request;
 import eu.execom.hawaii.model.Team;
 import eu.execom.hawaii.model.User;
+import eu.execom.hawaii.model.audit.RequestAudit;
 import eu.execom.hawaii.model.enumerations.AbsenceType;
-import eu.execom.hawaii.model.enumerations.AuditedEntity;
 import eu.execom.hawaii.model.enumerations.OperationPerformed;
 import eu.execom.hawaii.model.enumerations.RequestStatus;
-import eu.execom.hawaii.service.AuditInformationService;
 import eu.execom.hawaii.service.RequestService;
-import eu.execom.hawaii.service.SendNotificationsService;
 import eu.execom.hawaii.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,16 +40,11 @@ public class RequestController {
 
   private RequestService requestService;
   private UserService userService;
-  private SendNotificationsService sendNotificationsService;
-  private AuditInformationService auditInformationService;
 
   @Autowired
-  public RequestController(RequestService requestService, UserService userService,
-      SendNotificationsService sendNotificationsService, AuditInformationService auditInformationService) {
+  public RequestController(RequestService requestService, UserService userService) {
     this.requestService = requestService;
     this.userService = userService;
-    this.sendNotificationsService = sendNotificationsService;
-    this.auditInformationService = auditInformationService;
   }
 
   @GetMapping("/month")
@@ -168,9 +161,9 @@ public class RequestController {
   public ResponseEntity<RequestDto> createRequest(@ApiIgnore @AuthenticationPrincipal User authUser,
       @RequestBody RequestDto requestDto) {
     var request = MAPPER.map(requestDto, Request.class);
+    requestService.saveAuditInformation(OperationPerformed.CREATE, authUser, request, null);
     request.setUser(authUser);
     request = requestService.create(request);
-    sendAuditInformation(OperationPerformed.CREATE, authUser, request.getUser(), null, requestDto);
 
     return new ResponseEntity<>(new RequestDto(request), HttpStatus.OK);
   }
@@ -178,19 +171,12 @@ public class RequestController {
   @PutMapping
   public ResponseEntity<RequestDto> handleRequestStatus(@ApiIgnore @AuthenticationPrincipal User authUser,
       @RequestBody RequestDto requestDto) {
-    var oldRequest = requestService.getById(requestDto.getId());
     var request = MAPPER.map(requestDto, Request.class);
-    sendAuditInformation(OperationPerformed.UPDATE, authUser, request.getUser(), new RequestDto(oldRequest),
-        requestDto);
+    var previousRequestState = RequestAudit.createRequestAuditEntity(requestService.getById(requestDto.getId()));
+    requestService.saveAuditInformation(OperationPerformed.UPDATE, authUser, request, previousRequestState);
     request = requestService.handleRequestStatusUpdate(request, authUser);
 
     return new ResponseEntity<>(new RequestDto(request), HttpStatus.OK);
   }
 
-  private void sendAuditInformation(OperationPerformed operationPerformed, User authUser, User modifiedUser,
-      RequestDto previousState, RequestDto currentState) {
-
-    auditInformationService.buildAuditInformation(operationPerformed, AuditedEntity.USER, authUser, modifiedUser,
-        previousState, currentState);
-  }
 }

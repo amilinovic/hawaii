@@ -6,10 +6,11 @@ import eu.execom.hawaii.model.Day;
 import eu.execom.hawaii.model.Request;
 import eu.execom.hawaii.model.Team;
 import eu.execom.hawaii.model.User;
+import eu.execom.hawaii.model.audit.RequestAudit;
 import eu.execom.hawaii.model.enumerations.AbsenceType;
 import eu.execom.hawaii.model.enumerations.Duration;
+import eu.execom.hawaii.model.enumerations.OperationPerformed;
 import eu.execom.hawaii.model.enumerations.RequestStatus;
-import eu.execom.hawaii.repository.AbsenceRepository;
 import eu.execom.hawaii.repository.DayRepository;
 import eu.execom.hawaii.repository.RequestRepository;
 import eu.execom.hawaii.repository.TeamRepository;
@@ -41,28 +42,28 @@ public class RequestService {
 
   private RequestRepository requestRepository;
   private UserRepository userRepository;
-  private AbsenceRepository absenceRepository;
   private DayRepository dayRepository;
   private TeamRepository teamRepository;
   private AllowanceService allowanceService;
   private GoogleCalendarService googleCalendarService;
   private EmailService emailService;
   private SendNotificationsService sendNotificationsService;
+  private AuditInformationService auditInformationService;
 
   @Autowired
-  public RequestService(RequestRepository requestRepository, UserRepository userRepository,
-      AbsenceRepository absenceRepository, DayRepository dayRepository, TeamRepository teamRepository,
-      AllowanceService allowanceService, GoogleCalendarService googleCalendarService, EmailService emailService,
-      SendNotificationsService sendNotificationsService) {
+  public RequestService(RequestRepository requestRepository, UserRepository userRepository, DayRepository dayRepository,
+      TeamRepository teamRepository, AllowanceService allowanceService, GoogleCalendarService googleCalendarService,
+      EmailService emailService, SendNotificationsService sendNotificationsService,
+      AuditInformationService auditInformationService) {
     this.requestRepository = requestRepository;
     this.userRepository = userRepository;
     this.dayRepository = dayRepository;
     this.teamRepository = teamRepository;
     this.allowanceService = allowanceService;
-    this.absenceRepository = absenceRepository;
     this.googleCalendarService = googleCalendarService;
     this.emailService = emailService;
     this.sendNotificationsService = sendNotificationsService;
+    this.auditInformationService = auditInformationService;
   }
 
   public List<Request> findAllByDateRange(LocalDate startDate, LocalDate endDate) {
@@ -301,6 +302,14 @@ public class RequestService {
     }
 
     return requestRepository.save(request);
+  }
+
+  public void saveAuditInformation(OperationPerformed operationPerformed, User modifiedByUser, Request request,
+      RequestAudit previousRequestState) {
+    var currentRequestState = RequestAudit.createRequestAuditEntity(request);
+
+    auditInformationService.saveAudit(operationPerformed, modifiedByUser, request.getUser(), previousRequestState,
+        currentRequestState);
   }
 
   private boolean isUserRequestApprover(User approver, User requestUser) {
