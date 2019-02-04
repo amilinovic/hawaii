@@ -27,32 +27,47 @@ const createDaysFromEmptyArray = (
   publicHolidays,
   personalData
 ) => {
-  let calendarObject = new Array(31).fill([{}], 0).map((date, index) =>
+  let monthObject = new Array(31).fill([{}], 0).map((date, index) =>
     // TODO: Apply Composition
     addMetadata(
       checkDateValidity(convertDateToMomentObject(year, month, index + 1))
     )
   );
 
-  if (publicHolidays) {
-    calendarObject = addPublicHolidays(calendarObject, publicHolidays, year);
+  if (publicHolidays || personalData) {
+    monthObject = addFetchedData(
+      monthObject,
+      publicHolidays,
+      personalData,
+      year
+    );
   }
 
-  if (personalData) {
-    // TODO: add personal data to calendar object
-  }
-
-  return calendarObject;
+  return monthObject;
 };
-// TODO: Apply composition
+// TODO: Apply Composition
 
-const addPublicHolidays = (month, publicHolidays, selectedYear) => {
-  if (!publicHolidays) return month;
-  const momentPublicHolidays = convertPublicDatesToMoment(
-    publicHolidays
-  ).filter(holiday => holiday.date.year() === selectedYear);
+const addFetchedData = (month, publicHolidays, personalData, selectedYear) => {
+  if (!publicHolidays && !personalData) return month;
 
-  return month.map(day => (day ? addMetadata(day, momentPublicHolidays) : day));
+  const momentPublicHolidays =
+    publicHolidays &&
+    publicHolidays.length > 0 &&
+    mapAndConvertToMoment(publicHolidays).filter(
+      holiday => holiday.date.year() === selectedYear
+    );
+
+  const momentPersonalData =
+    personalData &&
+    personalData.length > 0 &&
+    mapAndConvertToMoment(personalData).filter(
+      data => data.date.year() === selectedYear
+    );
+
+  return month.map(
+    day =>
+      day ? addMetadata(day, momentPublicHolidays, momentPersonalData) : day
+  );
 };
 
 const convertDateToMomentObject = (year, month, date) => ({
@@ -66,13 +81,17 @@ const convertDateToMomentObject = (year, month, date) => ({
 
 const checkDateValidity = day => (day.date.isValid() ? day : null);
 
-const addMetadata = (dayObject, publicHolidays) => {
-  if (!dayObject) return dayObject;
-  let dayWithMetadata = { ...dayObject };
-  dayWithMetadata = checkIfToday(checkIfWeekend(dayWithMetadata));
-
-  return checkForPublicHolidays(dayWithMetadata, publicHolidays);
-};
+const addMetadata = (dayObject, publicHolidays, personalData) =>
+  dayObject
+    ? // TODO: Apply Composition
+      checkIfPersonalDay(
+        checkIfPublicHoliday(
+          checkIfToday(checkIfWeekend(dayObject)),
+          publicHolidays
+        ),
+        personalData
+      )
+    : null;
 
 const checkIfWeekend = day =>
   day.date.day() === 0 || day.date.day() === 6
@@ -84,9 +103,8 @@ const checkIfToday = day =>
     ? { ...day, today: true }
     : day;
 
-const checkForPublicHolidays = (day, publicHolidays) => {
+const checkIfPublicHoliday = (day, publicHolidays) => {
   if (!publicHolidays) return day;
-
   const publicHolidayCheck = publicHolidays.find(holiday =>
     holiday.date.isSame(day.date, 'day')
   );
@@ -95,8 +113,18 @@ const checkForPublicHolidays = (day, publicHolidays) => {
     : day;
 };
 
-const convertPublicDatesToMoment = publicHolidays =>
-  publicHolidays.map(holiday => ({
-    name: holiday.name,
-    date: moment(holiday.date, MOMENT_DATE_FORMAT)
+const checkIfPersonalDay = (day, personalData) => {
+  if (!personalData) return day;
+  const personalDataCheck = personalData.find(data =>
+    data.date.isSame(day.date, 'day')
+  );
+  return personalDataCheck
+    ? { ...day, personalDay: { ...personalDataCheck } }
+    : day;
+};
+
+const mapAndConvertToMoment = data =>
+  data.map(item => ({
+    ...item,
+    date: moment(item.date, MOMENT_DATE_FORMAT)
   }));

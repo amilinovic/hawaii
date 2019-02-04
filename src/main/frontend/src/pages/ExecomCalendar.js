@@ -75,46 +75,37 @@ const CalendarContainer = styled.div`
 
 class ExecomCalendar extends Component {
   state = {
-    months: [],
     selectedYear: moment().year()
   };
 
   componentDidMount() {
+    this.props.requestPublicHolidays();
+    this.props.requestPersonalDays();
     this.setState({
       ...this.state,
       months: fillWithMonthsAndDays()
     });
-    this.state.months && this.fetchPublicHolidayAndAddMetadata();
-    this.state.months && this.fetchPersonalDaysAndAddMetadata();
+    this.addFetchedDataMetadata();
     this.props.requestLeaveTypes();
   }
 
-  fetchPublicHolidayAndAddMetadata = (
-    selectedYear = this.state.selectedYear
-  ) => {
-    this.props.publicHolidays.length < 1 && this.props.requestPublicHolidays();
-    const calendarWithPublicHolidays = fillWithMonthsAndDays(
+  addFetchedDataMetadata = (selectedYear = this.state.selectedYear) => {
+    const calendarWithFetchedData = fillWithMonthsAndDays(
       selectedYear,
-      this.props.publicHolidays
+      this.props.publicHolidays,
+      this.props.personalDays
     );
-    this.setState({ ...this.state, months: [...calendarWithPublicHolidays] });
+    this.setState({ ...this.state, months: [...calendarWithFetchedData] });
   };
-
-  fetchPersonalDaysAndAddMetadata = (
-    selectedYear = this.state.selectedYear
-  ) => {
-    this.props.personalDays.length < 1 && this.props.requestPersonalDays();
-  };
-
-  // getMyPersonalDays = () => {
-  //   this.props.requestMyPersonalDays();
-  //   return this.props.myPersonalDays;
-  // };
 
   handleYearChange = selectedYear => {
     this.setState({
       ...this.state,
-      months: fillWithMonthsAndDays(selectedYear, this.props.publicHolidays),
+      months: fillWithMonthsAndDays(
+        selectedYear,
+        this.props.publicHolidays,
+        this.props.personalDays
+      ),
       selectedYear: selectedYear
     });
   };
@@ -146,7 +137,6 @@ class ExecomCalendar extends Component {
               <YearlyCalendar
                 calendar={this.state.months}
                 selectDay={this.props.selectDay}
-                personalDays={this.props.personalDays}
               />
             )}
           </CalendarContainer>
