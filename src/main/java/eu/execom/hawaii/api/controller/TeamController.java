@@ -3,7 +3,6 @@ package eu.execom.hawaii.api.controller;
 import eu.execom.hawaii.dto.TeamDto;
 import eu.execom.hawaii.model.Team;
 import eu.execom.hawaii.model.User;
-import eu.execom.hawaii.model.enumerations.OperationPerformed;
 import eu.execom.hawaii.service.TeamService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +54,7 @@ public class TeamController {
   public ResponseEntity<TeamDto> createTeam(@ApiIgnore @AuthenticationPrincipal User authUser,
       @RequestBody TeamDto teamDto) {
     var team = MAPPER.map(teamDto, Team.class);
-    team = teamService.save(team, authUser, OperationPerformed.CREATE);
+    team = teamService.save(team, authUser);
 
     return new ResponseEntity<>(new TeamDto(team), HttpStatus.CREATED);
   }
@@ -64,7 +63,7 @@ public class TeamController {
   public ResponseEntity<TeamDto> updateTeam(@ApiIgnore @AuthenticationPrincipal User authUser,
       @RequestBody TeamDto teamDto) {
     var team = MAPPER.map(teamDto, Team.class);
-    team = teamService.save(team, authUser, OperationPerformed.UPDATE);
+    team = teamService.update(team, authUser);
 
     return new ResponseEntity<>(new TeamDto(team), HttpStatus.OK);
   }

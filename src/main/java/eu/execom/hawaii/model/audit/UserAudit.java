@@ -13,6 +13,7 @@ import java.time.LocalDate;
 @EqualsAndHashCode(callSuper = false)
 public class UserAudit extends Audit {
 
+  private Long id;
   private Long teamId;
   private Long leaveProfileId;
   private String fullName;
@@ -24,7 +25,7 @@ public class UserAudit extends Audit {
   private LocalDate startedWorkingAtExecomDate;
 
   private UserAudit(User user) {
-    this.setAuditedEntity(AuditedEntity.USER);
+    this.id = user.getId();
     this.teamId = user.getTeam().getId();
     this.leaveProfileId = user.getLeaveProfile().getId();
     this.fullName = user.getFullName();
@@ -34,10 +35,10 @@ public class UserAudit extends Audit {
     this.userStatusType = user.getUserStatusType();
     this.startedWorkingDate = user.getStartedWorkingDate();
     this.startedWorkingAtExecomDate = user.getStartedWorkingAtExecomDate();
-
+    this.setAuditedEntity(AuditedEntity.USER);
   }
 
-  public static UserAudit createUserAuditEntity(User user) {
+  public static UserAudit fromUser(User user) {
     return new UserAudit(user);
   }
 }

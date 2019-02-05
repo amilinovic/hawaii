@@ -6,8 +6,6 @@ import eu.execom.hawaii.dto.UserWithDaysDto;
 import eu.execom.hawaii.model.Day;
 import eu.execom.hawaii.model.Team;
 import eu.execom.hawaii.model.User;
-import eu.execom.hawaii.model.audit.UserAudit;
-import eu.execom.hawaii.model.enumerations.OperationPerformed;
 import eu.execom.hawaii.model.enumerations.UserStatusType;
 import eu.execom.hawaii.service.DayService;
 import eu.execom.hawaii.service.TeamService;
@@ -37,7 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.time.LocalDate;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -77,7 +75,7 @@ public class UserController {
       @RequestParam(required = false) LocalDate startDate, @RequestParam(required = false) LocalDate endDate) {
     startDate = assignDefaultStartDate(startDate, endDate);
     endDate = assignDefaultEndDate(startDate, endDate);
-    List<UserStatusType> statuses = Arrays.asList(UserStatusType.ACTIVE);
+    List<UserStatusType> statuses = Collections.singletonList(UserStatusType.ACTIVE);
     List<User> users = userService.findAllByUserStatusType(statuses);
     List<UserWithDaysDto> userDtos = createUserRestrictedDtosFromUsers(users, startDate, endDate);
 
@@ -169,8 +167,7 @@ public class UserController {
   public ResponseEntity<UserDto> createUser(@ApiIgnore @AuthenticationPrincipal User authUser,
       @RequestBody UserDto userDto) {
     User user = MAPPER.map(userDto, User.class);
-    user = userService.createAllowanceForUserOnCreateUser(user);
-    userService.saveAuditInformation(OperationPerformed.CREATE, authUser, user, null);
+    user = userService.createAllowanceForUserOnCreateUser(user, authUser);
 
     return new ResponseEntity<>(new UserDto(user), HttpStatus.CREATED);
   }
@@ -179,9 +176,7 @@ public class UserController {
   public ResponseEntity<UserDto> updateUser(@ApiIgnore @AuthenticationPrincipal User authUser,
       @RequestBody UserDto userDto) {
     var user = MAPPER.map(userDto, User.class);
-    var previousUserState = UserAudit.createUserAuditEntity(userService.getUserById(user.getId()));
-    userService.saveAuditInformation(OperationPerformed.UPDATE, authUser, user, previousUserState);
-    user = userService.save(user);
+    user = userService.update(user, authUser);
 
     return new ResponseEntity<>(new UserDto(user), HttpStatus.OK);
   }

@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -27,6 +28,12 @@ public class AuditInformationService {
   @Autowired
   public AuditInformationService(AuditInformationRepository auditInformationRepository) {
     this.auditInformationRepository = auditInformationRepository;
+  }
+
+  @PostConstruct
+  public void init() {
+    OBJECT_MAPPER.registerModule(new JavaTimeModule());
+    OBJECT_MAPPER.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
   }
 
   public AuditInformation getById(Long id) {
@@ -68,8 +75,6 @@ public class AuditInformationService {
    * @param objectForSerialization previous or current state of the object.
    */
   private String convertToJSON(Audit objectForSerialization) {
-    OBJECT_MAPPER.registerModule(new JavaTimeModule());
-    OBJECT_MAPPER.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     String currentValue = null;
 
     try {

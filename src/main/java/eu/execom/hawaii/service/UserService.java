@@ -128,8 +128,41 @@ public class UserService {
    * Saves the provided User to repository.
    *
    * @param user the User entity to be persisted.
+   * @return saved User.
    */
+  @Transactional
   public User save(User user) {
+    return userRepository.save(user);
+  }
+
+  /**
+   * Saves the provided User to repository.
+   * Makes audit of that save.
+   *
+   * @param user the User entity to be persisted.
+   * @param modifiedByUser user that made the change to User entity.
+   * @return saved User.
+   */
+  @Transactional
+  public User update(User user, User modifiedByUser) {
+    var previousUserState = UserAudit.fromUser(getUserById(user.getId()));
+    saveAuditInformation(OperationPerformed.UPDATE, modifiedByUser, user, previousUserState);
+
+    return userRepository.save(user);
+  }
+
+  /**
+   * Saves the provided User to repository.
+   * Makes audit of that save.
+   *
+   * @param user the User entity to be persisted.
+   * @param modifiedByUser user that made the change to User entity.
+   * @return saved User.
+   */
+  @Transactional
+  public User create(User user, User modifiedByUser) {
+    saveAuditInformation(OperationPerformed.CREATE, modifiedByUser, user, null);
+
     return userRepository.save(user);
   }
 
@@ -140,7 +173,7 @@ public class UserService {
    */
   public void activate(Long id, User modifiedByUser) {
     var user = userRepository.getOne(id);
-    var previousUserState = UserAudit.createUserAuditEntity(user);
+    var previousUserState = UserAudit.fromUser(user);
 
     UserStatusType userStatusType = user.getUserStatusType();
 
@@ -157,8 +190,8 @@ public class UserService {
       default:
         throw new IllegalArgumentException("Unsupported user status type: " + userStatusType);
     }
-    saveAuditInformation(OperationPerformed.ACTIVATE, modifiedByUser, user, previousUserState);
     userRepository.save(user);
+    saveAuditInformation(OperationPerformed.ACTIVATE, modifiedByUser, user, previousUserState);
   }
 
   /**
@@ -167,17 +200,17 @@ public class UserService {
   @Transactional
   public void delete(Long userId, User modifiedByUser) {
     var user = userRepository.getOne(userId);
-    var previousUserState = UserAudit.createUserAuditEntity(user);
+    var previousUserState = UserAudit.fromUser(user);
     user.setUserStatusType(UserStatusType.DELETED);
-    saveAuditInformation(OperationPerformed.DELETE, modifiedByUser, user, previousUserState);
     userRepository.save(user);
+    saveAuditInformation(OperationPerformed.DELETE, modifiedByUser, user, previousUserState);
   }
 
   /**
    * Gets users leave profile and currently active years, and creates allowances
    * according with values from leave profile
    */
-  public User createAllowanceForUserOnCreateUser(User user) {
+  public User createAllowanceForUserOnCreateUser(User user, User modifiedByUser) {
     var leaveProfile = leaveProfileRepository.getOne(user.getLeaveProfile().getId());
     var openedActiveYears = yearRepository.findAllByYearGreaterThanEqual(LocalDate.now().getYear());
     List<Allowance> userAllowances = new ArrayList<>();
@@ -186,7 +219,7 @@ public class UserService {
       userAllowances.add(allowance);
     }
     user.setAllowances(userAllowances);
-    return save(user);
+    return create(user, modifiedByUser);
   }
 
   /**
@@ -285,9 +318,9 @@ public class UserService {
     }
   }
 
-  public void saveAuditInformation(OperationPerformed operationPerformed, User modifiedByUser, User modifiedUser,
+  private void saveAuditInformation(OperationPerformed operationPerformed, User modifiedByUser, User modifiedUser,
       UserAudit previousUserState) {
-    var currentUserState = UserAudit.createUserAuditEntity(modifiedUser);
+    var currentUserState = UserAudit.fromUser(modifiedUser);
 
     auditInformationService.saveAudit(operationPerformed, modifiedByUser, modifiedUser, previousUserState,
         currentUserState);

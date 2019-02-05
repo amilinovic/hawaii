@@ -15,14 +15,14 @@ public class TeamAudit extends Audit {
   private boolean deleted;
 
   private TeamAudit(Team team) {
-    this.setAuditedEntity(AuditedEntity.TEAM);
     this.id = team.getId();
     this.teamName = team.getName();
     this.emails = team.getEmails();
     this.deleted = team.isDeleted();
+    this.setAuditedEntity(AuditedEntity.TEAM);
   }
 
-  public static TeamAudit createTeamAuditEntity(Team team) {
+  public static TeamAudit fromTeam(Team team) {
     return new TeamAudit(team);
   }
 }

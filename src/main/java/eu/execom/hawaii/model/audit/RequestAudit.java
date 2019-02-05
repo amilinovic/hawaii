@@ -18,14 +18,14 @@ public class RequestAudit extends Audit {
   private LocalDateTime submissionTime;
 
   private RequestAudit(Request request) {
-    this.setAuditedEntity(AuditedEntity.REQUEST);
     this.id = request.getId();
     this.requestStatus = request.getRequestStatus();
     this.reason = request.getReason();
     this.submissionTime = request.getSubmissionTime();
+    this.setAuditedEntity(AuditedEntity.REQUEST);
   }
 
-  public static RequestAudit createRequestAuditEntity(Request request) {
+  public static RequestAudit fromRequest(Request request) {
     return new RequestAudit(request);
   }
 }

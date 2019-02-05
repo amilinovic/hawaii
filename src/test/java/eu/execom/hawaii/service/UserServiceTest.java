@@ -69,7 +69,7 @@ public class UserServiceTest {
     mockUser2.setFullName("John Snow");
 
     initialUsers = new ArrayList<>(Arrays.asList(mockUser, mockUser2));
-    allMocks = new Object[] {userRepository, leaveProfileRepository, yearRepository};
+    allMocks = new Object[] {userRepository, leaveProfileRepository, yearRepository, auditInformationService};
   }
 
   @Test
@@ -182,7 +182,7 @@ public class UserServiceTest {
     given(userRepository.save(user)).willReturn(user);
 
     // when
-    User userWithAllowance = userService.createAllowanceForUserOnCreateUser(user);
+    User userWithAllowance = userService.createAllowanceForUserOnCreateUser(user, user);
 
     // then
     assertThat("Expect to have two allowance created", userWithAllowance.getAllowances().size(), is(2));
@@ -197,6 +197,7 @@ public class UserServiceTest {
     verify(leaveProfileRepository).getOne(anyLong());
     verify(userRepository).save(any());
     verify(yearRepository).findAllByYearGreaterThanEqual(anyInt());
+    verify(auditInformationService).saveAudit(any(), any(), any(), any(), any());
     verifyNoMoreInteractions(allMocks);
   }
 

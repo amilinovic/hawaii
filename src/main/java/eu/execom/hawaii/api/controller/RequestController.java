@@ -4,9 +4,7 @@ import eu.execom.hawaii.dto.RequestDto;
 import eu.execom.hawaii.model.Request;
 import eu.execom.hawaii.model.Team;
 import eu.execom.hawaii.model.User;
-import eu.execom.hawaii.model.audit.RequestAudit;
 import eu.execom.hawaii.model.enumerations.AbsenceType;
-import eu.execom.hawaii.model.enumerations.OperationPerformed;
 import eu.execom.hawaii.model.enumerations.RequestStatus;
 import eu.execom.hawaii.service.RequestService;
 import eu.execom.hawaii.service.UserService;
@@ -161,9 +159,8 @@ public class RequestController {
   public ResponseEntity<RequestDto> createRequest(@ApiIgnore @AuthenticationPrincipal User authUser,
       @RequestBody RequestDto requestDto) {
     var request = MAPPER.map(requestDto, Request.class);
-    requestService.saveAuditInformation(OperationPerformed.CREATE, authUser, request, null);
     request.setUser(authUser);
-    request = requestService.create(request);
+    request = requestService.create(request, authUser);
 
     return new ResponseEntity<>(new RequestDto(request), HttpStatus.OK);
   }
@@ -172,8 +169,6 @@ public class RequestController {
   public ResponseEntity<RequestDto> handleRequestStatus(@ApiIgnore @AuthenticationPrincipal User authUser,
       @RequestBody RequestDto requestDto) {
     var request = MAPPER.map(requestDto, Request.class);
-    var previousRequestState = RequestAudit.createRequestAuditEntity(requestService.getById(requestDto.getId()));
-    requestService.saveAuditInformation(OperationPerformed.UPDATE, authUser, request, previousRequestState);
     request = requestService.handleRequestStatusUpdate(request, authUser);
 
     return new ResponseEntity<>(new RequestDto(request), HttpStatus.OK);
