@@ -1,31 +1,18 @@
 import React, { Component, Fragment } from 'react';
-import { Route, Switch } from 'react-router-dom';
-import Leave from '../pages/Leave';
-import InformationHeader from '../components/header/InformationHeader';
-import LeaveHistory from '../pages/LeaveHistory';
-import TeamCalendar from '../pages/TeamCalendar';
-import ExecomCalendar from '../pages/ExecomCalendar';
-import Sidebar from '../components/navigation/Sidebar';
-import TopHeader from '../components/header/TopHeader';
-import Dashboard from '../components/dashboard/Dashboard';
-
-import { getUser } from '../store/selectors';
-import { requestUser } from '../store/actions/userActions';
 import { connect } from 'react-redux';
+import { Route, Switch } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
-import styled from 'styled-components';
-
-const PanelContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  flex-grow: 1;
-`;
-
-const PanelContent = styled.div`
-  flex-grow: 1;
-  height: 100%;
-`;
+import Dashboard from '../components/dashboard/Dashboard';
+import InformationHeader from '../components/header/InformationHeader';
+import TopHeader from '../components/header/TopHeader';
+import Sidebar from '../components/navigation/Sidebar';
+import Administration from '../pages/Administration';
+import Leave from '../pages/Leave';
+import LeaveHistory from '../pages/LeaveHistory';
+import Team from '../pages/Team';
+import TeamCalendar from '../pages/TeamCalendar';
+import { requestUser } from '../store/actions/userActions';
+import { getUser } from '../store/selectors';
 
 class Panel extends Component {
   componentDidMount() {
@@ -38,19 +25,20 @@ class Panel extends Component {
       <Fragment>
         <div className="root-wrapper">
           <Sidebar />
-          <PanelContainer>
+          <div className="d-flex flex-column flex-grow-1">
             <TopHeader user={this.props.user} />
             <InformationHeader user={this.props.user} />
-            <PanelContent>
+            <div className="d-flex flex-column flex-grow-1">
               <Switch>
                 <Route path="/leave" component={Leave} />
                 <Route path="/leave-history" component={LeaveHistory} />
                 <Route path="/team-calendar" component={TeamCalendar} />
-                <Route path="/execom-calendar" component={ExecomCalendar} />
                 <Route path="/dashboard" component={Dashboard} />
+                <Route path="/administration" component={Administration} />
+                <Route path="/teams/:id" component={Team} />
               </Switch>
-            </PanelContent>
-          </PanelContainer>
+            </div>
+          </div>
         </div>
       </Fragment>
     );
