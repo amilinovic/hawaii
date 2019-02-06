@@ -46,14 +46,16 @@ Password: root
 project_root
 ```
 
-2 . Make a copy of application.properties.example in src/main/resources named application.properties and change to mached desired config
+2 . Make a copy of application.properties.example in `src/main/resources named` application.properties and change to mached desired config
 
 3 . Generate war file <br/>
 ```
 mvn clean install
 ```
 
-4 . Run SQL [script](https://drive.google.com/file/d/1Uc1VmwZsHL1_7q25AIAXiwWSw8WWWGVg/view?usp=sharing) to populate database
+4 . Run SQL script which can be found on `src/main/resources` to populate database
+
+![](sql_script.gif)
 
 5 . Add you credentials with **@execom** domain to the user table in order to login into the app
 
