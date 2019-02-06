@@ -8,7 +8,7 @@ These instructions will get you a copy of the project up and running on your loc
 #### Prerequisites
 What things you need to setup before starting server
 
-- Install [Java 10](https://docs.oracle.com/javase/10/install/overview-jdk-10-and-jre-10-installation.htm#JSJIG-GUID-8677A77F-231A-40F7-98B9-1FD0B48C346A) ([Windows](https://drive.google.com/file/d/1EE0cBbfHbFgB-zxBx_nAnORO19HCZCkB/view?usp=sharing)) and set the JAVA_HOME Environment Variable. Java 10 is mandatory because newer versions of Java are not going to work.
+- Install [Java 10](https://docs.oracle.com/javase/10/install/overview-jdk-10-and-jre-10-installation.htm) ([Windows](https://drive.google.com/file/d/1EE0cBbfHbFgB-zxBx_nAnORO19HCZCkB/view?usp=sharing)) and set the JAVA_HOME Environment Variable. Java 10 is mandatory because newer versions of Java are not going to work.
 - Install [Maven](https://maven.apache.org/install.html)
 - Install [MySQL](https://dev.mysql.com/doc/mysql-installation-excerpt/5.7/en/)
 - Install [Tomcat 9](https://octopus.com/blog/installing-tomcat-from-scratch)
