@@ -64,7 +64,6 @@ public class UserService {
     return userRepository.findAll(pageable);
   }
 
-
   /**
    * Retrieves a list of all active users from repository with a matching team.
    *
@@ -74,7 +73,6 @@ public class UserService {
   public List<User> findAllActiveUsersByTeam(Team team) {
     return userRepository.findAllByUserStatusTypeAndTeam(UserStatusType.ACTIVE, team);
   }
-
 
   /**
    * Retrieves a list of all users from repository.
@@ -88,8 +86,9 @@ public class UserService {
 
   /**
    * Retrieves a list of all users from repository(Pageable)
+   *
    * @param userStatusType what is user status (ACTIVE, INACTIVE or DELETED)
-   * @param pageable the Pageable information about size per page and number of page.
+   * @param pageable       the Pageable information about size per page and number of page.
    * @return list of all users from repository with given status (pageable).
    */
   public Page<User> findAllByUserStatusTypePage(List<UserStatusType> userStatusType, Pageable pageable) {
