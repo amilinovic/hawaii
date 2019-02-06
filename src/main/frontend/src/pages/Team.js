@@ -14,44 +14,40 @@ class Team extends Component {
     this.props.navigateOut();
   }
 
-  test() {}
-
   render() {
-    if (this.props.team) {
-      const {
-        team: { teamName, teamMembers = [], teamApprovers = [] }
-      } = this.props;
+    if (!this.props.team) return null;
+    const {
+      team: { teamName, teamMembers = [], teamApprovers = [] }
+    } = this.props;
 
-      const members = teamMembers.map(user => {
-        return <h5 key={user.id}>{user.fullName}</h5>;
-      });
+    const members = teamMembers.map(user => {
+      return <h5 key={user.id}>{user.fullName}</h5>;
+    });
 
-      const approvers = teamApprovers.map(approver => {
-        return <h5 key={approver.id}>{approver.fullName}</h5>;
-      });
-      return (
-        <div className="d-flex h-100 p-4 flex-column align-items-center">
-          <h1 className="mb-3">{teamName}</h1>
-          <div className="mb-4 text-center">
-            <h2 className="mb-2">Team members</h2>
-            {members}
-          </div>
-          <div className="mb-4 text-center">
-            <h2 className="mb-2">Team approvers</h2>
-            {approvers}
-          </div>
-          <button
-            className="btn btn-danger"
-            onClick={() =>
-              this.props.removeTeam({ id: this.props.match.params.id })
-            }
-          >
-            Delete
-          </button>
+    const approvers = teamApprovers.map(approver => {
+      return <h5 key={approver.id}>{approver.fullName}</h5>;
+    });
+    return (
+      <div className="d-flex h-100 p-4 flex-column align-items-center">
+        <h1 className="mb-3">{teamName}</h1>
+        <div className="mb-4 text-center">
+          <h2 className="mb-2">Team members</h2>
+          {members}
         </div>
-      );
-    }
-    return null;
+        <div className="mb-4 text-center">
+          <h2 className="mb-2">Team approvers</h2>
+          {approvers}
+        </div>
+        <button
+          className="btn btn-danger"
+          onClick={() =>
+            this.props.removeTeam({ id: this.props.match.params.id })
+          }
+        >
+          Delete
+        </button>
+      </div>
+    );
   }
 }
 
