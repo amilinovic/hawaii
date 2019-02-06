@@ -55,11 +55,11 @@ mvn clean install
 
 4 . Run SQL script which can be found on `src/main/resources` to populate database
 
-![](sql_script.gif)
+![](readme-gifs/sql_script.gif)
 
 5 . Add you credentials with **@execom** domain to the user table in order to login into the app
 
-![](credentials.gif)
+![](readme-gifs/credentials.gif)
 
 
 ##### Start with maven
