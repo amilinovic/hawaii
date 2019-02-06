@@ -125,6 +125,16 @@ public class UserService {
   }
 
   /**
+   * Retrieves a User with specific fullName.
+   *
+   * @param fullName User fullName
+   * @return User with specific fullName if exists
+   */
+  public User findOneByFullName(String fullName) {
+    return userRepository.findOneByFullNameContaining(fullName);
+  }
+
+  /**
    * Saves the provided User to repository.
    *
    * @param user the User entity to be persisted.
@@ -139,7 +149,7 @@ public class UserService {
    * Saves the provided User to repository.
    * Makes audit of that save.
    *
-   * @param user the User entity to be persisted.
+   * @param user           the User entity to be persisted.
    * @param modifiedByUser user that made the change to User entity.
    * @return saved User.
    */
@@ -155,7 +165,7 @@ public class UserService {
    * Saves the provided User to repository.
    * Makes audit of that save.
    *
-   * @param user the User entity to be persisted.
+   * @param user           the User entity to be persisted.
    * @param modifiedByUser user that made the change to User entity.
    * @return saved User.
    */
