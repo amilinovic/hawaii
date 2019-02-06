@@ -59,6 +59,9 @@ mvn clean install
 
 5 . Add you credentials with **@execom** domain to the user table in order to login into the app
 
+![](credentials.gif)
+
+
 ##### Start with maven
 ```
 mvn spring-boot:run
