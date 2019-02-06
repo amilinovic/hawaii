@@ -12,9 +12,11 @@ class Teams extends Component {
   }
 
   render() {
-    const teamItems = this.props.teams.map(item => {
-      return !item.deleted ? <TeamItem key={item.id} team={item} /> : null;
-    });
+    const teamItems = this.props.teams
+      .filter(item => !item.deleted)
+      .map(item => {
+        return <TeamItem key={item.id} team={item} />;
+      });
 
     return (
       <div className="container-fluid">
