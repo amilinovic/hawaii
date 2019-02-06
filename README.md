@@ -53,7 +53,7 @@ project_root
 mvn clean install
 ```
 
-4 . Run SQL script which can be found on `src/main/resources` to populate database
+4 . Run SQL script which can be found in `src/main/resources` to populate database
 
 ![](readme-gifs/sql_script.gif)
 
