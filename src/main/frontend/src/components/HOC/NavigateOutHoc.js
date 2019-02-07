@@ -15,13 +15,13 @@ const navigateOutHoc = () => WrappedComponent => {
     }
   };
 
+  const mapDispatchToProps = dispatch =>
+    bindActionCreators({ navigateOut }, dispatch);
+
   return connect(
     null,
     mapDispatchToProps
   )(navigateOutClass);
 };
-
-const mapDispatchToProps = dispatch =>
-  bindActionCreators({ navigateOut }, dispatch);
 
 export default navigateOutHoc;
