@@ -31,7 +31,7 @@ public class DayServiceTest {
   @Mock
   private DayRepository dayRepository;
   @Mock
-  private RequestRepository requestRepo;
+  private RequestRepository requestRepository;
 
   @InjectMocks
   private DayService dayService;
@@ -55,13 +55,13 @@ public class DayServiceTest {
     date = day1.getDate();
     date2 = day2.getDate();
 
-    allMocks = new Object[] {requestRepo, dayRepository};
+    allMocks = new Object[] {requestRepository, dayRepository};
   }
 
   @Test
   public void shouldGetUserAbsencesDays() {
     // given
-    given(requestRepo.findAllByUser(mockUser)).willReturn(mockRequests);
+    given(requestRepository.findAllByUser(mockUser)).willReturn(mockRequests);
     given(dayRepository.findAllByRequestInAndDateIsBetween(mockRequests, date, date2)).willReturn(mockDays);
 
     // when
@@ -70,7 +70,7 @@ public class DayServiceTest {
     // then
     assertNotNull(mockDays);
     assertThat("Expect to list size be two", days.size(), is(2));
-    verify(requestRepo).findAllByUser(any());
+    verify(requestRepository).findAllByUser(any());
     verify(dayRepository).findAllByRequestInAndDateIsBetween(any(), any(), any());
     verifyNoMoreInteractions(allMocks);
   }
