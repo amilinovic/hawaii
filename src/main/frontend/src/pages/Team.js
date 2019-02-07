@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import navigateOutHoc from '../components/HOC/NavigateOutHoc';
+import withResetOnNavigate from '../components/HOC/withResetOnNavigate';
 import { removeTeam, requestTeam } from '../store/actions/teamActions';
 import { getTeam } from '../store/selectors';
 
@@ -57,4 +57,4 @@ const mapDispatchToProps = dispatch =>
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(navigateOutHoc()(Team));
+)(withResetOnNavigate()(Team));

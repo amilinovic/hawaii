@@ -4,8 +4,8 @@ import { bindActionCreators } from 'redux';
 import { navigateOut } from '../../store/actions/navigateActions';
 
 // This HOC component is used to clear out the redux state of the component where it is called when unmounting
-const navigateOutHoc = () => WrappedComponent => {
-  const navigateOutClass = class navigateOutClass extends Component {
+const withResetOnNavigate = () => WrappedComponent => {
+  const withResetOnNavigateClass = class withResetOnNavigateClass extends Component {
     componentWillUnmount() {
       this.props.navigateOut();
     }
@@ -21,7 +21,7 @@ const navigateOutHoc = () => WrappedComponent => {
   return connect(
     null,
     mapDispatchToProps
-  )(navigateOutClass);
+  )(withResetOnNavigateClass);
 };
 
-export default navigateOutHoc;
+export default withResetOnNavigate;
