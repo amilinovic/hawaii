@@ -62,6 +62,8 @@ public class RequestServiceTest {
     private DayRepository dayRepository;
     @Mock
     private SendNotificationsService sendNotificationsService;
+    @Mock
+    private AuditInformationService auditInformationService;
     @InjectMocks
     private RequestService requestService;
 
@@ -97,7 +99,7 @@ public class RequestServiceTest {
         mockRequests = Arrays.asList(requestOne, requestTwo);
 
         allMocks = new Object[]{allowanceService, googleCalendarService, emailService, requestRepository, userRepository,
-                absenceRepository, teamRepository};
+                absenceRepository, teamRepository, auditInformationService};
     }
 
     @Test
@@ -293,7 +295,7 @@ public class RequestServiceTest {
         given(requestRepository.findAllByUser(mockUser)).willReturn(new ArrayList<>());
 
         // when
-        Request savedRequest = requestService.create(requestOne);
+        Request savedRequest = requestService.create(requestOne, mockUser);
 
         // then
         assertThat("Expect to request user email be aria.stark@gmail.com", savedRequest.getUser().getEmail(),
@@ -304,6 +306,7 @@ public class RequestServiceTest {
         verify(emailService).createEmailAndSendForApproval(any());
         verify(allowanceService).applyPendingRequest(any(), anyBoolean());
         verify(requestRepository).findAllByUser(any());
+        verify(auditInformationService).saveAudit(any(), any(), any(), any(), any());
         verifyNoMoreInteractions(allMocks);
     }
 
@@ -322,7 +325,7 @@ public class RequestServiceTest {
         given(requestRepository.findAllByUser(mockUser)).willReturn(new ArrayList<>());
 
         // when
-        Request savedRequest = requestService.create(requestOne);
+        Request savedRequest = requestService.create(requestOne, mockUser);
 
         // then
         assertThat("Expect to request be with status APPROVED", savedRequest.getRequestStatus(),
@@ -333,6 +336,7 @@ public class RequestServiceTest {
         verify(emailService).createSicknessEmailForTeammatesAndSend(any());
         verify(allowanceService).applyRequest(any(), anyBoolean());
         verify(requestRepository).findAllByUser(any());
+        verify(auditInformationService).saveAudit(any(), any(), any(), any(), any());
         verifyNoMoreInteractions(allMocks);
     }
 
@@ -342,7 +346,7 @@ public class RequestServiceTest {
         given(userRepository.getOne(1L)).willThrow(new EntityNotFoundException());
 
         // when
-        requestService.create(requestOne);
+        requestService.create(requestOne, mockUser);
 
         // then
 
@@ -359,7 +363,7 @@ public class RequestServiceTest {
         given(requestRepository.findAllByUser(mockUser)).willReturn(List.of(existingRequest));
 
         // when
-        requestService.create(requestOne);
+        requestService.create(requestOne, mockUser);
 
         // then
 
@@ -393,9 +397,10 @@ public class RequestServiceTest {
         assertNotNull("Expect to user exist", savedRequest.getUser());
         assertNotNull("Expect to absence exist", savedRequest.getAbsence());
         verify(userRepository).getOne(anyLong());
-        verify(requestRepository).getOne(anyLong());
+        verify(requestRepository, times(2)).getOne(anyLong());
         verify(allowanceService).applyPendingRequest(any(), anyBoolean());
         verify(requestRepository).save(any());
+        verify(auditInformationService).saveAudit(any(), any(), any(), any(), any());
         verifyNoMoreInteractions(allMocks);
     }
 
@@ -423,9 +428,10 @@ public class RequestServiceTest {
         assertThat("Expect to saved request have status", savedRequest.getRequestStatus(),
                 is(RequestStatus.CANCELLATION_PENDING));
         verify(userRepository).getOne(anyLong());
-        verify(requestRepository).getOne(anyLong());
+        verify(requestRepository, times(2)).getOne(anyLong());
         verify(emailService).createEmailAndSendForApproval(any());
         verify(requestRepository).save(any());
+        verify(auditInformationService).saveAudit(any(), any(), any(), any(), any());
         verifyNoMoreInteractions(allMocks);
     }
 
@@ -452,9 +458,10 @@ public class RequestServiceTest {
         //then
         assertThat("Expect to saved request has status", savedRequest.getRequestStatus(), is(RequestStatus.CANCELED));
         verify(userRepository).getOne(anyLong());
-        verify(requestRepository).getOne(anyLong());
+        verify(requestRepository, times(2)).getOne(anyLong());
         verify(allowanceService).applyPendingRequest(any(), anyBoolean());
         verify(requestRepository).save(any());
+        verify(auditInformationService).saveAudit(any(), any(), any(), any(), any());
         verifyNoMoreInteractions(allMocks);
     }
 
@@ -479,13 +486,14 @@ public class RequestServiceTest {
         // then
         assertThat("Expect to saved request have status", savedRequest.getRequestStatus(), is(RequestStatus.APPROVED));
         verify(userRepository).getOne(anyLong());
-        verify(requestRepository).getOne(anyLong());
+        verify(requestRepository, times(2)).getOne(anyLong());
         verify(allowanceService).applyPendingRequest(any(), anyBoolean());
         verify(allowanceService).applyRequest(any(), anyBoolean());
         verify(emailService).createStatusNotificationEmailAndSend(any());
         verify(emailService).createAnnualEmailForTeammatesAndSend(any());
         verify(googleCalendarService).handleRequestUpdate(any(), anyBoolean());
         verify(requestRepository).save(any());
+        verify(auditInformationService).saveAudit(any(), any(), any(), any(), any());
         verifyNoMoreInteractions(allMocks);
     }
 

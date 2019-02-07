@@ -6,10 +6,11 @@ import eu.execom.hawaii.model.Day;
 import eu.execom.hawaii.model.Request;
 import eu.execom.hawaii.model.Team;
 import eu.execom.hawaii.model.User;
+import eu.execom.hawaii.model.audit.RequestAudit;
 import eu.execom.hawaii.model.enumerations.AbsenceType;
 import eu.execom.hawaii.model.enumerations.Duration;
+import eu.execom.hawaii.model.enumerations.OperationPerformed;
 import eu.execom.hawaii.model.enumerations.RequestStatus;
-import eu.execom.hawaii.repository.AbsenceRepository;
 import eu.execom.hawaii.repository.DayRepository;
 import eu.execom.hawaii.repository.RequestRepository;
 import eu.execom.hawaii.repository.TeamRepository;
@@ -41,28 +42,28 @@ public class RequestService {
 
   private RequestRepository requestRepository;
   private UserRepository userRepository;
-  private AbsenceRepository absenceRepository;
   private DayRepository dayRepository;
   private TeamRepository teamRepository;
   private AllowanceService allowanceService;
   private GoogleCalendarService googleCalendarService;
   private EmailService emailService;
   private SendNotificationsService sendNotificationsService;
+  private AuditInformationService auditInformationService;
 
   @Autowired
-  public RequestService(RequestRepository requestRepository, UserRepository userRepository,
-      AbsenceRepository absenceRepository, DayRepository dayRepository, TeamRepository teamRepository,
-      AllowanceService allowanceService, GoogleCalendarService googleCalendarService, EmailService emailService,
-      SendNotificationsService sendNotificationsService) {
+  public RequestService(RequestRepository requestRepository, UserRepository userRepository, DayRepository dayRepository,
+      TeamRepository teamRepository, AllowanceService allowanceService, GoogleCalendarService googleCalendarService,
+      EmailService emailService, SendNotificationsService sendNotificationsService,
+      AuditInformationService auditInformationService) {
     this.requestRepository = requestRepository;
     this.userRepository = userRepository;
     this.dayRepository = dayRepository;
     this.teamRepository = teamRepository;
     this.allowanceService = allowanceService;
-    this.absenceRepository = absenceRepository;
     this.googleCalendarService = googleCalendarService;
     this.emailService = emailService;
     this.sendNotificationsService = sendNotificationsService;
+    this.auditInformationService = auditInformationService;
   }
 
   public List<Request> findAllByDateRange(LocalDate startDate, LocalDate endDate) {
@@ -178,6 +179,36 @@ public class RequestService {
   }
 
   /**
+   * Saves the provided Request to repository.
+   * Makes audit of that save.
+   *
+   * @param request the Request entity to be persisted.
+   * @param modifiedByUser user that made changes to that Request entity.
+   * @return saved Request.
+   */
+  @Transactional
+  public Request save(Request request, User modifiedByUser) {
+    saveAuditInformation(OperationPerformed.CREATE, modifiedByUser, request, null);
+    return requestRepository.save(request);
+  }
+
+  /**
+   * Saves the provided Request to repository.
+   * Makes audit of that save.
+   *
+   * @param request the Request entity to be persisted.
+   * @param modifiedByUser user that made changes to that Request entity.
+   * @return saved Request.
+   */
+  @Transactional
+  public Request update(Request request, User modifiedByUser) {
+    var previousRequestState = RequestAudit.fromRequest(getById(request.getId()));
+    saveAuditInformation(OperationPerformed.UPDATE, modifiedByUser, request, previousRequestState);
+
+    return requestRepository.save(request);
+  }
+
+  /**
    * Save the provided request to repository, with setting initial status
    * of request depending of absence type SICKNESS or any other.
    * Also applies leave days from request to pending field on user's allowance.
@@ -187,7 +218,7 @@ public class RequestService {
    */
   @CacheEvict(value = REQUESTS_CACHE, key = "#newRequest.user.id")
   @Transactional
-  public Request create(Request newRequest) {
+  public Request create(Request newRequest, User authUser) {
     newRequest.getDays().forEach(day -> day.setRequest(newRequest));
 
     User user = userRepository.getOne(newRequest.getUser().getId());
@@ -213,12 +244,12 @@ public class RequestService {
       newRequest.setRequestStatus(RequestStatus.APPROVED);
       allowanceService.applyRequest(newRequest, false);
       emailService.createSicknessEmailForTeammatesAndSend(newRequest);
-      requestRepository.save(newRequest);
+      save(newRequest, authUser);
     } else {
       newRequest.setRequestStatus(RequestStatus.PENDING);
       allowanceService.applyPendingRequest(newRequest, false);
       emailService.createEmailAndSendForApproval(newRequest);
-      requestRepository.save(newRequest);
+      save(newRequest, authUser);
       sendNotificationsService.sendNotificationToApproversAboutSubmittedRequest(newRequest);
     }
     return newRequest;
@@ -300,7 +331,15 @@ public class RequestService {
         throw new IllegalArgumentException("Unsupported request status: " + request.getRequestStatus());
     }
 
-    return requestRepository.save(request);
+    return update(request, authUser);
+  }
+
+  private void saveAuditInformation(OperationPerformed operationPerformed, User modifiedByUser, Request request,
+      RequestAudit previousRequestState) {
+    var currentRequestState = RequestAudit.fromRequest(request);
+
+    auditInformationService.saveAudit(operationPerformed, modifiedByUser, request.getUser(), previousRequestState,
+        currentRequestState);
   }
 
   private boolean isUserRequestApprover(User approver, User requestUser) {

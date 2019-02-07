@@ -7,7 +7,6 @@ import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.enumerations.AbsenceType;
 import eu.execom.hawaii.model.enumerations.RequestStatus;
 import eu.execom.hawaii.service.RequestService;
-import eu.execom.hawaii.service.SendNotificationsService;
 import eu.execom.hawaii.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,14 +38,11 @@ public class RequestController {
 
   private RequestService requestService;
   private UserService userService;
-  private SendNotificationsService sendNotificationsService;
 
   @Autowired
-  public RequestController(RequestService requestService, UserService userService,
-      SendNotificationsService sendNotificationsService) {
+  public RequestController(RequestService requestService, UserService userService) {
     this.requestService = requestService;
     this.userService = userService;
-    this.sendNotificationsService = sendNotificationsService;
   }
 
   @GetMapping("/month")
@@ -164,7 +160,7 @@ public class RequestController {
       @RequestBody RequestDto requestDto) {
     var request = MAPPER.map(requestDto, Request.class);
     request.setUser(authUser);
-    request = requestService.create(request);
+    request = requestService.create(request, authUser);
 
     return new ResponseEntity<>(new RequestDto(request), HttpStatus.OK);
   }

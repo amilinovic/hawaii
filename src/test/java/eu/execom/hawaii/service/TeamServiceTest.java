@@ -29,11 +29,15 @@ public class TeamServiceTest {
   @Mock
   private TeamRepository teamRepository;
 
+  @Mock
+  private AuditInformationService auditInformationService;
+
   @InjectMocks
   private TeamService teamService;
 
   private Team mockTeam;
   private List<Team> mockTeams;
+  private Object[] allMocks;
 
   @Before
   public void setUp() {
@@ -42,6 +46,8 @@ public class TeamServiceTest {
     mockTeam2.setName("My team 2");
 
     mockTeams = new ArrayList<>(Arrays.asList(mockTeam, mockTeam2));
+
+    allMocks = new Object[]{teamRepository, auditInformationService};
   }
 
   @Test
@@ -57,7 +63,7 @@ public class TeamServiceTest {
     assertThat("Expect size to be two", teams.size(), is(2));
     assertThat("Expect name to be My team1", teams.get(0).getName(), is("My team1"));
     verify(teamRepository).findAllByDeleted(anyBoolean());
-    verifyNoMoreInteractions(teamRepository);
+    verifyNoMoreInteractions(allMocks);
   }
 
   @Test
@@ -72,22 +78,23 @@ public class TeamServiceTest {
     // then
     assertThat("Expect name to be My team1", team.getName(), is("My team1"));
     verify(teamRepository).getOne(anyLong());
-    verifyNoMoreInteractions(teamRepository);
+    verifyNoMoreInteractions(allMocks);
   }
 
   @Test
   public void shouldSaveTeam() {
     // given
-
+    var user = EntityBuilder.approver();
     given(teamRepository.save(mockTeam)).willReturn(mockTeam);
 
     // when
-    var team = teamService.save(mockTeam);
+    var team = teamService.save(mockTeam, user);
 
     // then
     assertNotNull(team);
+    verify(auditInformationService).saveAudit(any(), any(), any(), any(), any());
     verify(teamRepository).save(mockTeam);
-    verifyNoMoreInteractions(teamRepository);
+    verifyNoMoreInteractions(allMocks);
   }
 
   @Test
@@ -97,12 +104,13 @@ public class TeamServiceTest {
     given(teamRepository.getOne(teamId)).willReturn(mockTeam);
 
     // when
-    teamService.delete(teamId);
+    teamService.delete(teamId, any());
 
     // then
     verify(teamRepository).getOne(anyLong());
+    verify(auditInformationService).saveAudit(any(), any(), any(), any(), any());
     verify(teamRepository).save(any());
-    verifyNoMoreInteractions(teamRepository);
+    verifyNoMoreInteractions(allMocks);
   }
 
 }
