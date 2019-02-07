@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import navigateOutHoc from '../components/HOC/NavigateOutHoc';
 import { navigateOut } from '../store/actions/navigateActions';
 import { removeTeam, requestTeam } from '../store/actions/teamActions';
 import { getTeam } from '../store/selectors';
@@ -8,10 +9,6 @@ import { getTeam } from '../store/selectors';
 class Team extends Component {
   componentDidMount() {
     this.props.requestTeam(this.props.match.params.id);
-  }
-
-  componentWillUnmount() {
-    this.props.navigateOut();
   }
 
   render() {
@@ -61,4 +58,4 @@ const mapDispatchToProps = dispatch =>
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Team);
+)(navigateOutHoc()(Team));
