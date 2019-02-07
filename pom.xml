@@ -32,7 +32,7 @@
         <liquibase-maven-plugin-version>3.6.2</liquibase-maven-plugin-version>
         <plantuml-maven-plugin-version>1.2</plantuml-maven-plugin-version>
         <plantuml-version>8059</plantuml-version>
-
+        <frontend.build.directory>${project.basedir}/src/main/frontend</frontend.build.directory>
     </properties>
 
     <dependencies>
@@ -193,6 +193,49 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <plugin>
+                <groupId>com.github.eirslett</groupId>
+                <artifactId>frontend-maven-plugin</artifactId>
+                <version>1.6</version>
+                <executions>
+                    <execution>
+                        <id>install node and yarn</id>
+                        <goals>
+                            <goal>install-node-and-yarn</goal>
+                        </goals>
+                        <phase>initialize</phase>
+                        <configuration>
+                            <workingDirectory>${frontend.build.directory}</workingDirectory>
+                            <nodeVersion>v8.11.2</nodeVersion>
+                            <yarnVersion>v1.6.0</yarnVersion>
+
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>yarn install</id>
+                        <goals>
+                            <goal>yarn</goal>
+                        </goals>
+                        <phase>initialize</phase>
+                        <configuration>
+                            <workingDirectory>${frontend.build.directory}</workingDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>yarn build</id>
+                        <goals>
+                            <goal>yarn</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <workingDirectory>${frontend.build.directory}</workingDirectory>
+                            <arguments>build</arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
     </build>
 </project>
