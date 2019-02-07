@@ -18,11 +18,16 @@ import java.util.List;
 public class TeamService {
 
   private TeamRepository teamRepository;
+
   private AuditInformationService auditInformationService;
 
+
+  private UserService userService;
+
   @Autowired
-  public TeamService(TeamRepository teamRepository, AuditInformationService auditInformationService) {
+  public TeamService(TeamRepository teamRepository, AuditInformationService auditInformationService, UserService userService) {
     this.teamRepository = teamRepository;
+    this.userService = userService;
     this.auditInformationService = auditInformationService;
   }
 
@@ -56,10 +61,23 @@ public class TeamService {
   }
 
   /**
+   * @param fullName User fullName
+   * @return list which contains team where user is a member and teams where user is approver
+   */
+  public List<Team> getTeamsForUser(String fullName) {
+
+    User user = userService.findOneByFullName(fullName);
+    List<Team> teams = user.getApproverTeams();
+    teams.add(user.getTeam());
+
+    return teams;
+  }
+
+  /**
    * Saves the provided Team to repository.
    * Makes audit of that save.
    *
-   * @param team the Team entity to be persisted.
+   * @param team           the Team entity to be persisted.
    * @param modifiedByUser user that made changes to that Team entity.
    * @return saved Team.
    */
@@ -72,7 +90,7 @@ public class TeamService {
   /**
    * Saves the provided Team to repository.
    *
-   * @param team the Team entity to be persisted.
+   * @param team           the Team entity to be persisted.
    * @param modifiedByUser user that made change to Team entity.
    * @return saved Team.
    */
