@@ -69,7 +69,7 @@ public class DayServiceTest {
 
     // then
     assertNotNull(mockDays);
-    assertThat("Expect to list size be two", days.size(), is(2));
+    assertThat("Expect list size to be two", days.size(), is(2));
     verify(requestRepository).findAllByUser(any());
     verify(dayRepository).findAllByRequestInAndDateIsBetween(any(), any(), any());
     verifyNoMoreInteractions(allMocks);
