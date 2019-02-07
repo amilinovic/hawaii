@@ -52,8 +52,9 @@ public class TeamController {
     var teamDto = new TeamDto(team);
     return new ResponseEntity<>(teamDto, HttpStatus.OK);
   }
+
   @GetMapping("/search")
-  public ResponseEntity<List<TeamDto>> getTeamsByUser(@RequestParam String fullName){
+  public ResponseEntity<List<TeamDto>> getTeamsByUser(@RequestParam String fullName) {
     List<Team> teams = teamService.getTeamsForUser(fullName);
     var teamDtos = teams.stream().map(TeamDto::new).collect(Collectors.toList());
     return new ResponseEntity<>(teamDtos, HttpStatus.OK);

@@ -21,11 +21,11 @@ public class TeamService {
 
   private AuditInformationService auditInformationService;
 
-
   private UserService userService;
 
   @Autowired
-  public TeamService(TeamRepository teamRepository, AuditInformationService auditInformationService, UserService userService) {
+  public TeamService(TeamRepository teamRepository, AuditInformationService auditInformationService,
+      UserService userService) {
     this.teamRepository = teamRepository;
     this.userService = userService;
     this.auditInformationService = auditInformationService;
@@ -61,6 +61,8 @@ public class TeamService {
   }
 
   /**
+   * Retrieves a list of teams by given user.
+   *
    * @param fullName User fullName
    * @return list which contains team where user is a member and teams where user is approver
    */
