@@ -1,33 +1,18 @@
 import React from 'react';
-import styled from 'styled-components';
-
 import Tab from '../tabs/Tab';
 
-const TabsWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-const TabList = styled.div`
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-`;
-
 const Tabs = ({ activeTabIndex, data, handleTabClick }) => (
-  <TabsWrapper>
-    <TabList>
-      {data.map(({ label }, index) => (
-        <Tab
-          key={index}
-          label={label}
-          isActive={activeTabIndex === index}
-          handleTabClick={handleTabClick}
-          tabIndex={index}
-        />
-      ))}
-    </TabList>
-  </TabsWrapper>
+  <div className="d-flex flex-row flex-grow-1">
+    {data.map(({ label }, index) => (
+      <Tab
+        key={index}
+        label={label}
+        isActive={activeTabIndex === index}
+        handleTabClick={handleTabClick}
+        tabIndex={index}
+      />
+    ))}
+  </div>
 );
 
 export default Tabs;

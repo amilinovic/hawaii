@@ -2,6 +2,7 @@ import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { Route, Switch } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
+import styled from 'styled-components';
 import Dashboard from '../components/dashboard/Dashboard';
 import InformationHeader from '../components/header/InformationHeader';
 import TopHeader from '../components/header/TopHeader';
@@ -14,6 +15,10 @@ import TeamCalendar from '../pages/TeamCalendar';
 import { requestUser } from '../store/actions/userActions';
 import { getUser } from '../store/selectors';
 
+const PanelContent = styled.div`
+  overflow: auto;
+`;
+
 class Panel extends Component {
   componentDidMount() {
     // Will be removed after `/me` endpoint is created, so user info could be fetched and stored in userStore
@@ -25,19 +30,19 @@ class Panel extends Component {
       <Fragment>
         <div className="root-wrapper">
           <Sidebar />
-          <div className="d-flex flex-column flex-grow-1">
+          <div className="d-flex flex-column justify-content-start flex-grow-1">
             <TopHeader user={this.props.user} />
             <InformationHeader user={this.props.user} />
-            <div className="d-flex flex-column flex-grow-1">
+            <PanelContent className="d-flex flex-column flex-grow-1">
               <Switch>
+                <Route path="/dashboard" component={Dashboard} />
                 <Route path="/leave" component={Leave} />
                 <Route path="/leave-history" component={LeaveHistory} />
                 <Route path="/team-calendar" component={TeamCalendar} />
-                <Route path="/dashboard" component={Dashboard} />
                 <Route path="/administration" component={Administration} />
                 <Route path="/teams/:id" component={Team} />
               </Switch>
-            </div>
+            </PanelContent>
           </div>
         </div>
       </Fragment>
