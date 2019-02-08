@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
 import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
-import { NavigationLink } from '../common/navigationLink';
-import { MainLogo } from '../common/mainLogo';
 import ExecomLogo from '../../img/execom_logo.png';
+import { MainLogo } from '../common/mainLogo';
+import { NavigationLink } from '../common/navigationLink';
 
 const Aside = styled.aside`
   background-color: #323234;
   width: 250px;
+  min-width: 250px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -17,11 +18,11 @@ const Aside = styled.aside`
 // TODO vrackovic: Change implementation of navLinks and controlLinks
 
 const navLinks = [
+  { url: '/dashboard', name: 'Dashboard' },
   { url: '/leave', name: 'Leave' },
   { url: '/leave-history', name: 'Leave history' },
   { url: '/team-calendar', name: 'Team calendar' },
-  { url: '/execom-calendar', name: 'Execom calendar' },
-  { url: '/dashboard', name: 'Dashboard' }
+  { url: '/administration', name: 'Administration' }
 ].map(navLink => (
   <NavLink key={navLink.url} to={navLink.url}>
     <NavigationLink
