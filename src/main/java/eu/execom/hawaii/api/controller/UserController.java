@@ -58,18 +58,13 @@ public class UserController {
   }
 
   @GetMapping
-  public ResponseEntity<Page<UserDto>> getUsers(@RequestParam(required = false, defaultValue="ACTIVE") List<UserStatusType> userStatusType,
+  public ResponseEntity<Page<UserDto>> getUsers(
+      @RequestParam(required = false, defaultValue = "ACTIVE") List<UserStatusType> userStatusType,
       @RequestParam(required = false, defaultValue = "0") Integer page,
-      @RequestParam(required = false, defaultValue = "30") Integer size
-      ) {
-    Pageable pageable = PageRequest.of(page,size);
+      @RequestParam(required = false, defaultValue = "30") Integer size) {
 
-    Page<User> users;
-    if (userStatusType != null && !userStatusType.isEmpty()) {
-      users = userService.findAllByUserStatusTypePage(userStatusType, pageable);
-    } else {
-      users = userService.findAll(pageable);
-    }
+    Pageable pageable = PageRequest.of(page, size);
+    Page<User> users = userService.findAllByUserStatusTypePage(userStatusType, pageable);
     List<UserDto> userDtos = users.stream().map(UserDto::new).collect(Collectors.toList());
     Page<UserDto> pageableUserDtos = new PageImpl<>(userDtos, pageable, users.getTotalElements());
 
