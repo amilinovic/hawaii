@@ -1,5 +1,7 @@
 package eu.execom.hawaii.service;
 
+import eu.execom.hawaii.exceptions.ActionNotAllowedException;
+import eu.execom.hawaii.exceptions.NotAuthorizedApprovalException;
 import eu.execom.hawaii.model.Team;
 import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.audit.TeamAudit;
@@ -14,6 +16,7 @@ import java.util.List;
 /**
  * Team management service.
  */
+
 @Service
 public class TeamService {
 
@@ -36,16 +39,6 @@ public class TeamService {
   }
 
   /**
-   * Retrieves a list of all teams from repository by given status.
-   *
-   * @param deleted is it deleted.
-   * @return a list of all teams.
-   */
-  public List<Team> findAllByDeleted(boolean deleted) {
-    return teamRepository.findAllByDeleted(deleted);
-  }
-
-  /**
    * Retrieves a team with a specific id.
    *
    * @param id Team id.
@@ -59,7 +52,7 @@ public class TeamService {
    * Saves the provided Team to repository.
    * Makes audit of that save.
    *
-   * @param team the Team entity to be persisted.
+   * @param team           the Team entity to be persisted.
    * @param modifiedByUser user that made changes to that Team entity.
    * @return saved Team.
    */
@@ -72,7 +65,7 @@ public class TeamService {
   /**
    * Saves the provided Team to repository.
    *
-   * @param team the Team entity to be persisted.
+   * @param team           the Team entity to be persisted.
    * @param modifiedByUser user that made change to Team entity.
    * @return saved Team.
    */
@@ -88,17 +81,22 @@ public class TeamService {
   }
 
   /**
-   * Logically deletes Team.
+   * Deletes Team from database if its member list is empty.
    *
-   * @param id - the team id.
+   * @param modifiedByUser user that made change to Team entity.
+   * @param id             - the team id.
    */
   @Transactional
   public void delete(Long id, User modifiedByUser) {
     var team = getById(id);
     var previousTeamState = TeamAudit.fromTeam(team);
-    team.setDeleted(true);
-    teamRepository.save(team);
-    saveAuditInformation(OperationPerformed.DELETE, modifiedByUser, team, previousTeamState);
+    if (team.getUsers().isEmpty()) {
+      teamRepository.deleteById(id);
+      saveAuditInformation(OperationPerformed.DELETE, modifiedByUser, team, previousTeamState);
+    } else {
+      throw new ActionNotAllowedException("Team member list needs to be empty");
+    }
+
   }
 
   private void saveAuditInformation(OperationPerformed operationPerformed, User modifiedByUser, Team team,

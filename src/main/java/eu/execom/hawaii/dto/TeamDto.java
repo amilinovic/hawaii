@@ -13,15 +13,13 @@ public class TeamDto {
   private Long id;
   private String name;
   private String emails;
-  private boolean deleted;
-  private List<UserDto> users = new ArrayList<>();
-  private List<UserDto> teamApprovers = new ArrayList<>();
+  private List<UserDto> users;
+  private List<UserDto> teamApprovers;
 
   public TeamDto(Team team) {
     this.id = team.getId();
     this.name = team.getName();
     this.emails = team.getEmails();
-    this.deleted = team.isDeleted();
     this.users = team.getUsers().stream().map(UserDto::new).collect(Collectors.toList());
     this.teamApprovers = team.getTeamApprovers().stream().map(UserDto::new).collect(Collectors.toList());
   }

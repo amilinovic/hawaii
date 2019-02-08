@@ -12,13 +12,11 @@ public class TeamAudit extends Audit {
   private Long id;
   private String teamName;
   private String emails;
-  private boolean deleted;
 
   private TeamAudit(Team team) {
     this.id = team.getId();
     this.teamName = team.getName();
     this.emails = team.getEmails();
-    this.deleted = team.isDeleted();
     this.setAuditedEntity(AuditedEntity.TEAM);
   }
 

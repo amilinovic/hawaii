@@ -29,8 +29,6 @@ public class Team extends BaseEntity implements Serializable {
 
   private String emails;
 
-  private boolean deleted;
-
   @OneToMany(mappedBy = "team", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
   private List<User> users;
 
