@@ -24,6 +24,7 @@
         <java.version>10</java.version>
 
         <swagger.version>2.9.2</swagger.version>
+        <jackson.version>2.9.7</jackson.version>
         <google.api.version>1.26.0</google.api.version>
         <google-api-services-calendar.version>v3-rev355-1.25.0</google-api-services-calendar.version>
         <modelmapper-version>2.3.1</modelmapper-version>
@@ -100,6 +101,17 @@
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger-ui</artifactId>
             <version>${swagger.version}</version>
+        </dependency>
+        <!-- Jackson -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>${jackson.version}</version>
         </dependency>
         <!--Other-->
         <dependency>

@@ -7,9 +7,10 @@ import Dashboard from '../components/dashboard/Dashboard';
 import InformationHeader from '../components/header/InformationHeader';
 import TopHeader from '../components/header/TopHeader';
 import Sidebar from '../components/navigation/Sidebar';
-import ExecomCalendar from '../pages/ExecomCalendar';
+import Administration from '../pages/Administration';
 import Leave from '../pages/Leave';
 import LeaveHistory from '../pages/LeaveHistory';
+import Team from '../pages/Team';
 import TeamCalendar from '../pages/TeamCalendar';
 import { requestUser } from '../store/actions/userActions';
 import { getUser } from '../store/selectors';
@@ -34,11 +35,12 @@ class Panel extends Component {
             <InformationHeader user={this.props.user} />
             <PanelContent className="d-flex flex-column flex-grow-1">
               <Switch>
+                <Route path="/dashboard" component={Dashboard} />
                 <Route path="/leave" component={Leave} />
                 <Route path="/leave-history" component={LeaveHistory} />
                 <Route path="/team-calendar" component={TeamCalendar} />
-                <Route path="/execom-calendar" component={ExecomCalendar} />
-                <Route path="/dashboard" component={Dashboard} />
+                <Route path="/administration" component={Administration} />
+                <Route path="/teams/:id" component={Team} />
               </Switch>
             </PanelContent>
           </div>

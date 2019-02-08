@@ -291,4 +291,40 @@
                              onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
                              referencedTableName="user"/>
   </changeSet>
+  <changeSet author="admin" id="{initialId}-24">
+    <createTable tableName="audit_information">
+      <column autoIncrement="true" name="id" type="BIGINT(19)">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="audited_entity" type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="operation_performed" type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="modified_date_time" type="datetime">
+        <constraints nullable="false"/>
+      </column>
+      <column name="modified_by_user_id" type="BIGINT(19)"/>
+      <column name="modified_user_id" type="BIGINT(19)"/>
+      <column name="previous_value" type="text">
+        <constraints nullable="false"/>
+      </column>
+      <column name="current_value" type="text">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+  <changeSet author="admin" id="{initialId}-25">
+    <addForeignKeyConstraint baseColumnNames="modified_by_user_id" baseTableName="audit_information"
+                             constraintName="FK_audit_information_modified_by_user_id" deferrable="false" initiallyDeferred="false"
+                             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                             referencedTableName="user"/>
+  </changeSet>
+  <changeSet author="admin" id="{initialId}-26">
+    <addForeignKeyConstraint baseColumnNames="modified_user_id" baseTableName="audit_information"
+                             constraintName="FK_audit_information_modified_user_id" deferrable="false" initiallyDeferred="false"
+                             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                             referencedTableName="user"/>
+  </changeSet>
 </databaseChangeLog>

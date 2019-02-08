@@ -25,7 +25,8 @@ import java.util.List;
 
 @Entity
 @Data
-@ToString(exclude = {"approverTeams", "requests", "allowances", "userPushTokens"})
+@ToString(exclude = {"approverTeams", "requests", "allowances", "userPushTokens", "modifierAuditInformation",
+    "userAuditInformation"})
 @EqualsAndHashCode(callSuper = false)
 public class User extends BaseEntity implements Serializable {
 
@@ -66,7 +67,7 @@ public class User extends BaseEntity implements Serializable {
 
   @Lob
   @Basic(fetch = FetchType.LAZY)
-  @Column(columnDefinition="MEDIUMBLOB")
+  @Column(columnDefinition = "MEDIUMBLOB")
   private byte[] image;
 
   @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
@@ -80,5 +81,11 @@ public class User extends BaseEntity implements Serializable {
 
   @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST)
   private List<Allowance> allowances;
+
+  @OneToMany(mappedBy = "modifiedByUser")
+  private List<AuditInformation> modifierAuditInformation;
+
+  @OneToMany(mappedBy = "modifiedUser")
+  private List<AuditInformation> userAuditInformation;
 
 }

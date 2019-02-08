@@ -3,10 +3,12 @@ package eu.execom.hawaii.service;
 import eu.execom.hawaii.dto.CreateTokenDto;
 import eu.execom.hawaii.model.Allowance;
 import eu.execom.hawaii.model.LeaveProfile;
+import eu.execom.hawaii.model.Team;
 import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.UserPushToken;
 import eu.execom.hawaii.model.Year;
-import eu.execom.hawaii.model.Team;
+import eu.execom.hawaii.model.audit.UserAudit;
+import eu.execom.hawaii.model.enumerations.OperationPerformed;
 import eu.execom.hawaii.model.enumerations.UserStatusType;
 import eu.execom.hawaii.repository.LeaveProfileRepository;
 import eu.execom.hawaii.repository.UserPushTokensRepository;
@@ -43,14 +45,17 @@ public class UserService {
   private LeaveProfileRepository leaveProfileRepository;
   private UserPushTokensRepository userPushTokensRepository;
   private YearRepository yearRepository;
+  private AuditInformationService auditInformationService;
 
   @Autowired
   public UserService(UserRepository userRepository, LeaveProfileRepository leaveProfileRepository,
-      UserPushTokensRepository userPushTokensRepository, YearRepository yearRepository) {
+      UserPushTokensRepository userPushTokensRepository, YearRepository yearRepository,
+      AuditInformationService auditInformationService) {
     this.userRepository = userRepository;
     this.leaveProfileRepository = leaveProfileRepository;
     this.userPushTokensRepository = userPushTokensRepository;
     this.yearRepository = yearRepository;
+    this.auditInformationService = auditInformationService;
   }
 
   /**
@@ -123,8 +128,41 @@ public class UserService {
    * Saves the provided User to repository.
    *
    * @param user the User entity to be persisted.
+   * @return saved User.
    */
+  @Transactional
   public User save(User user) {
+    return userRepository.save(user);
+  }
+
+  /**
+   * Saves the provided User to repository.
+   * Makes audit of that save.
+   *
+   * @param user the User entity to be persisted.
+   * @param modifiedByUser user that made the change to User entity.
+   * @return saved User.
+   */
+  @Transactional
+  public User update(User user, User modifiedByUser) {
+    var previousUserState = UserAudit.fromUser(getUserById(user.getId()));
+    saveAuditInformation(OperationPerformed.UPDATE, modifiedByUser, user, previousUserState);
+
+    return userRepository.save(user);
+  }
+
+  /**
+   * Saves the provided User to repository.
+   * Makes audit of that save.
+   *
+   * @param user the User entity to be persisted.
+   * @param modifiedByUser user that made the change to User entity.
+   * @return saved User.
+   */
+  @Transactional
+  public User create(User user, User modifiedByUser) {
+    saveAuditInformation(OperationPerformed.CREATE, modifiedByUser, user, null);
+
     return userRepository.save(user);
   }
 
@@ -133,8 +171,9 @@ public class UserService {
    * Only inactive users can become active.
    * Once user is deleted, he can only turn back to being inactive, and then active.
    */
-  public void activate(Long id) {
+  public void activate(Long id, User modifiedByUser) {
     var user = userRepository.getOne(id);
+    var previousUserState = UserAudit.fromUser(user);
 
     UserStatusType userStatusType = user.getUserStatusType();
 
@@ -152,23 +191,26 @@ public class UserService {
         throw new IllegalArgumentException("Unsupported user status type: " + userStatusType);
     }
     userRepository.save(user);
+    saveAuditInformation(OperationPerformed.ACTIVATE, modifiedByUser, user, previousUserState);
   }
 
   /**
    * Logically deletes User.
    */
   @Transactional
-  public void delete(Long userId) {
+  public void delete(Long userId, User modifiedByUser) {
     var user = userRepository.getOne(userId);
+    var previousUserState = UserAudit.fromUser(user);
     user.setUserStatusType(UserStatusType.DELETED);
     userRepository.save(user);
+    saveAuditInformation(OperationPerformed.DELETE, modifiedByUser, user, previousUserState);
   }
 
   /**
    * Gets users leave profile and currently active years, and creates allowances
    * according with values from leave profile
    */
-  public User createAllowanceForUserOnCreateUser(User user) {
+  public User createAllowanceForUserOnCreateUser(User user, User modifiedByUser) {
     var leaveProfile = leaveProfileRepository.getOne(user.getLeaveProfile().getId());
     var openedActiveYears = yearRepository.findAllByYearGreaterThanEqual(LocalDate.now().getYear());
     List<Allowance> userAllowances = new ArrayList<>();
@@ -177,7 +219,7 @@ public class UserService {
       userAllowances.add(allowance);
     }
     user.setAllowances(userAllowances);
-    return save(user);
+    return create(user, modifiedByUser);
   }
 
   /**
@@ -275,4 +317,13 @@ public class UserService {
       }
     }
   }
+
+  private void saveAuditInformation(OperationPerformed operationPerformed, User modifiedByUser, User modifiedUser,
+      UserAudit previousUserState) {
+    var currentUserState = UserAudit.fromUser(modifiedUser);
+
+    auditInformationService.saveAudit(operationPerformed, modifiedByUser, modifiedUser, previousUserState,
+        currentUserState);
+  }
+
 }

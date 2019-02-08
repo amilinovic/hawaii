@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { NavLink } from 'react-router-dom';
+import { bindActionCreators } from 'redux';
 import { requestTeams } from '../../store/actions/teamsActions';
 import { getTeams } from '../../store/selectors';
 import TeamItem from './TeamItem';
@@ -12,9 +12,11 @@ class Teams extends Component {
   }
 
   render() {
-    const teamItems = Object.keys(this.props.teams).map(key => {
-      return <TeamItem key={key} team={this.props.teams[key]} />;
-    });
+    const teamItems = this.props.teams
+      .filter(item => !item.deleted)
+      .map(item => {
+        return <TeamItem key={item.id} team={item} />;
+      });
 
     return (
       <div className="container-fluid">

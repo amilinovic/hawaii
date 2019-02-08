@@ -48,6 +48,9 @@ public class UserServiceTest {
   @Mock
   private YearRepository yearRepository;
 
+  @Mock
+  private AuditInformationService auditInformationService;
+
   @InjectMocks
   private UserService userService;
 
@@ -66,7 +69,7 @@ public class UserServiceTest {
     mockUser2.setFullName("John Snow");
 
     initialUsers = new ArrayList<>(Arrays.asList(mockUser, mockUser2));
-    allMocks = new Object[] {userRepository, leaveProfileRepository, yearRepository};
+    allMocks = new Object[] {userRepository, leaveProfileRepository, yearRepository, auditInformationService};
   }
 
   @Test
@@ -157,10 +160,11 @@ public class UserServiceTest {
     given(userRepository.getOne(userId)).willReturn(mockUser);
 
     // when
-    userService.delete(userId);
+    userService.delete(userId, any());
 
     // then
     verify(userRepository).getOne(anyLong());
+    verify(auditInformationService).saveAudit(any(), any(), any(), any(), any());
     verify(userRepository).save(any());
     verifyNoMoreInteractions(allMocks);
   }
@@ -178,7 +182,7 @@ public class UserServiceTest {
     given(userRepository.save(user)).willReturn(user);
 
     // when
-    User userWithAllowance = userService.createAllowanceForUserOnCreateUser(user);
+    User userWithAllowance = userService.createAllowanceForUserOnCreateUser(user, user);
 
     // then
     assertThat("Expect to have two allowance created", userWithAllowance.getAllowances().size(), is(2));
@@ -193,6 +197,7 @@ public class UserServiceTest {
     verify(leaveProfileRepository).getOne(anyLong());
     verify(userRepository).save(any());
     verify(yearRepository).findAllByYearGreaterThanEqual(anyInt());
+    verify(auditInformationService).saveAudit(any(), any(), any(), any(), any());
     verifyNoMoreInteractions(allMocks);
   }
 

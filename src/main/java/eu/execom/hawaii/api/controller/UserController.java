@@ -4,9 +4,9 @@ import eu.execom.hawaii.dto.DayDto;
 import eu.execom.hawaii.dto.UserDto;
 import eu.execom.hawaii.dto.UserWithDaysDto;
 import eu.execom.hawaii.model.Day;
+import eu.execom.hawaii.model.Team;
 import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.enumerations.UserStatusType;
-import eu.execom.hawaii.model.Team;
 import eu.execom.hawaii.service.DayService;
 import eu.execom.hawaii.service.TeamService;
 import eu.execom.hawaii.service.UserService;
@@ -35,7 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.time.LocalDate;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -75,7 +75,7 @@ public class UserController {
       @RequestParam(required = false) LocalDate startDate, @RequestParam(required = false) LocalDate endDate) {
     startDate = assignDefaultStartDate(startDate, endDate);
     endDate = assignDefaultEndDate(startDate, endDate);
-    List<UserStatusType> statuses = Arrays.asList(UserStatusType.ACTIVE);
+    List<UserStatusType> statuses = Collections.singletonList(UserStatusType.ACTIVE);
     List<User> users = userService.findAllByUserStatusType(statuses);
     List<UserWithDaysDto> userDtos = createUserRestrictedDtosFromUsers(users, startDate, endDate);
 
@@ -164,18 +164,35 @@ public class UserController {
   }
 
   @PostMapping
-  public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto) {
+  public ResponseEntity<UserDto> createUser(@ApiIgnore @AuthenticationPrincipal User authUser,
+      @RequestBody UserDto userDto) {
     User user = MAPPER.map(userDto, User.class);
-    user = userService.createAllowanceForUserOnCreateUser(user);
+    user = userService.createAllowanceForUserOnCreateUser(user, authUser);
+
     return new ResponseEntity<>(new UserDto(user), HttpStatus.CREATED);
   }
 
   @PutMapping
-  public ResponseEntity<UserDto> updateUser(@RequestBody UserDto userDto) {
-    User user = MAPPER.map(userDto, User.class);
-    user = userService.save(user);
+  public ResponseEntity<UserDto> updateUser(@ApiIgnore @AuthenticationPrincipal User authUser,
+      @RequestBody UserDto userDto) {
+    var user = MAPPER.map(userDto, User.class);
+    user = userService.update(user, authUser);
 
     return new ResponseEntity<>(new UserDto(user), HttpStatus.OK);
+  }
+
+  @PutMapping("/{id}/activate")
+  public ResponseEntity activateUser(@ApiIgnore @AuthenticationPrincipal User authUser, @PathVariable Long id) {
+    userService.activate(id, authUser);
+
+    return new ResponseEntity(HttpStatus.OK);
+  }
+
+  @DeleteMapping("/{id}")
+  public ResponseEntity deleteUser(@ApiIgnore @AuthenticationPrincipal User authUser, @PathVariable Long id) {
+    userService.delete(id, authUser);
+
+    return new ResponseEntity(HttpStatus.NO_CONTENT);
   }
 
   @GetMapping("/image/{id}")
@@ -186,19 +203,6 @@ public class UserController {
     headers.setContentLength(user.getImage().length);
 
     return new ResponseEntity<>(user.getImage(), headers, HttpStatus.OK);
-  }
-
-  @PutMapping("/{id}/activate")
-  public ResponseEntity activateUser(@PathVariable Long id) {
-    userService.activate(id);
-
-    return new ResponseEntity(HttpStatus.OK);
-  }
-
-  @DeleteMapping("/{id}")
-  public ResponseEntity deleteUser(@PathVariable Long id) {
-    userService.delete(id);
-    return new ResponseEntity(HttpStatus.NO_CONTENT);
   }
 
   @GetMapping("/me")
