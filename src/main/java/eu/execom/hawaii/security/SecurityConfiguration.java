@@ -37,12 +37,20 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
   }
 
   @Override
+  public void configure(WebSecurity web) {
+    web.ignoring()
+       .antMatchers("/", "/icons/**", "/swagger-ui.html", "/swagger-resources/**", "/v2/**", "/webjars/**",
+           "/resources/**", "/static/**", "/css/**", "/js/**", "/images/**", "/img/**", "/configuration/**", "/login");
+  }
+
+  @Override
   protected void configure(HttpSecurity http) throws Exception {
     //@formatter:off
       http.csrf().disable()
         .sessionManagement().sessionCreationPolicy(STATELESS)
           .and()
             .authorizeRequests()
+//              .antMatchers("/**/*.{js,html,css}").permitAll()
               .antMatchers("/api/users/me","/api/users/image/**").permitAll()
               .antMatchers("/api/users", "/api/users/**", "/api/teams", "/api/teams/**", "/api/leavetypes", "/api/leavetypes/**", "/api/leaveprofiles",
                 "/api/leaveprofiles/**", "/api/requests/**").hasAuthority("HR_MANAGER")
@@ -50,12 +58,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
           .and()
             .addFilterBefore(idTokenVerifierFilter(), AnonymousAuthenticationFilter.class);
     //@formatter:on
-  }
-
-  @Override
-  public void configure(WebSecurity web) {
-    web.ignoring()
-       .antMatchers("/", "/swagger-ui.html", "/swagger-resources/**", "/v2/**", "/webjars/**", "/**");
   }
 
   @Override

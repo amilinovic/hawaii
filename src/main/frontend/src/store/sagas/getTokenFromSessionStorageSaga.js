@@ -1,10 +1,10 @@
-import { call, put, takeEvery } from 'redux-saga/effects';
 import { push } from 'connected-react-router';
-import {
-  REQUEST_TOKEN_FROM_STORAGE,
-  receiveTokenFromStorageError
-} from '../actions/getTokenFromSessionStorageActions';
+import { call, put, takeEvery } from 'redux-saga/effects';
 import { receiveToken } from '../actions/getTokenActions';
+import {
+  receiveTokenFromStorageError,
+  REQUEST_TOKEN_FROM_STORAGE
+} from '../actions/getTokenFromSessionStorageActions';
 import { getTokenFromSessionStorage } from '../services/getTokenFromSessionStorage';
 
 export const authenticate = function*() {
@@ -18,7 +18,9 @@ export const authenticate = function*() {
 };
 
 export const redirect = function*(authentication) {
-  yield put(push(authentication ? '/leave' : '/login'));
+  if (!authentication) {
+    yield put(push('/login'));
+  }
 };
 
 export const authenticateSaga = [
