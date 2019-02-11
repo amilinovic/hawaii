@@ -7,10 +7,10 @@ export const getTeamApi = async id => {
     .then(res => res.body);
 };
 
-export const createTeamApi = async id => {
+export const createTeamApi = async teamObject => {
   return await request
     .post('/teams')
-    .send({ name: 'dasdas' })
+    .send(teamObject)
     .set('X-ID-TOKEN', sessionStorage.getItem('token'))
     .then(res => res.body);
 };
