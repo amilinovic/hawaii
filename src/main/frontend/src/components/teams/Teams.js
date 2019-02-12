@@ -4,14 +4,15 @@ import { NavLink } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import { requestTeams } from '../../store/actions/teamsActions';
 import { getTeams } from '../../store/selectors';
+import withResetOnNavigate from '../HOC/withResetOnNavigate';
 import TeamItem from './TeamItem';
-
 class Teams extends Component {
   componentDidMount() {
     this.props.requestTeams();
   }
 
   render() {
+    if (!this.props.teams) return null;
     const teamItems = this.props.teams
       .filter(item => !item.deleted)
       .map(item => {
@@ -22,7 +23,7 @@ class Teams extends Component {
       <div className="container-fluid">
         <div className="row">
           <div className="col-md-12">
-            <NavLink to={'/teams/create-team'}>
+            <NavLink to={'/administration'}>
               <input
                 type="button"
                 value="Create Team"
@@ -60,4 +61,4 @@ const mapDispatchToProps = dispatch =>
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Teams);
+)(withResetOnNavigate()(Teams));

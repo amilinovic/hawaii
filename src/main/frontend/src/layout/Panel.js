@@ -8,7 +8,6 @@ import InformationHeader from '../components/header/InformationHeader';
 import TopHeader from '../components/header/TopHeader';
 import Sidebar from '../components/navigation/Sidebar';
 import Administration from '../pages/Administration';
-import CreateTeam from '../pages/CreateTeam';
 import EditTeam from '../pages/EditTeam';
 import Leave from '../pages/Leave';
 import LeaveHistory from '../pages/LeaveHistory';
@@ -42,7 +41,6 @@ class Panel extends Component {
                 <Route path="/leave-history" component={LeaveHistory} />
                 <Route path="/team-calendar" component={TeamCalendar} />
                 <Route path="/administration" component={Administration} />
-                <Route path="/teams/create" component={CreateTeam} />
                 <Route path="/teams/:id/edit" component={EditTeam} />
                 <Route path="/teams/:id" component={Team} />
               </Switch>

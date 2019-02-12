@@ -1,11 +1,11 @@
 import { handleActions } from 'redux-actions';
 import { navigateOut } from '../actions/navigateActions';
-import { receiveTeams } from '../actions/teamsActions';
+import { receiveUsers } from '../actions/usersActions';
 
-export const initialState = [];
+export const initialState = null;
 
 const actionHandlers = {
-  [receiveTeams]: (state, action) => action.payload,
+  [receiveUsers]: (state, action) => action.payload,
   [navigateOut]: () => null
 };
 
