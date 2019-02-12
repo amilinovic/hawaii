@@ -1,5 +1,5 @@
 import { handleActions } from 'redux-actions';
-import { receiveEmployees } from '../actions/employeesAction';
+import { receiveEmployees } from '../actions/employeesActions';
 
 export const initialState = [];
 

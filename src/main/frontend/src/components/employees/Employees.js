@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { requestEmployees } from '../../store/actions/employeesAction';
 import { bindActionCreators } from 'redux';
-import { getEmployees } from '../../store/selectors';
 import styled from 'styled-components';
+import { requestEmployees } from '../../store/actions/employeesActions';
+import { getEmployees } from '../../store/selectors';
 import EmployeeInfo from './EmployeeInfo';
 
 const EmployeesContainer = styled.div`
