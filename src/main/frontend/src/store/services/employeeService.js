@@ -1,14 +1,14 @@
 import request from 'superagent';
 
-export const getEmployeeApi = id => {
-  return request
+export const getEmployeeApi = async id => {
+  return await request
     .get(`/users/${id}`)
     .set('X-ID-TOKEN', sessionStorage.getItem('token'))
     .then(res => res.body);
 };
 
-export const removeEmployeeApi = id => {
-  return request
+export const removeEmployeeApi = async id => {
+  return await request
     .del(`/users/${id}`)
     .set('X-ID-TOKEN', sessionStorage.getItem('token'))
     .then(res => res.body);
