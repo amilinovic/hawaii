@@ -23,7 +23,7 @@ const TableRow = styled.div`
 `;
 
 const EmployeeInfo = employee => {
-  const { id, fullName, email, jobTitle, yearsOfService } = employee;
+  const { fullName, email, jobTitle, yearsOfService } = employee;
   return (
     <div className="align-items-center d-flex justify-content-between mb-3">
       <EmployeesImage />
