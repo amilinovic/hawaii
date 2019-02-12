@@ -1,5 +1,4 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
 
 const TableText = styled.span`
@@ -40,8 +39,6 @@ const EmployeeInfo = employee => {
       <TableRow>
         <TableText>Years of Service: {yearsOfService}</TableText>
       </TableRow>
-      {/* TODO: Change this to ID, email is used because there is now getById endpoint at the moment on the backend */}
-      <NavLink to={`/employee/${email}`}>View Profile</NavLink>
     </div>
   );
 };
