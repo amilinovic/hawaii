@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import withResetOnNavigate from '../components/HOC/withResetOnNavigate';
+import { requestEmployees } from '../store/actions/employeesAction';
 import { createTeam } from '../store/actions/teamActions';
-import { requestUsers } from '../store/actions/usersActions';
-import { getUsers } from '../store/selectors';
+import { getEmployees } from '../store/selectors';
 
 class CreateTeam extends Component {
   state = {
@@ -16,7 +16,7 @@ class CreateTeam extends Component {
   };
 
   componentDidMount() {
-    this.props.requestUsers();
+    this.props.requestEmployees();
   }
 
   teamNameChange(event) {
@@ -28,7 +28,7 @@ class CreateTeam extends Component {
     });
   }
 
-  addUser(user) {
+  addMember(user) {
     this.setState(prevState => ({
       team: {
         ...this.state.team,
@@ -47,20 +47,23 @@ class CreateTeam extends Component {
   }
 
   render() {
-    if (!this.props.users) return null;
+    if (!this.props.employees) return null;
 
-    const users = this.props.users.map(user => {
+    const employees = this.props.employees.map(employee => {
       return (
         <div
-          key={user.id}
+          key={employee.id}
           className="align-items-center d-flex justify-content-between my-2"
         >
-          <span>{user.fullName}</span>
+          <span>{employee.fullName}</span>
           <div>
-            <button onClick={() => this.addUser(user)} className="btn mr-2">
+            <button
+              onClick={() => this.addMember(employee)}
+              className="btn mr-2"
+            >
               Member
             </button>
-            <button onClick={() => this.addApprover(user)} className="btn">
+            <button onClick={() => this.addApprover(employee)} className="btn">
               Approver
             </button>
           </div>
@@ -68,12 +71,12 @@ class CreateTeam extends Component {
       );
     });
 
-    const selectedUsers = this.state.team.users.map(user => {
-      return <h6 key={user.id}>{user.fullName}</h6>;
+    const selectedUsers = this.state.team.users.map(employee => {
+      return <h6 key={employee.id}>{employee.fullName}</h6>;
     });
 
-    const selectedApprovers = this.state.team.teamApprovers.map(user => {
-      return <h6 key={user.id}>{user.fullName}</h6>;
+    const selectedApprovers = this.state.team.teamApprovers.map(employee => {
+      return <h6 key={employee.id}>{employee.fullName}</h6>;
     });
 
     return (
@@ -85,7 +88,7 @@ class CreateTeam extends Component {
           placeholder="Team name"
           className="mb-3"
         />
-        {users}
+        {employees}
         <div className="d-flex justify-content-between">
           <div className="mb-5">
             <h3>Team members</h3>
@@ -108,11 +111,11 @@ class CreateTeam extends Component {
 }
 
 const mapStateToProps = state => ({
-  users: getUsers(state)
+  employees: getEmployees(state)
 });
 
 const mapDispatchToProps = dispatch =>
-  bindActionCreators({ createTeam, requestUsers }, dispatch);
+  bindActionCreators({ createTeam, requestEmployees }, dispatch);
 
 export default connect(
   mapStateToProps,
