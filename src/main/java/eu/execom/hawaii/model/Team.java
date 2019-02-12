@@ -34,7 +34,7 @@ public class Team extends BaseEntity implements Serializable {
   @OneToMany(mappedBy = "team", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
   private List<User> users;
 
-  @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+  @ManyToMany(cascade = {CascadeType.MERGE}) //CascadeType.PERSIST,
   @JoinTable(name = "team_approver", joinColumns = @JoinColumn(name = "team_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
   private List<User> teamApprovers;
 

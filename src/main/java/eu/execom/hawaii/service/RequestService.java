@@ -182,7 +182,7 @@ public class RequestService {
    * Saves the provided Request to repository.
    * Makes audit of that save.
    *
-   * @param request the Request entity to be persisted.
+   * @param request        the Request entity to be persisted.
    * @param modifiedByUser user that made changes to that Request entity.
    * @return saved Request.
    */
@@ -196,7 +196,7 @@ public class RequestService {
    * Saves the provided Request to repository.
    * Makes audit of that save.
    *
-   * @param request the Request entity to be persisted.
+   * @param request        the Request entity to be persisted.
    * @param modifiedByUser user that made changes to that Request entity.
    * @return saved Request.
    */
