@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Field, Form } from 'react-final-form';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import withResetOnNavigate from '../components/HOC/withResetOnNavigate';
@@ -6,110 +7,74 @@ import {
   requestEmployee,
   updateEmployee
 } from '../store/actions/employeeActions';
-import { getEmployee } from '../store/selectors';
+import { requestTeams } from '../store/actions/teamsActions';
+import { getEmployee, getTeams } from '../store/selectors';
 class EditEmployee extends Component {
-  state = {
-    employee: {
-      email: '',
-      fullName: '',
-      jobTitle: '',
-      leaveProfileId: 0,
-      startedWorkingAtExecomDate: '',
-      startedWorkingDate: '',
-      teamId: 0,
-      teamName: '',
-      userRole: '',
-      userStatusType: '',
-      yearsOfService: 0
-    }
-  };
-
   componentDidMount() {
     this.props.requestEmployee(this.props.match.params.id);
-  }
-
-  static getDerivedStateFromProps(nextProps, prevState) {
-    if (!nextProps.employee) {
-      return null;
-    } else if (
-      !prevState.employee.fullName &&
-      nextProps.employee !== prevState.employee
-    ) {
-      return { employee: nextProps.employee };
-    }
-    return null;
-  }
-
-  employeeNameChange(event) {
-    this.setState({
-      employee: {
-        ...this.state.employee,
-        fullName: event.target.value
-      }
-    });
-  }
-
-  employeeEmailChange(event) {
-    this.setState({
-      employee: {
-        ...this.state.employee,
-        email: event.target.value
-      }
-    });
-  }
-
-  employeeJobTitleChange(event) {
-    this.setState({
-      employee: {
-        ...this.state.employee,
-        jobTitle: event.target.value
-      }
-    });
+    this.props.requestTeams();
   }
 
   render() {
     if (!this.props.employee) return null;
-
+    const teams = this.props.teams.map(team => {
+      return (
+        <option key={team.id} value={team.id}>
+          {team.name}
+        </option>
+      );
+    });
     return (
       <div className="d-flex p-4 justify-content-center flex-column">
-        <input
-          type="text"
-          defaultValue={this.props.employee.fullName}
-          onChange={e => this.employeeNameChange(e)}
-          placeholder="Employee name"
-          className="mb-3"
-        />
-        <input
-          type="text"
-          defaultValue={this.props.employee.email}
-          onChange={e => this.employeeEmailChange(e)}
-          placeholder="Employee email"
-          className="mb-3"
-        />
-        <input
-          type="text"
-          defaultValue={this.props.employee.jobTitle}
-          onChange={e => this.employeeJobTitleChange(e)}
-          placeholder="Job title"
-          className="mb-3"
-        />
-        <button
-          onClick={() => this.props.updateEmployee(this.state.employee)}
-          className="btn"
+        <Form
+          initialValues={this.props.employee}
+          onSubmit={this.props.updateEmployee}
         >
-          Update
-        </button>
+          {({ handleSubmit }) => (
+            <React.Fragment>
+              <Field className="mb-3" name="fullName" component="input" />
+              <Field className="mb-3" name="email" component="input" />
+              <Field className="mb-3" name="jobTitle" component="input" />
+              <Field className="mb-3" name="userRole" component="select">
+                <option defaultValue value="HR_MANAGER">
+                  HR manager
+                </option>
+              </Field>
+              <Field className="mb-3" name="teamId" component="select">
+                {teams}
+              </Field>
+              <Field
+                className="mb-3"
+                name="startedWorkingDate"
+                component="input"
+              />
+              <Field
+                className="mb-3"
+                name="startedWorkingAtExecomDate"
+                component="input"
+              />
+              <Field className="mb-3" name="yearsOfService" component="input" />
+              <button className="btn" onClick={handleSubmit} type="submit">
+                Update
+              </button>
+            </React.Fragment>
+          )}
+        </Form>
       </div>
     );
   }
 }
 
 const mapStateToProps = state => ({
-  employee: getEmployee(state)
+  employee: getEmployee(state),
+  teams: getTeams(state)
 });
 
 const mapDispatchToProps = dispatch =>
-  bindActionCreators({ updateEmployee, requestEmployee }, dispatch);
+  bindActionCreators(
+    { updateEmployee, requestEmployee, requestTeams },
+    dispatch
+  );
 
 export default connect(
   mapStateToProps,
