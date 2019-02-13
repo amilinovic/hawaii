@@ -113,6 +113,12 @@
             <artifactId>jackson-datatype-jsr310</artifactId>
             <version>${jackson.version}</version>
         </dependency>
+        <!-- liquibase -->
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+            <version>${liquibase-maven-and-core-plugin-version}</version>
+        </dependency>
         <!--Other-->
         <dependency>
             <groupId>javax.xml.bind</groupId>
@@ -149,7 +155,7 @@
             <plugin>
                 <groupId>org.liquibase</groupId>
                 <artifactId>liquibase-maven-plugin</artifactId>
-                <version>${liquibase-maven-plugin-version}</version>
+                <version>${liquibase-maven-and-core-plugin-version}</version>
                 <configuration>
                     <propertyFile>src/main/resources/liquibase.properties</propertyFile>
                 </configuration>
