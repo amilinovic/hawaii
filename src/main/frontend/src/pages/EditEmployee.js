@@ -10,16 +10,16 @@ import { getEmployee } from '../store/selectors';
 class EditEmployee extends Component {
   state = {
     employee: {
-      email: 'string',
+      email: '',
       fullName: '',
-      jobTitle: 'string',
+      jobTitle: '',
       leaveProfileId: 0,
-      startedWorkingAtExecomDate: 'string',
-      startedWorkingDate: 'string',
+      startedWorkingAtExecomDate: '',
+      startedWorkingDate: '',
       teamId: 0,
-      teamName: 'string',
-      userRole: 'HR_MANAGER',
-      userStatusType: 'ACTIVE',
+      teamName: '',
+      userRole: '',
+      userStatusType: '',
       yearsOfService: 0
     }
   };
@@ -49,6 +49,24 @@ class EditEmployee extends Component {
     });
   }
 
+  employeeEmailChange(event) {
+    this.setState({
+      employee: {
+        ...this.state.employee,
+        email: event.target.value
+      }
+    });
+  }
+
+  employeeJobTitleChange(event) {
+    this.setState({
+      employee: {
+        ...this.state.employee,
+        jobTitle: event.target.value
+      }
+    });
+  }
+
   render() {
     if (!this.props.employee) return null;
 
@@ -56,9 +74,23 @@ class EditEmployee extends Component {
       <div className="d-flex p-4 justify-content-center flex-column">
         <input
           type="text"
-          defaultValue={this.state.employee.fullName}
+          defaultValue={this.props.employee.fullName}
           onChange={e => this.employeeNameChange(e)}
           placeholder="Employee name"
+          className="mb-3"
+        />
+        <input
+          type="text"
+          defaultValue={this.props.employee.email}
+          onChange={e => this.employeeEmailChange(e)}
+          placeholder="Employee email"
+          className="mb-3"
+        />
+        <input
+          type="text"
+          defaultValue={this.props.employee.jobTitle}
+          onChange={e => this.employeeJobTitleChange(e)}
+          placeholder="Job title"
           className="mb-3"
         />
         <button

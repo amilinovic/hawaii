@@ -4,7 +4,8 @@ import {
   receiveEmployee,
   requestEmployee,
   updateEmployee,
-  updateEmployeeError
+  updateEmployeeError,
+  updateEmployeeSuccessful
 } from '../actions/employeeActions';
 import { getEmployeeApi, updateEmployeeApi } from '../services/employeeService';
 
@@ -20,7 +21,7 @@ export const getEmployeeSaga = function*(action) {
 export const updateEmployeeSaga = function*(action) {
   try {
     yield call(updateEmployeeApi, action.payload);
-    yield put(updateEmployee());
+    yield put(updateEmployeeSuccessful());
   } catch (error) {
     yield put(updateEmployeeError(error));
   }
