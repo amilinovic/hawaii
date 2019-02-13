@@ -30,7 +30,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build && yarn copy-build",
+    "build": "PUBLIC_URL='https://hawaii2.execom.eu' URL_PREFIX='' react-scripts build && yarn copy-build",
     "copy-build": "n-copy --source build --destination ../resources/static \"**\" ",
     "test": "react-scripts test --env=jsdom",
     "precommit": "lint-staged",
@@ -43,6 +43,10 @@
     "prettier": "^1.13.3",
     "react-scripts": "1.1.4"
   },
-  "proxy": "http://localhost:8080",
-  "homepage": "http://localhost:8080"
+  "proxy": {
+    "/api": {
+      "target": "http://localhost:8080"
+    }
+  },
+  "homepage": "https://hawaii2.execom.eu"
 }

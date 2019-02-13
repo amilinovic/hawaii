@@ -43,6 +43,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
            "/resources/**", "/static/**", "/css/**", "/js/**", "/images/**", "/img/**", "/configuration/**", "/login");
   }
 
+
+
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     //@formatter:off
