@@ -29,7 +29,7 @@
         <google-api-services-calendar.version>v3-rev355-1.25.0</google-api-services-calendar.version>
         <modelmapper-version>2.3.1</modelmapper-version>
 
-        <liquibase-maven-plugin-version>3.6.2</liquibase-maven-plugin-version>
+        <liquibase-maven-and-core-plugin-version>3.6.2</liquibase-maven-and-core-plugin-version>
         <plantuml-maven-plugin-version>1.2</plantuml-maven-plugin-version>
         <plantuml-version>8059</plantuml-version>
 
