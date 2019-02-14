@@ -26,25 +26,6 @@ const actionHandlers = {
   })
 };
 
-// const personalDayMetadata = (calendarObject, personalDays) => {
-//   const mappedPersonalDays = calendarObject.reduce((acc, month) => {
-//     let mappedMonth = { ...month };
-//     personalDays.map(personalDay => {
-//       mappedMonth = {
-//         ...month,
-//         days: mappedMonth.days.map(dayObj => {
-//           return dayObj && dayObj.localdate === personalDay.date
-//             ? { ...dayObj, personalDay: personalDay }
-//             : dayObj;
-//         })
-//       };
-//       return personalDay;
-//     });
-//     return acc.concat(mappedMonth || month);
-//   }, []);
-//   return mappedPersonalDays;
-// };
-
 const reducer = handleActions(actionHandlers, initialState);
 
 export default reducer;
