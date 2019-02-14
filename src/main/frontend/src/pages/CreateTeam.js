@@ -8,50 +8,19 @@ import { requestEmployees } from '../store/actions/employeesAction';
 import { createTeam } from '../store/actions/teamActions';
 import { getEmployees } from '../store/selectors';
 class CreateTeam extends Component {
-  //   state = {
-  //     team: {
-  //       name: '',
-  //       teamApprovers: [],
-  //       users: []
-  //     }
-  //   };
-
   componentDidMount() {
     this.props.requestEmployees();
   }
-
-  //   teamNameChange(event) {
-  //     this.setState({
-  //       team: {
-  //         ...this.state.team,
-  //         name: event.target.value
-  //       }
-  //     });
-  //   }
-
-  //   addMember(user) {
-  //     this.setState(prevState => ({
-  //       team: {
-  //         ...this.state.team,
-  //         users: [...prevState.team.users, user]
-  //       }
-  //     }));
-  //   }
-
-  //   addApprover(user) {
-  //     this.setState(prevState => ({
-  //       team: {
-  //         ...this.state.team,
-  //         teamApprovers: [...prevState.team.teamApprovers, user]
-  //       }
-  //     }));
-  //   }
 
   render() {
     if (!this.props.employees) return null;
     return (
       <div className="d-flex p-4 justify-content-center flex-column">
         <Form
+          initialValues={{
+            teamApprovers: [],
+            users: []
+          }}
           onSubmit={this.props.createTeam}
           mutators={{
             ...arrayMutators
@@ -94,15 +63,17 @@ class CreateTeam extends Component {
               <div className="d-flex justify-content-between mt-3">
                 <div className="mb-5">
                   <h3>Team members</h3>
-                  {values.users.map(user => {
-                    return <h5 key={user.id}>{user.fullName}</h5>;
-                  })}
+                  {values.users &&
+                    values.users.map(user => {
+                      return <h5 key={user.id}>{user.fullName}</h5>;
+                    })}
                 </div>
                 <div className="mb-5">
                   <h3>Team approvers</h3>
-                  {values.teamApprovers.map(user => {
-                    return <h5 key={user.id}>{user.fullName}</h5>;
-                  })}
+                  {values.teamApprovers &&
+                    values.teamApprovers.map(user => {
+                      return <h5 key={user.id}>{user.fullName}</h5>;
+                    })}
                 </div>
               </div>
               <button className="btn" onClick={handleSubmit} type="submit">
