@@ -56,12 +56,11 @@ const addFetchedData = (month, publicHolidays, personalData, selectedYear) => {
       )
     : [];
 
-  const momentPersonalData =
-    personalData &&
-    personalData.length > 0 &&
-    mapAndConvertToMoment(personalData).filter(
-      data => data.date.year() === selectedYear
-    );
+  const momentPersonalData = personalData
+    ? mapAndConvertToMoment(personalData).filter(
+        data => data.date.year() === selectedYear
+      )
+    : [];
 
   return month.map(
     day =>
