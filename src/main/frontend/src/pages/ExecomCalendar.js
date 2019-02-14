@@ -94,18 +94,25 @@ class ExecomCalendar extends Component {
       this.props.publicHolidays,
       this.props.personalDays
     );
-    this.setState({ ...this.state, months: [...calendarWithFetchedData] });
+    this.setState(prevState => {
+      return {
+        ...prevState,
+        months: [...calendarWithFetchedData]
+      };
+    });
   };
 
   handleYearChange = selectedYear => {
-    this.setState({
-      ...this.state,
-      months: fillWithMonthsAndDays(
-        selectedYear,
-        this.props.publicHolidays,
-        this.props.personalDays
-      ),
-      selectedYear: selectedYear
+    this.setState(prevState => {
+      return {
+        ...prevState,
+        months: fillWithMonthsAndDays(
+          selectedYear,
+          this.props.publicHolidays,
+          this.props.personalDays
+        ),
+        selectedYear: selectedYear
+      };
     });
   };
 
