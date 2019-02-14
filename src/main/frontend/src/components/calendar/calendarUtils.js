@@ -9,8 +9,8 @@ export const fillWithMonthsAndDays = (
   selectedYear = year,
   publicHolidays,
   personalData
-) => [
-  ...months.map(month => ({
+) =>
+  months.map(month => ({
     name: month,
     days: createDaysFromEmptyArray(
       selectedYear,
@@ -18,8 +18,7 @@ export const fillWithMonthsAndDays = (
       publicHolidays,
       personalData
     )
-  }))
-];
+  }));
 
 const createDaysFromEmptyArray = (
   year,
