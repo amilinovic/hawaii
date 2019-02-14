@@ -1,8 +1,9 @@
-import { get } from './request';
+import { getFactory } from './request';
 
 export const tokenRequest = async userObj => {
   try {
-    const response = await get(`/users/me`, userObj.tokenId);
+    const response = getFactory('/users/me', userObj.tokenId);
+    // const response = await get(`/users/me`, userObj.tokenId);
 
     const [token, role, userImageUrl] = [
       userObj.tokenId,

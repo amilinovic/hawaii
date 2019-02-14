@@ -1,11 +1,3 @@
-import { get } from './request';
+import { getFactory } from './request';
 
-export const getTeamsApi = async () => {
-  try {
-    return await get('/teams');
-  } catch (e) {
-    // TODO error handling
-    console.log(e);
-  }
-  return false;
-};
+export const getTeamsApi = getFactory('/teams');
