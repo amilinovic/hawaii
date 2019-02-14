@@ -27,7 +27,7 @@ const createDaysFromEmptyArray = (
   publicHolidays,
   personalData
 ) => {
-  let monthObject = new Array(31).fill([{}], 0).map((date, index) =>
+  let monthObject = new Array(31).fill({}).map((date, index) =>
     // TODO: Apply Composition
     addMetadata(
       checkDateValidity(convertDateToMomentObject(year, month, index + 1))
@@ -97,9 +97,7 @@ const checkIfWeekend = day =>
     : day;
 
 const checkIfToday = day =>
-  day.date.format(MOMENT_DATE_FORMAT) === moment().format(MOMENT_DATE_FORMAT)
-    ? { ...day, today: true }
-    : day;
+  moment(moment()).isSame(day.date, 'day') ? { ...day, today: true } : day;
 
 const checkIfPublicHoliday = (day, publicHolidays) => {
   if (!publicHolidays) return day;
