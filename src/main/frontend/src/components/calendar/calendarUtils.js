@@ -50,12 +50,11 @@ const createDaysFromEmptyArray = (
 const addFetchedData = (month, publicHolidays, personalData, selectedYear) => {
   if (!publicHolidays && !personalData) return month;
 
-  const momentPublicHolidays =
-    publicHolidays &&
-    publicHolidays.length > 0 &&
-    mapAndConvertToMoment(publicHolidays).filter(
-      holiday => holiday.date.year() === selectedYear
-    );
+  const momentPublicHolidays = publicHolidays
+    ? mapAndConvertToMoment(publicHolidays).filter(
+        holiday => holiday.date.year() === selectedYear
+      )
+    : [];
 
   const momentPersonalData =
     personalData &&
