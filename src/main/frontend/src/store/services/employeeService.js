@@ -1,7 +1,6 @@
 import request from 'superagent';
 
 export const createEmployeeApi = async employeeObject => {
-  console.log(employeeObject);
   return await request
     .post(`/users`)
     .send(employeeObject)
