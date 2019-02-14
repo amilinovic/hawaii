@@ -9,8 +9,8 @@ export const initialState = {};
 
 const actionHandlers = {
   [initDate]: (state, { payload }) => ({
-    ...payload,
-    ...state
+    ...state,
+    ...payload
   }),
   [incrementYear]: (state, { payload }) => ({
     ...state,
