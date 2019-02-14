@@ -82,7 +82,6 @@ class ExecomCalendar extends Component {
     this.props.requestPublicHolidays();
     this.props.requestPersonalDays();
     this.setState({
-      ...this.state,
       months: fillWithMonthsAndDays()
     });
     this.addFetchedDataMetadata();
