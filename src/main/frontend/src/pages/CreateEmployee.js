@@ -40,11 +40,13 @@ class CreateEmployee extends Component {
       <div className="d-flex p-4 justify-content-center flex-column">
         <Formik
           initialValues={{
-            userRole: 'HR_MANAGER'
+            leaveProfileId: 2,
+            userRole: 'HR_MANAGER',
+            userStatusType: 'ACTIVE'
           }}
           onSubmit={this.props.createEmployee}
         >
-          {({ handleSubmit, values, handleChange }) => (
+          {({ handleSubmit, handleChange }) => (
             <React.Fragment>
               <input
                 className="mb-3"
