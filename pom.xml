@@ -29,7 +29,7 @@
         <google-api-services-calendar.version>v3-rev355-1.25.0</google-api-services-calendar.version>
         <modelmapper-version>2.3.1</modelmapper-version>
 
-        <liquibase-maven-and-core-plugin-version>3.6.2</liquibase-maven-and-core-plugin-version>
+        <liquibase-version>3.6.2</liquibase-version>
         <plantuml-maven-plugin-version>1.2</plantuml-maven-plugin-version>
         <plantuml-version>8059</plantuml-version>
 
@@ -117,7 +117,7 @@
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
-            <version>${liquibase-maven-and-core-plugin-version}</version>
+            <version>${liquibase-version}</version>
         </dependency>
         <!--Other-->
         <dependency>
@@ -155,7 +155,7 @@
             <plugin>
                 <groupId>org.liquibase</groupId>
                 <artifactId>liquibase-maven-plugin</artifactId>
-                <version>${liquibase-maven-and-core-plugin-version}</version>
+                <version>${liquibase-version}</version>
                 <configuration>
                     <propertyFile>src/main/resources/liquibase.properties</propertyFile>
                 </configuration>
