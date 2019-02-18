@@ -21,13 +21,15 @@ class EditTeam extends Component {
           initialValues={this.props.team}
           onSubmit={this.props.updateTeam}
           enableReinitialize
-          render={({ handleSubmit, values }) => (
+          render={({ handleSubmit, handleChange, values }) => (
             <React.Fragment>
+              {console.log(values)}
               <input
                 className="mb-3"
                 name="name"
                 defaultValue={values.name}
                 placeholder="Team name"
+                onChange={handleChange}
               />
               {this.props.employees.map(employee => {
                 return (
