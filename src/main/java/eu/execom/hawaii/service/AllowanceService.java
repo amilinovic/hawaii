@@ -88,7 +88,7 @@ public class AllowanceService {
    * @param userId Allowance user.
    * @return Allowance.
    */
-  public Allowance getByUserAndYear(Long userId, int year) {
+  private Allowance getByUserAndYear(Long userId, int year) {
     return allowanceRepository.findByUserIdAndYearYear(userId, year);
   }
 
