@@ -1,24 +1,16 @@
+import { Formik } from 'formik';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import withResetOnNavigate from '../components/HOC/withResetOnNavigate';
 import { createEmployee } from '../store/actions/employeeActions';
-import { Formik } from 'formik';
 import { requestTeams } from '../store/actions/teamsActions';
 import { getTeams } from '../store/selectors';
 class CreateEmployee extends Component {
   state = {
     employee: {
-      teamId: 1,
-      teamName: 'sasa matic',
       leaveProfileId: 1,
-      fullName: 'Test name',
-      email: 'testd@execom.eu',
-      userRole: 'HR_MANAGER',
-      jobTitle: 'Developer',
-      userStatusType: 'ACTIVE',
-      startedWorkingDate: '2012-08-08',
-      startedWorkingAtExecomDate: '2018-08-08'
+      userStatusType: 'ACTIVE'
     }
   };
 
