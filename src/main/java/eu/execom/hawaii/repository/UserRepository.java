@@ -23,6 +23,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
   List<User> findAllByUserStatusTypeAndTeam(UserStatusType userStatusType, Team team);
 
-  User findOneByFullNameContaining(String fullName);
+  List<User> findAllByFullNameContaining(String fullName);
 
 }

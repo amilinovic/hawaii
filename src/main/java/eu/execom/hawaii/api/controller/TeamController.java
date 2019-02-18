@@ -30,7 +30,6 @@ import java.util.stream.Collectors;
 public class TeamController {
 
   private TeamService teamService;
-  private UserService userService;
 
   @Autowired
   public TeamController(TeamService teamService) {
@@ -54,8 +53,8 @@ public class TeamController {
   }
 
   @GetMapping("/search")
-  public ResponseEntity<List<TeamDto>> getTeamsByUser(@RequestParam String fullName) {
-    List<Team> teams = teamService.getTeamsForUser(fullName);
+  public ResponseEntity<List<TeamDto>> searchTeamsByUsersName(@RequestParam String fullName) {
+    List<Team> teams = teamService.searchTeamsByUsersName(fullName);
     var teamDtos = teams.stream().map(TeamDto::new).collect(Collectors.toList());
     return new ResponseEntity<>(teamDtos, HttpStatus.OK);
   }

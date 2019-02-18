@@ -5,10 +5,12 @@ import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.audit.TeamAudit;
 import eu.execom.hawaii.model.enumerations.OperationPerformed;
 import eu.execom.hawaii.repository.TeamRepository;
+import eu.execom.hawaii.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -61,16 +63,20 @@ public class TeamService {
   }
 
   /**
-   * Retrieves a list of teams by given user.
+   * Retrieves a list of teams by given users fullname.
    *
    * @param fullName User fullName
-   * @return list which contains team where user is a member and teams where user is approver
+   * @return a list of all teams where user with given fullname is member or team approver.
    */
-  public List<Team> getTeamsForUser(String fullName) {
+  public List<Team> searchTeamsByUsersName(String fullName) {
 
-    User user = userService.findOneByFullName(fullName);
-    List<Team> teams = user.getApproverTeams();
-    teams.add(user.getTeam());
+    List<User> users = userService.findByFullNameContaining(fullName);
+
+    List<Team> teams = new ArrayList<>();
+    for (User u : users) {
+      teams.addAll(u.getApproverTeams());
+      teams.add(u.getTeam());
+    }
 
     return teams;
   }

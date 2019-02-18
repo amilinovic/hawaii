@@ -125,13 +125,14 @@ public class UserService {
   }
 
   /**
-   * Retrieves a User with specific fullName.
+   * Retrieves a list of Users with a given fullname containing.
    *
-   * @param fullName User fullName
-   * @return User with specific fullName if exists
+   * @param fullName User fullname
+   * @return List of users with given fullname containing.
    */
-  public User findOneByFullName(String fullName) {
-    return userRepository.findOneByFullNameContaining(fullName);
+  @Transactional
+  public List<User> findByFullNameContaining(String fullName) {
+    return userRepository.findAllByFullNameContaining(fullName);
   }
 
   /**
