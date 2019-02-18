@@ -146,7 +146,18 @@
       <column name="deleted" type="BIT(1)">
         <constraints nullable="false"/>
       </column>
-      <column name="emails" type="VARCHAR(255)"/>
+      <column name="sendEmailToTeammatesForSicknessRequestEnabled" type="BIT(1)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="sendEmailToTeammatesForAnnualRequestEnabled" type="BIT(1)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="sendEmailToTeammatesForBonusRequestEnabled" type="BIT(1)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="sicknessRequestEmails" type="VARCHAR(255)"/>
+      <column name="annualRequestEmails" type="VARCHAR(255)"/>
+      <column name="bonusRequestEmails" type="VARCHAR(255)"/>
       <column name="name" type="VARCHAR(255)">
         <constraints nullable="false"/>
       </column>
