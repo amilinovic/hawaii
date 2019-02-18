@@ -1,6 +1,5 @@
-import arrayMutators from 'final-form-arrays';
+import { FieldArray, Formik } from 'formik';
 import React, { Component } from 'react';
-import { Field, Form } from 'react-final-form';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import withResetOnNavigate from '../components/HOC/withResetOnNavigate';
@@ -18,21 +17,27 @@ class EditTeam extends Component {
     if (!this.props.employees || !this.props.team) return null;
     return (
       <div className="d-flex p-4 justify-content-center flex-column">
-        <Form
+        <Formik
           initialValues={this.props.team}
           onSubmit={this.props.updateTeam}
-          mutators={{
-            ...arrayMutators
-          }}
+          enableReinitialize
+          //   mutators={{
+          //     ...arrayMutators
+          //   }}
           render={({
             handleSubmit,
-            values,
-            form: {
-              mutators: { push }
-            }
+            values
+            // form: {
+            //   mutators: { push }
+            // }
           }) => (
             <React.Fragment>
-              <Field className="mb-3" name="name" component="input" />
+              <input
+                className="mb-3"
+                name="name"
+                defaultValue={values.name}
+                placeholder="Team name"
+              />
               {this.props.employees.map(employee => {
                 return (
                   <label
@@ -41,20 +46,30 @@ class EditTeam extends Component {
                   >
                     {employee.fullName}
                     <div className="mb-2">
-                      <button
-                        className="btn mr-2"
-                        type="button"
-                        onClick={() => push('users', employee)}
-                      >
-                        Add member
-                      </button>
-                      <button
-                        className="btn"
-                        type="button"
-                        onClick={() => push('teamApprovers', employee)}
-                      >
-                        Add approver
-                      </button>
+                      <FieldArray
+                        name="users"
+                        render={arrayHelpers => (
+                          <button
+                            className="btn mr-2"
+                            type="button"
+                            onClick={() => arrayHelpers.push(employee)}
+                          >
+                            Add member
+                          </button>
+                        )}
+                      />
+                      <FieldArray
+                        name="teamApprovers"
+                        render={arrayHelpers => (
+                          <button
+                            className="btn"
+                            type="button"
+                            onClick={() => arrayHelpers.push(employee)}
+                          >
+                            Add approver
+                          </button>
+                        )}
+                      />
                     </div>
                   </label>
                 );
