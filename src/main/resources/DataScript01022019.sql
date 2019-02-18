@@ -12,7 +12,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `team` WRITE;
 /*!40000 ALTER TABLE `team` DISABLE KEYS */;
-INSERT INTO `team` VALUES (1,b'0','string','My team ONE'),(2,b'0','string','My team TWO'),(3,b'0','string','My team THREE'),(4,b'0','string','My team FOUR');
+INSERT INTO `team` VALUES (1,b'0',b'0',b'0',b'0','notifier@execom.eu','notifier@execom.eu','notifier@execom.eu','My team ONE'),(2,b'0',b'0',b'0',b'0','notifier@execom.eu','notifier@execom.eu','notifier@execom.eu','My team TWO'),(3,b'0',b'0',b'0',b'0','notifier@execom.eu','notifier@execom.eu','notifier@execom.eu','My team THREE'),(4,b'0',b'0',b'0',b'0','notifier@execom.eu','notifier@execom.eu','notifier@execom.eu','My team FOUR');
 /*!40000 ALTER TABLE `team` ENABLE KEYS */;
 UNLOCK TABLES;
 
