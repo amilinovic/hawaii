@@ -21,16 +21,7 @@ class EditTeam extends Component {
           initialValues={this.props.team}
           onSubmit={this.props.updateTeam}
           enableReinitialize
-          //   mutators={{
-          //     ...arrayMutators
-          //   }}
-          render={({
-            handleSubmit,
-            values
-            // form: {
-            //   mutators: { push }
-            // }
-          }) => (
+          render={({ handleSubmit, values }) => (
             <React.Fragment>
               <input
                 className="mb-3"
