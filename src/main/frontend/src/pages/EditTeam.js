@@ -23,7 +23,6 @@ class EditTeam extends Component {
           enableReinitialize
           render={({ handleSubmit, handleChange, values }) => (
             <React.Fragment>
-              {console.log(values)}
               <input
                 className="mb-3"
                 name="name"
