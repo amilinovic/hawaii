@@ -322,7 +322,7 @@ public class UserService {
       UserAudit previousUserState) {
     var currentUserState = UserAudit.fromUser(modifiedUser);
 
-    if (operationPerformed.equals(OperationPerformed.CREATE)) {
+    if (OperationPerformed.CREATE.equals(operationPerformed)) {
       auditInformationService.saveAudit(operationPerformed, modifiedByUser, null, previousUserState, currentUserState);
     } else {
       auditInformationService.saveAudit(operationPerformed, modifiedByUser, modifiedUser, previousUserState,
