@@ -11,6 +11,6 @@ export default combineReducers({
   teams,
   team,
   user,
-  employee,
-  employees
+  employees,
+  employee
 });

@@ -11,6 +11,8 @@ import Administration from '../pages/Administration';
 import CreateEmployee from '../pages/CreateEmployee';
 import CreateTeam from '../pages/CreateTeam';
 import EditEmployee from '../pages/EditEmployee';
+import EditTeam from '../pages/EditTeam';
+import Employee from '../pages/Employee';
 import Leave from '../pages/Leave';
 import LeaveHistory from '../pages/LeaveHistory';
 import Team from '../pages/Team';
@@ -44,9 +46,11 @@ class Panel extends Component {
                 <Route path="/team-calendar" component={TeamCalendar} />
                 <Route path="/administration" component={Administration} />
                 <Route path="/teams/create" component={CreateTeam} />
+                <Route path="/teams/:id/edit" component={EditTeam} />
                 <Route path="/teams/:id" component={Team} />
-                <Route path="/employee/:id/edit" component={EditEmployee} />
                 <Route path="/employee/create" component={CreateEmployee} />
+                <Route path="/employee/:id/edit" component={EditEmployee} />
+                <Route path="/employee/:id" component={Employee} />
               </Switch>
             </PanelContent>
           </div>

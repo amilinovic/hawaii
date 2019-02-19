@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import withResetOnNavigate from '../components/HOC/withResetOnNavigate';
-import { requestEmployees } from '../store/actions/employeesAction';
+import { requestEmployees } from '../store/actions/employeesActions';
 import { requestTeam, updateTeam } from '../store/actions/teamActions';
 import { getEmployees, getTeam } from '../store/selectors';
 
