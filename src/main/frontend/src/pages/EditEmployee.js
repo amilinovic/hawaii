@@ -18,6 +18,7 @@ class EditEmployee extends Component {
 
   render() {
     if (!this.props.employee) return null;
+
     const teams = this.props.teams.map(team => {
       return (
         <option key={team.id} value={team.id}>
@@ -25,6 +26,7 @@ class EditEmployee extends Component {
         </option>
       );
     });
+
     return (
       <div className="d-flex p-4 justify-content-center flex-column">
         <Formik
