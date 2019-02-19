@@ -27,7 +27,17 @@ public class Team extends BaseEntity implements Serializable {
   @Column(unique = true)
   private String name;
 
-  private String emails;
+  private String sicknessRequestEmails;
+
+  private String annualRequestEmails;
+
+  private String bonusRequestEmails;
+
+  private boolean sendEmailToTeammatesForSicknessRequestEnabled;
+
+  private boolean sendEmailToTeammatesForAnnualRequestEnabled;
+
+  private boolean sendEmailToTeammatesForBonusRequestEnabled;
 
   private boolean deleted;
 

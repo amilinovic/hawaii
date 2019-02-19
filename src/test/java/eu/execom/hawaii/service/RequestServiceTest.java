@@ -333,7 +333,7 @@ public class RequestServiceTest {
         verify(userRepository, times(2)).getOne(anyLong());
         verify(requestRepository).save(any());
         verify(googleCalendarService).handleCreatedRequest(any());
-        verify(emailService).createSicknessEmailForTeammatesAndSend(any());
+        verify(emailService).sendSicknessEmailNotification(any());
         verify(allowanceService).applyRequest(any(), anyBoolean());
         verify(requestRepository).findAllByUser(any());
         verify(auditInformationService).saveAudit(any(), any(), any(), any(), any());
@@ -490,7 +490,7 @@ public class RequestServiceTest {
         verify(allowanceService).applyPendingRequest(any(), anyBoolean());
         verify(allowanceService).applyRequest(any(), anyBoolean());
         verify(emailService).createStatusNotificationEmailAndSend(any());
-        verify(emailService).createAnnualEmailForTeammatesAndSend(any());
+        verify(emailService).sendAnnualRequestEmailNotification(any());
         verify(googleCalendarService).handleRequestUpdate(any(), anyBoolean());
         verify(requestRepository).save(any());
         verify(auditInformationService).saveAudit(any(), any(), any(), any(), any());

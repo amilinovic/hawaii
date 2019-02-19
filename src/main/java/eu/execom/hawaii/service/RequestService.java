@@ -182,7 +182,7 @@ public class RequestService {
    * Saves the provided Request to repository.
    * Makes audit of that save.
    *
-   * @param request the Request entity to be persisted.
+   * @param request        the Request entity to be persisted.
    * @param modifiedByUser user that made changes to that Request entity.
    * @return saved Request.
    */
@@ -196,7 +196,7 @@ public class RequestService {
    * Saves the provided Request to repository.
    * Makes audit of that save.
    *
-   * @param request the Request entity to be persisted.
+   * @param request        the Request entity to be persisted.
    * @param modifiedByUser user that made changes to that Request entity.
    * @return saved Request.
    */
@@ -243,7 +243,7 @@ public class RequestService {
     if (AbsenceType.SICKNESS.equals(newRequest.getAbsence().getAbsenceType())) {
       newRequest.setRequestStatus(RequestStatus.APPROVED);
       allowanceService.applyRequest(newRequest, false);
-      emailService.createSicknessEmailForTeammatesAndSend(newRequest);
+      emailService.sendSicknessEmailNotification(newRequest);
       save(newRequest, authUser);
     } else {
       newRequest.setRequestStatus(RequestStatus.PENDING);
@@ -353,8 +353,16 @@ public class RequestService {
     allowanceService.applyRequest(request, requestCanceled);
     emailService.createStatusNotificationEmailAndSend(request);
     if (!requestCanceled) {
-      emailService.createAnnualEmailForTeammatesAndSend(request);
+      sendEmailToTeammatesAndNotifiers(request);
     }
     googleCalendarService.handleRequestUpdate(request, requestCanceled);
+  }
+
+  private void sendEmailToTeammatesAndNotifiers(Request request) {
+    if (AbsenceType.BONUS_DAYS.equals(request.getAbsence().getAbsenceType())) {
+      emailService.sendBonusRequestEmailNotification(request);
+    } else {
+      emailService.sendAnnualRequestEmailNotification(request);
+    }
   }
 }
