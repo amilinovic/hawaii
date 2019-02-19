@@ -6,6 +6,7 @@ import withResetOnNavigate from '../components/HOC/withResetOnNavigate';
 import { createEmployee } from '../store/actions/employeeActions';
 import { requestTeams } from '../store/actions/teamsActions';
 import { getTeams } from '../store/selectors';
+
 class CreateEmployee extends Component {
   state = {
     employee: {
@@ -20,6 +21,7 @@ class CreateEmployee extends Component {
 
   render() {
     if (!this.props.teams) return null;
+
     const teams = this.props.teams.map(team => {
       return (
         <option key={team.id} value={team.id}>
