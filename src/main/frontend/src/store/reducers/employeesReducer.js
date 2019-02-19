@@ -6,7 +6,7 @@ export const initialState = [];
 
 const actionHandlers = {
   [receiveEmployees]: (state, action) => action.payload,
-  [navigateOut]: () => null
+  [navigateOut]: () => []
 };
 
 const reducer = handleActions(actionHandlers, initialState);

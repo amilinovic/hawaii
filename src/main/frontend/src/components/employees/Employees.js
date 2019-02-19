@@ -26,10 +26,10 @@ class Employees extends Component {
         </div>
         <div className="row">
           <div className="col-md-12">
-            {this.props.employees &&
-              this.props.employees.map(employee => (
-                <EmployeeInfo {...employee} key={employee.id} />
-              ))}
+            {console.log(this.props.employees)}
+            {this.props.employees.map(employee => (
+              <EmployeeInfo {...employee} key={employee.id} />
+            ))}
           </div>
         </div>
       </div>
