@@ -129,48 +129,48 @@ public class EmailService {
   }
 
   /**
-   * Create email on user submitting sickness request and send to recipients for sickness request.
+   * Send email on user submitting sickness request to recipients for given request.
    *
    * @param request the Request.
    */
   @Async
-  public void createSicknessEmailForNotifiersAndSend(Request request) {
+  public void sendSicknessEmailNotification(Request request) {
     List<String> recipients = getRecipientsEmails(request.getUser().getTeam().getSicknessRequestEmails());
     if (request.getUser().getTeam().isSendEmailToTeammatesForSicknessRequestEnabled()) {
       recipients.addAll(getTeammatesEmailAddresses(request));
     }
 
-    collectEmailData(EmailSubjectProvider.SICKNESS_SUBJECT, "recipientsSicknessEmail.ftl", recipients, request);
+    sendEmail(EmailSubjectProvider.SICKNESS_SUBJECT, "recipientsSicknessEmail.ftl", recipients, request);
   }
 
   /**
-   * Create email on user approved annual leave request and send to recipients for annual request.
+   * Send email on user approved annual leave request to recipients for given request.
    *
    * @param request the Request.
    */
   @Async
-  public void createAnnualEmailForNotifiersAndSend(Request request) {
+  public void sendAnnualRequestEmailNotification(Request request) {
     List<String> recipients = getRecipientsEmails(request.getUser().getTeam().getAnnualRequestEmails());
     if (request.getUser().getTeam().isSendEmailToTeammatesForAnnualRequestEnabled()) {
       recipients.addAll(getTeammatesEmailAddresses(request));
     }
 
-    collectEmailData(EmailSubjectProvider.ANNUAL_SUBJECT, "recipientsAnnualEmail.ftl", recipients, request);
+    sendEmail(EmailSubjectProvider.ANNUAL_SUBJECT, "recipientsAnnualEmail.ftl", recipients, request);
   }
 
   /**
-   * Create email on user approved bonus leave request and send to recipients for bonus request.
+   * Send email on user approved bonus leave request to recipients for given request.
    *
    * @param request the Request.
    */
   @Async
-  public void createBonusEmailForNotifiersAndSend(Request request) {
+  public void sendBonusRequestEmailNotification(Request request) {
     List<String> recipients = getRecipientsEmails(request.getUser().getTeam().getBonusRequestEmails());
     if (request.getUser().getTeam().isSendEmailToTeammatesForBonusRequestEnabled()) {
       recipients.addAll(getTeammatesEmailAddresses(request));
     }
 
-    collectEmailData(EmailSubjectProvider.BONUS_SUBJECT, "recipientsBonusEmail.ftl", recipients, request);
+    sendEmail(EmailSubjectProvider.BONUS_SUBJECT, "recipientsBonusEmail.ftl", recipients, request);
   }
 
   private List<String> getRecipientsEmails(String emails) {
@@ -192,7 +192,7 @@ public class EmailService {
     return email -> !requestUserEmail.equals(email);
   }
 
-  private void collectEmailData(String subject, String emailTemplate, List<String> recipients, Request request) {
+  private void sendEmail(String subject, String emailTemplate, List<String> recipients, Request request) {
     Map<String, Object> templateData = collectTemplateData(request);
 
     Email email = new Email(recipients, subject, templateData);

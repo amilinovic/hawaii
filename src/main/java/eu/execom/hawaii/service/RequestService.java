@@ -243,7 +243,7 @@ public class RequestService {
     if (AbsenceType.SICKNESS.equals(newRequest.getAbsence().getAbsenceType())) {
       newRequest.setRequestStatus(RequestStatus.APPROVED);
       allowanceService.applyRequest(newRequest, false);
-      emailService.createSicknessEmailForNotifiersAndSend(newRequest);
+      emailService.sendSicknessEmailNotification(newRequest);
       save(newRequest, authUser);
     } else {
       newRequest.setRequestStatus(RequestStatus.PENDING);
@@ -360,9 +360,9 @@ public class RequestService {
 
   private void sendEmailToTeammatesAndNotifiers(Request request) {
     if (AbsenceType.BONUS_DAYS.equals(request.getAbsence().getAbsenceType())) {
-      emailService.createBonusEmailForNotifiersAndSend(request);
+      emailService.sendBonusRequestEmailNotification(request);
     } else {
-      emailService.createAnnualEmailForNotifiersAndSend(request);
+      emailService.sendAnnualRequestEmailNotification(request);
     }
   }
 }
