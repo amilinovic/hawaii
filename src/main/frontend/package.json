@@ -30,7 +30,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "PUBLIC_URL='https://hawaii2.execom.eu' URL_PREFIX='' react-scripts build && yarn copy-build",
+    "build": "react-scripts build && npm run copy-build",
     "copy-build": "n-copy --source build --destination ../resources/static \"**\" ",
     "test": "react-scripts test --env=jsdom",
     "precommit": "lint-staged",
@@ -48,5 +48,5 @@
       "target": "http://localhost:8080"
     }
   },
-  "homepage": "https://hawaii2.execom.eu"
+  "homepage": "http://localhost:8080"
 }

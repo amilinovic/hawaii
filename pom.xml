@@ -32,6 +32,9 @@
         <liquibase-maven-plugin-version>3.6.2</liquibase-maven-plugin-version>
         <plantuml-maven-plugin-version>1.2</plantuml-maven-plugin-version>
         <plantuml-version>8059</plantuml-version>
+        <frontend-maven-plugin-version>1.6</frontend-maven-plugin-version>
+        <node-version>v8.11.2</node-version>
+        <yarn-version>v1.6.0</yarn-version>
         <frontend.build.directory>${project.basedir}/src/main/frontend</frontend.build.directory>
     </properties>
 
@@ -193,11 +196,10 @@
                     </execution>
                 </executions>
             </plugin>
-
             <plugin>
                 <groupId>com.github.eirslett</groupId>
                 <artifactId>frontend-maven-plugin</artifactId>
-                <version>1.6</version>
+                <version>${frontend-maven-plugin-version}</version>
                 <executions>
                     <execution>
                         <id>install node and yarn</id>
@@ -207,9 +209,8 @@
                         <phase>initialize</phase>
                         <configuration>
                             <workingDirectory>${frontend.build.directory}</workingDirectory>
-                            <nodeVersion>v8.11.2</nodeVersion>
-                            <yarnVersion>v1.6.0</yarnVersion>
-
+                            <nodeVersion>${node-version}</nodeVersion>
+                            <yarnVersion>${yarn-version}</yarnVersion>
                         </configuration>
                     </execution>
                     <execution>
@@ -235,7 +236,6 @@
                     </execution>
                 </executions>
             </plugin>
-
         </plugins>
     </build>
 </project>
