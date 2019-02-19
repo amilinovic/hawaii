@@ -1,6 +1,6 @@
 import React from 'react';
+import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
-import Button from '../common/Button';
 
 const TableText = styled.span`
   text-overflow: ellipsis;
@@ -29,7 +29,11 @@ const EmployeeInfo = employee => {
     <div className="align-items-center d-flex justify-content-between mb-3">
       <EmployeesImage />
       <TableRow width="15%">
-        <TableText>{fullName}</TableText>
+        <TableText>
+          {/* TODO: Change this to ID, email is used because there is now getById endpoint at the moment on the backend */}
+          <NavLink to={`/employee/${email}`}>{fullName}</NavLink>
+          <NavLink to={`/employee/${email}/edit`}>Edit</NavLink>
+        </TableText>
       </TableRow>
       <TableRow>
         <TableText>{jobTitle}</TableText>
@@ -40,7 +44,6 @@ const EmployeeInfo = employee => {
       <TableRow>
         <TableText>Years of Service: {yearsOfService}</TableText>
       </TableRow>
-      <Button title="View Profile" />
     </div>
   );
 };

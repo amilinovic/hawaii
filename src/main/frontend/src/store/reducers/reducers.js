@@ -1,4 +1,5 @@
 import { combineReducers } from 'redux';
+import employee from './employeeReducer';
 import employees from './employeesReducer';
 import authorization from './getTokenReducer';
 import team from './teamReducer';
@@ -10,5 +11,6 @@ export default combineReducers({
   teams,
   team,
   user,
-  employees
+  employees,
+  employee
 });

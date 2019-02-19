@@ -7,6 +7,14 @@ export const getTeamApi = async id => {
     .then(res => res.body);
 };
 
+export const updateTeamApi = async teamObject => {
+  return await request
+    .put('/teams')
+    .send(teamObject)
+    .set('X-ID-TOKEN', sessionStorage.getItem('token'))
+    .then(res => res.body);
+};
+
 export const removeTeamApi = async id => {
   return await request
     .del(`/teams/${id}`)

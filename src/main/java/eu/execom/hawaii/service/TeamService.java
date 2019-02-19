@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Team management service.
@@ -80,7 +81,8 @@ public class TeamService {
   public Team update(Team team, User modifiedByUser) {
     var oldTeam = getById(team.getId());
     var users = oldTeam.getUsers();
-    team.setUsers(users);
+    users.addAll(team.getUsers());
+    team.setUsers(users.stream().distinct().collect(Collectors.toList()));
     var previousTeamState = TeamAudit.fromTeam(oldTeam);
     saveAuditInformation(OperationPerformed.UPDATE, modifiedByUser, team, previousTeamState);
 
