@@ -17,7 +17,7 @@ class EditEmployee extends Component {
   }
 
   render() {
-    if (!this.props.employee) return null;
+    if (!this.props.employee || !this.props.teams) return null;
 
     const teams = this.props.teams.map(team => {
       return (

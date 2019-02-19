@@ -10,6 +10,7 @@ import Sidebar from '../components/navigation/Sidebar';
 import Administration from '../pages/Administration';
 import CreateEmployee from '../pages/CreateEmployee';
 import EditEmployee from '../pages/EditEmployee';
+import EditTeam from '../pages/EditTeam';
 import Employee from '../pages/Employee';
 import Leave from '../pages/Leave';
 import LeaveHistory from '../pages/LeaveHistory';
@@ -43,6 +44,7 @@ class Panel extends Component {
                 <Route path="/leave-history" component={LeaveHistory} />
                 <Route path="/team-calendar" component={TeamCalendar} />
                 <Route path="/administration" component={Administration} />
+                <Route path="/teams/:id/edit" component={EditTeam} />
                 <Route path="/teams/:id" component={Team} />
                 <Route path="/employee/create" component={CreateEmployee} />
                 <Route path="/employee/:id/edit" component={EditEmployee} />
