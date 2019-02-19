@@ -52,7 +52,7 @@ public class TeamService {
    * Saves the provided Team to repository.
    * Makes audit of that save.
    *
-   * @param team           the Team entity to be persisted.
+   * @param team the Team entity to be persisted.
    * @param modifiedByUser user that made changes to that Team entity.
    * @return saved Team.
    */
@@ -65,7 +65,7 @@ public class TeamService {
   /**
    * Saves the provided Team to repository.
    *
-   * @param team           the Team entity to be persisted.
+   * @param team the Team entity to be persisted.
    * @param modifiedByUser user that made change to Team entity.
    * @return saved Team.
    */
@@ -84,7 +84,7 @@ public class TeamService {
    * Deletes Team from database if its member list is empty.
    *
    * @param modifiedByUser user that made change to Team entity.
-   * @param id             - the team id.
+   * @param id - the team id.
    */
   @Transactional
   public void delete(Long id, User modifiedByUser) {
