@@ -10,6 +10,7 @@ import Sidebar from '../components/navigation/Sidebar';
 import Administration from '../pages/Administration';
 import CreateEmployee from '../pages/CreateEmployee';
 import EditEmployee from '../pages/EditEmployee';
+import Employee from '../pages/Employee';
 import Leave from '../pages/Leave';
 import LeaveHistory from '../pages/LeaveHistory';
 import Team from '../pages/Team';
@@ -45,6 +46,7 @@ class Panel extends Component {
                 <Route path="/teams/:id" component={Team} />
                 <Route path="/employee/create" component={CreateEmployee} />
                 <Route path="/employee/:id/edit" component={EditEmployee} />
+                <Route path="/employee/:id" component={Employee} />
               </Switch>
             </PanelContent>
           </div>

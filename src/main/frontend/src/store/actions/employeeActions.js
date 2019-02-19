@@ -25,3 +25,11 @@ export const updateEmployeeSuccessful = createAction(
   UPDATE_EMPLOYEE_SUCCESSFUL
 );
 export const updateEmployeeError = createAction(UPDATE_EMPLOYEE_ERROR);
+
+export const REMOVE_EMPLOYEE = 'REMOVE_EMPLOYEE';
+export const REMOVE_EMPLOYEE_SUCCESS = 'REMOVE_EMPLOYEE_SUCCESS';
+export const REMOVE_EMPLOYEE_ERROR = 'REMOVE_EMPLOYEE_ERROR';
+
+export const removeEmployee = createAction(REMOVE_EMPLOYEE);
+export const removeEmployeeSuccess = createAction(REMOVE_EMPLOYEE_SUCCESS);
+export const errorRemovingEmployee = createAction(REMOVE_EMPLOYEE_ERROR);

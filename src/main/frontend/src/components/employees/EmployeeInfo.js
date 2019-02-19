@@ -41,6 +41,8 @@ const EmployeeInfo = employee => {
         <TableText>Years of Service: {yearsOfService}</TableText>
       </TableRow>
       <NavLink to={`/employee/${email}/edit`}>Edit</NavLink>
+      {/* TODO: Change this to ID, email is used because there is now getById endpoint at the moment on the backend */}
+      <NavLink to={`/employee/${email}`}>View Profile</NavLink>
     </div>
   );
 };

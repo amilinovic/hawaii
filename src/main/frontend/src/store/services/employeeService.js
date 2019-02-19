@@ -22,3 +22,10 @@ export const updateEmployeeApi = async employeeObject => {
     .set('X-ID-TOKEN', sessionStorage.getItem('token'))
     .then(res => res.body);
 };
+
+export const removeEmployeeApi = async id => {
+  return await request
+    .del(`/users/${id}`)
+    .set('X-ID-TOKEN', sessionStorage.getItem('token'))
+    .then(res => res.body);
+};

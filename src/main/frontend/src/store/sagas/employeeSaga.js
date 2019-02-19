@@ -1,10 +1,14 @@
+import { push } from 'connected-react-router';
 import { call, put, takeLatest } from 'redux-saga/effects';
 import {
   createEmployee,
   createEmployeeSuccess,
   errorCreatingEmployee,
   errorReceivingEmployee,
+  errorRemovingEmployee,
   receiveEmployee,
+  removeEmployee,
+  removeEmployeeSuccess,
   requestEmployee,
   updateEmployee,
   updateEmployeeError,
@@ -13,6 +17,7 @@ import {
 import {
   createEmployeeApi,
   getEmployeeApi,
+  removeEmployeeApi,
   updateEmployeeApi
 } from '../services/employeeService';
 
@@ -43,8 +48,19 @@ export const updateEmployeeSaga = function*(action) {
   }
 };
 
+export const removeEmployeeSaga = function*(action) {
+  try {
+    yield call(removeEmployeeApi, action.payload.id);
+    yield put(removeEmployeeSuccess());
+    yield put(push('/administration'));
+  } catch (error) {
+    yield put(errorRemovingEmployee(error));
+  }
+};
+
 export const employeeSaga = [
   takeLatest(requestEmployee, getEmployeeSaga),
   takeLatest(updateEmployee, updateEmployeeSaga),
-  takeLatest(createEmployee, createEmployeeSaga)
+  takeLatest(createEmployee, createEmployeeSaga),
+  takeLatest(removeEmployee, removeEmployeeSaga)
 ];
