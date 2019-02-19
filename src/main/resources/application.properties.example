@@ -1,5 +1,5 @@
 ################### DataSource Configuration #########################
-spring.datasource.url=jdbc:mysql://localhost:3306/hawaii?useSSL=false&createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=UTF-8
+spring.datasource.url=jdbc:mysql://localhost:3306/hawaii?useSSL=false
 spring.datasource.username=hawaii
 spring.datasource.password=G3tm3int0hawaii
 

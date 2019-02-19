@@ -1,20 +1,20 @@
 import { push } from 'connected-react-router';
 import { call, put, takeLatest } from 'redux-saga/effects';
 import {
-  createTeam,
-  createTeamError,
-  createTeamSuccessful,
   errorReceivingTeam,
   errorRemovingTeam,
   receiveTeam,
   removeTeam,
   removeTeamSuccess,
-  requestTeam
+  requestTeam,
+  updateTeam,
+  updateTeamError,
+  updateTeamSuccessful
 } from '../actions/teamActions';
 import {
-  createTeamApi,
   getTeamApi,
-  removeTeamApi
+  removeTeamApi,
+  updateTeamApi
 } from '../services/teamService';
 
 export const getTeamSaga = function*(action) {
@@ -36,17 +36,17 @@ export const removeTeamSaga = function*(action) {
   }
 };
 
-export const createTeamSaga = function*(action) {
+export const updateTeamSaga = function*(action) {
   try {
-    yield call(createTeamApi, action.payload);
-    yield put(createTeamSuccessful());
+    yield call(updateTeamApi, action.payload);
+    yield put(updateTeamSuccessful());
   } catch (error) {
-    yield put(createTeamError(error));
+    yield put(updateTeamError(error));
   }
 };
 
 export const teamSaga = [
   takeLatest(requestTeam, getTeamSaga),
-  takeLatest(createTeam, createTeamSaga),
+  takeLatest(updateTeam, updateTeamSaga),
   takeLatest(removeTeam, removeTeamSaga)
 ];

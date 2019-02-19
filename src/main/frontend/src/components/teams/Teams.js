@@ -24,7 +24,7 @@ class Teams extends Component {
       <div className="container-fluid">
         <div className="row">
           <div className="col-md-12">
-            <NavLink to={'/teams/create'}>
+            <NavLink to={'/administration'}>
               <input
                 type="button"
                 value="Create Team"
