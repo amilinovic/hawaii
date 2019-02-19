@@ -129,79 +129,52 @@ public class EmailService {
   }
 
   /**
-   * Create email on user submitting sickness request and send to notifiers for sickness request.
+   * Create email on user submitting sickness request and send to recipients for sickness request.
    *
    * @param request the Request.
    */
   @Async
   public void createSicknessEmailForNotifiersAndSend(Request request) {
-    List<String> notifiersEmails = Arrays.asList(
-        request.getUser().getTeam().getAnnualRequestEmails().split("\\s*,\\s*"));
-
+    List<String> recipients = getRecipientsEmails(request.getUser().getTeam().getSicknessRequestEmails());
     if (request.getUser().getTeam().isSendEmailToTeammatesForSicknessRequestEnabled()) {
-      notifiersEmails.addAll(getTeammatesEmailAddresses(request));
+      recipients.addAll(getTeammatesEmailAddresses(request));
     }
-    String subject = EmailSubjectProvider.SICKNESS_SUBJECT;
-    String userName = request.getUser().getFullName();
-    String teamName = request.getUser().getTeam().getName();
-    int numberOfRequestedDays = request.getDays().size();
-    LocalDate startDate = request.getDays().get(0).getDate();
-    LocalDate endDate = request.getDays().get(numberOfRequestedDays - 1).getDate();
-    String reason = request.getAbsence().getName();
-    Map<String, Object> templateData = Map.of(USER_NAME, userName, TEAM_NAME, teamName, START_DATE, startDate, END_DATE,
-        endDate, NUMBER_OF_REQUESTED_DAYS, numberOfRequestedDays, REASON, reason);
 
-    sendEmail(new Email(notifiersEmails, subject, templateData), "notifiersSicknessEmail.ftl");
+    collectEmailData(EmailSubjectProvider.SICKNESS_SUBJECT, "recipientsSicknessEmail.ftl", recipients, request);
   }
 
   /**
-   * Create email on user approved annual leave request and send to notifiers for annual request.
+   * Create email on user approved annual leave request and send to recipients for annual request.
    *
    * @param request the Request.
    */
   @Async
   public void createAnnualEmailForNotifiersAndSend(Request request) {
-    List<String> notifiersEmails = Arrays.asList(
-        request.getUser().getTeam().getAnnualRequestEmails().split("\\s*,\\s*"));
-
+    List<String> recipients = getRecipientsEmails(request.getUser().getTeam().getAnnualRequestEmails());
     if (request.getUser().getTeam().isSendEmailToTeammatesForAnnualRequestEnabled()) {
-      notifiersEmails.addAll(getTeammatesEmailAddresses(request));
+      recipients.addAll(getTeammatesEmailAddresses(request));
     }
-    String subject = EmailSubjectProvider.ANNUAL_SUBJECT;
-    String userName = request.getUser().getFullName();
-    int numberOfRequestedDays = request.getDays().size();
-    LocalDate startDate = request.getDays().get(0).getDate();
-    LocalDate endDate = request.getDays().get(numberOfRequestedDays - 1).getDate();
-    String teamName = request.getUser().getTeam().getName();
-    Map<String, Object> templateData = Map.of(USER_NAME, userName, NUMBER_OF_REQUESTED_DAYS, numberOfRequestedDays,
-        START_DATE, startDate, END_DATE, endDate, TEAM_NAME, teamName);
 
-    sendEmail(new Email(notifiersEmails, subject, templateData), "notifiersAnnualEmail.ftl");
+    collectEmailData(EmailSubjectProvider.ANNUAL_SUBJECT, "recipientsAnnualEmail.ftl", recipients, request);
   }
 
   /**
-   * Create email on user approved bonus leave request and send to notifiers for bonus request.
+   * Create email on user approved bonus leave request and send to recipients for bonus request.
    *
    * @param request the Request.
    */
   @Async
   public void createBonusEmailForNotifiersAndSend(Request request) {
-    List<String> notifiersEmails = Arrays.asList(
-        request.getUser().getTeam().getBonusRequestEmails().split("\\s*,\\s*"));
-
+    List<String> recipients = getRecipientsEmails(request.getUser().getTeam().getBonusRequestEmails());
     if (request.getUser().getTeam().isSendEmailToTeammatesForBonusRequestEnabled()) {
-      notifiersEmails.addAll(getTeammatesEmailAddresses(request));
+      recipients.addAll(getTeammatesEmailAddresses(request));
     }
-    String subject = EmailSubjectProvider.BONUS_SUBJECT;
-    String userName = request.getUser().getFullName();
-    int numberOfRequestedDays = request.getDays().size();
-    LocalDate startDate = request.getDays().get(0).getDate();
-    LocalDate endDate = request.getDays().get(numberOfRequestedDays - 1).getDate();
-    String teamName = request.getUser().getTeam().getName();
-    Map<String, Object> templateData = Map.of(USER_NAME, userName, NUMBER_OF_REQUESTED_DAYS, numberOfRequestedDays,
-        START_DATE, startDate, END_DATE, endDate, TEAM_NAME, teamName);
 
-    sendEmail(new Email(notifiersEmails, subject, templateData), "notifiersBonusEmail.ftl");
+    collectEmailData(EmailSubjectProvider.BONUS_SUBJECT, "recipientsBonusEmail.ftl", recipients, request);
+  }
+
+  private List<String> getRecipientsEmails(String emails) {
+    return Arrays.asList(emails.split("\\s*,\\s*"));
   }
 
   private List<String> getTeammatesEmailAddresses(Request request) {
@@ -217,6 +190,24 @@ public class EmailService {
 
   private Predicate<String> isTeammateEmail(String requestUserEmail) {
     return email -> !requestUserEmail.equals(email);
+  }
+
+  private void collectEmailData(String subject, String emailTemplate, List<String> recipients, Request request) {
+    Map<String, Object> templateData = collectTemplateData(request);
+
+    Email email = new Email(recipients, subject, templateData);
+    sendEmail(email, emailTemplate);
+  }
+
+  private Map<String, Object> collectTemplateData(Request request) {
+    String userName = request.getUser().getFullName();
+    String teamName = request.getUser().getTeam().getName();
+    int numberOfRequestedDays = request.getDays().size();
+    LocalDate startDate = request.getDays().get(0).getDate();
+    LocalDate endDate = request.getDays().get(numberOfRequestedDays - 1).getDate();
+    String reason = request.getAbsence() == null ? EMPTY_STRING : request.getAbsence().getName();
+    return Map.of(USER_NAME, userName, TEAM_NAME, teamName, NUMBER_OF_REQUESTED_DAYS, numberOfRequestedDays, START_DATE,
+        startDate, END_DATE, endDate, REASON, reason);
   }
 
   private void sendEmail(Email email, String templateName) {
