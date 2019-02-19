@@ -63,14 +63,14 @@ public class TeamService {
   }
 
   /**
-   * Retrieves a list of teams by given users fullname.
+   * Retrieves a list of teams from repository by given users fullName query.
    *
-   * @param fullName User fullName
-   * @return a list of all teams where user with given fullname is member or team approver.
+   * @param fullNameQuery User fullName query
+   * @return a list of all teams where user with given fullName query is member or teamApprover.
    */
-  public List<Team> searchTeamsByUsersName(String fullName) {
+  public List<Team> searchTeamsByUsersNameContaining(String fullNameQuery) {
 
-    List<User> users = userService.findByFullNameContaining(fullName);
+    List<User> users = userService.findByFullNameContaining(fullNameQuery);
 
     List<Team> teams = new ArrayList<>();
     for (User u : users) {

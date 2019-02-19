@@ -53,8 +53,8 @@ public class TeamController {
   }
 
   @GetMapping("/search")
-  public ResponseEntity<List<TeamDto>> searchTeamsByUsersName(@RequestParam String fullName) {
-    List<Team> teams = teamService.searchTeamsByUsersName(fullName);
+  public ResponseEntity<List<TeamDto>> searchTeamsByUsersNameContaining(@RequestParam String fullNameQuery) {
+    List<Team> teams = teamService.searchTeamsByUsersNameContaining(fullNameQuery);
     var teamDtos = teams.stream().map(TeamDto::new).collect(Collectors.toList());
     return new ResponseEntity<>(teamDtos, HttpStatus.OK);
   }
