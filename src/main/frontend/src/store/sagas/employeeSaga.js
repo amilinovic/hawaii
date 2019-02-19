@@ -1,5 +1,8 @@
 import { call, put, takeLatest } from 'redux-saga/effects';
 import {
+  createEmployee,
+  createEmployeeSuccess,
+  errorCreatingEmployee,
   errorReceivingEmployee,
   receiveEmployee,
   requestEmployee,
@@ -7,7 +10,11 @@ import {
   updateEmployeeError,
   updateEmployeeSuccessful
 } from '../actions/employeeActions';
-import { getEmployeeApi, updateEmployeeApi } from '../services/employeeService';
+import {
+  createEmployeeApi,
+  getEmployeeApi,
+  updateEmployeeApi
+} from '../services/employeeService';
 
 export const getEmployeeSaga = function*(action) {
   try {
@@ -26,8 +33,17 @@ export const updateEmployeeSaga = function*(action) {
     yield put(updateEmployeeError(error));
   }
 };
+export const createEmployeeSaga = function*(action) {
+  try {
+    yield call(createEmployeeApi, action.payload);
+    yield put(createEmployeeSuccess());
+  } catch (error) {
+    yield put(errorCreatingEmployee(error));
+  }
+};
 
 export const employeeSaga = [
   takeLatest(requestEmployee, getEmployeeSaga),
-  takeLatest(updateEmployee, updateEmployeeSaga)
+  takeLatest(updateEmployee, updateEmployeeSaga),
+  takeLatest(createEmployee, createEmployeeSaga)
 ];

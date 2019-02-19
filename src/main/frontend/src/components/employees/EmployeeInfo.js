@@ -1,7 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
-import Button from '../common/Button';
 
 const TableText = styled.span`
   text-overflow: ellipsis;
@@ -41,7 +40,6 @@ const EmployeeInfo = employee => {
       <TableRow>
         <TableText>Years of Service: {yearsOfService}</TableText>
       </TableRow>
-      <Button title="View Profile" />
       <NavLink to={`/employee/${email}/edit`}>Edit</NavLink>
     </div>
   );

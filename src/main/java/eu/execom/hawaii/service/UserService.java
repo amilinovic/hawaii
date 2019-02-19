@@ -61,10 +61,11 @@ public class UserService {
   /**
    * Retrieves a list of all users from repository.
    *
+   * @param pageable the Pageable information about size per page and number of page.
    * @return a list of all users, both active and non-active
    */
-  public List<User> findAllUsers() {
-    return userRepository.findAll();
+  public Page<User> findAll(Pageable pageable) {
+    return userRepository.findAll(pageable);
   }
 
   /**
@@ -85,6 +86,17 @@ public class UserService {
    */
   public List<User> findAllByUserStatusType(List<UserStatusType> userStatusType) {
     return userRepository.findAllByUserStatusTypeIn(userStatusType);
+  }
+
+  /**
+   * Retrieves a list of all users from repository(Pageable)
+   *
+   * @param userStatusType what is user status (ACTIVE, INACTIVE or DELETED)
+   * @param pageable       the Pageable information about size per page and number of page.
+   * @return list of all users from repository with given status (pageable).
+   */
+  public Page<User> findAllByUserStatusTypePage(List<UserStatusType> userStatusType, Pageable pageable) {
+    return userRepository.findAllByUserStatusType(userStatusType, pageable);
   }
 
   /**
@@ -139,7 +151,7 @@ public class UserService {
    * Saves the provided User to repository.
    * Makes audit of that save.
    *
-   * @param user the User entity to be persisted.
+   * @param user           the User entity to be persisted.
    * @param modifiedByUser user that made the change to User entity.
    * @return saved User.
    */
@@ -155,7 +167,7 @@ public class UserService {
    * Saves the provided User to repository.
    * Makes audit of that save.
    *
-   * @param user the User entity to be persisted.
+   * @param user           the User entity to be persisted.
    * @param modifiedByUser user that made the change to User entity.
    * @return saved User.
    */
@@ -322,8 +334,12 @@ public class UserService {
       UserAudit previousUserState) {
     var currentUserState = UserAudit.fromUser(modifiedUser);
 
-    auditInformationService.saveAudit(operationPerformed, modifiedByUser, modifiedUser, previousUserState,
-        currentUserState);
+    if (operationPerformed.equals(OperationPerformed.CREATE)) {
+      auditInformationService.saveAudit(operationPerformed, modifiedByUser, null, previousUserState, currentUserState);
+    } else {
+      auditInformationService.saveAudit(operationPerformed, modifiedByUser, modifiedUser, previousUserState,
+          currentUserState);
+    }
   }
 
 }

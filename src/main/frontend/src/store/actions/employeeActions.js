@@ -17,3 +17,11 @@ export const updateEmployeeSuccessful = createAction(
   UPDATE_EMPLOYEE_SUCCESSFUL
 );
 export const updateEmployeeError = createAction(UPDATE_EMPLOYEE_ERROR);
+
+export const CREATE_EMPLOYEE = 'CREATE_EMPLOYEE';
+export const CREATE_EMPLOYEE_SUCCESS = 'CREATE_EMPLOYEE_SUCCESS';
+export const CREATE_EMPLOYEE_ERROR = 'CREATE_EMPLOYEE_ERROR';
+
+export const createEmployee = createAction(CREATE_EMPLOYEE);
+export const createEmployeeSuccess = createAction(CREATE_EMPLOYEE_SUCCESS);
+export const errorCreatingEmployee = createAction(CREATE_EMPLOYEE_ERROR);
