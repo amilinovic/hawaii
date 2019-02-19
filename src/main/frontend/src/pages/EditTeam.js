@@ -15,6 +15,7 @@ class EditTeam extends Component {
 
   render() {
     if (!this.props.employees || !this.props.team) return null;
+
     return (
       <div className="d-flex p-4 justify-content-center flex-column">
         <Formik
