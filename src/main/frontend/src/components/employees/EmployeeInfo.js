@@ -1,4 +1,5 @@
 import React from 'react';
+import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
 
 const TableText = styled.span`
@@ -23,7 +24,7 @@ const TableRow = styled.div`
 `;
 
 const EmployeeInfo = employee => {
-  const { fullName, email, jobTitle, yearsOfService } = employee;
+  const { id, fullName, email, jobTitle, yearsOfService } = employee;
   return (
     <div className="align-items-center d-flex justify-content-between mb-3">
       <EmployeesImage />
@@ -39,6 +40,7 @@ const EmployeeInfo = employee => {
       <TableRow>
         <TableText>Years of Service: {yearsOfService}</TableText>
       </TableRow>
+      <NavLink to={`/employee/${email}/edit`}>Edit</NavLink>
     </div>
   );
 };
