@@ -91,8 +91,8 @@ public class UserService {
    * Retrieves a list of all users searched by given query.
    *
    * @param userStatusType what is user status (ACTIVE, INACTIVE or DELETED)
-   * @param searchQuery    search by given query.
-   * @param pageable       the Pageable information about size per page and number of page.
+   * @param searchQuery search by given query.
+   * @param pageable the Pageable information about size per page and number of page.
    * @return a list of queried users by given search.
    */
   public Page<User> findAllByActiveAndEmailOrFullName(UserStatusType userStatusType, String searchQuery,
@@ -228,9 +228,9 @@ public class UserService {
    * If date of Leave Profile update was before half year mark, only half of allowance bonus should
    * be added, and full amount if it was afterwards. Following years allowances receive full amount.
    *
-   * @param user                 the User entity for witch allowances should be updated.
+   * @param user the User entity for witch allowances should be updated.
    * @param previousLeaveProfile the LeaveProfile entity necessary for determining difference in allowance.
-   * @param todaysDate           year, month and date for today.
+   * @param todaysDate year, month and date for today.
    */
   public void updateAllowanceForUserOnLeaveProfileUpdate(User user, LeaveProfile previousLeaveProfile,
       LocalDate todaysDate) {
@@ -322,8 +322,12 @@ public class UserService {
       UserAudit previousUserState) {
     var currentUserState = UserAudit.fromUser(modifiedUser);
 
-    auditInformationService.saveAudit(operationPerformed, modifiedByUser, modifiedUser, previousUserState,
-        currentUserState);
+    if (OperationPerformed.CREATE.equals(operationPerformed)) {
+      auditInformationService.saveAudit(operationPerformed, modifiedByUser, null, previousUserState, currentUserState);
+    } else {
+      auditInformationService.saveAudit(operationPerformed, modifiedByUser, modifiedUser, previousUserState,
+          currentUserState);
+    }
   }
 
 }
