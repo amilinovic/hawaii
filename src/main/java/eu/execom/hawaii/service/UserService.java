@@ -151,7 +151,7 @@ public class UserService {
    * Saves the provided User to repository.
    * Makes audit of that save.
    *
-   * @param user the User entity to be persisted.
+   * @param user           the User entity to be persisted.
    * @param modifiedByUser user that made the change to User entity.
    * @return saved User.
    */
@@ -167,7 +167,7 @@ public class UserService {
    * Saves the provided User to repository.
    * Makes audit of that save.
    *
-   * @param user the User entity to be persisted.
+   * @param user           the User entity to be persisted.
    * @param modifiedByUser user that made the change to User entity.
    * @return saved User.
    */
@@ -334,8 +334,12 @@ public class UserService {
       UserAudit previousUserState) {
     var currentUserState = UserAudit.fromUser(modifiedUser);
 
-    auditInformationService.saveAudit(operationPerformed, modifiedByUser, modifiedUser, previousUserState,
-        currentUserState);
+    if (operationPerformed.equals(OperationPerformed.CREATE)) {
+      auditInformationService.saveAudit(operationPerformed, modifiedByUser, null, previousUserState, currentUserState);
+    } else {
+      auditInformationService.saveAudit(operationPerformed, modifiedByUser, modifiedUser, previousUserState,
+          currentUserState);
+    }
   }
 
 }
