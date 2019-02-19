@@ -6,6 +6,7 @@ import withResetOnNavigate from '../components/HOC/withResetOnNavigate';
 import { requestEmployees } from '../store/actions/employeesAction';
 import { createTeam } from '../store/actions/teamActions';
 import { getEmployees } from '../store/selectors';
+
 class CreateTeam extends Component {
   componentDidMount() {
     this.props.requestEmployees();
@@ -13,6 +14,7 @@ class CreateTeam extends Component {
 
   render() {
     if (!this.props.employees) return null;
+
     return (
       <div className="d-flex p-4 justify-content-center flex-column">
         <Formik
@@ -63,17 +65,15 @@ class CreateTeam extends Component {
               <div className="d-flex justify-content-between mt-3">
                 <div className="mb-5">
                   <h3>Team members</h3>
-                  {values.users &&
-                    values.users.map(user => {
-                      return <h5 key={user.id}>{user.fullName}</h5>;
-                    })}
+                  {values.users.map(user => {
+                    return <h5 key={user.id}>{user.fullName}</h5>;
+                  })}
                 </div>
                 <div className="mb-5">
                   <h3>Team approvers</h3>
-                  {values.teamApprovers &&
-                    values.teamApprovers.map(user => {
-                      return <h5 key={user.id}>{user.fullName}</h5>;
-                    })}
+                  {values.teamApprovers.map(user => {
+                    return <h5 key={user.id}>{user.fullName}</h5>;
+                  })}
                 </div>
               </div>
               <button className="btn" onClick={handleSubmit} type="submit">

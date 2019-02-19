@@ -13,6 +13,7 @@ class Teams extends Component {
 
   render() {
     if (!this.props.teams) return null;
+
     const teamItems = this.props.teams
       .filter(item => !item.deleted)
       .map(item => {
