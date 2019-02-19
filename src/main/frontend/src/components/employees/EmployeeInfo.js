@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import Button from '../common/Button';
 
 const TableText = styled.span`
   text-overflow: ellipsis;
@@ -40,7 +39,6 @@ const EmployeeInfo = employee => {
       <TableRow>
         <TableText>Years of Service: {yearsOfService}</TableText>
       </TableRow>
-      <Button title="View Profile" />
     </div>
   );
 };
