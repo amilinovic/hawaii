@@ -1,23 +1,7 @@
-import request from 'superagent';
+import { delFactory, getFactory, putFactory } from './request';
 
-export const getTeamApi = async id => {
-  return await request
-    .get(`/teams/${id}`)
-    .set('X-ID-TOKEN', sessionStorage.getItem('token'))
-    .then(res => res.body);
-};
+const apiEndpoint = '/teams';
 
-export const updateTeamApi = async teamObject => {
-  return await request
-    .put('/teams')
-    .send(teamObject)
-    .set('X-ID-TOKEN', sessionStorage.getItem('token'))
-    .then(res => res.body);
-};
-
-export const removeTeamApi = async id => {
-  return await request
-    .del(`/teams/${id}`)
-    .set('X-ID-TOKEN', sessionStorage.getItem('token'))
-    .then(res => res.body);
-};
+export const getTeamApi = id => getFactory(`${apiEndpoint}/${id}`);
+export const removeTeamApi = id => delFactory(`${apiEndpoint}/${id}`);
+export const updateTeamApi = teamObject => putFactory(apiEndpoint, teamObject);
