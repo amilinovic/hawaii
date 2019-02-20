@@ -1,8 +1,10 @@
 package eu.execom.hawaii.security;
 
 import eu.execom.hawaii.model.User;
+import eu.execom.hawaii.model.UserPushToken;
 import eu.execom.hawaii.model.enumerations.UserRole;
 import eu.execom.hawaii.model.enumerations.UserStatusType;
+import eu.execom.hawaii.service.EntityBuilder;
 import eu.execom.hawaii.service.TokenIdentityVerifier;
 import eu.execom.hawaii.service.UserService;
 import org.junit.Test;
@@ -11,13 +13,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static eu.execom.hawaii.security.IdTokenVerifierFilter.ID_TOKEN_HEADER;
@@ -171,11 +179,18 @@ public class ApiSecurityTests {
 
   @Test
   public void shouldReturnOkResponseForProtectedUrlRequestsWhichRequireHrManagerAuthorityWhenActiveUserIsHrManager() {
-    User user = new User();
-    user.setUserStatusType(UserStatusType.ACTIVE);
-    user.setUserRole(UserRole.HR_MANAGER);
+    User user = EntityBuilder.user(EntityBuilder.team());
+    Pageable pageable = PageRequest.of(0, 30);
+    List<UserStatusType> userStatusTypes = new ArrayList<>();
+    List<User> users = new ArrayList<>();
+    users.add(user);
+    user.setUserPushTokens(List.of(new UserPushToken()));
+    Page<User> pageableUsers = new PageImpl<>(users, pageable, users.size());
+    userStatusTypes.add(UserStatusType.ACTIVE);
+
     given(tokenIdentityVerifier.getIdentityOf(SAMPLE_ID_TOKEN)).willReturn(Optional.of(SAMPLE_USER));
     given(userService.findByEmail(SAMPLE_USER)).willReturn(user);
+    given(userService.findAllByUserStatusTypePage(userStatusTypes, pageable)).willReturn(pageableUsers);
 
     ResponseEntity<String> response = restTemplate.exchange(SAMPLE_PROTECTED_HR_MANAGER_URL_PATH, HttpMethod.GET,
         new HttpEntity<>(createIdTokenHeader(SAMPLE_ID_TOKEN)), String.class);
