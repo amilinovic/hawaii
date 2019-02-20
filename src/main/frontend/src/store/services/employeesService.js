@@ -1,8 +1,3 @@
-import request from 'superagent';
+import { getFactory } from './request';
 
-export const getEmployeesApi = () => {
-  return request
-    .get('/users')
-    .set('X-ID-TOKEN', sessionStorage.getItem('token'))
-    .then(res => res.body);
-};
+export const getEmployeesApi = getFactory('/users');

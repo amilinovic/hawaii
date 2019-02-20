@@ -1,4 +1,5 @@
 import { delFactory, getFactory, postFactory, putFactory } from './request';
+
 const apiEndpoint = '/users';
 
 export const getEmployeeApi = id => getFactory(`${apiEndpoint}/${id}`);
