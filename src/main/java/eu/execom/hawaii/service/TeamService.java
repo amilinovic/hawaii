@@ -1,5 +1,7 @@
 package eu.execom.hawaii.service;
 
+import eu.execom.hawaii.exceptions.ActionNotAllowedException;
+import eu.execom.hawaii.exceptions.NotAuthorizedApprovalException;
 import eu.execom.hawaii.model.Team;
 import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.audit.TeamAudit;
@@ -15,6 +17,7 @@ import java.util.stream.Collectors;
 /**
  * Team management service.
  */
+
 @Service
 public class TeamService {
 
@@ -34,16 +37,6 @@ public class TeamService {
    */
   public List<Team> findAll() {
     return teamRepository.findAll();
-  }
-
-  /**
-   * Retrieves a list of all teams from repository by given status.
-   *
-   * @param deleted is it deleted.
-   * @return a list of all teams.
-   */
-  public List<Team> findAllByDeleted(boolean deleted) {
-    return teamRepository.findAllByDeleted(deleted);
   }
 
   /**
@@ -90,17 +83,22 @@ public class TeamService {
   }
 
   /**
-   * Logically deletes Team.
+   * Deletes Team from database if its member list is empty.
    *
+   * @param modifiedByUser user that made change to Team entity.
    * @param id - the team id.
    */
   @Transactional
   public void delete(Long id, User modifiedByUser) {
     var team = getById(id);
     var previousTeamState = TeamAudit.fromTeam(team);
-    team.setDeleted(true);
-    teamRepository.save(team);
-    saveAuditInformation(OperationPerformed.DELETE, modifiedByUser, team, previousTeamState);
+    if (team.getUsers().isEmpty()) {
+      teamRepository.deleteById(id);
+      saveAuditInformation(OperationPerformed.DELETE, modifiedByUser, team, previousTeamState);
+    } else {
+      throw new ActionNotAllowedException("Team member list needs to be empty");
+    }
+
   }
 
   private void saveAuditInformation(OperationPerformed operationPerformed, User modifiedByUser, Team team,

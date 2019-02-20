@@ -1,6 +1,6 @@
 package eu.execom.hawaii.service;
 
-import eu.execom.hawaii.exceptions.NotAuthorizedApprovalExeception;
+import eu.execom.hawaii.exceptions.NotAuthorizedApprovalException;
 import eu.execom.hawaii.exceptions.RequestAlreadyCanceledException;
 import eu.execom.hawaii.model.Day;
 import eu.execom.hawaii.model.Request;
@@ -295,7 +295,7 @@ public class RequestService {
       case APPROVED:
         if (!userIsRequestApprover) {
           log.error("Approver not authorized to approve this request for user with email: {}", user.getEmail());
-          throw new NotAuthorizedApprovalExeception();
+          throw new NotAuthorizedApprovalException();
         }
         allowanceService.applyPendingRequest(request, true);
         applyRequest(request, false);
@@ -314,7 +314,7 @@ public class RequestService {
           sendNotificationsService.sendNotificationToApproversAboutSubmittedRequest(request);
         } else if (!userIsRequestApprover && requestHasPendingCancellation) {
           log.error("User not authorized to cancel this request for user with email: {}", user.getEmail());
-          throw new NotAuthorizedApprovalExeception();
+          throw new NotAuthorizedApprovalException();
         } else if (requestIsPending) {
           allowanceService.applyPendingRequest(request, true);
         }
@@ -322,7 +322,7 @@ public class RequestService {
       case REJECTED:
         if (!userIsRequestApprover) {
           log.error("Approver not authorized to reject this request for user with email: {}", user.getEmail());
-          throw new NotAuthorizedApprovalExeception();
+          throw new NotAuthorizedApprovalException();
         }
         allowanceService.applyPendingRequest(request, true);
         sendNotificationsService.sendNotificationForRequestedLeave(request.getRequestStatus(), user);

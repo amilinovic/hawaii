@@ -39,8 +39,6 @@ public class Team extends BaseEntity implements Serializable {
 
   private boolean sendEmailToTeammatesForBonusRequestEnabled;
 
-  private boolean deleted;
-
   @OneToMany(mappedBy = "team", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
   private List<User> users;
 

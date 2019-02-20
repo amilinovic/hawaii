@@ -17,7 +17,6 @@ public class TeamAudit extends Audit {
   private boolean sendEmailToTeammatesForSicknessRequestEnabled;
   private boolean sendEmailToTeammatesForAnnualRequestEnabled;
   private boolean sendEmailToTeammatesForBonusRequestEnabled;
-  private boolean deleted;
 
   private TeamAudit(Team team) {
     this.id = team.getId();
@@ -28,7 +27,6 @@ public class TeamAudit extends Audit {
     this.sendEmailToTeammatesForSicknessRequestEnabled = team.isSendEmailToTeammatesForSicknessRequestEnabled();
     this.sendEmailToTeammatesForAnnualRequestEnabled = team.isSendEmailToTeammatesForAnnualRequestEnabled();
     this.sendEmailToTeammatesForBonusRequestEnabled = team.isSendEmailToTeammatesForBonusRequestEnabled();
-    this.deleted = team.isDeleted();
     this.setAuditedEntity(AuditedEntity.TEAM);
   }
 

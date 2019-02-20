@@ -28,7 +28,9 @@ public class EntityBuilder {
   public static Team team() {
     var team = new Team();
     team.setName("My team1");
-    team.setDeleted(false);
+    team.setAnnualRequestEmails("example@example.com");
+    team.setSicknessRequestEmails("example@example.com");
+    team.setBonusRequestEmails("example@example.com");
     team.setUsers(new ArrayList<>());
     team.setTeamApprovers(new ArrayList<>());
 
