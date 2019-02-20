@@ -59,8 +59,9 @@ public class UserService {
   }
 
   /**
-   * @param pageable the Pageable information about size per page and number of page.
+   * Retrieves a list of all users from repository.
    *
+   * @param pageable the Pageable information about size per page and number of page.
    * @return a list of all users, both active and non-active
    */
   public Page<User> findAll(Pageable pageable) {
