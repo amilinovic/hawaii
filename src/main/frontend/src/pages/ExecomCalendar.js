@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import CalendarContainer from '../components/calendar/CalendarContainer';
 import { requestLeaveTypes } from '../store/actions/leaveTypesActions';
 import { requestPersonalDays } from '../store/actions/personalDaysActions';
 import { requestPublicHolidays } from '../store/actions/publicHolidayActions';
@@ -19,9 +20,13 @@ class ExecomCalendar extends Component {
   }
 
   render() {
+    if (!this.props.publicHolidays.length) return null;
     return (
-      <div className="d-flex h-100 align-items-center justify-content-center">
-        Execom calendar
+      <div className="d-flex flex-grow-1 flex-column justify-content-between align-items-center">
+        <CalendarContainer
+          publicHolidays={this.props.publicHolidays}
+          personalDays={this.props.personalDays}
+        />
       </div>
     );
   }
