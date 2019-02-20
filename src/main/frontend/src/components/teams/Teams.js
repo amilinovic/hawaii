@@ -1,26 +1,30 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { NavLink } from 'react-router-dom';
+import { bindActionCreators } from 'redux';
 import { requestTeams } from '../../store/actions/teamsActions';
 import { getTeams } from '../../store/selectors';
+import withResetOnNavigate from '../HOC/withResetOnNavigate';
 import TeamItem from './TeamItem';
-
 class Teams extends Component {
   componentDidMount() {
     this.props.requestTeams();
   }
 
   render() {
-    const teamItems = Object.keys(this.props.teams).map(key => {
-      return <TeamItem key={key} team={this.props.teams[key]} />;
-    });
+    if (!this.props.teams) return null;
+
+    const teamItems = this.props.teams
+      .filter(item => !item.deleted)
+      .map(item => {
+        return <TeamItem key={item.id} team={item} />;
+      });
 
     return (
       <div className="container-fluid">
         <div className="row">
           <div className="col-md-12">
-            <NavLink to={'/teams/create-team'}>
+            <NavLink to={'/teams/create'}>
               <input
                 type="button"
                 value="Create Team"
@@ -58,4 +62,4 @@ const mapDispatchToProps = dispatch =>
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Teams);
+)(withResetOnNavigate()(Teams));

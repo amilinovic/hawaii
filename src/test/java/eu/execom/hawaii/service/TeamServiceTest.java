@@ -74,7 +74,7 @@ public class TeamServiceTest {
     var team = teamService.getById(teamId);
 
     // then
-    assertThat("Expect name to be My team1", team.getName(), is("My team1"));
+    assertThat("Expect name to be 'My team1'", team.getName(), is("My team1"));
     verify(teamRepository).getOne(anyLong());
     verifyNoMoreInteractions(allMocks);
   }
@@ -107,7 +107,7 @@ public class TeamServiceTest {
     // then
     verify(teamRepository).getOne(anyLong());
     verify(auditInformationService).saveAudit(any(), any(), any(), any(), any());
-    verify(teamRepository).save(any());
+    verify(teamRepository).deleteById(any());
     verifyNoMoreInteractions(allMocks);
   }
 

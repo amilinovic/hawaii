@@ -70,6 +70,12 @@ public class UserController {
     return new ResponseEntity<>(userDtos, HttpStatus.OK);
   }
 
+  @GetMapping("/{id}")
+  public ResponseEntity<UserDto> getUserById(@PathVariable Long id) {
+    var user = userService.getUserById(id);
+    return new ResponseEntity<>(new UserDto(user), HttpStatus.OK);
+  }
+
   @GetMapping("/allUsers")
   public ResponseEntity<List<UserWithDaysDto>> allUsersRestrictedList(
       @RequestParam(required = false) LocalDate startDate, @RequestParam(required = false) LocalDate endDate) {
