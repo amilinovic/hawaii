@@ -27,6 +27,7 @@ import java.time.LocalDateTime;
 import java.time.MonthDay;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
@@ -40,6 +41,7 @@ public class UserService {
 
   private static final int HALF_DAY = 4;
   private static final MonthDay HALF_YEAR_DATE = MonthDay.of(6, 30);
+  private static final int MINIMUM_QUERY_SIZE = 3;
 
   private UserRepository userRepository;
   private LeaveProfileRepository leaveProfileRepository;
@@ -132,13 +134,10 @@ public class UserService {
    */
   @Transactional
   public List<User> findByFullNameContaining(String fullNameQuery) {
-    List<User> users;
-    if (fullNameQuery.length() <= 3) {
-      users = new ArrayList<>();
-    } else {
-      users = userRepository.findAllByFullNameContaining(fullNameQuery);
+    if (fullNameQuery.length() <= MINIMUM_QUERY_SIZE) {
+      return Collections.emptyList();
     }
-    return users;
+    return userRepository.findAllByFullNameContaining(fullNameQuery);
   }
 
   /**

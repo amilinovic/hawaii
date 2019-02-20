@@ -20,17 +20,15 @@ import java.util.List;
 public class TeamService {
 
   private TeamRepository teamRepository;
-
   private AuditInformationService auditInformationService;
-
   private UserService userService;
 
   @Autowired
   public TeamService(TeamRepository teamRepository, AuditInformationService auditInformationService,
       UserService userService) {
     this.teamRepository = teamRepository;
-    this.userService = userService;
     this.auditInformationService = auditInformationService;
+    this.userService = userService;
   }
 
   /**
