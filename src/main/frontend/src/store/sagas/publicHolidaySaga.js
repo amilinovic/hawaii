@@ -4,7 +4,7 @@ import {
   receivePublicHolidays,
   requestPublicHolidays
 } from '../actions/publicHolidayActions';
-import { getPublicHolidaysApi } from '../services/publicHolidaysApi';
+import { getPublicHolidaysApi } from '../services/publicHolidaysService';
 
 export const getPublicHolidays = function*() {
   try {

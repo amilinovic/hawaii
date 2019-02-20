@@ -4,7 +4,7 @@ import {
   receivePersonalDays,
   requestPersonalDays
 } from '../actions/personalDaysActions';
-import { getPersonalDaysApi } from '../services/personalDaysApi';
+import { getPersonalDaysApi } from '../services/personalDayService';
 
 export const getPersonalDays = function*() {
   try {

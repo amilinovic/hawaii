@@ -4,7 +4,7 @@ import { employeesSaga } from './employeesSaga';
 import { authenticateSaga } from './getTokenFromSessionStorageSaga';
 import { getTokenSaga } from './getTokenSaga';
 import { leaveTypesSaga } from './leaveTypesSaga';
-import { personalDaysSaga } from './personalDays';
+import { personalDaysSaga } from './personalDaysSaga';
 import { publicHolidaysSaga } from './publicHolidaySaga';
 import { teamSaga } from './teamSaga';
 import { teamsSaga } from './teamsSaga';
