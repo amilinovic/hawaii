@@ -3,17 +3,7 @@ import styled from 'styled-components';
 import { Day } from './Day';
 import { Month } from './Month';
 
-const Table = styled.table`
-  width: 100%;
-  border-collapse: collapse;
-  border-spacing: 0px;
-`;
-
 const TableHeading = styled.th`
-  border-bottom: 1px solid black;
-  border: none;
-  text-align: center;
-  padding: 5px 0px 5px 0px;
   min-width: 20px;
   font-size: 14px;
 `;
@@ -21,12 +11,14 @@ const TableHeading = styled.th`
 class YearlyCalendar extends Component {
   render() {
     return (
-      <Table>
+      <table className="w-100">
         <thead>
           <tr>
             <th />
             {this.props.calendar[0].days.map((day, index) => (
-              <TableHeading key={index}>{index + 1}</TableHeading>
+              <TableHeading className="text-center py-1" key={index}>
+                {index + 1}
+              </TableHeading>
             ))}
           </tr>
         </thead>
@@ -44,7 +36,7 @@ class YearlyCalendar extends Component {
             </Month>
           ))}
         </tbody>
-      </Table>
+      </table>
     );
   }
 }

@@ -7,13 +7,11 @@ import HolidayImg from '../../img/holiday.svg';
 const DayCell = styled.td`
   border: ${ifProp('isToday', '1px solid grey', '1px solid #c0c0c0')};
   border-style: ${ifProp('isToday', 'double')};
-  text-align: center;
   min-width: 20px;
   font-size: 14px;
   border-color: ${ifProp('isToday', 'grey')};
   background-color: ${ifProp('disabled', '#9e9e9e')};
   background-color: ${ifProp('isWeekend', '#E0E0E0')};
-  vertical-align: middle;
   cursor: ${ifProp('disabled', 'no-drop')};
   &:hover {
     background-color: rgba(0, 0, 0, 0.5);
@@ -32,7 +30,7 @@ const Image = styled.img`
 
 export const Day = props => {
   return (
-    <DayCell {...props}>
+    <DayCell className="text-center align-middle" {...props}>
       {props.publicHoliday && <Image src={HolidayImg} alt="public_holiday" />}
       {props.personalDay && <Image src={props.personalDay.iconUrl} />}
     </DayCell>

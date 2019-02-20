@@ -6,8 +6,6 @@ import YearlyCalendar from './YearlyCalendar';
 
 const YearControlButton = styled.button`
   background-color: transparent;
-  border: none;
-  margin: 0px 10px 0px 10px;
   color: #fb4b4f;
   cursor: pointer;
   transition: 200ms ease;
@@ -16,34 +14,16 @@ const YearControlButton = styled.button`
   }
 `;
 
-const CalendarWrapper = styled.div`
-  width: 100%;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-`;
-
 const YearSelection = styled.div`
-  width: 100%;
   background-color: lightgrey;
-  border-radius: 10px;
   border: 1px solid grey;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  padding: 10px;
   color: #fb4b4f;
-  margin: 20px 0px 20px 0px;
 `;
 
 const CalendarContainerBlock = styled.div`
-  width: 100%;
-  background-color: white;
-  border-radius: 10px;
   border: 1px solid grey;
-  padding: 20px;
 `;
+
 export default class CalendarContainer extends Component {
   state = {
     selectedYear: moment().year(),
@@ -76,11 +56,13 @@ export default class CalendarContainer extends Component {
       };
     });
   };
+
   render() {
     if (!this.state.calendar.length || !this.props.publicHolidays) return null;
+
     return (
-      <CalendarWrapper>
-        <YearSelection>
+      <div className="p-4 d-flex flex-column flex-grow-1">
+        <YearSelection className="rounded d-flex align-items-center justify-content-center p-2 my-3">
           <YearControlButton
             onClick={() => this.handleYearChange(this.state.selectedYear - 1)}
           >
@@ -93,7 +75,7 @@ export default class CalendarContainer extends Component {
             {'>'}
           </YearControlButton>
         </YearSelection>
-        <CalendarContainerBlock>
+        <CalendarContainerBlock className="p-3 rounded">
           {this.state.calendar && (
             <YearlyCalendar
               calendar={this.state.calendar}
@@ -101,7 +83,7 @@ export default class CalendarContainer extends Component {
             />
           )}
         </CalendarContainerBlock>
-      </CalendarWrapper>
+      </div>
     );
   }
 }

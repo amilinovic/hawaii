@@ -23,7 +23,7 @@ class Dashboard extends Component {
   render() {
     if (!this.props.publicHolidays.length) return null;
     return (
-      <div className="d-flex flex-grow-1 flex-column justify-content-between align-items-center">
+      <div className="d-flex flex-grow-1 justify-content-between">
         <CalendarContainer
           publicHolidays={this.props.publicHolidays}
           personalDays={this.props.personalDays}
