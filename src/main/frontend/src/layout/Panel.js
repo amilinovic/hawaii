@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import { Route, Switch } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import styled from 'styled-components';
-import Dashboard from '../components/dashboard/Dashboard';
 import InformationHeader from '../components/header/InformationHeader';
 import TopHeader from '../components/header/TopHeader';
 import Sidebar from '../components/navigation/Sidebar';
@@ -13,6 +12,7 @@ import CreateTeam from '../pages/CreateTeam';
 import EditEmployee from '../pages/EditEmployee';
 import EditTeam from '../pages/EditTeam';
 import Employee from '../pages/Employee';
+import ExecomCalendar from '../pages/ExecomCalendar';
 import Leave from '../pages/Leave';
 import LeaveHistory from '../pages/LeaveHistory';
 import Team from '../pages/Team';
@@ -40,7 +40,7 @@ class Panel extends Component {
             <InformationHeader user={this.props.user} />
             <PanelContent className="d-flex flex-column flex-grow-1">
               <Switch>
-                <Route path="/dashboard" component={Dashboard} />
+                <Route path="/dashboard" component={ExecomCalendar} />
                 <Route path="/leave" component={Leave} />
                 <Route path="/leave-history" component={LeaveHistory} />
                 <Route path="/team-calendar" component={TeamCalendar} />
