@@ -5,7 +5,7 @@ import { navigateOut } from '../actions/navigateActions';
 export const initialState = [];
 
 const actionHandlers = {
-  [receiveEmployees]: (state, action) => action.payload,
+  [receiveEmployees]: (state, action) => action.payload.content,
   [navigateOut]: () => []
 };
 
