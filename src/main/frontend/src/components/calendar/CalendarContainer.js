@@ -58,7 +58,7 @@ export default class CalendarContainer extends Component {
   };
 
   render() {
-    if (!this.state.calendar.length || !this.props.publicHolidays) return null;
+    if (!this.state.calendar.length) return null;
 
     return (
       <div className="p-4 d-flex flex-column flex-grow-1">

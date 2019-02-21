@@ -10,14 +10,19 @@ const TableHeading = styled.th`
 
 class YearlyCalendar extends Component {
   render() {
+    const numberOfDays = [];
+    for (let i = 1; i <= 31; i++) {
+      numberOfDays.push(i);
+    }
+
     return (
       <table className="w-100">
         <thead>
           <tr>
             <th />
-            {this.props.calendar[0].days.map((day, index) => (
-              <TableHeading className="text-center py-1" key={index}>
-                {index + 1}
+            {numberOfDays.map(day => (
+              <TableHeading className="text-center py-1" key={day}>
+                {day}
               </TableHeading>
             ))}
           </tr>

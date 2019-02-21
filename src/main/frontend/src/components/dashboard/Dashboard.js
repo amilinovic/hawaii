@@ -12,6 +12,7 @@ import {
 } from '../../store/selectors';
 import CalendarContainer from '../calendar/CalendarContainer';
 import withResetOnNavigate from '../HOC/withResetOnNavigate';
+import Loading from '../loading/Loading';
 
 class Dashboard extends Component {
   componentDidMount() {
@@ -21,7 +22,9 @@ class Dashboard extends Component {
   }
 
   render() {
-    if (!this.props.publicHolidays.length) return null;
+    if (this.props.publicHolidays === null || this.props.personalDays === null)
+      return <Loading />;
+
     return (
       <div className="d-flex flex-grow-1 justify-content-between">
         <CalendarContainer
