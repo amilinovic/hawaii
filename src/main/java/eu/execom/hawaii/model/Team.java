@@ -27,14 +27,22 @@ public class Team extends BaseEntity implements Serializable {
   @Column(unique = true)
   private String name;
 
-  private String emails;
+  private String sicknessRequestEmails;
 
-  private boolean deleted;
+  private String annualRequestEmails;
+
+  private String bonusRequestEmails;
+
+  private boolean sendEmailToTeammatesForSicknessRequestEnabled;
+
+  private boolean sendEmailToTeammatesForAnnualRequestEnabled;
+
+  private boolean sendEmailToTeammatesForBonusRequestEnabled;
 
   @OneToMany(mappedBy = "team", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
   private List<User> users;
 
-  @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+  @ManyToMany(cascade = {CascadeType.MERGE})
   @JoinTable(name = "team_approver", joinColumns = @JoinColumn(name = "team_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
   private List<User> teamApprovers;
 

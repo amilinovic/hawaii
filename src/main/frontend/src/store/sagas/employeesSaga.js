@@ -1,9 +1,9 @@
 import { call, put, takeLatest } from 'redux-saga/effects';
 import {
-  requestEmployees,
+  errorReceivingEmployees,
   receiveEmployees,
-  errorReceivingEmployees
-} from '../actions/employeesAction';
+  requestEmployees
+} from '../actions/employeesActions';
 import { getEmployeesApi } from '../services/employeesService';
 
 export const getEmployees = function*() {

@@ -5,6 +5,7 @@
   "dependencies": {
     "bootstrap": "^4.1.1",
     "connected-react-router": "^4.3.0",
+    "formik": "^1.5.1",
     "history": "^4.7.2",
     "lodash": "^4.17.10",
     "react": "^16.4.0",
@@ -30,7 +31,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build && npm run copy-build",
+    "build": "react-scripts build && yarn copy-build",
     "copy-build": "n-copy --source build --destination ../resources/static \"**\" ",
     "test": "react-scripts test --env=jsdom",
     "precommit": "lint-staged",

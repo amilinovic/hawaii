@@ -6,9 +6,16 @@ import {
   receiveTeam,
   removeTeam,
   removeTeamSuccess,
-  requestTeam
+  requestTeam,
+  updateTeam,
+  updateTeamError,
+  updateTeamSuccessful
 } from '../actions/teamActions';
-import { getTeamApi, removeTeamApi } from '../services/teamService';
+import {
+  getTeamApi,
+  removeTeamApi,
+  updateTeamApi
+} from '../services/teamService';
 
 export const getTeamSaga = function*(action) {
   try {
@@ -29,7 +36,17 @@ export const removeTeamSaga = function*(action) {
   }
 };
 
+export const updateTeamSaga = function*(action) {
+  try {
+    yield call(updateTeamApi, action.payload);
+    yield put(updateTeamSuccessful());
+  } catch (error) {
+    yield put(updateTeamError(error));
+  }
+};
+
 export const teamSaga = [
   takeLatest(requestTeam, getTeamSaga),
+  takeLatest(updateTeam, updateTeamSaga),
   takeLatest(removeTeam, removeTeamSaga)
 ];

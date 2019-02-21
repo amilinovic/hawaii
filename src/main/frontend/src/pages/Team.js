@@ -13,10 +13,10 @@ class Team extends Component {
   render() {
     if (!this.props.team) return null;
     const {
-      team: { teamName, teamMembers = [], teamApprovers = [] }
+      team: { name, users = [], teamApprovers = [] }
     } = this.props;
 
-    const members = teamMembers.map(user => {
+    const members = users.map(user => {
       return <h5 key={user.id}>{user.fullName}</h5>;
     });
 
@@ -24,8 +24,8 @@ class Team extends Component {
       return <h5 key={approver.id}>{approver.fullName}</h5>;
     });
     return (
-      <div className="d-flex h-100 p-4 flex-column align-items-center">
-        <h1 className="mb-3">{teamName}</h1>
+      <div className="d-flex flex-grow-1 p-4 flex-column align-items-center">
+        <h1 className="mb-3">{name}</h1>
         <div className="mb-4 text-center">
           <h2 className="mb-2">Team members</h2>
           {members}

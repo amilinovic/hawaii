@@ -52,17 +52,15 @@ public class TeamServiceTest {
 
   @Test
   public void shouldGetAllTeams() {
-    // given
-    var deleted = false;
-    given(teamRepository.findAllByDeleted(deleted)).willReturn(mockTeams);
+    //given
+    given(teamRepository.findAll()).willReturn(mockTeams);
 
-    // when
-    List<Team> teams = teamService.findAllByDeleted(deleted);
+    //when
+    var teams = teamService.findAll();
 
-    // then
-    assertThat("Expect size to be two", teams.size(), is(2));
-    assertThat("Expect name to be 'My team1'", teams.get(0).getName(), is("My team1"));
-    verify(teamRepository).findAllByDeleted(anyBoolean());
+    //then
+    assertThat("Expect name of first element in list to be My team1", teams.get(0).getName(), is("My team1"));
+    verify(teamRepository).findAll();
     verifyNoMoreInteractions(allMocks);
   }
 
@@ -109,7 +107,7 @@ public class TeamServiceTest {
     // then
     verify(teamRepository).getOne(anyLong());
     verify(auditInformationService).saveAudit(any(), any(), any(), any(), any());
-    verify(teamRepository).save(any());
+    verify(teamRepository).deleteById(any());
     verifyNoMoreInteractions(allMocks);
   }
 

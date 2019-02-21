@@ -1,6 +1,6 @@
 package eu.execom.hawaii.service;
 
-import eu.execom.hawaii.exceptions.NotAuthorizedApprovalExeception;
+import eu.execom.hawaii.exceptions.NotAuthorizedApprovalException;
 import eu.execom.hawaii.exceptions.RequestAlreadyCanceledException;
 import eu.execom.hawaii.model.Day;
 import eu.execom.hawaii.model.Request;
@@ -78,7 +78,7 @@ public class RequestService {
    * Retrieves a list of request by given dates, ordered by latest.
    *
    * @param startDate from date.
-   * @param endDate   to date.
+   * @param endDate to date.
    * @return a list of requests.
    */
   public List<Request> findAllByUserWithinDates(LocalDate startDate, LocalDate endDate, Long userId) {
@@ -115,7 +115,7 @@ public class RequestService {
   /**
    * Retrieves a list of requests for all users from requested team and requested month.
    *
-   * @param teamId        the Team id.
+   * @param teamId the Team id.
    * @param requestedDate the LocalDate.
    * @return a list of all requests for given team.
    */
@@ -182,7 +182,7 @@ public class RequestService {
    * Saves the provided Request to repository.
    * Makes audit of that save.
    *
-   * @param request the Request entity to be persisted.
+   * @param request        the Request entity to be persisted.
    * @param modifiedByUser user that made changes to that Request entity.
    * @return saved Request.
    */
@@ -196,7 +196,7 @@ public class RequestService {
    * Saves the provided Request to repository.
    * Makes audit of that save.
    *
-   * @param request the Request entity to be persisted.
+   * @param request        the Request entity to be persisted.
    * @param modifiedByUser user that made changes to that Request entity.
    * @return saved Request.
    */
@@ -243,7 +243,7 @@ public class RequestService {
     if (AbsenceType.SICKNESS.equals(newRequest.getAbsence().getAbsenceType())) {
       newRequest.setRequestStatus(RequestStatus.APPROVED);
       allowanceService.applyRequest(newRequest, false);
-      emailService.createSicknessEmailForTeammatesAndSend(newRequest);
+      emailService.sendSicknessEmailNotification(newRequest);
       save(newRequest, authUser);
     } else {
       newRequest.setRequestStatus(RequestStatus.PENDING);
@@ -295,7 +295,7 @@ public class RequestService {
       case APPROVED:
         if (!userIsRequestApprover) {
           log.error("Approver not authorized to approve this request for user with email: {}", user.getEmail());
-          throw new NotAuthorizedApprovalExeception();
+          throw new NotAuthorizedApprovalException();
         }
         allowanceService.applyPendingRequest(request, true);
         applyRequest(request, false);
@@ -314,7 +314,7 @@ public class RequestService {
           sendNotificationsService.sendNotificationToApproversAboutSubmittedRequest(request);
         } else if (!userIsRequestApprover && requestHasPendingCancellation) {
           log.error("User not authorized to cancel this request for user with email: {}", user.getEmail());
-          throw new NotAuthorizedApprovalExeception();
+          throw new NotAuthorizedApprovalException();
         } else if (requestIsPending) {
           allowanceService.applyPendingRequest(request, true);
         }
@@ -322,7 +322,7 @@ public class RequestService {
       case REJECTED:
         if (!userIsRequestApprover) {
           log.error("Approver not authorized to reject this request for user with email: {}", user.getEmail());
-          throw new NotAuthorizedApprovalExeception();
+          throw new NotAuthorizedApprovalException();
         }
         allowanceService.applyPendingRequest(request, true);
         sendNotificationsService.sendNotificationForRequestedLeave(request.getRequestStatus(), user);
@@ -353,8 +353,16 @@ public class RequestService {
     allowanceService.applyRequest(request, requestCanceled);
     emailService.createStatusNotificationEmailAndSend(request);
     if (!requestCanceled) {
-      emailService.createAnnualEmailForTeammatesAndSend(request);
+      sendEmailToTeammatesAndNotifiers(request);
     }
     googleCalendarService.handleRequestUpdate(request, requestCanceled);
+  }
+
+  private void sendEmailToTeammatesAndNotifiers(Request request) {
+    if (AbsenceType.BONUS_DAYS.equals(request.getAbsence().getAbsenceType())) {
+      emailService.sendBonusRequestEmailNotification(request);
+    } else {
+      emailService.sendAnnualRequestEmailNotification(request);
+    }
   }
 }

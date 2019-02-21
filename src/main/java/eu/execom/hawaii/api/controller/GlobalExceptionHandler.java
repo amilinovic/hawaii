@@ -1,7 +1,7 @@
 package eu.execom.hawaii.api.controller;
 
 import eu.execom.hawaii.exceptions.InsufficientHoursException;
-import eu.execom.hawaii.exceptions.NotAuthorizedApprovalExeception;
+import eu.execom.hawaii.exceptions.NotAuthorizedApprovalException;
 import eu.execom.hawaii.exceptions.RequestAlreadyCanceledException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 public class GlobalExceptionHandler {
 
   @ResponseStatus(HttpStatus.UNAUTHORIZED) // 401
-  @ExceptionHandler(NotAuthorizedApprovalExeception.class)
+  @ExceptionHandler(NotAuthorizedApprovalException.class)
   public void handleNotAuthorizedApprovalException(HttpServletRequest request, Exception exception) {
     logException(request, exception);
   }
