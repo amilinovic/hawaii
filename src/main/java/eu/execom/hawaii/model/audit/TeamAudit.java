@@ -11,14 +11,22 @@ public class TeamAudit extends Audit {
 
   private Long id;
   private String teamName;
-  private String emails;
-  private boolean deleted;
+  private String sicknessRequestEmails;
+  private String annualRequestEmails;
+  private String bonusRequestEmails;
+  private boolean sendEmailToTeammatesForSicknessRequestEnabled;
+  private boolean sendEmailToTeammatesForAnnualRequestEnabled;
+  private boolean sendEmailToTeammatesForBonusRequestEnabled;
 
   private TeamAudit(Team team) {
     this.id = team.getId();
     this.teamName = team.getName();
-    this.emails = team.getEmails();
-    this.deleted = team.isDeleted();
+    this.sicknessRequestEmails = team.getSicknessRequestEmails();
+    this.annualRequestEmails = team.getAnnualRequestEmails();
+    this.bonusRequestEmails = team.getBonusRequestEmails();
+    this.sendEmailToTeammatesForSicknessRequestEnabled = team.isSendEmailToTeammatesForSicknessRequestEnabled();
+    this.sendEmailToTeammatesForAnnualRequestEnabled = team.isSendEmailToTeammatesForAnnualRequestEnabled();
+    this.sendEmailToTeammatesForBonusRequestEnabled = team.isSendEmailToTeammatesForBonusRequestEnabled();
     this.setAuditedEntity(AuditedEntity.TEAM);
   }
 
