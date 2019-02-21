@@ -26,6 +26,7 @@ import javax.persistence.EntityExistsException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -113,6 +114,22 @@ public class RequestService {
   }
 
   /**
+   * Retrieves a list of requests by userId for given year from repository.
+   *
+   * @param userId the userId
+   * @param date requested date
+   * @return a list of requests for user in given year.
+   */
+  public List<Request> findAllByUserForYear(Long userId, LocalDate date) {
+    List<Request> filtratedRequests;
+    var startDate = date.withDayOfYear(1);
+    var endDate = date.withDayOfYear(date.lengthOfYear());
+    filtratedRequests = findAllByUserWithinDates(startDate, endDate, userId);
+
+    return filtratedRequests;
+  }
+
+  /**
    * Retrieves a list of requests for all users from requested team and requested month.
    *
    * @param teamId the Team id.
@@ -182,7 +199,7 @@ public class RequestService {
    * Saves the provided Request to repository.
    * Makes audit of that save.
    *
-   * @param request        the Request entity to be persisted.
+   * @param request the Request entity to be persisted.
    * @param modifiedByUser user that made changes to that Request entity.
    * @return saved Request.
    */
@@ -196,7 +213,7 @@ public class RequestService {
    * Saves the provided Request to repository.
    * Makes audit of that save.
    *
-   * @param request        the Request entity to be persisted.
+   * @param request the Request entity to be persisted.
    * @param modifiedByUser user that made changes to that Request entity.
    * @return saved Request.
    */
