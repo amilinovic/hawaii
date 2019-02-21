@@ -22,6 +22,7 @@ const YearSelection = styled.div`
 
 const CalendarContainerBlock = styled.div`
   border: 1px solid grey;
+  background: white;
 `;
 
 export default class CalendarContainer extends Component {

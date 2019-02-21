@@ -22,6 +22,7 @@ import { getUser } from '../store/selectors';
 
 const PanelContent = styled.div`
   overflow: auto;
+  background: #ededed;
 `;
 
 class Panel extends Component {

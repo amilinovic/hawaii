@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import UserInfoComponent from '../UserInfoExtended';
 
 const UserInfoWrapper = styled.div`
-  background-color: #ededed;
   border-top: 1px solid #c0c0c3;
   box-shadow: 0px -2px 10px 2px rgba(0, 0, 0, 0.35);
   z-index: 1;
