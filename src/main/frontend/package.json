@@ -31,7 +31,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build && yarn copy-build",
+    "build": "react-scripts build",
     "copy-build": "n-copy --source build --destination ../resources/static \"**\" ",
     "test": "react-scripts test --env=jsdom",
     "precommit": "lint-staged",

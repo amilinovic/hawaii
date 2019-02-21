@@ -203,41 +203,46 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>com.github.eirslett</groupId>
-                <artifactId>frontend-maven-plugin</artifactId>
-                <version>${frontend-maven-plugin-version}</version>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>install node and yarn</id>
-                        <goals>
-                            <goal>install-node-and-yarn</goal>
-                        </goals>
-                        <phase>initialize</phase>
-                        <configuration>
-                            <workingDirectory>${frontend.build.directory}</workingDirectory>
-                            <nodeVersion>${node-version}</nodeVersion>
-                            <yarnVersion>${yarn-version}</yarnVersion>
-                        </configuration>
-                    </execution>
-                    <execution>
                         <id>yarn install</id>
+                        <phase>generate-sources</phase>
                         <goals>
-                            <goal>yarn</goal>
+                            <goal>exec</goal>
                         </goals>
-                        <phase>initialize</phase>
                         <configuration>
-                            <workingDirectory>${frontend.build.directory}</workingDirectory>
+                            <executable>yarn.cmd</executable>
+                            <workingDirectory>${basedir}/src/main/frontend</workingDirectory>
                         </configuration>
                     </execution>
                     <execution>
                         <id>yarn build</id>
+                        <phase>generate-sources</phase>
                         <goals>
-                            <goal>yarn</goal>
+                            <goal>exec</goal>
                         </goals>
-                        <phase>generate-resources</phase>
                         <configuration>
-                            <workingDirectory>${frontend.build.directory}</workingDirectory>
-                            <arguments>build</arguments>
+                            <executable>yarn.cmd</executable>
+                            <arguments>
+                                <argument>build</argument>
+                            </arguments>
+                            <workingDirectory>${basedir}/src/main/frontend</workingDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>yarn copy build</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>yarn.cmd</executable>
+                            <arguments>
+                                <argument>copy-build</argument>
+                            </arguments>
+                            <workingDirectory>${basedir}/src/main/frontend</workingDirectory>
                         </configuration>
                     </execution>
                 </executions>
