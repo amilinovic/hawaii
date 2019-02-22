@@ -121,12 +121,10 @@ public class RequestService {
    * @return a list of requests for user in given year.
    */
   public List<Request> findAllByUserForYear(Long userId, LocalDate date) {
-    List<Request> filtratedRequests;
     var startDate = date.withDayOfYear(1);
     var endDate = date.withDayOfYear(date.lengthOfYear());
-    filtratedRequests = findAllByUserWithinDates(startDate, endDate, userId);
 
-    return filtratedRequests;
+    return findAllByUserWithinDates(startDate, endDate, userId);
   }
 
   /**
