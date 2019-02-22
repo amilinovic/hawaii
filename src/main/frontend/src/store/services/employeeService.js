@@ -1,8 +1,9 @@
 import request from 'superagent';
+import { getLink } from '../getLink';
 
 export const createEmployeeApi = async employeeObject => {
   return await request
-    .post(`/users`)
+    .post(getLink('/users'))
     .send(employeeObject)
     .set('X-ID-TOKEN', sessionStorage.getItem('token'))
     .then(res => res.body);
@@ -10,14 +11,15 @@ export const createEmployeeApi = async employeeObject => {
 
 export const getEmployeeApi = async id => {
   return await request
-    .get(`/users/${id}`)
+    .get(getLink(`/users/${id}`))
+    .post(`/users`)
     .set('X-ID-TOKEN', sessionStorage.getItem('token'))
     .then(res => res.body);
 };
 
 export const updateEmployeeApi = async employeeObject => {
   return await request
-    .put('/users')
+    .put(getLink('/users'))
     .send(employeeObject)
     .set('X-ID-TOKEN', sessionStorage.getItem('token'))
     .then(res => res.body);
@@ -25,7 +27,7 @@ export const updateEmployeeApi = async employeeObject => {
 
 export const removeEmployeeApi = async id => {
   return await request
-    .del(`/users/${id}`)
+    .del(getLink(`/users/${id}`))
     .set('X-ID-TOKEN', sessionStorage.getItem('token'))
     .then(res => res.body);
 };
