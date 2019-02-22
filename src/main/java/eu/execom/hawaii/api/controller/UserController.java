@@ -163,7 +163,7 @@ public class UserController {
     return new ResponseEntity<>(pageableUserDtos, HttpStatus.OK);
   }
 
-  @GetMapping("/{email}")
+  @GetMapping("/email/{email}")
   public ResponseEntity<UserDto> getUserByEmail(@PathVariable String email) {
     User user = userService.findByEmail(email);
 

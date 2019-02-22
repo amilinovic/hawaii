@@ -1,6 +1,8 @@
 package eu.execom.hawaii.api.controller;
 
 import eu.execom.hawaii.dto.AllowanceForUserDto;
+import eu.execom.hawaii.dto.AllowanceWithoutYearDto;
+import eu.execom.hawaii.model.Allowance;
 import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.service.AllowanceService;
 import eu.execom.hawaii.service.UserService;
@@ -12,6 +14,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -45,5 +48,19 @@ public class AllowanceController {
     AllowanceForUserDto allowanceForUserDto = allowanceService.getAllowancesForUser(user);
 
     return new ResponseEntity<>(allowanceForUserDto, HttpStatus.OK);
+  }
+
+  @GetMapping("/user/{id}/year")
+  public ResponseEntity<AllowanceWithoutYearDto> getAllowanceForUserInYear(@PathVariable Long id,
+      @RequestParam int year) {
+    Allowance allowance = allowanceService.getByUserAndYear(id, year);
+    return new ResponseEntity<>(new AllowanceWithoutYearDto(allowance), HttpStatus.OK);
+  }
+
+  @GetMapping("/me")
+  public ResponseEntity<AllowanceWithoutYearDto> getAllowancesForUser(@ApiIgnore @AuthenticationPrincipal User authUser,
+      @RequestParam int year) {
+    Allowance allowance = allowanceService.getByUserAndYear(authUser.getId(), year);
+    return new ResponseEntity<>(new AllowanceWithoutYearDto(allowance), HttpStatus.OK);
   }
 }
