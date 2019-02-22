@@ -13,7 +13,6 @@ export const getUser = function*(action) {
     yield put(receiveUser(userInformation));
   } catch (error) {
     yield put(errorReceivingUser(error));
-    yield console.log(error.message);
     yield put(
       toastrActions.add({
         type: 'error',
