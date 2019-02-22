@@ -12,12 +12,12 @@ export const createEmployeeApi = async employeeObject => {
 export const getEmployeeApi = async id => {
   return await request
     .get(getLink(`/users/${id}`))
-    .post(`/users`)
     .set('X-ID-TOKEN', sessionStorage.getItem('token'))
     .then(res => res.body);
 };
 
 export const updateEmployeeApi = async employeeObject => {
+  console.log(employeeObject);
   return await request
     .put(getLink('/users'))
     .send(employeeObject)

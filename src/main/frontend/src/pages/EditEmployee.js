@@ -57,10 +57,21 @@ class EditEmployee extends Component {
                 defaultValue={values.jobTitle}
                 placeholder="Employee job title"
               />
-              <select className="mb-3" name="userRole">
+              <select
+                className="mb-3"
+                name="userRole"
+                onChange={handleChange}
+                value={values.userRole}
+              >
                 <option value="HR_MANAGER">HR manager</option>
+                <option value="DEVELOPER">Developer</option>
               </select>
-              <select className="mb-3" name="teamId">
+              <select
+                className="mb-3"
+                name="teamId"
+                onChange={handleChange}
+                value={values.teamId}
+              >
                 {teams}
               </select>
               <input

@@ -24,15 +24,15 @@ const TableRow = styled.div`
 `;
 
 const EmployeeInfo = employee => {
-  const { fullName, email, jobTitle, yearsOfService } = employee;
+  const { id, fullName, email, jobTitle, yearsOfService } = employee;
   return (
     <div className="align-items-center d-flex justify-content-between mb-3">
       <EmployeesImage />
       <TableRow width="15%">
         <TableText>
           {/* TODO: Change this to ID, email is used because there is now getById endpoint at the moment on the backend */}
-          <NavLink to={`/employee/${email}`}>{fullName}</NavLink>
-          <NavLink to={`/employee/${email}/edit`}>Edit</NavLink>
+          <NavLink to={`/employee/${id}`}>{fullName}</NavLink>
+          <NavLink to={`/employee/${id}/edit`}>Edit</NavLink>
         </TableText>
       </TableRow>
       <TableRow>
