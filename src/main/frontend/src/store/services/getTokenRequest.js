@@ -1,9 +1,9 @@
 import request from 'superagent';
-
+import { getLink } from '../getLink';
 export const tokenRequest = async userObj => {
   try {
     const response = await request
-      .get(`/users/me`)
+      .get(getLink('/users/me'))
       .set('X-ID-TOKEN', userObj.tokenId)
       .set('Accept', 'application/json');
 

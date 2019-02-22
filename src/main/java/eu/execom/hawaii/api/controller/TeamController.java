@@ -39,8 +39,8 @@ public class TeamController {
   private static final ModelMapper MAPPER = new ModelMapper();
 
   @GetMapping
-  public ResponseEntity<List<TeamDto>> getTeams(@RequestParam(required = false) Boolean active) {
-    var teams = getTeamsByStatus(active);
+  public ResponseEntity<List<TeamDto>> getTeams() {
+    var teams = teamService.findAll();
     var teamDtos = teams.stream().map(TeamDto::new).collect(Collectors.toList());
     return new ResponseEntity<>(teamDtos, HttpStatus.OK);
   }
@@ -79,12 +79,9 @@ public class TeamController {
 
   @DeleteMapping("/{id}")
   public ResponseEntity deleteTeam(@ApiIgnore @AuthenticationPrincipal User authUser, @PathVariable Long id) {
+    var team = teamService.getById(id);
     teamService.delete(id, authUser);
-
     return new ResponseEntity(HttpStatus.NO_CONTENT);
-  }
 
-  private List<Team> getTeamsByStatus(Boolean deleted) {
-    return deleted == null ? teamService.findAll() : teamService.findAllByDeleted(deleted);
   }
 }

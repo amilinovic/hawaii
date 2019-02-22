@@ -1,15 +1,15 @@
+import { push } from 'connected-react-router';
 import React, { Component } from 'react';
 import { GoogleLogin } from 'react-google-login';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import styled from 'styled-components';
+import { MainLogo } from '../components/common/mainLogo';
+import ExecomLogo from '../img/execom_logo.png';
+import HawaiiWallpaper from '../img/hawaii_wallpaper.jpg';
 import { requestToken } from '../store/actions/getTokenActions';
 import { getAuthorization } from '../store/selectors';
 import store from '../store/store';
-import { push } from 'connected-react-router';
-import HawaiiWallpaper from '../img/hawaii_wallpaper.jpg';
-import ExecomLogo from '../img/execom_logo.png';
-import styled from 'styled-components';
-import { MainLogo } from '../components/common/mainLogo';
 
 const loginButtonStyle = {
   padding: 0,
@@ -52,9 +52,13 @@ const LogoContainer = styled.div`
   border: 2px solid rgba(50, 50, 52);
 `;
 class Login extends Component {
+  componentDidMount = () => {
+    sessionStorage.clear();
+  };
+
   componentDidUpdate() {
     if (this.props.authorization) {
-      store.dispatch(push('/leave'));
+      store.dispatch(push('/dashboard'));
     }
   }
 

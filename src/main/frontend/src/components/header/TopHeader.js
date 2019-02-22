@@ -1,16 +1,12 @@
 import React from 'react';
-import UserInfo from '../UserInfo';
-import ExecomLogo from '../../img/execom_logo.png';
 import styled from 'styled-components';
+import ExecomLogo from '../../img/execom_logo.png';
+import UserInfo from '../UserInfo';
 
 const NavHeader = styled.header`
-  width: 100%;
   background-color: #ededed;
-  display: flex;
-  flex-direction: row;
-  align-items: flex-end;
-  justify-content: space-between;
   z-index: 3;
+  flex: 0 0 auto;
 `;
 
 const LogoImage = styled.img`
@@ -22,7 +18,7 @@ const NavSpan = styled.span`
 `;
 
 const TopHeader = props => (
-  <NavHeader>
+  <NavHeader className="d-flex justify-content-between align-items-end">
     <NavSpan />
     <LogoImage src={ExecomLogo} />
     <UserInfo fullName={props.user.fullName} userEmail={props.user.email} />

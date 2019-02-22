@@ -10,6 +10,7 @@ class TeamItem extends Component {
       <tr>
         <td>
           <NavLink to={`teams/${id}`}>{name}</NavLink>
+          <NavLink to={`teams/${id}/edit`}>edit</NavLink>
         </td>
         <td>test members</td>
         <td>{emails}</td>
