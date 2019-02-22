@@ -25,6 +25,7 @@ class CreateTeam extends Component {
           onSubmit={this.props.createTeam}
           render={({ handleSubmit, handleChange, values }) => (
             <React.Fragment>
+              {console.log(values)}
               <input className="mb-3" name="name" onChange={handleChange} />
               {this.props.employees.map(employee => {
                 return (

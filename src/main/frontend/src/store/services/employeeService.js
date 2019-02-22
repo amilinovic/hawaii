@@ -17,7 +17,6 @@ export const getEmployeeApi = async id => {
 };
 
 export const updateEmployeeApi = async employeeObject => {
-  console.log(employeeObject);
   return await request
     .put(getLink('/users'))
     .send(employeeObject)

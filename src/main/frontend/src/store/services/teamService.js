@@ -16,6 +16,14 @@ export const updateTeamApi = async teamObject => {
     .then(res => res.body);
 };
 
+export const createTeamApi = async teamObject => {
+  return await request
+    .post(getLink('/teams'))
+    .send(teamObject)
+    .set('X-ID-TOKEN', sessionStorage.getItem('token'))
+    .then(res => res.body);
+};
+
 export const removeTeamApi = async id => {
   return await request
     .del(getLink(`/teams/${id}`))
