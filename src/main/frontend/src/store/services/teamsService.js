@@ -1,10 +1,9 @@
 import request from 'superagent';
-import { getLink } from '../getLink';
 
 export const getTeamsApi = async () => {
   try {
     return await request
-      .get(getLink('/teams'))
+      .get('/teams')
       .set('X-ID-TOKEN', sessionStorage.getItem('token'))
       .then(res => res.body)
       .catch(err => {

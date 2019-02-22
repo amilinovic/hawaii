@@ -1,12 +1,12 @@
-import { ConnectedRouter } from 'connected-react-router';
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { Route, Switch } from 'react-router-dom';
-import { bindActionCreators } from 'redux';
+import { Switch, Route } from 'react-router-dom';
 import Login from './layout/Login';
 import Panel from './layout/Panel';
-import { requestTokenFromStorage } from './store/actions/getTokenFromSessionStorageActions';
+import { ConnectedRouter } from 'connected-react-router';
 import { history } from './store/store';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { requestTokenFromStorage } from './store/actions/getTokenFromSessionStorageActions';
 
 class App extends Component {
   componentDidMount() {
