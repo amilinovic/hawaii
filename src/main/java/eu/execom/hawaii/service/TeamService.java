@@ -73,9 +73,9 @@ public class TeamService {
   @Transactional
   public Team update(Team team, User modifiedByUser) {
     var oldTeam = getById(team.getId());
-    var users = oldTeam.getUsers();
-    users.addAll(team.getUsers());
-    team.setUsers(users.stream().distinct().collect(Collectors.toList()));
+    for(User u: team.getUsers()){
+      u.setTeam(team);
+    }
     var previousTeamState = TeamAudit.fromTeam(oldTeam);
     saveAuditInformation(OperationPerformed.UPDATE, modifiedByUser, team, previousTeamState);
 
