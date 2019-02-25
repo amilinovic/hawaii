@@ -111,6 +111,9 @@ public class UserService {
    */
   public Page<User> findAllByActiveAndEmailOrFullName(UserStatusType userStatusType, String searchQuery,
       Pageable pageable) {
+    if (searchQuery.length() <= MINIMUM_QUERY_SIZE) {
+      return Page.empty();
+    }
     return userRepository.findAllByUserStatusTypeAndEmailContainingOrFullNameContaining(userStatusType, searchQuery,
         searchQuery, pageable);
   }

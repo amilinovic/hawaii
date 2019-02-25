@@ -152,8 +152,12 @@ public class UserController {
   }
 
   @GetMapping("/search")
-  public ResponseEntity<Page<UserDto>> searchUsersByNameAndEmail(@RequestParam int page, @RequestParam int size,
-      @RequestParam UserStatusType userStatusType, @RequestParam String searchQuery) {
+  public ResponseEntity<Page<UserDto>> searchUsersByNameAndEmail(
+      @RequestParam(required = false, defaultValue = "0") int page,
+      @RequestParam(required = false, defaultValue = "30") int size,
+      @RequestParam(required = false, defaultValue = "ACTIVE") UserStatusType userStatusType,
+      @RequestParam String searchQuery) {
+
     Pageable pageable = PageRequest.of(page, size, Sort.Direction.ASC, "fullName");
 
     Page<User> users = userService.findAllByActiveAndEmailOrFullName(userStatusType, searchQuery, pageable);
