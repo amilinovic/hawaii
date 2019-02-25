@@ -1,7 +1,7 @@
 ################### DataSource Configuration #########################
 spring.datasource.url=jdbc:mysql://localhost:3306/hawaii?useSSL=false&createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=UTF-8
-spring.datasource.username=hawaii
-spring.datasource.password=G3tm3int0hawaii
+spring.datasource.username=root
+spring.datasource.password=root
 
 ################### Hibernate/Spring JPA Configuration ###############
 spring.jpa.properties.hibernate.dialect = org.hibernate.dialect.MySQL5InnoDBDialect
@@ -25,15 +25,15 @@ logging.file.max-history=10
 ################### Email configuration ###############################
 spring.mail.host=smtp.gmail.com
 spring.mail.port=587
-spring.mail.username=mpay.noreply@gmail.com
-spring.mail.password=Serv1SExecom
+spring.mail.username=
+spring.mail.password=
 spring.mail.properties.mail.smtp.auth=true
 spring.mail.properties.mail.smtp.starttls.enable=true
 
 ################### Firebase configuration ##########################################
-fcm.service-account-file=./hawaii-9ba04-firebase-adminsdk-r498c-74efac9073.json
-fcm.server-legacy-key=AIzaSyBROYZVWI-47ybG7TBonivxmfo3WhNBLuI
+fcm.service-account-file=
+fcm.server-legacy-key=
 fcm.api-url=https://fcm.googleapis.com/fcm/send
 
 ################### Security configuration ##########################################
-security.google-client-ids=91011414864-9igmd38tpgbklpgkdpcogh9j6h7e2rt9.apps.googleusercontent.com,91011414864-oscjl6qmm6qds4kuvvh1j991rgvker3h.apps.googleusercontent.com,91011414864-fse65f2pje2rgmobdqu8n67ld8pk6mhr.apps.googleusercontent.com
+security.google-client-ids=
