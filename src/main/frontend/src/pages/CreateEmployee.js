@@ -35,12 +35,13 @@ class CreateEmployee extends Component {
         <Formik
           initialValues={{
             leaveProfileId: 2,
-            userRole: 'HR_MANAGER',
+            userRole: '',
+            teamId: '',
             userStatusType: 'ACTIVE'
           }}
           onSubmit={this.props.createEmployee}
         >
-          {({ handleSubmit, handleChange }) => (
+          {({ handleSubmit, handleChange, values }) => (
             <React.Fragment>
               <input
                 className="mb-3"
@@ -63,12 +64,26 @@ class CreateEmployee extends Component {
                 onChange={handleChange}
                 placeholder="Job title"
               />
-              <select className="mb-3" name="userRole" onChange={handleChange}>
-                <option defaultValue value="HR_MANAGER">
-                  HR manager
+              <select
+                className="mb-3"
+                name="userRole"
+                onChange={handleChange}
+                value={values.userRole}
+              >
+                <option value="" disabled>
+                  Select role
                 </option>
+                <option value="HR_MANAGER">HR manager</option>
               </select>
-              <select className="mb-3" name="teamId" onChange={handleChange}>
+              <select
+                className="mb-3"
+                name="teamId"
+                onChange={handleChange}
+                value={values.teamId}
+              >
+                <option value="" disabled>
+                  Select team
+                </option>
                 {teams}
               </select>
               <input
