@@ -1,10 +1,15 @@
 import { call, put, takeLatest } from 'redux-saga/effects';
 import {
+  clearEmployees,
   errorReceivingEmployees,
   receiveEmployees,
-  requestEmployees
+  requestEmployees,
+  searchEmployees
 } from '../actions/employeesActions';
-import { getEmployeesApi } from '../services/employeesService';
+import {
+  getEmployeesApi,
+  searchEmployeesApi
+} from '../services/employeesService';
 
 export const getEmployees = function*() {
   try {
@@ -15,4 +20,23 @@ export const getEmployees = function*() {
   }
 };
 
-export const employeesSaga = [takeLatest(requestEmployees, getEmployees)];
+export const searchEmployeesSaga = function*(action) {
+  if (action.payload) {
+    try {
+      const employeesInformation = yield call(
+        searchEmployeesApi,
+        action.payload
+      );
+      yield put(receiveEmployees(employeesInformation));
+    } catch (error) {
+      yield put(errorReceivingEmployees(error));
+    }
+  } else {
+    yield put(clearEmployees());
+  }
+};
+
+export const employeesSaga = [
+  takeLatest(requestEmployees, getEmployees),
+  takeLatest(searchEmployees, searchEmployeesSaga)
+];
