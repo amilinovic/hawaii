@@ -143,9 +143,6 @@
       <column autoIncrement="true" name="id" type="BIGINT(19)">
         <constraints primaryKey="true"/>
       </column>
-      <column name="deleted" type="BIT(1)">
-        <constraints nullable="false"/>
-      </column>
       <column name="send_email_to_teammates_for_sickness_request_enabled" type="BIT(1)">
         <constraints nullable="false"/>
       </column>
