@@ -58,7 +58,7 @@ public class AllowanceController {
   }
 
   @GetMapping("/me")
-  public ResponseEntity<AllowanceWithoutYearDto> getAllowancesForUser(@ApiIgnore @AuthenticationPrincipal User authUser,
+  public ResponseEntity<AllowanceWithoutYearDto> getAllowancesForAuthUser(@ApiIgnore @AuthenticationPrincipal User authUser,
       @RequestParam int year) {
     Allowance allowance = allowanceService.getByUserAndYear(authUser.getId(), year);
     return new ResponseEntity<>(new AllowanceWithoutYearDto(allowance), HttpStatus.OK);
