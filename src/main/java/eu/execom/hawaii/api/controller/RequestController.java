@@ -123,6 +123,24 @@ public class RequestController {
     return new ResponseEntity<>(requestDtos, HttpStatus.OK);
   }
 
+  @GetMapping("/user/{id}/year")
+  public ResponseEntity<List<RequestDto>> getUserRequestsByYear(@PathVariable Long id,
+      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+    List<Request> requests = requestService.findAllByUserForYear(id, date);
+    var requestDtos = requests.stream().map(RequestDto::new).collect(Collectors.toList());
+
+    return new ResponseEntity<>(requestDtos, HttpStatus.OK);
+  }
+
+  @GetMapping("/me/year")
+  public ResponseEntity<List<RequestDto>> getMyRequestsForYear(@ApiIgnore @AuthenticationPrincipal User authUser,
+      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+    List<Request> requests = requestService.findAllByUserForYear(authUser.getId(), date);
+    var requestDtos = requests.stream().map(RequestDto::new).collect(Collectors.toList());
+
+    return new ResponseEntity<>(requestDtos, HttpStatus.OK);
+  }
+
   @GetMapping("/team/{teamId}/month")
   public ResponseEntity<List<RequestDto>> getTeamRequestsByMonth(@PathVariable Long teamId,
       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
