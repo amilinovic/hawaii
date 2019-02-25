@@ -2,10 +2,9 @@ package eu.execom.hawaii.jobs;
 
 import eu.execom.hawaii.model.Allowance;
 import eu.execom.hawaii.model.User;
-import eu.execom.hawaii.repository.AllowanceRepository;
-import eu.execom.hawaii.repository.UserRepository;
 import eu.execom.hawaii.service.AllowanceService;
 import eu.execom.hawaii.service.EntityBuilder;
+import eu.execom.hawaii.service.UserService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,10 +27,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 public class CarryOverVacationJobTest {
 
   @Mock
-  private UserRepository userRepository;
-
-  @Mock
-  private AllowanceRepository allowanceRepository;
+  private UserService userService;
 
   @Mock
   private AllowanceService allowanceService;
@@ -45,16 +41,16 @@ public class CarryOverVacationJobTest {
   @Before
   public void setUp() {
     mockUser = EntityBuilder.user(EntityBuilder.team());
-    allMocks = new Object[] {userRepository, allowanceRepository, allowanceService};
+    allMocks = new Object[] {userService, allowanceService};
   }
 
   @Test
-  public void shouldAddCarriedOverToUsers() {
+  public void shouldAddMaxAllowedCarriedOverToUsers() {
     //given
     Allowance allowance = EntityBuilder.allowance(mockUser);
     var activeUsers = List.of(mockUser);
-    given(userRepository.findAllByUserStatusTypeIn(any())).willReturn(activeUsers);
-    given(allowanceRepository.findByUserIdAndYearYear(any(), anyInt())).willReturn(allowance);
+    given(userService.findAllByUserStatusType(any())).willReturn(activeUsers);
+    given(allowanceService.getByUserAndYear(any(), anyInt())).willReturn(allowance);
     given(allowanceService.calculateRemainingAnnualHours(allowance)).willReturn(100);
 
     //when
@@ -62,10 +58,53 @@ public class CarryOverVacationJobTest {
 
     //than
     assertThat("Expect carried over is 40 hours", allowance.getCarriedOver(), is(40));
-    verify(userRepository).findAllByUserStatusTypeIn(any());
-    verify(allowanceRepository, times(2)).findByUserIdAndYearYear(any(), anyInt());
+    verify(userService).findAllByUserStatusType(any());
+    verify(allowanceService, times(2)).getByUserAndYear(any(), anyInt());
     verify(allowanceService).calculateRemainingAnnualHours(any());
-    verify(allowanceRepository).save(any());
+    verify(allowanceService).save(any());
     verifyNoMoreInteractions(allMocks);
   }
+
+  @Test
+  public void shouldAddCarriedOverToUsers() {
+    //given
+    Allowance allowance = EntityBuilder.allowance(mockUser);
+    var activeUsers = List.of(mockUser);
+    given(userService.findAllByUserStatusType(any())).willReturn(activeUsers);
+    given(allowanceService.getByUserAndYear(any(), anyInt())).willReturn(allowance);
+    given(allowanceService.calculateRemainingAnnualHours(allowance)).willReturn(36);
+
+    //when
+    carryOverVacationJob.addCarriedOverToUsers();
+
+    //than
+    assertThat("Expect carried over is 36 hours", allowance.getCarriedOver(), is(36));
+    verify(userService).findAllByUserStatusType(any());
+    verify(allowanceService, times(2)).getByUserAndYear(any(), anyInt());
+    verify(allowanceService).calculateRemainingAnnualHours(any());
+    verify(allowanceService).save(any());
+    verifyNoMoreInteractions(allMocks);
+  }
+
+  @Test
+  public void shouldNotAddCarriedOverToUsers() {
+    //given
+    Allowance allowance = EntityBuilder.allowance(mockUser);
+    var activeUsers = List.of(mockUser);
+    given(userService.findAllByUserStatusType(any())).willReturn(activeUsers);
+    given(allowanceService.getByUserAndYear(any(), anyInt())).willReturn(allowance);
+    given(allowanceService.calculateRemainingAnnualHours(allowance)).willReturn(0);
+
+    //when
+    carryOverVacationJob.addCarriedOverToUsers();
+
+    //than
+    assertThat("Expect carried over is 0 hours", allowance.getCarriedOver(), is(0));
+    verify(userService).findAllByUserStatusType(any());
+    verify(allowanceService, times(2)).getByUserAndYear(any(), anyInt());
+    verify(allowanceService).calculateRemainingAnnualHours(any());
+    verify(allowanceService).save(any());
+    verifyNoMoreInteractions(allMocks);
+  }
+
 }
