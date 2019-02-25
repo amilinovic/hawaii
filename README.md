@@ -31,6 +31,9 @@ Service account key > Choose JSON (default) > Create.
 Save the generated file to the application's `src/main/resources` folder and rename it
 to `service_account.json`.
 
+- Create `application.properties` in reference to `application.properties.example`. Setup configurations based on 
+your needs.
+
 #### Create MySQL database:
 ```sh
 Database name: hawaii
@@ -103,6 +106,7 @@ These instructions will get you a copy of the project up and running on your loc
 What things you need to setup before starting server
 
 - Install [Node](https://nodejs.org/en/)
+- Install [Yarn](https://yarnpkg.com/lang/en/docs/install/#debian-stable)
 
 #### Server starting
 
