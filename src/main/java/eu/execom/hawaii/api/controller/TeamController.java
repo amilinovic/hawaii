@@ -4,6 +4,7 @@ import eu.execom.hawaii.dto.TeamDto;
 import eu.execom.hawaii.model.Team;
 import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.service.TeamService;
+import eu.execom.hawaii.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,6 +50,13 @@ public class TeamController {
     var team = teamService.getById(id);
     var teamDto = new TeamDto(team);
     return new ResponseEntity<>(teamDto, HttpStatus.OK);
+  }
+
+  @GetMapping("/search")
+  public ResponseEntity<List<TeamDto>> searchTeamsByUsersNameContaining(@RequestParam String fullNameQuery) {
+    List<Team> teams = teamService.searchTeamsByUsersNameContaining(fullNameQuery);
+    var teamDtos = teams.stream().map(TeamDto::new).collect(Collectors.toList());
+    return new ResponseEntity<>(teamDtos, HttpStatus.OK);
   }
 
   @PostMapping

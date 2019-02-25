@@ -7,10 +7,12 @@ import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.audit.TeamAudit;
 import eu.execom.hawaii.model.enumerations.OperationPerformed;
 import eu.execom.hawaii.repository.TeamRepository;
+import eu.execom.hawaii.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,11 +25,14 @@ public class TeamService {
 
   private TeamRepository teamRepository;
   private AuditInformationService auditInformationService;
+  private UserService userService;
 
   @Autowired
-  public TeamService(TeamRepository teamRepository, AuditInformationService auditInformationService) {
+  public TeamService(TeamRepository teamRepository, AuditInformationService auditInformationService,
+      UserService userService) {
     this.teamRepository = teamRepository;
     this.auditInformationService = auditInformationService;
+    this.userService = userService;
   }
 
   /**
@@ -50,10 +55,29 @@ public class TeamService {
   }
 
   /**
+   * Retrieves a list of teams from repository by given users fullName query.
+   *
+   * @param fullNameQuery User fullName query
+   * @return a list of all teams where user with given fullName query is member or teamApprover.
+   */
+  public List<Team> searchTeamsByUsersNameContaining(String fullNameQuery) {
+
+    List<User> users = userService.findByFullNameContaining(fullNameQuery);
+
+    List<Team> teams = new ArrayList<>();
+    for (User u : users) {
+      teams.addAll(u.getApproverTeams());
+      teams.add(u.getTeam());
+    }
+
+    return teams;
+  }
+
+  /**
    * Saves the provided Team to repository.
    * Makes audit of that save.
    *
-   * @param team the Team entity to be persisted.
+   * @param team           the Team entity to be persisted.
    * @param modifiedByUser user that made changes to that Team entity.
    * @return saved Team.
    */
@@ -66,7 +90,7 @@ public class TeamService {
   /**
    * Saves the provided Team to repository.
    *
-   * @param team the Team entity to be persisted.
+   * @param team           the Team entity to be persisted.
    * @param modifiedByUser user that made change to Team entity.
    * @return saved Team.
    */
