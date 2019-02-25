@@ -73,7 +73,7 @@ public class TeamService {
   @Transactional
   public Team update(Team team, User modifiedByUser) {
     var oldTeam = getById(team.getId());
-    for(User u: team.getUsers()){
+    for (User u : team.getUsers()) {
       u.setTeam(team);
     }
     var previousTeamState = TeamAudit.fromTeam(oldTeam);
