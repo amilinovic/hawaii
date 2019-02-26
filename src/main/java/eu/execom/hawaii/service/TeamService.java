@@ -1,33 +1,37 @@
 package eu.execom.hawaii.service;
 
 import eu.execom.hawaii.exceptions.ActionNotAllowedException;
-import eu.execom.hawaii.exceptions.NotAuthorizedApprovalException;
 import eu.execom.hawaii.model.Team;
 import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.audit.TeamAudit;
 import eu.execom.hawaii.model.enumerations.OperationPerformed;
 import eu.execom.hawaii.repository.TeamRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
  * Team management service.
  */
-
+@Slf4j
 @Service
 public class TeamService {
 
   private TeamRepository teamRepository;
   private AuditInformationService auditInformationService;
+  private UserService userService;
 
   @Autowired
-  public TeamService(TeamRepository teamRepository, AuditInformationService auditInformationService) {
+  public TeamService(TeamRepository teamRepository, AuditInformationService auditInformationService,
+      UserService userService) {
     this.teamRepository = teamRepository;
     this.auditInformationService = auditInformationService;
+    this.userService = userService;
   }
 
   /**
@@ -50,10 +54,29 @@ public class TeamService {
   }
 
   /**
+   * Retrieves a list of teams from repository by given users fullName query.
+   *
+   * @param fullNameQuery User fullName query
+   * @return a list of all teams where user with given fullName query is member or teamApprover.
+   */
+  public List<Team> searchTeamsByUsersNameContaining(String fullNameQuery) {
+
+    List<User> users = userService.findByFullNameContaining(fullNameQuery);
+
+    List<Team> teams = new ArrayList<>();
+    for (User u : users) {
+      teams.addAll(u.getApproverTeams());
+      teams.add(u.getTeam());
+    }
+
+    return teams;
+  }
+
+  /**
    * Saves the provided Team to repository.
    * Makes audit of that save.
    *
-   * @param team the Team entity to be persisted.
+   * @param team           the Team entity to be persisted.
    * @param modifiedByUser user that made changes to that Team entity.
    * @return saved Team.
    */
@@ -66,16 +89,16 @@ public class TeamService {
   /**
    * Saves the provided Team to repository.
    *
-   * @param team the Team entity to be persisted.
+   * @param team           the Team entity to be persisted.
    * @param modifiedByUser user that made change to Team entity.
    * @return saved Team.
    */
   @Transactional
   public Team update(Team team, User modifiedByUser) {
     var oldTeam = getById(team.getId());
-    var users = oldTeam.getUsers();
-    users.addAll(team.getUsers());
-    team.setUsers(users.stream().distinct().collect(Collectors.toList()));
+    for (User u : team.getUsers()) {
+      u.setTeam(team);
+    }
     var previousTeamState = TeamAudit.fromTeam(oldTeam);
     saveAuditInformation(OperationPerformed.UPDATE, modifiedByUser, team, previousTeamState);
 
@@ -96,7 +119,9 @@ public class TeamService {
       teamRepository.deleteById(id);
       saveAuditInformation(OperationPerformed.DELETE, modifiedByUser, team, previousTeamState);
     } else {
-      throw new ActionNotAllowedException("Team member list needs to be empty");
+      log.error("Team: {}, still contains {} members, team needs to be empty before it can be deleted.", team.getName(),
+          team.getUsers().size());
+      throw new ActionNotAllowedException();
     }
 
   }

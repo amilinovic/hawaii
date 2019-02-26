@@ -3,9 +3,8 @@ package eu.execom.hawaii.jobs;
 import eu.execom.hawaii.model.Allowance;
 import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.enumerations.UserStatusType;
-import eu.execom.hawaii.repository.AllowanceRepository;
-import eu.execom.hawaii.repository.UserRepository;
 import eu.execom.hawaii.service.AllowanceService;
+import eu.execom.hawaii.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 
@@ -15,16 +14,13 @@ import java.util.List;
 
 public class CarryOverVacationJob {
 
-  private AllowanceRepository allowanceRepository;
-  private UserRepository userRepository;
+  private UserService userService;
   private AllowanceService allowanceService;
 
   @Autowired
-  public CarryOverVacationJob(AllowanceRepository allowanceRepository, AllowanceService allowanceService,
-      UserRepository userRepository) {
-    this.allowanceRepository = allowanceRepository;
+  public CarryOverVacationJob(UserService userService, AllowanceService allowanceService) {
+    this.userService = userService;
     this.allowanceService = allowanceService;
-    this.userRepository = userRepository;
   }
 
   /**
@@ -36,19 +32,29 @@ public class CarryOverVacationJob {
    */
   @Scheduled(cron = "1 0 0 1 1 *", zone = "Europe/Belgrade")
   public void addCarriedOverToUsers() {
-    List<User> users = userRepository.findAllByUserStatusTypeIn(Collections.singletonList(UserStatusType.ACTIVE));
-    int currentYear = LocalDate.now().getYear();
-    users.forEach(user -> {
-      Allowance thisYearAllowance = allowanceRepository.findByUserIdAndYearYear(user.getId(), currentYear);
-      Allowance lastYearAllowance = allowanceRepository.findByUserIdAndYearYear(user.getId(), currentYear - 1);
-      int remainingHours = allowanceService.calculateRemainingAnnualHours(lastYearAllowance);
-
-      if (remainingHours > user.getLeaveProfile().getMaxCarriedOver()) {
-        thisYearAllowance.setCarriedOver(user.getLeaveProfile().getMaxCarriedOver());
-      } else {
-        thisYearAllowance.setCarriedOver(remainingHours);
-      }
-      allowanceRepository.save(thisYearAllowance);
-    });
+    List<User> users = userService.findAllByUserStatusType(Collections.singletonList(UserStatusType.ACTIVE));
+    var lastYear = LocalDate.now().minusYears(1).getYear();
+    users.forEach(user -> saveCarriedOver(user, lastYear));
   }
+
+  private void saveCarriedOver(User user, int lastYear) {
+    Allowance thisYearAllowance = allowanceService.getByUserAndYear(user.getId(), lastYear + 1);
+    thisYearAllowance.setCarriedOver(getCarriedOver(user, lastYear));
+
+    allowanceService.save(thisYearAllowance);
+  }
+
+  private int getCarriedOver(User user, int lastYear) {
+    int remainingLastYearHours = getRemainingHours(user, lastYear);
+    int maxCarriedOverThreshold = user.getLeaveProfile().getMaxCarriedOver();
+
+    return (remainingLastYearHours > maxCarriedOverThreshold) ? maxCarriedOverThreshold : remainingLastYearHours;
+  }
+
+  private int getRemainingHours(User user, int lastYear) {
+    Allowance lastYearAllowance = allowanceService.getByUserAndYear(user.getId(), lastYear);
+
+    return allowanceService.calculateRemainingAnnualHours(lastYearAllowance);
+  }
+
 }
