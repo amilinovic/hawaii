@@ -1,13 +1,12 @@
 package eu.execom.hawaii.service;
 
 import eu.execom.hawaii.exceptions.ActionNotAllowedException;
-import eu.execom.hawaii.exceptions.NotAuthorizedApprovalException;
 import eu.execom.hawaii.model.Team;
 import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.model.audit.TeamAudit;
 import eu.execom.hawaii.model.enumerations.OperationPerformed;
 import eu.execom.hawaii.repository.TeamRepository;
-import eu.execom.hawaii.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +18,7 @@ import java.util.stream.Collectors;
 /**
  * Team management service.
  */
-
+@Slf4j
 @Service
 public class TeamService {
 
@@ -120,7 +119,9 @@ public class TeamService {
       teamRepository.deleteById(id);
       saveAuditInformation(OperationPerformed.DELETE, modifiedByUser, team, previousTeamState);
     } else {
-      throw new ActionNotAllowedException("Team member list needs to be empty");
+      log.error("Team: {}, still contains {} members, team needs to be empty before it can be deleted.", team.getName(),
+          team.getUsers().size());
+      throw new ActionNotAllowedException();
     }
 
   }

@@ -4,7 +4,6 @@ import eu.execom.hawaii.dto.TeamDto;
 import eu.execom.hawaii.model.Team;
 import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.service.TeamService;
-import eu.execom.hawaii.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -79,9 +77,7 @@ public class TeamController {
 
   @DeleteMapping("/{id}")
   public ResponseEntity deleteTeam(@ApiIgnore @AuthenticationPrincipal User authUser, @PathVariable Long id) {
-    var team = teamService.getById(id);
     teamService.delete(id, authUser);
     return new ResponseEntity(HttpStatus.NO_CONTENT);
-
   }
 }
