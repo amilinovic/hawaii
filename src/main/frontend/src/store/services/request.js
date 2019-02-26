@@ -2,33 +2,33 @@ import request from 'superagent';
 import { getLink } from '../getLink';
 import { getTokenFromSessionStorage } from './getTokenFromSessionStorage';
 
-const get = (url, user = getTokenFromSessionStorage().token) => {
+const get = url => {
   return request
     .get(getLink(url))
-    .set('X-ID-TOKEN', user)
+    .set('X-ID-TOKEN', getTokenFromSessionStorage().token)
     .then(res => res.body);
 };
 
-const post = (url, data, user = getTokenFromSessionStorage().token) => {
+const post = (url, data) => {
   return request
     .post(getLink(url))
     .send(data)
-    .set('X-ID-TOKEN', user)
+    .set('X-ID-TOKEN', getTokenFromSessionStorage().token)
     .then(res => res.body);
 };
 
-const put = (url, data, user = getTokenFromSessionStorage().token) => {
+const put = (url, data) => {
   return request
     .put(getLink(url))
     .send(data)
-    .set('X-ID-TOKEN', user)
+    .set('X-ID-TOKEN', getTokenFromSessionStorage().token)
     .then(res => res.body);
 };
 
-const del = (url, user = getTokenFromSessionStorage().token) => {
+const del = url => {
   return request
     .del(getLink(url))
-    .set('X-ID-TOKEN', user)
+    .set('X-ID-TOKEN', getTokenFromSessionStorage().token)
     .then(res => res.body);
 };
 

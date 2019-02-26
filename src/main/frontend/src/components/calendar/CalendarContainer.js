@@ -36,7 +36,7 @@ export default class CalendarContainer extends Component {
       return {
         ...prevState,
         calendar: createCalendar(
-          this.state.selectedYear,
+          prevState.selectedYear,
           this.props.publicHolidays,
           this.props.personalDays
         )
@@ -59,8 +59,6 @@ export default class CalendarContainer extends Component {
   };
 
   render() {
-    if (!this.state.calendar.length) return null;
-
     return (
       <div className="p-4 d-flex flex-column flex-grow-1">
         <YearSelection className="rounded d-flex align-items-center justify-content-center p-2 my-3">

@@ -1,4 +1,4 @@
-import flow from 'lodash/fp/flow';
+import flow from 'lodash/flow';
 import moment from 'moment';
 
 export const createCalendar = (year, publicHolidays, personalData) =>
@@ -19,12 +19,14 @@ const createMonths = (year, publicHolidays, personalData) => {
       year
     };
   });
+
   return { months, publicHolidays, personalData };
 };
 
 const createDays = monthObject => {
   const monthsAndDays = monthObject.months.map(month => {
     const days = [];
+
     for (let day = 1; day <= 31; day++) {
       const dayObject = {
         date: moment(`${day}-${month.name}-${month.year}`, 'DD-MMMM-YYYY')
@@ -39,19 +41,23 @@ const createDays = monthObject => {
             )
           );
     }
+
     return {
       ...month,
       days
     };
   });
+
   return monthsAndDays;
 };
 
 const checkIfPublicHoliday = (day, publicHolidays, personalData) => {
   if (!publicHolidays) return day;
+
   const publicHolidayCheck = publicHolidays.find(holiday =>
     moment(holiday.date).isSame(day.date, 'day')
   );
+
   return publicHolidayCheck
     ? { day, publicHoliday: publicHolidayCheck.name, personalData }
     : { day, personalData };
@@ -63,9 +69,11 @@ const checkIfPersonalDay = dayObject => {
   } else if (!dayObject.personalData.length) {
     return { day: dayObject.day, publicHoliday: dayObject.publicHoliday };
   }
+
   const personalDataCheck = dayObject.personalData.find(data =>
     data.date.isSame(dayObject.day.date, 'day')
   );
+
   return personalDataCheck
     ? { ...dayObject, personalDay: { ...personalDataCheck } }
     : dayObject;
@@ -77,6 +85,6 @@ const checkIfWeekend = dayObject =>
     : dayObject;
 
 const checkIfToday = dayObject =>
-  moment(moment()).isSame(dayObject.day.date, 'day')
+  moment().isSame(dayObject.day.date, 'day')
     ? { ...dayObject, isToday: true }
     : dayObject;

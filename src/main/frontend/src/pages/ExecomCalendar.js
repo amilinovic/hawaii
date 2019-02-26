@@ -21,6 +21,7 @@ class ExecomCalendar extends Component {
 
   render() {
     if (!this.props.publicHolidays.length) return null;
+
     return (
       <div className="d-flex flex-grow-1 flex-column justify-content-between align-items-center">
         <CalendarContainer

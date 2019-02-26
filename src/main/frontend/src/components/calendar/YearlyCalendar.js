@@ -8,13 +8,13 @@ const TableHeading = styled.th`
   font-size: 14px;
 `;
 
+const numberOfDays = [];
+for (let i = 1; i <= 31; i++) {
+  numberOfDays.push(i);
+}
+
 class YearlyCalendar extends Component {
   render() {
-    const numberOfDays = [];
-    for (let i = 1; i <= 31; i++) {
-      numberOfDays.push(i);
-    }
-
     return (
       <table className="w-100">
         <thead>
@@ -30,13 +30,16 @@ class YearlyCalendar extends Component {
         <tbody>
           {this.props.calendar.map(month => (
             <Month key={month.name} {...month}>
-              {month.days.map(
-                (day, index) =>
-                  day ? (
-                    <Day key={index} {...day.personalDay} {...day} />
-                  ) : (
-                    <Day key={`${month.name}.${index}`} disabled />
-                  )
+              {month.days.map((day, index) =>
+                day ? (
+                  <Day
+                    key={`${month.name}.${index}`}
+                    {...day.personalDay}
+                    {...day}
+                  />
+                ) : (
+                  <Day key={`${month.name}.${index}`} disabled />
+                )
               )}
             </Month>
           ))}
