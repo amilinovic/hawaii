@@ -17,7 +17,6 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
@@ -86,7 +85,7 @@ public class TeamServiceTest {
     given(teamRepository.save(mockTeam)).willReturn(mockTeam);
 
     // when
-    var team = teamService.save(mockTeam, user);
+    var team = teamService.create(mockTeam, user);
 
     // then
     assertNotNull(team);
