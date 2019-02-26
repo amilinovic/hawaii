@@ -1,5 +1,6 @@
 package eu.execom.hawaii.api.controller;
 
+import eu.execom.hawaii.exceptions.ActionNotAllowedException;
 import eu.execom.hawaii.exceptions.InsufficientHoursException;
 import eu.execom.hawaii.exceptions.NotAuthorizedApprovalException;
 import eu.execom.hawaii.exceptions.RequestAlreadyCanceledException;
@@ -52,6 +53,12 @@ public class GlobalExceptionHandler {
   @ResponseStatus(HttpStatus.CONFLICT) // 409
   @ExceptionHandler(RequestAlreadyCanceledException.class)
   public void handleRequestAlreadyCanceledException(HttpServletRequest request, Exception exception) {
+    logException(request, exception);
+  }
+
+  @ResponseStatus(HttpStatus.CONFLICT) // 409
+  @ExceptionHandler(ActionNotAllowedException.class)
+  public void handleActionNotAllowedException(HttpServletRequest request, Exception exception) {
     logException(request, exception);
   }
 
