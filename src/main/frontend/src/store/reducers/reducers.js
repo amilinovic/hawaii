@@ -1,3 +1,4 @@
+import { reducer as toastr } from 'react-redux-toastr';
 import { combineReducers } from 'redux';
 import employee from './employeeReducer';
 import employees from './employeesReducer';
@@ -18,5 +19,6 @@ export default combineReducers({
   employee,
   personalDays,
   publicHolidays,
-  leaveTypes
+  leaveTypes,
+  toastr
 });

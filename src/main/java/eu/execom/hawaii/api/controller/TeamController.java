@@ -50,6 +50,13 @@ public class TeamController {
     return new ResponseEntity<>(teamDto, HttpStatus.OK);
   }
 
+  @GetMapping("/search")
+  public ResponseEntity<List<TeamDto>> searchTeamsByUsersNameContaining(@RequestParam String fullNameQuery) {
+    List<Team> teams = teamService.searchTeamsByUsersNameContaining(fullNameQuery);
+    var teamDtos = teams.stream().map(TeamDto::new).collect(Collectors.toList());
+    return new ResponseEntity<>(teamDtos, HttpStatus.OK);
+  }
+
   @PostMapping
   public ResponseEntity<TeamDto> createTeam(@ApiIgnore @AuthenticationPrincipal User authUser,
       @RequestBody TeamDto teamDto) {
@@ -70,9 +77,7 @@ public class TeamController {
 
   @DeleteMapping("/{id}")
   public ResponseEntity deleteTeam(@ApiIgnore @AuthenticationPrincipal User authUser, @PathVariable Long id) {
-    var team = teamService.getById(id);
     teamService.delete(id, authUser);
     return new ResponseEntity(HttpStatus.NO_CONTENT);
-
   }
 }

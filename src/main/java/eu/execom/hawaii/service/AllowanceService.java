@@ -47,6 +47,17 @@ public class AllowanceService {
   }
 
   /**
+   * Saves the provided Allowance to repository.
+   *
+   * @param allowance the Allowance entity to be persisted.
+   * @return saved Allowance.
+   */
+  @Transactional
+  public Allowance save(Allowance allowance) {
+    return allowanceRepository.save(allowance);
+  }
+
+  /**
    * Apply pending request on request user allowance.
    *
    * @param request the Request.
@@ -88,7 +99,7 @@ public class AllowanceService {
    * @param userId Allowance user.
    * @return Allowance.
    */
-  Allowance getByUserAndYear(Long userId, int year) {
+  public Allowance getByUserAndYear(Long userId, int year) {
     return allowanceRepository.findByUserIdAndYearYear(userId, year);
   }
 
