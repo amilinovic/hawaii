@@ -1,16 +1,40 @@
 import { handleActions } from 'redux-actions';
 import {
   clearEmployees,
+  searchEmployees,
   searchEmployeesSuccess
 } from '../actions/employeesSearchActions';
 import { navigateOut } from '../actions/navigateActions';
 
-export const initialState = [];
+export const initialState = { isFetching: false, results: null };
 
 const actionHandlers = {
-  [searchEmployeesSuccess]: (state, action) => action.payload.content,
-  [clearEmployees]: () => [],
-  [navigateOut]: () => []
+  [searchEmployees]: state => {
+    return {
+      ...state,
+      isFetching: true
+    };
+  },
+  [searchEmployeesSuccess]: (state, action) => {
+    return {
+      ...state,
+      isFetching: false,
+      results: action.payload.content
+    };
+  },
+  [clearEmployees]: state => {
+    return {
+      ...state,
+      isFetching: false,
+      results: null
+    };
+  },
+  [navigateOut]: state => {
+    return {
+      ...state,
+      results: []
+    };
+  }
 };
 
 const reducer = handleActions(actionHandlers, initialState);

@@ -21,9 +21,11 @@ class SearchDropdown extends Component {
   };
 
   mouseEnter() {
-    this.setState({
-      dropdownIsActive: true
-    });
+    if (this.inputReference.value.length < 2) {
+      this.setState({
+        dropdownIsActive: true
+      });
+    }
   }
 
   mouseLeave() {
@@ -34,6 +36,24 @@ class SearchDropdown extends Component {
     this.inputReference.focus();
   }
 
+  search() {
+    this.checkIfInputHasEnoughCharacters();
+    this.props.searchEmployees(this.inputReference.value);
+  }
+
+  checkIfInputHasEnoughCharacters() {
+    if (this.inputReference.value.length > 2) {
+      this.setState({
+        inputIsActive: true
+      });
+    } else {
+      this.setState({
+        inputIsActive: false,
+        dropdownIsActive: false
+      });
+    }
+  }
+
   render() {
     return (
       <div className="position-relative">
@@ -41,11 +61,7 @@ class SearchDropdown extends Component {
           inputRef={ref => {
             this.inputReference = ref;
           }}
-          onFocus={() =>
-            this.setState({
-              inputIsActive: true
-            })
-          }
+          onFocus={() => this.checkIfInputHasEnoughCharacters()}
           onBlur={() =>
             this.setState({
               inputIsActive: false
@@ -53,8 +69,8 @@ class SearchDropdown extends Component {
           }
           minLength={3}
           debounceTimeout={300}
-          onChange={e => this.props.searchEmployees(e.target.value)}
-          placeholder="Users search"
+          onChange={e => this.search(e)}
+          placeholder="Users search (type 3 characters to search)"
           className="w-100"
         />
         <Results
@@ -64,10 +80,13 @@ class SearchDropdown extends Component {
           dropdownIsActive={this.state.dropdownIsActive}
           className="results position-absolute w-100 p-4 border border-top-0"
         >
-          {!this.props.results.length ? (
-            <span>Search...</span>
+          {this.props.results.isFetching ? (
+            <span>Loading...</span>
+          ) : !this.props.results.results ? null : !this.props.results
+              .isFetching && !this.props.results.results.length ? (
+            <span>No results</span>
           ) : (
-            this.props.results.map(result => {
+            this.props.results.results.map(result => {
               return (
                 <label
                   className="d-flex justify-content-between"
