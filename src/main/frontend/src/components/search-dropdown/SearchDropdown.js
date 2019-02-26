@@ -14,14 +14,21 @@ const Results = styled.div`
     props.dropdownIsActive || props.inputIsActive ? 'block' : 'none'};
 `;
 
+const numberOfCharacters = 4;
 class SearchDropdown extends Component {
+  // TODO: Make this component more uniform since it's going to be used across the project
   state = {
     inputIsActive: false,
     dropdownIsActive: false
   };
 
   mouseEnter() {
-    if (this.inputReference.value.length < 2) {
+    if (this.inputReference.value.length < numberOfCharacters) {
+      this.setState({
+        inputIsActive: false,
+        dropdownIsActive: false
+      });
+    } else {
       this.setState({
         dropdownIsActive: true
       });
@@ -29,11 +36,27 @@ class SearchDropdown extends Component {
   }
 
   mouseLeave() {
-    this.setState({
-      dropdownIsActive: false,
-      inputIsActive: true
-    });
-    this.inputReference.focus();
+    if (this.inputReference.value.length < numberOfCharacters) {
+      this.setState({
+        inputIsActive: false,
+        dropdownIsActive: false
+      });
+    } else {
+      this.setState({
+        dropdownIsActive: false,
+        inputIsActive: true
+      });
+      this.inputReference.focus();
+    }
+  }
+
+  mouseOver() {
+    if (this.inputReference.value.length < numberOfCharacters) {
+      this.setState({
+        inputIsActive: false,
+        dropdownIsActive: false
+      });
+    }
   }
 
   search() {
@@ -42,7 +65,7 @@ class SearchDropdown extends Component {
   }
 
   checkIfInputHasEnoughCharacters() {
-    if (this.inputReference.value.length > 2) {
+    if (this.inputReference.value.length >= numberOfCharacters) {
       this.setState({
         inputIsActive: true
       });
@@ -67,15 +90,16 @@ class SearchDropdown extends Component {
               inputIsActive: false
             })
           }
-          minLength={3}
+          minLength={numberOfCharacters}
           debounceTimeout={300}
           onChange={e => this.search(e)}
-          placeholder="Users search (type 3 characters to search)"
+          placeholder="Users search (type 4 characters to search)"
           className="w-100"
         />
         <Results
           onMouseEnter={() => this.mouseEnter()}
           onMouseLeave={() => this.mouseLeave()}
+          onMouseOver={() => this.mouseOver()}
           inputIsActive={this.state.inputIsActive}
           dropdownIsActive={this.state.dropdownIsActive}
           className="results position-absolute w-100 p-4 border border-top-0"
@@ -86,6 +110,7 @@ class SearchDropdown extends Component {
               .isFetching && !this.props.results.results.length ? (
             <span>No results</span>
           ) : (
+            //   TODO: This part will be extracted to separate component based on the needs
             this.props.results.results.map(result => {
               return (
                 <label
