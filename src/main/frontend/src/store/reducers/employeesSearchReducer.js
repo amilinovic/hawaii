@@ -1,11 +1,15 @@
 import { handleActions } from 'redux-actions';
-import { receiveEmployees } from '../actions/employeesActions';
+import {
+  clearEmployees,
+  searchEmployeesSuccess
+} from '../actions/employeesSearchActions';
 import { navigateOut } from '../actions/navigateActions';
 
 export const initialState = [];
 
 const actionHandlers = {
-  [receiveEmployees]: (state, action) => action.payload.content,
+  [searchEmployeesSuccess]: (state, action) => action.payload.content,
+  [clearEmployees]: () => [],
   [navigateOut]: () => []
 };
 

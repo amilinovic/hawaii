@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
-import styled from 'styled-components';
-import { DebounceInput } from 'react-debounce-input';
 import { FieldArray } from 'formik';
-import { searchEmployees } from '../../store/actions/employeesActions';
-import { bindActionCreators } from 'redux';
+import React, { Component } from 'react';
+import { DebounceInput } from 'react-debounce-input';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import styled from 'styled-components';
+import { searchEmployees } from '../../store/actions/employeesSearchActions';
 
 const Results = styled.div`
   background: white;
@@ -13,6 +13,7 @@ const Results = styled.div`
   display: ${props =>
     props.dropdownIsActive || props.inputIsActive ? 'block' : 'none'};
 `;
+
 class SearchDropdown extends Component {
   state = {
     inputIsActive: false,
@@ -32,6 +33,7 @@ class SearchDropdown extends Component {
     });
     this.inputReference.focus();
   }
+
   render() {
     return (
       <div className="position-relative">
@@ -49,13 +51,12 @@ class SearchDropdown extends Component {
               inputIsActive: false
             })
           }
-          minLength={4}
+          minLength={3}
           debounceTimeout={300}
           onChange={e => this.props.searchEmployees(e.target.value)}
           placeholder="Users search"
           className="w-100"
         />
-
         <Results
           onMouseEnter={() => this.mouseEnter()}
           onMouseLeave={() => this.mouseLeave()}

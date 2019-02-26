@@ -1,6 +1,7 @@
 import { combineReducers } from 'redux';
 import employee from './employeeReducer';
 import employees from './employeesReducer';
+import employeesSearch from './employeesSearchReducer';
 import authorization from './getTokenReducer';
 import team from './teamReducer';
 import teams from './teamsReducer';
@@ -12,5 +13,6 @@ export default combineReducers({
   team,
   user,
   employees,
+  employeesSearch,
   employee
 });

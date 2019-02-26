@@ -1,6 +1,7 @@
 import { all } from 'redux-saga/effects';
 import { employeeSaga } from './employeeSaga';
 import { employeesSaga } from './employeesSaga';
+import { employeesSearchSaga } from './employeesSearchSaga';
 import { authenticateSaga } from './getTokenFromSessionStorageSaga';
 import { getTokenSaga } from './getTokenSaga';
 import { teamSaga } from './teamSaga';
@@ -15,6 +16,7 @@ export default function* saga() {
     ...teamSaga,
     ...userSaga,
     ...employeesSaga,
-    ...employeeSaga
+    ...employeeSaga,
+    ...employeesSearchSaga
   ]);
 }

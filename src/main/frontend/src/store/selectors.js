@@ -4,3 +4,4 @@ export const getTeam = state => state.team;
 export const getUser = state => state.user;
 export const getEmployees = state => state.employees;
 export const getEmployee = state => state.employee;
+export const getSearchEmployees = state => state.employeesSearch;

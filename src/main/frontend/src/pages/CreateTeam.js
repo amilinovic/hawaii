@@ -3,10 +3,10 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import withResetOnNavigate from '../components/HOC/withResetOnNavigate';
+import SearchDropdown from '../components/search-dropdown/SearchDropdown';
 import { requestEmployees } from '../store/actions/employeesActions';
 import { createTeam } from '../store/actions/teamActions';
-import { getEmployees } from '../store/selectors';
-import SearchDropdown from '../components/search-dropdown/SearchDropdown';
+import { getSearchEmployees } from '../store/selectors';
 
 class CreateTeam extends Component {
   render() {
@@ -61,7 +61,7 @@ class CreateTeam extends Component {
 }
 
 const mapStateToProps = state => ({
-  employees: getEmployees(state)
+  employees: getSearchEmployees(state)
 });
 
 const mapDispatchToProps = dispatch =>
