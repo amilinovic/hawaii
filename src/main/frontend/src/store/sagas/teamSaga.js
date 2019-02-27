@@ -23,7 +23,7 @@ import {
 
 export const getTeamSaga = function*(action) {
   try {
-    const teamInformation = yield call(getTeamApi, action.payload);
+    const teamInformation = yield call(getTeamApi(action.payload));
     yield put(receiveTeam(teamInformation));
   } catch (error) {
     yield put(errorReceivingTeam(error));
@@ -32,7 +32,7 @@ export const getTeamSaga = function*(action) {
 
 export const removeTeamSaga = function*(action) {
   try {
-    yield call(removeTeamApi, action.payload.id);
+    yield call(removeTeamApi(action.payload.id));
     yield put(removeTeamSuccess());
     yield put(push('/administration'));
   } catch (error) {
@@ -42,7 +42,7 @@ export const removeTeamSaga = function*(action) {
 
 export const updateTeamSaga = function*(action) {
   try {
-    yield call(updateTeamApi, action.payload);
+    yield call(updateTeamApi(action.payload));
     yield put(updateTeamSuccessful());
   } catch (error) {
     yield put(updateTeamError(error));
@@ -50,7 +50,6 @@ export const updateTeamSaga = function*(action) {
 };
 
 export const createTeamSaga = function*(action) {
-  console.log(action);
   try {
     yield call(createTeamApi, action.payload);
     yield put(createTeamSuccessful());

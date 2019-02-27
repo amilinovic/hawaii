@@ -1,10 +1,59 @@
 import React, { Component } from 'react';
-export default class Dashboard extends Component {
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { requestLeaveTypes } from '../../store/actions/leaveTypesActions';
+import { requestPersonalDays } from '../../store/actions/personalDaysActions';
+import { requestPublicHolidays } from '../../store/actions/publicHolidayActions';
+import {
+  getLeaveTypes,
+  getPersonalDays,
+  getPublicHolidays,
+  getRequest
+} from '../../store/selectors';
+import CalendarContainer from '../calendar/CalendarContainer';
+import withResetOnNavigate from '../HOC/withResetOnNavigate';
+import Loading from '../loading/Loading';
+
+class Dashboard extends Component {
+  componentDidMount() {
+    this.props.requestPublicHolidays();
+    this.props.requestPersonalDays();
+    this.props.requestLeaveTypes();
+  }
+
   render() {
+    if (this.props.publicHolidays === null || this.props.personalDays === null)
+      return <Loading />;
+
     return (
-      <div className="d-flex h-100 align-items-center justify-content-center">
-        Dashboard - Execom calendar
+      <div className="d-flex flex-grow-1 justify-content-between">
+        <CalendarContainer
+          publicHolidays={this.props.publicHolidays}
+          personalDays={this.props.personalDays}
+        />
       </div>
     );
   }
 }
+
+const mapStateToProps = state => ({
+  publicHolidays: getPublicHolidays(state),
+  personalDays: getPersonalDays(state),
+  request: getRequest(state),
+  leaveTypes: getLeaveTypes(state)
+});
+
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(
+    {
+      requestPublicHolidays,
+      requestPersonalDays,
+      requestLeaveTypes
+    },
+    dispatch
+  );
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withResetOnNavigate()(Dashboard));

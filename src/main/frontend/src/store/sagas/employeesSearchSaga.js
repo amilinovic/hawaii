@@ -11,8 +11,7 @@ export const searchEmployeesSaga = function*(action) {
   if (action.payload) {
     try {
       const employeesInformation = yield call(
-        searchEmployeesApi,
-        action.payload
+        searchEmployeesApi(action.payload)
       );
       yield put(searchEmployeesSuccess(employeesInformation));
     } catch (error) {

@@ -26,7 +26,6 @@ class CreateTeam extends Component {
           onSubmit={this.props.createTeam}
           render={({ handleSubmit, handleChange, values, errors, touched }) => (
             <React.Fragment>
-              {console.log(touched)}
               <div className="mb-3">
                 <input
                   className="w-100"

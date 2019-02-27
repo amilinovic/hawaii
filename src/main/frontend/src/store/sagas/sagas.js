@@ -4,6 +4,9 @@ import { employeesSaga } from './employeesSaga';
 import { employeesSearchSaga } from './employeesSearchSaga';
 import { authenticateSaga } from './getTokenFromSessionStorageSaga';
 import { getTokenSaga } from './getTokenSaga';
+import { leaveTypesSaga } from './leaveTypesSaga';
+import { personalDaysSaga } from './personalDaysSaga';
+import { publicHolidaysSaga } from './publicHolidaySaga';
 import { teamSaga } from './teamSaga';
 import { teamsSaga } from './teamsSaga';
 import { userSaga } from './userSaga';
@@ -17,6 +20,9 @@ export default function* saga() {
     ...userSaga,
     ...employeesSaga,
     ...employeeSaga,
-    ...employeesSearchSaga
+    ...employeesSearchSaga,
+    ...leaveTypesSaga,
+    ...personalDaysSaga,
+    ...publicHolidaysSaga
   ]);
 }

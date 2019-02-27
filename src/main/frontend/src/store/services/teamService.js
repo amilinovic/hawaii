@@ -1,32 +1,8 @@
-import request from 'superagent';
-import { getLink } from '../getLink';
+import { delFactory, getFactory, postFactory, putFactory } from './request';
 
-export const getTeamApi = async id => {
-  return await request
-    .get(getLink(`/teams/${id}`))
-    .set('X-ID-TOKEN', sessionStorage.getItem('token'))
-    .then(res => res.body);
-};
+const apiEndpoint = '/teams';
 
-export const updateTeamApi = async teamObject => {
-  return await request
-    .put(getLink('/teams'))
-    .send(teamObject)
-    .set('X-ID-TOKEN', sessionStorage.getItem('token'))
-    .then(res => res.body);
-};
-
-export const createTeamApi = async teamObject => {
-  return await request
-    .post(getLink('/teams'))
-    .send(teamObject)
-    .set('X-ID-TOKEN', sessionStorage.getItem('token'))
-    .then(res => res.body);
-};
-
-export const removeTeamApi = async id => {
-  return await request
-    .del(getLink(`/teams/${id}`))
-    .set('X-ID-TOKEN', sessionStorage.getItem('token'))
-    .then(res => res.body);
-};
+export const createTeamApi = teamObject => postFactory(apiEndpoint, teamObject);
+export const getTeamApi = id => getFactory(`${apiEndpoint}/${id}`);
+export const removeTeamApi = id => delFactory(`${apiEndpoint}/${id}`);
+export const updateTeamApi = teamObject => putFactory(apiEndpoint, teamObject);

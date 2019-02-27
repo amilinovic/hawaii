@@ -1,8 +1,8 @@
 import { call, put, takeEvery } from 'redux-saga/effects';
 import {
-  REQUEST_TOKEN,
   receiveToken,
-  receiveTokenError
+  receiveTokenError,
+  REQUEST_TOKEN
 } from '../actions/getTokenActions';
 import { tokenRequest } from '../services/getTokenRequest';
 
