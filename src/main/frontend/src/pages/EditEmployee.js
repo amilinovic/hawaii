@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as Yup from 'yup';
 import withResetOnNavigate from '../components/HOC/withResetOnNavigate';
+import Loading from '../components/loading/Loading';
 import {
   requestEmployee,
   updateEmployee
@@ -30,7 +31,7 @@ class EditEmployee extends Component {
   }
 
   render() {
-    if (!this.props.employee || !this.props.teams) return null;
+    if (!this.props.employee || !this.props.teams) return <Loading />;
 
     const teams = this.props.teams.map(team => {
       return (
