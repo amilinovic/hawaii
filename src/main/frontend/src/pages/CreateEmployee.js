@@ -62,7 +62,6 @@ class CreateEmployee extends Component {
         >
           {({ handleSubmit, handleChange, values, errors, touched }) => (
             <React.Fragment>
-              {console.log(values)}
               <input
                 className={`${
                   errors.fullName && touched.fullName
