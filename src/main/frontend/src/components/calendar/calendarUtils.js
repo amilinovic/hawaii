@@ -2,9 +2,6 @@ import * as _ from 'lodash';
 import flow from 'lodash/flow';
 import moment from 'moment';
 
-export const createCalendar = (year, publicHolidays, personalData) =>
-  flow([createMonths, createDays])(year, publicHolidays, personalData);
-
 const createMonths = (year, publicHolidays, personalData) => {
   const months = moment.months().map(month => {
     return {
@@ -21,16 +18,13 @@ const createDays = data => {
     const days = [];
 
     for (let day = 1; day <= 31; day++) {
-      const dayObject = {
-        date: moment(`${day}-${month.name}-${month.year}`, 'DD-MMMM-YYYY')
-      };
-      day > moment(`${month.year}-${month.name}`, 'YYYY-MMMM').daysInMonth()
-        ? days.push(null)
-        : days.push(
-            fillDaysWithData(dayObject, data.publicHolidays, data.personalData)
-          );
+      const date = moment(`${day}-${month.name}-${month.year}`, 'DD-MMMM-YYYY');
+      days.push(
+        date.isValid()
+          ? fillDaysWithData(date, data.publicHolidays, data.personalData)
+          : null
+      );
     }
-
     return {
       ...month,
       days
@@ -41,10 +35,10 @@ const createDays = data => {
 };
 
 const checkIfPublicHoliday = (day, publicHolidays, personalData) => {
-  if (!publicHolidays) return day;
+  if (!publicHolidays.length) return day;
 
   const publicHolidayCheck = publicHolidays.find(holiday =>
-    moment(holiday.date).isSame(day.date, 'day')
+    moment(holiday.date).isSame(day, 'day')
   );
 
   return {
@@ -68,12 +62,12 @@ const checkIfPersonalDay = dayObject => {
 };
 
 const checkIfWeekend = dayObject =>
-  dayObject.day.date.day() === 0 || dayObject.day.date.day() === 6
+  dayObject.day.day() === 0 || dayObject.day.day() === 6
     ? { ...dayObject, isWeekend: true }
     : dayObject;
 
 const checkIfToday = dayObject =>
-  moment().isSame(dayObject.day.date, 'day')
+  moment().isSame(dayObject.day, 'day')
     ? { ...dayObject, isToday: true }
     : dayObject;
 
@@ -83,3 +77,5 @@ const fillDaysWithData = flow([
   checkIfWeekend,
   checkIfToday
 ]);
+
+export const createCalendar = flow([createMonths, createDays]);
