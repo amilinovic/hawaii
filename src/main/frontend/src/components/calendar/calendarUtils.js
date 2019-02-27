@@ -1,16 +1,9 @@
+import * as _ from 'lodash';
 import flow from 'lodash/flow';
 import moment from 'moment';
 
 export const createCalendar = (year, publicHolidays, personalData) =>
   flow([createMonths, createDays])(year, publicHolidays, personalData);
-
-const fillDaysWithData = (day, publicHoliday, personalData) =>
-  flow([
-    checkIfPublicHoliday,
-    checkIfPersonalDay,
-    checkIfWeekend,
-    checkIfToday
-  ])(day, publicHoliday, personalData);
 
 const createMonths = (year, publicHolidays, personalData) => {
   const months = moment.months().map(month => {
@@ -23,8 +16,8 @@ const createMonths = (year, publicHolidays, personalData) => {
   return { months, publicHolidays, personalData };
 };
 
-const createDays = monthObject => {
-  const monthsAndDays = monthObject.months.map(month => {
+const createDays = data => {
+  const monthsAndDays = data.months.map(month => {
     const days = [];
 
     for (let day = 1; day <= 31; day++) {
@@ -34,11 +27,7 @@ const createDays = monthObject => {
       day > moment(`${month.year}-${month.name}`, 'YYYY-MMMM').daysInMonth()
         ? days.push(null)
         : days.push(
-            fillDaysWithData(
-              dayObject,
-              monthObject.publicHolidays,
-              monthObject.personalData
-            )
+            fillDaysWithData(dayObject, data.publicHolidays, data.personalData)
           );
     }
 
@@ -58,25 +47,24 @@ const checkIfPublicHoliday = (day, publicHolidays, personalData) => {
     moment(holiday.date).isSame(day.date, 'day')
   );
 
-  return publicHolidayCheck
-    ? { day, publicHoliday: publicHolidayCheck.name, personalData }
-    : { day, personalData };
+  return {
+    day,
+    personalData,
+    publicHoliday: _.get(publicHolidayCheck, 'name')
+  };
 };
 
 const checkIfPersonalDay = dayObject => {
-  if (!dayObject.personalData.length && !dayObject.publicHoliday) {
-    return { day: dayObject.day };
-  } else if (!dayObject.personalData.length) {
-    return { day: dayObject.day, publicHoliday: dayObject.publicHoliday };
+  const { day, publicHoliday, personalData } = dayObject;
+  if (!personalData.length) {
+    return { day, publicHoliday };
   }
 
-  const personalDataCheck = dayObject.personalData.find(data =>
-    data.date.isSame(dayObject.day.date, 'day')
+  const personalDay = personalData.find(personalDay =>
+    personalDay.date.isSame(personalData.day.date, 'day')
   );
 
-  return personalDataCheck
-    ? { ...dayObject, personalDay: { ...personalDataCheck } }
-    : dayObject;
+  return { ...dayObject, personalDay };
 };
 
 const checkIfWeekend = dayObject =>
@@ -88,3 +76,10 @@ const checkIfToday = dayObject =>
   moment().isSame(dayObject.day.date, 'day')
     ? { ...dayObject, isToday: true }
     : dayObject;
+
+const fillDaysWithData = flow([
+  checkIfPublicHoliday,
+  checkIfPersonalDay,
+  checkIfWeekend,
+  checkIfToday
+]);
