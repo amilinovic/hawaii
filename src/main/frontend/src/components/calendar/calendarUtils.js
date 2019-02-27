@@ -25,6 +25,7 @@ const createDays = data => {
           : null
       );
     }
+
     return {
       ...month,
       days
@@ -50,6 +51,7 @@ const checkIfPublicHoliday = (day, publicHolidays, personalData) => {
 
 const checkIfPersonalDay = dayObject => {
   const { day, publicHoliday, personalData } = dayObject;
+
   if (!personalData.length) {
     return { day, publicHoliday };
   }
