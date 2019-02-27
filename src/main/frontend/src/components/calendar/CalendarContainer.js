@@ -28,21 +28,12 @@ const CalendarContainerBlock = styled.div`
 export default class CalendarContainer extends Component {
   state = {
     selectedYear: moment().year(),
-    calendar: []
+    calendar: createCalendar(
+      moment().year(),
+      this.props.publicHolidays,
+      this.props.personalDays
+    )
   };
-
-  componentDidMount() {
-    this.setState(prevState => {
-      return {
-        ...prevState,
-        calendar: createCalendar(
-          prevState.selectedYear,
-          this.props.publicHolidays,
-          this.props.personalDays
-        )
-      };
-    });
-  }
 
   handleYearChange = selectedYear => {
     this.setState(prevState => {
