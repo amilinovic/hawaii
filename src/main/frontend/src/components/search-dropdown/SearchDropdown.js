@@ -94,7 +94,7 @@ class SearchDropdown extends Component {
           debounceTimeout={300}
           onChange={e => this.search(e)}
           placeholder="Users search (type 4 characters to search)"
-          className="w-100"
+          className="w-100 border"
         />
         <Results
           onMouseEnter={() => this.mouseEnter()}

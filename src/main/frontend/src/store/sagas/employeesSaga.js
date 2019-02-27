@@ -5,6 +5,7 @@ import {
   requestEmployees
 } from '../actions/employeesActions';
 import { getEmployeesApi } from '../services/employeesService';
+import { toastrError } from './toastrHelperSaga';
 
 export const getEmployees = function*() {
   try {
@@ -12,6 +13,7 @@ export const getEmployees = function*() {
     yield put(receiveEmployees(employeesInformation));
   } catch (error) {
     yield put(errorReceivingEmployees(error));
+    yield put(toastrError(error.message));
   }
 };
 

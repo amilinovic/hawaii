@@ -1,4 +1,4 @@
-import { Formik } from 'formik';
+import { FieldArray, Formik } from 'formik';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -20,6 +20,7 @@ class CreateTeam extends Component {
         <Formik
           validationSchema={validationSchema}
           initialValues={{
+            name: '',
             teamApprovers: [],
             users: []
           }}
@@ -28,14 +29,15 @@ class CreateTeam extends Component {
             <React.Fragment>
               <div className="mb-3">
                 <input
-                  className="w-100"
+                  className={`${
+                    errors.name && touched.name
+                      ? 'border border-danger'
+                      : 'border'
+                  } w-100`}
                   name="name"
                   onChange={handleChange}
                   placeholder="Team name"
                 />
-                {errors.name && touched.name ? (
-                  <div className="text-danger">{errors.name}</div>
-                ) : null}
               </div>
               <SearchDropdown results={this.props.employees} />
               <div className="d-flex justify-content-between mt-3">
@@ -45,7 +47,24 @@ class CreateTeam extends Component {
                     <span>No members selected</span>
                   ) : (
                     values.users.map(user => {
-                      return <h5 key={user.id}>{user.fullName}</h5>;
+                      return (
+                        <h5 key={user.id}>
+                          {user.fullName}
+                          <FieldArray
+                            name="users"
+                            render={arrayHelpers => (
+                              <span
+                                className="text-danger ml-2"
+                                onClick={() => {
+                                  arrayHelpers.pop(user);
+                                }}
+                              >
+                                x
+                              </span>
+                            )}
+                          />
+                        </h5>
+                      );
                     })
                   )}
                 </div>
@@ -55,7 +74,24 @@ class CreateTeam extends Component {
                     <span>No approvers selected</span>
                   ) : (
                     values.teamApprovers.map(user => {
-                      return <h5 key={user.id}>{user.fullName}</h5>;
+                      return (
+                        <h5 key={user.id}>
+                          {user.fullName}
+                          <FieldArray
+                            name="teamApprovers"
+                            render={arrayHelpers => (
+                              <span
+                                className="text-danger ml-2"
+                                onClick={() => {
+                                  arrayHelpers.pop(user);
+                                }}
+                              >
+                                x
+                              </span>
+                            )}
+                          />
+                        </h5>
+                      );
                     })
                   )}
                 </div>
