@@ -23,7 +23,7 @@ import {
 
 export const createEmployeeSaga = function*(action) {
   try {
-    yield call(createEmployeeApi, action.payload);
+    yield call(createEmployeeApi(action.payload));
     yield put(createEmployeeSuccess());
   } catch (error) {
     yield put(errorCreatingEmployee(error));
@@ -32,7 +32,7 @@ export const createEmployeeSaga = function*(action) {
 
 export const getEmployeeSaga = function*(action) {
   try {
-    const employeeInformation = yield call(getEmployeeApi, action.payload);
+    const employeeInformation = yield call(getEmployeeApi(action.payload));
     yield put(receiveEmployee(employeeInformation));
   } catch (error) {
     yield put(errorReceivingEmployee(error));
@@ -41,7 +41,7 @@ export const getEmployeeSaga = function*(action) {
 
 export const updateEmployeeSaga = function*(action) {
   try {
-    yield call(updateEmployeeApi, action.payload);
+    yield call(updateEmployeeApi(action.payload));
     yield put(updateEmployeeSuccessful());
   } catch (error) {
     yield put(updateEmployeeError(error));
@@ -50,7 +50,7 @@ export const updateEmployeeSaga = function*(action) {
 
 export const removeEmployeeSaga = function*(action) {
   try {
-    yield call(removeEmployeeApi, action.payload.id);
+    yield call(removeEmployeeApi(action.payload.id));
     yield put(removeEmployeeSuccess());
     yield put(push('/administration'));
   } catch (error) {

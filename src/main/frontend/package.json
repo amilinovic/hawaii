@@ -8,6 +8,7 @@
     "formik": "^1.5.1",
     "history": "^4.7.2",
     "lodash": "^4.17.10",
+    "moment": "^2.24.0",
     "react": "^16.4.0",
     "react-dom": "^16.4.0",
     "react-google-login": "^3.2.1",
