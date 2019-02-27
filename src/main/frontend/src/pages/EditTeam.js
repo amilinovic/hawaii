@@ -2,10 +2,15 @@ import { FieldArray, Formik } from 'formik';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import * as Yup from 'yup';
 import withResetOnNavigate from '../components/HOC/withResetOnNavigate';
 import { requestEmployees } from '../store/actions/employeesActions';
 import { requestTeam, updateTeam } from '../store/actions/teamActions';
 import { getEmployees, getTeam } from '../store/selectors';
+
+const validationSchema = Yup.object().shape({
+  name: Yup.string().required('Required')
+});
 
 class EditTeam extends Component {
   componentDidMount() {
@@ -19,13 +24,18 @@ class EditTeam extends Component {
     return (
       <div className="d-flex p-4 justify-content-center flex-column">
         <Formik
+          validationSchema={validationSchema}
           initialValues={this.props.team}
           onSubmit={this.props.updateTeam}
           enableReinitialize
-          render={({ handleSubmit, handleChange, values }) => (
+          render={({ handleSubmit, handleChange, values, errors, touched }) => (
             <React.Fragment>
               <input
-                className="mb-3"
+                className={`${
+                  errors.name && touched.name
+                    ? 'border border-danger'
+                    : 'border'
+                } w-100 mb-3`}
                 name="name"
                 defaultValue={values.name}
                 placeholder="Team name"
@@ -77,7 +87,24 @@ class EditTeam extends Component {
                 <div className="mb-5">
                   <h3>Team approvers</h3>
                   {values.teamApprovers.map(user => {
-                    return <h5 key={user.id}>{user.fullName}</h5>;
+                    return (
+                      <h5 key={user.id}>
+                        {user.fullName}
+                        <FieldArray
+                          name="teamApprovers"
+                          render={arrayHelpers => (
+                            <span
+                              className="text-danger ml-2"
+                              onClick={() => {
+                                arrayHelpers.pop(user);
+                              }}
+                            >
+                              x
+                            </span>
+                          )}
+                        />
+                      </h5>
+                    );
                   })}
                 </div>
               </div>
