@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -21,6 +20,8 @@ import java.util.List;
 @Slf4j
 @Service
 public class TeamService {
+
+  private static final Long TEMPORARY_TEAM_ID = -1L;
 
   private TeamRepository teamRepository;
   private AuditInformationService auditInformationService;
@@ -83,19 +84,12 @@ public class TeamService {
   @Transactional
   public Team create(Team team, User modifiedByUser) {
     saveAuditInformation(OperationPerformed.CREATE, modifiedByUser, team, null);
-    if (!team.getUsers().isEmpty()) {
-      addUsersToNewTeam(team);
+    if (team.getId() == null) {
+      team.setId(TEMPORARY_TEAM_ID);
     }
+    team.getUsers().forEach(user -> user.setTeam(team));
 
     return teamRepository.save(team);
-  }
-
-  private void addUsersToNewTeam(Team team) {
-    var users = team.getUsers();
-    team.setUsers(Collections.emptyList());
-    teamRepository.save(team);
-    team.setUsers(users);
-    users.forEach(user -> user.setTeam(team));
   }
 
   /**
