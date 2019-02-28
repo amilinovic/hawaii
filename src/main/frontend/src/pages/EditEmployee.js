@@ -13,15 +13,15 @@ import { requestTeams } from '../store/actions/teamsActions';
 import { getEmployee, getTeams } from '../store/selectors';
 
 const validationSchema = Yup.object().shape({
-  fullName: Yup.string().required('Required'),
+  fullName: Yup.string().required(),
   email: Yup.string()
-    .email('Invalid email')
-    .required('Required'),
-  userRole: Yup.string().required('Required'),
-  teamId: Yup.string().required('Required'),
-  jobTitle: Yup.string().required('Required'),
-  startedWorkingAtExecomDate: Yup.string().required('Required'),
-  startedWorkingDate: Yup.string().required('Required')
+    .email()
+    .required(),
+  userRole: Yup.string().required(),
+  teamId: Yup.string().required(),
+  jobTitle: Yup.string().required(),
+  startedWorkingAtExecomDate: Yup.string().required(),
+  startedWorkingDate: Yup.string().required()
 });
 
 class EditEmployee extends Component {

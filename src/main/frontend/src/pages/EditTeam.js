@@ -11,7 +11,7 @@ import { requestTeam, updateTeam } from '../store/actions/teamActions';
 import { getSearchEmployees, getTeam } from '../store/selectors';
 
 const validationSchema = Yup.object().shape({
-  name: Yup.string().required('Required')
+  name: Yup.string().required()
 });
 
 class EditTeam extends Component {
