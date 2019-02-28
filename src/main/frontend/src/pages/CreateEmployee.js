@@ -22,13 +22,6 @@ const validationSchema = Yup.object().shape({
 });
 
 class CreateEmployee extends Component {
-  state = {
-    employee: {
-      leaveProfileId: 1,
-      userStatusType: 'ACTIVE'
-    }
-  };
-
   componentDidMount() {
     this.props.requestTeams();
   }

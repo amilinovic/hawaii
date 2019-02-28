@@ -1,20 +1,12 @@
 import { getFactory, searchFactory } from './request';
 
-const apiEndpoint = '/users/search';
+const apiEndpoint = '/users';
 
-export const getEmployeesApi = getFactory('/users');
+export const getEmployeesApi = getFactory(apiEndpoint);
 export const searchEmployeesApi = user =>
-  searchFactory(apiEndpoint, {
+  searchFactory(`${apiEndpoint}/search`, {
     searchQuery: user,
     page: 0,
     size: 5,
     userStatusType: 'ACTIVE'
   });
-
-// export const searchEmployeesApi = async user => {
-//   return await request
-//     .get(getLink('/users/search'))
-//     .query({ searchQuery: user, page: 0, size: 5, userStatusType: 'ACTIVE' })
-//     .set('X-ID-TOKEN', sessionStorage.getItem('token'))
-//     .then(res => res.body);
-// };

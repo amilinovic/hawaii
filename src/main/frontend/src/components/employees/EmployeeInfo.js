@@ -30,9 +30,7 @@ const EmployeeInfo = employee => {
       <EmployeesImage />
       <TableRow width="15%">
         <TableText>
-          {/* TODO: Change this to ID, email is used because there is now getById endpoint at the moment on the backend */}
           <NavLink to={`/employee/${id}`}>{fullName}</NavLink>
-          <NavLink to={`/employee/${id}/edit`}>Edit</NavLink>
         </TableText>
       </TableRow>
       <TableRow>
