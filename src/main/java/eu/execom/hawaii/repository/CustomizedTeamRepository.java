@@ -5,8 +5,5 @@ import org.springframework.data.repository.NoRepositoryBean;
 
 @NoRepositoryBean
 public interface CustomizedTeamRepository<Team, Long> extends JpaRepository<Team, Long> {
-  Team createTeam(Team team);
-
+  Team create(Team team);
 }
-
-

@@ -84,7 +84,7 @@ public class TeamService {
     saveAuditInformation(OperationPerformed.CREATE, modifiedByUser, team, null);
     team.getUsers().forEach(user -> user.setTeam(team));
 
-    return teamRepository.createTeam(team);
+    return teamRepository.create(team);
   }
 
   /**

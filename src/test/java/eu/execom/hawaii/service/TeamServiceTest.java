@@ -82,7 +82,7 @@ public class TeamServiceTest {
   public void shouldSaveTeam() {
     // given
     var user = EntityBuilder.approver();
-    given(teamRepository.createTeam(mockTeam)).willReturn(mockTeam);
+    given(teamRepository.create(mockTeam)).willReturn(mockTeam);
 
     // when
     var team = teamService.create(mockTeam, user);
@@ -90,7 +90,7 @@ public class TeamServiceTest {
     // then
     assertNotNull(team);
     verify(auditInformationService).saveAudit(any(), any(), any(), any(), any());
-    verify(teamRepository).createTeam(mockTeam);
+    verify(teamRepository).create(mockTeam);
     verifyNoMoreInteractions(allMocks);
   }
 

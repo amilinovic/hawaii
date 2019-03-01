@@ -9,8 +9,8 @@ import javax.persistence.EntityManager;
 public class CustomizedTeamRepositoryImpl<Team, Long> extends SimpleJpaRepository<Team, Long>
     implements CustomizedTeamRepository<Team, Long> {
 
-  private final JpaEntityInformation<Team, ?> entityInformation;
-  private final EntityManager entityManager;
+  private JpaEntityInformation<Team, ?> entityInformation;
+  private EntityManager entityManager;
 
   public CustomizedTeamRepositoryImpl(JpaEntityInformation<Team, ?> entityInformation, EntityManager entityManager) {
     super(entityInformation, entityManager);
@@ -20,7 +20,7 @@ public class CustomizedTeamRepositoryImpl<Team, Long> extends SimpleJpaRepositor
 
   @Override
   @Transactional
-  public Team createTeam(Team team) {
+  public Team create(Team team) {
     if (this.entityInformation.isNew(team)) {
       this.entityManager.persist(team);
     }
