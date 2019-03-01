@@ -27,7 +27,6 @@ import javax.persistence.EntityExistsException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -80,7 +79,7 @@ public class RequestService {
    * Retrieves a list of request by given dates, ordered by latest.
    *
    * @param startDate from date.
-   * @param endDate   to date.
+   * @param endDate to date.
    * @return a list of requests.
    */
   public List<Request> findAllByUserWithinDates(LocalDate startDate, LocalDate endDate, Long userId) {
@@ -118,7 +117,7 @@ public class RequestService {
    * Retrieves a list of requests by userId for given year from repository.
    *
    * @param userId the userId
-   * @param date   requested date
+   * @param date requested date
    * @return a list of requests for user in given year.
    */
   public List<Request> findAllByUserForYear(Long userId, LocalDate date) {
@@ -131,7 +130,7 @@ public class RequestService {
   /**
    * Retrieves a list of requests for all users from requested team and requested month.
    *
-   * @param teamId        the Team id.
+   * @param teamId the Team id.
    * @param requestedDate the LocalDate.
    * @return a list of all requests for given team.
    */
@@ -198,7 +197,7 @@ public class RequestService {
    * Saves the provided Request to repository.
    * Makes audit of that save.
    *
-   * @param request        the Request entity to be persisted.
+   * @param request the Request entity to be persisted.
    * @param modifiedByUser user that made changes to that Request entity.
    * @return saved Request.
    */
@@ -212,7 +211,7 @@ public class RequestService {
    * Saves the provided Request to repository.
    * Makes audit of that save.
    *
-   * @param request        the Request entity to be persisted.
+   * @param request the Request entity to be persisted.
    * @param modifiedByUser user that made changes to that Request entity.
    * @return saved Request.
    */
