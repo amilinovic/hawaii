@@ -7,6 +7,7 @@ import styled from 'styled-components';
 import { MainLogo } from '../components/common/mainLogo';
 import ExecomLogo from '../img/execom_logo.png';
 import HawaiiWallpaper from '../img/hawaii_wallpaper.jpg';
+import { clearAuthorization } from '../store/actions/authorizationActions';
 import { requestToken } from '../store/actions/getTokenActions';
 import { getAuthorization } from '../store/selectors';
 import store from '../store/store';
@@ -53,6 +54,7 @@ const LogoContainer = styled.div`
 `;
 class Login extends Component {
   componentDidMount = () => {
+    this.props.clearAuthorization();
     sessionStorage.clear();
   };
 
@@ -98,7 +100,8 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
-      requestToken
+      requestToken,
+      clearAuthorization
     },
     dispatch
   );

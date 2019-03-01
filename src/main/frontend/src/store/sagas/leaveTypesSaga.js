@@ -1,3 +1,4 @@
+import { push } from 'connected-react-router';
 import { call, put, takeLatest } from 'redux-saga/effects';
 import {
   errorReceivingLeaveTypes,
@@ -12,6 +13,9 @@ export const getAllLeaveTypes = function*() {
     yield put(receiveLeaveTypes(leaveTypes));
   } catch (error) {
     yield put(errorReceivingLeaveTypes(error));
+    if (error.status === 401) {
+      yield put(push('/login'));
+    }
   }
 };
 

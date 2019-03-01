@@ -23,6 +23,9 @@ export const getTeamSaga = function*(action) {
     yield put(receiveTeam(teamInformation));
   } catch (error) {
     yield put(errorReceivingTeam(error));
+    if (error.status === 401) {
+      yield put(push('/login'));
+    }
   }
 };
 

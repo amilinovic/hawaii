@@ -1,3 +1,4 @@
+import { push } from 'connected-react-router';
 import { call, put, takeEvery } from 'redux-saga/effects';
 import {
   receiveToken,
@@ -12,6 +13,9 @@ export const getToken = function*(action) {
     yield put(receiveToken(responseGoogle));
   } catch (error) {
     yield put(receiveTokenError(error));
+    if (error.status === 401) {
+      yield put(push('/login'));
+    }
   }
 };
 

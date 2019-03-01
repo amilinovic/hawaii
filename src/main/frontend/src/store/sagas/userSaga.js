@@ -1,3 +1,4 @@
+import { push } from 'connected-react-router';
 import { actions as toastrActions } from 'react-redux-toastr';
 import { call, put, takeEvery } from 'redux-saga/effects';
 import {
@@ -13,6 +14,9 @@ export const getUser = function*(action) {
     yield put(receiveUser(userInformation));
   } catch (error) {
     yield put(errorReceivingUser(error));
+    if (error.status === 401) {
+      yield put(push('/login'));
+    }
     yield put(
       toastrActions.add({
         type: 'error',

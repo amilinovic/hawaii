@@ -1,3 +1,4 @@
+import { push } from 'connected-react-router';
 import { call, put, takeLatest } from 'redux-saga/effects';
 import {
   errorReceivingPersonalDays,
@@ -12,6 +13,9 @@ export const getPersonalDays = function*() {
     yield put(receivePersonalDays(personalDays));
   } catch (error) {
     yield put(errorReceivingPersonalDays(error));
+    if (error.status === 401) {
+      yield put(push('/login'));
+    }
   }
 };
 

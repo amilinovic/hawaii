@@ -1,3 +1,4 @@
+import { push } from 'connected-react-router';
 import { call, put, takeLatest } from 'redux-saga/effects';
 import {
   errorReceivingEmployees,
@@ -12,6 +13,9 @@ export const getEmployees = function*() {
     yield put(receiveEmployees(employeesInformation));
   } catch (error) {
     yield put(errorReceivingEmployees(error));
+    if (error.status === 401) {
+      yield put(push('/login'));
+    }
   }
 };
 

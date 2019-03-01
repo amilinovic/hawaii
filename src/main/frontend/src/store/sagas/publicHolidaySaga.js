@@ -1,3 +1,4 @@
+import { push } from 'connected-react-router';
 import { call, put, takeLatest } from 'redux-saga/effects';
 import {
   errorReceivingPublicHolidays,
@@ -12,6 +13,9 @@ export const getPublicHolidays = function*() {
     yield put(receivePublicHolidays(publicHolidays));
   } catch (error) {
     yield put(errorReceivingPublicHolidays(error));
+    if (error.status === 401) {
+      yield put(push('/login'));
+    }
   }
 };
 

@@ -36,6 +36,9 @@ export const getEmployeeSaga = function*(action) {
     yield put(receiveEmployee(employeeInformation));
   } catch (error) {
     yield put(errorReceivingEmployee(error));
+    if (error.status === 401) {
+      yield put(push('/login'));
+    }
   }
 };
 
