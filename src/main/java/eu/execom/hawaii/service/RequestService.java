@@ -2,7 +2,6 @@ package eu.execom.hawaii.service;
 
 import eu.execom.hawaii.exceptions.NotAuthorizedApprovalException;
 import eu.execom.hawaii.exceptions.RequestAlreadyCanceledException;
-import eu.execom.hawaii.model.Absence;
 import eu.execom.hawaii.model.Day;
 import eu.execom.hawaii.model.Request;
 import eu.execom.hawaii.model.Team;
@@ -313,6 +312,13 @@ public class RequestService {
           log.error("Approver not authorized to approve this request for user with email: {}", user.getEmail());
           throw new NotAuthorizedApprovalException();
         }
+        if (request.getAbsence().isBonusDays()) {
+          handleBonusRequestApproval(request, authUser);
+          if (request.isPending()) {
+            break;
+          }
+        }
+
         allowanceService.applyPendingRequest(request, true);
         applyRequest(request, false);
         sendNotificationsService.sendNotificationForRequestedLeave(request.getRequestStatus(), user);
@@ -356,6 +362,35 @@ public class RequestService {
 
     auditInformationService.saveAudit(operationPerformed, modifiedByUser, request.getUser(), previousRequestState,
         currentRequestState);
+  }
+
+  private void handleBonusRequestApproval(Request request, User approver) {
+    setCurrentlyApprovedBy(approver, request);
+
+    int neededApprovals = request.getUser().getTeam().getTeamApprovers().size();
+
+    if (request.getCurrentlyApprovedBy().size() == neededApprovals) {
+      request.setRequestStatus(RequestStatus.APPROVED);
+    } else
+      request.setRequestStatus(RequestStatus.PENDING);
+
+  }
+
+  private void setCurrentlyApprovedBy(User approver, Request request) {
+    List<User> currentlyApprovedBy = request.getCurrentlyApprovedBy();
+
+    if (!isRequestAlreadyApprovedByApprover(approver, request)) {
+      currentlyApprovedBy.add(approver);
+    }
+    request.setCurrentlyApprovedBy(currentlyApprovedBy);
+
+  }
+
+  private boolean isRequestAlreadyApprovedByApprover(User approver, Request request) {
+
+    return request.getCurrentlyApprovedBy()
+                  .stream()
+                  .anyMatch(teamApprover -> teamApprover.getId().equals(approver.getId()));
   }
 
   private boolean isUserRequestApprover(User approver, User requestUser) {
