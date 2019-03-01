@@ -1,11 +1,12 @@
-import { FieldArray } from 'formik';
 import React, { Component } from 'react';
 import { DebounceInput } from 'react-debounce-input';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import styled from 'styled-components';
 import { searchEmployees } from '../../store/actions/employeesSearchActions';
+import EmployeeSearchResults from './search-results/EmployeeSearchResults';
 
+const numberOfCharacters = 4;
 const Results = styled.div`
   background: white;
   height: 150px;
@@ -14,9 +15,7 @@ const Results = styled.div`
     props.dropdownIsActive || props.inputIsActive ? 'block' : 'none'};
 `;
 
-const numberOfCharacters = 4;
 class SearchDropdown extends Component {
-  // TODO: Make this component more uniform since it's going to be used across the project
   state = {
     inputIsActive: false,
     dropdownIsActive: false
@@ -59,12 +58,7 @@ class SearchDropdown extends Component {
     }
   }
 
-  search() {
-    this.checkIfInputHasEnoughCharacters();
-    this.props.searchEmployees(this.inputReference.value);
-  }
-
-  checkIfInputHasEnoughCharacters() {
+  checkIfInputIsValid() {
     if (this.inputReference.value.length >= numberOfCharacters) {
       this.setState({
         inputIsActive: true
@@ -77,6 +71,11 @@ class SearchDropdown extends Component {
     }
   }
 
+  search() {
+    this.checkIfInputIsValid();
+    this.props.searchEmployees(this.inputReference.value);
+  }
+
   render() {
     return (
       <div className="position-relative">
@@ -84,7 +83,7 @@ class SearchDropdown extends Component {
           inputRef={ref => {
             this.inputReference = ref;
           }}
-          onFocus={() => this.checkIfInputHasEnoughCharacters()}
+          onFocus={() => this.checkIfInputIsValid()}
           onBlur={() =>
             this.setState({
               inputIsActive: false
@@ -104,56 +103,10 @@ class SearchDropdown extends Component {
           dropdownIsActive={this.state.dropdownIsActive}
           className="results position-absolute w-100 p-4 border border-top-0"
         >
-          {this.props.results.isFetching ? (
-            <span>Loading...</span>
-          ) : !this.props.results.results ? null : !this.props.results
-              .isFetching && !this.props.results.results.length ? (
-            <span>No results</span>
-          ) : (
-            //   TODO: This part will be extracted to separate component based on the needs
-            this.props.results.results.map(result => {
-              return (
-                <label
-                  className="d-flex justify-content-between"
-                  key={result.id}
-                >
-                  {result.fullName}
-                  <div className="mb-2">
-                    <FieldArray
-                      name="users"
-                      render={arrayHelpers => (
-                        <button
-                          className="btn mr-2"
-                          type="button"
-                          onClick={() => {
-                            arrayHelpers.push(result);
-                            this.inputReference.focus();
-                          }}
-                        >
-                          Add member
-                        </button>
-                      )}
-                    />
-                    <FieldArray
-                      name="teamApprovers"
-                      render={arrayHelpers => (
-                        <button
-                          className="btn"
-                          type="button"
-                          onClick={() => {
-                            arrayHelpers.push(result);
-                            this.inputReference.focus();
-                          }}
-                        >
-                          Add approver
-                        </button>
-                      )}
-                    />
-                  </div>
-                </label>
-              );
-            })
-          )}
+          <EmployeeSearchResults
+            inputReference={this.inputReference}
+            results={this.props.results}
+          />
         </Results>
       </div>
     );
