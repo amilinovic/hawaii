@@ -408,7 +408,7 @@ public class RequestServiceTest {
   public void shouldHandleRequestStatusUpdateCancellationPending() {
     // given
     var approver = EntityBuilder.approver();
-    approver.setId(2L);
+    approver.setId(1L);
 
     var request = EntityBuilder.request(absenceAnnual, List.of(dayOne));
     request.setRequestStatus(RequestStatus.CANCELED);
@@ -438,7 +438,7 @@ public class RequestServiceTest {
   @Test
   public void shouldCancelPendingRequest() {
     var approver = EntityBuilder.approver();
-    approver.setId(2L);
+    approver.setId(1L);
 
     var request = EntityBuilder.request(absenceAnnual, List.of(dayOne));
     request.setRequestStatus(RequestStatus.CANCELED);

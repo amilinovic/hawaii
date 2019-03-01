@@ -2,6 +2,7 @@ package eu.execom.hawaii.service;
 
 import eu.execom.hawaii.exceptions.NotAuthorizedApprovalException;
 import eu.execom.hawaii.exceptions.RequestAlreadyCanceledException;
+import eu.execom.hawaii.model.Absence;
 import eu.execom.hawaii.model.Day;
 import eu.execom.hawaii.model.Request;
 import eu.execom.hawaii.model.Team;
@@ -79,7 +80,7 @@ public class RequestService {
    * Retrieves a list of request by given dates, ordered by latest.
    *
    * @param startDate from date.
-   * @param endDate to date.
+   * @param endDate   to date.
    * @return a list of requests.
    */
   public List<Request> findAllByUserWithinDates(LocalDate startDate, LocalDate endDate, Long userId) {
@@ -117,7 +118,7 @@ public class RequestService {
    * Retrieves a list of requests by userId for given year from repository.
    *
    * @param userId the userId
-   * @param date requested date
+   * @param date   requested date
    * @return a list of requests for user in given year.
    */
   public List<Request> findAllByUserForYear(Long userId, LocalDate date) {
@@ -130,7 +131,7 @@ public class RequestService {
   /**
    * Retrieves a list of requests for all users from requested team and requested month.
    *
-   * @param teamId the Team id.
+   * @param teamId        the Team id.
    * @param requestedDate the LocalDate.
    * @return a list of all requests for given team.
    */
@@ -197,7 +198,7 @@ public class RequestService {
    * Saves the provided Request to repository.
    * Makes audit of that save.
    *
-   * @param request the Request entity to be persisted.
+   * @param request        the Request entity to be persisted.
    * @param modifiedByUser user that made changes to that Request entity.
    * @return saved Request.
    */
@@ -211,7 +212,7 @@ public class RequestService {
    * Saves the provided Request to repository.
    * Makes audit of that save.
    *
-   * @param request the Request entity to be persisted.
+   * @param request        the Request entity to be persisted.
    * @param modifiedByUser user that made changes to that Request entity.
    * @return saved Request.
    */
@@ -305,6 +306,7 @@ public class RequestService {
     boolean requestHasPendingCancellation = existingRequest.isCancellationPending();
     boolean requestIsPending = existingRequest.isPending();
     boolean requestIsCanceled = existingRequest.isCanceled();
+    boolean userIsAuthUser = user.getId().equals(authUser.getId());
 
     switch (request.getRequestStatus()) {
       case APPROVED:
@@ -323,15 +325,15 @@ public class RequestService {
         } else if (userIsRequestApprover && (requestIsApproved || requestHasPendingCancellation)) {
           applyRequest(request, true);
           sendNotificationsService.sendNotificationForRequestedLeave(request.getRequestStatus(), user);
-        } else if (!userIsRequestApprover && requestIsApproved) {
+        } else if (!userIsRequestApprover && userIsAuthUser && requestIsApproved) {
           request.setRequestStatus(RequestStatus.CANCELLATION_PENDING);
           emailService.createEmailAndSendForApproval(request);
           sendNotificationsService.sendNotificationToApproversAboutSubmittedRequest(request);
-        } else if (!userIsRequestApprover && requestHasPendingCancellation) {
+        } else if (requestIsPending && userIsAuthUser) {
+          allowanceService.applyPendingRequest(request, true);
+        } else {
           log.error("User not authorized to cancel this request for user with email: {}", user.getEmail());
           throw new NotAuthorizedApprovalException();
-        } else if (requestIsPending) {
-          allowanceService.applyPendingRequest(request, true);
         }
         break;
       case REJECTED:
