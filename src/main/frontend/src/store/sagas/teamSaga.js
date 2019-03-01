@@ -49,6 +49,7 @@ export const updateTeamSaga = function*(action) {
     yield call(updateTeamApi(action.payload));
     yield put(updateTeamSuccessful());
     yield put(toastrSuccess('Succesfully updated team'));
+    yield put(push(`/teams/${action.payload.id}`));
   } catch (error) {
     yield put(updateTeamError(error));
     yield put(toastrError(error.message));

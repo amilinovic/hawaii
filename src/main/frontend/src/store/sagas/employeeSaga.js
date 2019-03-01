@@ -49,6 +49,7 @@ export const updateEmployeeSaga = function*(action) {
     yield call(updateEmployeeApi(action.payload));
     yield put(updateEmployeeSuccessful());
     yield put(toastrSuccess('Succesfully updated employee'));
+    yield put(push(`/employee/${action.payload.id}`));
   } catch (error) {
     yield put(updateEmployeeError(error));
     yield put(toastrError(error.message));
