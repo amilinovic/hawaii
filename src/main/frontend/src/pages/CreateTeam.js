@@ -7,6 +7,7 @@ import * as Yup from 'yup';
 import withResetOnNavigate from '../components/HOC/withResetOnNavigate';
 import SearchDropdown from '../components/search-dropdown/SearchDropdown';
 import { requestEmployees } from '../store/actions/employeesActions';
+import { searchEmployees } from '../store/actions/employeesSearchActions';
 import { createTeam } from '../store/actions/teamActions';
 import { getSearchEmployees } from '../store/selectors';
 
@@ -89,7 +90,10 @@ class CreateTeam extends Component {
                   name="sendEmailToTeammatesForSicknessRequestEnabled"
                 />
               </div>
-              <SearchDropdown results={this.props.employees} />
+              <SearchDropdown
+                results={this.props.employees}
+                searchAction={searchEmployees}
+              />
               <div className="d-flex justify-content-between mt-3">
                 <div className="mb-5">
                   <h3>Team members</h3>

@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
 import { DebounceInput } from 'react-debounce-input';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import styled from 'styled-components';
-import { searchEmployees } from '../../store/actions/employeesSearchActions';
 import EmployeeSearchResults from './search-results/EmployeeSearchResults';
 
 const numberOfCharacters = 4;
@@ -73,7 +71,7 @@ class SearchDropdown extends Component {
 
   search() {
     this.checkIfInputIsValid();
-    this.props.searchEmployees(this.inputReference.value);
+    this.props.dispatch(this.props.searchAction(this.inputReference.value));
   }
 
   render() {
@@ -113,10 +111,4 @@ class SearchDropdown extends Component {
   }
 }
 
-const mapDispatchToProps = dispatch =>
-  bindActionCreators({ searchEmployees }, dispatch);
-
-export default connect(
-  null,
-  mapDispatchToProps
-)(SearchDropdown);
+export default connect()(SearchDropdown);
