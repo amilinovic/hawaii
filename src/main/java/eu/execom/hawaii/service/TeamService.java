@@ -21,8 +21,6 @@ import java.util.List;
 @Service
 public class TeamService {
 
-  private static final Long TEMPORARY_TEAM_ID = -1L;
-
   private TeamRepository teamRepository;
   private AuditInformationService auditInformationService;
   private UserService userService;
@@ -84,12 +82,9 @@ public class TeamService {
   @Transactional
   public Team create(Team team, User modifiedByUser) {
     saveAuditInformation(OperationPerformed.CREATE, modifiedByUser, team, null);
-    if (team.getId() == null) {
-      team.setId(TEMPORARY_TEAM_ID);
-    }
     team.getUsers().forEach(user -> user.setTeam(team));
 
-    return teamRepository.save(team);
+    return teamRepository.createTeam(team);
   }
 
   /**
