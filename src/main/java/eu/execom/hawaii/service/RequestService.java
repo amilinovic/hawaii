@@ -2,6 +2,7 @@ package eu.execom.hawaii.service;
 
 import eu.execom.hawaii.exceptions.NotAuthorizedApprovalException;
 import eu.execom.hawaii.exceptions.RequestAlreadyCanceledException;
+import eu.execom.hawaii.model.Absence;
 import eu.execom.hawaii.model.Day;
 import eu.execom.hawaii.model.Request;
 import eu.execom.hawaii.model.Team;
@@ -26,7 +27,6 @@ import javax.persistence.EntityExistsException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -305,6 +305,7 @@ public class RequestService {
     boolean requestHasPendingCancellation = existingRequest.isCancellationPending();
     boolean requestIsPending = existingRequest.isPending();
     boolean requestIsCanceled = existingRequest.isCanceled();
+    boolean userIsAuthUser = user.getId().equals(authUser.getId());
 
     switch (request.getRequestStatus()) {
       case APPROVED:
@@ -323,15 +324,15 @@ public class RequestService {
         } else if (userIsRequestApprover && (requestIsApproved || requestHasPendingCancellation)) {
           applyRequest(request, true);
           sendNotificationsService.sendNotificationForRequestedLeave(request.getRequestStatus(), user);
-        } else if (!userIsRequestApprover && requestIsApproved) {
+        } else if (!userIsRequestApprover && userIsAuthUser && requestIsApproved) {
           request.setRequestStatus(RequestStatus.CANCELLATION_PENDING);
           emailService.createEmailAndSendForApproval(request);
           sendNotificationsService.sendNotificationToApproversAboutSubmittedRequest(request);
-        } else if (!userIsRequestApprover && requestHasPendingCancellation) {
+        } else if (requestIsPending && userIsAuthUser) {
+          allowanceService.applyPendingRequest(request, true);
+        } else {
           log.error("User not authorized to cancel this request for user with email: {}", user.getEmail());
           throw new NotAuthorizedApprovalException();
-        } else if (requestIsPending) {
-          allowanceService.applyPendingRequest(request, true);
         }
         break;
       case REJECTED:

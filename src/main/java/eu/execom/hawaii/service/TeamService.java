@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Team management service.
@@ -76,20 +75,22 @@ public class TeamService {
    * Saves the provided Team to repository.
    * Makes audit of that save.
    *
-   * @param team           the Team entity to be persisted.
+   * @param team the Team entity to be persisted.
    * @param modifiedByUser user that made changes to that Team entity.
    * @return saved Team.
    */
   @Transactional
-  public Team save(Team team, User modifiedByUser) {
+  public Team create(Team team, User modifiedByUser) {
     saveAuditInformation(OperationPerformed.CREATE, modifiedByUser, team, null);
-    return teamRepository.save(team);
+    team.getUsers().forEach(user -> user.setTeam(team));
+
+    return teamRepository.create(team);
   }
 
   /**
    * Saves the provided Team to repository.
    *
-   * @param team           the Team entity to be persisted.
+   * @param team the Team entity to be persisted.
    * @param modifiedByUser user that made change to Team entity.
    * @return saved Team.
    */
