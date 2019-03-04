@@ -7,75 +7,83 @@ import eu.execom.hawaii.exceptions.RequestAlreadyCanceledException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.AccessDeniedException;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
+import java.nio.file.AccessDeniedException;
+import java.util.Collections;
+import java.util.Map;
 
 @Slf4j
-@RestControllerAdvice
+@ControllerAdvice
 public class GlobalExceptionHandler {
 
-  @ResponseStatus(HttpStatus.UNAUTHORIZED) // 401
   @ExceptionHandler(NotAuthorizedApprovalException.class)
-  public void handleNotAuthorizedApprovalException(HttpServletRequest request, Exception exception) {
-    logException(request, exception);
+  public ResponseEntity<Map<String, String>> handle(HttpServletRequest request, NotAuthorizedApprovalException ex) {
+    logException(request, ex);
+    return new ResponseEntity<>(Collections.singletonMap("error", ex.getMessage()), HttpStatus.UNAUTHORIZED);
   }
 
-  @ResponseStatus(HttpStatus.FORBIDDEN) // 403
   @ExceptionHandler(AccessDeniedException.class)
-  public void handleAccessDeniedException(HttpServletRequest request, Exception exception) {
-    logException(request, exception);
+  public ResponseEntity<Map<String, String>> handle(HttpServletRequest request, AccessDeniedException ex) {
+    logException(request, ex);
+    return new ResponseEntity<>(Collections.singletonMap("error", ex.getMessage()), HttpStatus.FORBIDDEN);
   }
 
-  @ResponseStatus(HttpStatus.NOT_FOUND) // 404
   @ExceptionHandler(EntityNotFoundException.class)
-  public void handleEntityNotFoundException(HttpServletRequest request, Exception exception) {
-    logException(request, exception);
+  public ResponseEntity<Map<String, String>> handle(HttpServletRequest request, EntityNotFoundException ex) {
+    logException(request, ex);
+    return new ResponseEntity<>(Collections.singletonMap("error", ex.getMessage()), HttpStatus.NOT_FOUND);
   }
 
-  @ResponseStatus(HttpStatus.CONFLICT) // 409
   @ExceptionHandler(EntityExistsException.class)
-  public void handleEntityExistsException(HttpServletRequest request, Exception exception) {
-    logException(request, exception);
+  public ResponseEntity<Map<String, String>> handle(HttpServletRequest request, EntityExistsException ex) {
+    logException(request, ex);
+    return new ResponseEntity<>(Collections.singletonMap("error", ex.getMessage()), HttpStatus.CONFLICT);
   }
 
-  @ResponseStatus(HttpStatus.CONFLICT) // 409
   @ExceptionHandler(DataIntegrityViolationException.class)
-  public void handleDataIntegrityViolationException(HttpServletRequest request, Exception exception) {
-    logException(request, exception);
+  public ResponseEntity<Map<String, String>> handle(HttpServletRequest request, DataIntegrityViolationException ex) {
+    logException(request, ex);
+    return new ResponseEntity<>(Collections.singletonMap("error", ex.getMessage()), HttpStatus.CONFLICT);
   }
 
-  @ResponseStatus(HttpStatus.CONFLICT) // 409
   @ExceptionHandler(RequestAlreadyCanceledException.class)
-  public void handleRequestAlreadyCanceledException(HttpServletRequest request, Exception exception) {
-    logException(request, exception);
+  public ResponseEntity<Map<String, String>> handle(HttpServletRequest request, RequestAlreadyCanceledException ex) {
+    logException(request, ex);
+    return new ResponseEntity<>(Collections.singletonMap("error", ex.getMessage()), HttpStatus.CONFLICT);
   }
 
-  @ResponseStatus(HttpStatus.CONFLICT) // 409
   @ExceptionHandler(ActionNotAllowedException.class)
-  public void handleActionNotAllowedException(HttpServletRequest request, Exception exception) {
-    logException(request, exception);
+  public ResponseEntity<Map<String, String>> handle(HttpServletRequest request, ActionNotAllowedException ex) {
+    logException(request, ex);
+    return new ResponseEntity<>(Collections.singletonMap("error", ex.getMessage()), HttpStatus.CONFLICT);
   }
 
-  @ResponseStatus(HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE) // 416
   @ExceptionHandler(InsufficientHoursException.class)
-  public void handleInsufficientHoursException(HttpServletRequest request, Exception exception) {
-    logException(request, exception);
+  public ResponseEntity<Map<String, String>> handle(HttpServletRequest request, InsufficientHoursException ex) {
+    logException(request, ex);
+    return new ResponseEntity<>(Collections.singletonMap("error", ex.getMessage()),
+        HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE);
   }
 
-  @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR) // 500
+  @ExceptionHandler(IllegalArgumentException.class)
+  public ResponseEntity<Map<String, String>> handle(HttpServletRequest request, IllegalArgumentException ex) {
+    logException(request, ex);
+    return new ResponseEntity<>(Collections.singletonMap("error", ex.getMessage()), HttpStatus.BAD_REQUEST);
+  }
+
   @ExceptionHandler(Exception.class)
-  public void handleException(HttpServletRequest request, Exception exception) {
-    logException(request, exception);
+  public ResponseEntity<Map<String, String>> handle(HttpServletRequest request, Exception ex) {
+    logException(request, ex);
+    return new ResponseEntity<>(Collections.singletonMap("error", ex.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
-  private void logException(HttpServletRequest request, Exception exception) {
-    log.error("Requesting resource: {} raised exception: {}", request.getRequestURI(), exception);
+  private void logException(HttpServletRequest request, Exception ex) {
+    log.error("Requesting resource: {} raised exception: {}", request.getRequestURI(), ex);
   }
-
 }

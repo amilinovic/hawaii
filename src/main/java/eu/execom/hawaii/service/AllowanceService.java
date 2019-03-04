@@ -36,6 +36,9 @@ public class AllowanceService {
   private static final int HALF_DAY = 4;
   private static final int FULL_DAY = 8;
   private static final int FIVE_DAYS = 40;
+  private static final String ANNUAL = "annual";
+  private static final String TRAINING = "training";
+  private static final String BONUS = "bonus";
 
   private AllowanceRepository allowanceRepository;
   private PublicHolidayRepository publicHolidayRepository;
@@ -308,9 +311,7 @@ public class AllowanceService {
     var remainingHoursNextYear = calculateNextYearRemainingAnnualHours(nextYearAllowance);
 
     if (requestedHours > remainingHoursCurrentYear + remainingHoursNextYear) {
-      log.error("Insufficient hours: available {}, requested {}, for user with email {}", remainingHoursCurrentYear,
-          requestedHours, userEmail);
-      throw new InsufficientHoursException();
+      logAndThrowInsufficientHoursException(remainingHoursCurrentYear, requestedHours, userEmail, ANNUAL);
     }
   }
 
@@ -342,9 +343,7 @@ public class AllowanceService {
     var userEmail = allowance.getUser().getEmail();
     var remainingHours = calculateRemainingTrainingHours(allowance);
     if (requestedHours > remainingHours) {
-      log.error("Insufficient hours: available {}, requested {}, for user with email {}", remainingHours,
-          requestedHours, userEmail);
-      throw new InsufficientHoursException();
+      logAndThrowInsufficientHoursException(remainingHours, requestedHours, userEmail, TRAINING);
     }
   }
 
@@ -362,8 +361,15 @@ public class AllowanceService {
     var remainingBonusHours = totalBonus - takenBonus;
 
     if (requestedHours > remainingBonusHours) {
-      throw new InsufficientHoursException();
+      logAndThrowInsufficientHoursException(remainingBonusHours, requestedHours, allowance.getUser().getEmail(), BONUS);
     }
+  }
+
+  private void logAndThrowInsufficientHoursException(int remainingHours, int requestedHours, String userEmail,
+      String leaveType) {
+    log.error("Insufficient hours: available {}, requested {}, for user with email {}", remainingHours, requestedHours,
+        userEmail);
+    throw new InsufficientHoursException("You don't have enough " + leaveType + " hours for this request.");
   }
 
   public AllowanceForUserDto getAllowancesForUser(User user) {

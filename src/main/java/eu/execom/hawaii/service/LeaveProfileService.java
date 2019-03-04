@@ -70,7 +70,7 @@ public class LeaveProfileService {
    */
   public void delete(Long id) {
     if (!leaveProfileRepository.existsById(id)) {
-      throw new EntityNotFoundException();
+      throw new EntityNotFoundException("Leave Profile already deleted.");
     }
     leaveProfileRepository.deleteById(id);
   }

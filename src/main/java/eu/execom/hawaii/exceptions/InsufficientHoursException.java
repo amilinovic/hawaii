@@ -4,4 +4,7 @@ public class InsufficientHoursException extends RuntimeException {
 
   private static final long serialVersionUID = -8496947778753670980L;
 
+  public InsufficientHoursException(String message) {
+    super(message);
+  }
 }
