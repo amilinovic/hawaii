@@ -21,11 +21,11 @@ public class CustomizedTeamRepositoryImpl<Team, Long> extends SimpleJpaRepositor
   @Override
   @Transactional
   public Team create(Team team) {
-    if (this.entityInformation.isNew(team)) {
-      this.entityManager.persist(team);
+    if (entityInformation.isNew(team)) {
+      entityManager.persist(team);
     }
 
-    return this.entityManager.merge(team);
+    return entityManager.merge(team);
   }
 
 }
