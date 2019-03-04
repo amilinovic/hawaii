@@ -1,4 +1,3 @@
-import { push } from 'connected-react-router';
 import { call, put, takeLatest } from 'redux-saga/effects';
 import {
   errorReceivingPersonalDays,
@@ -6,19 +5,21 @@ import {
   requestPersonalDays
 } from '../actions/personalDaysActions';
 import { getPersonalDaysApi } from '../services/personalDayService';
+import {
+  errorHandlingAction,
+  withErrorHandling
+} from './HOC/withErrorHandling';
 
 export const getPersonalDays = function*() {
-  try {
-    const personalDays = yield call(getPersonalDaysApi);
-    yield put(receivePersonalDays(personalDays));
-  } catch (error) {
-    yield put(errorReceivingPersonalDays(error));
-    if (error.status === 401) {
-      yield put(push('/login'));
-    }
-  }
+  const personalDays = yield call(getPersonalDaysApi);
+  yield put(receivePersonalDays(personalDays));
 };
 
 export const personalDaysSaga = [
-  takeLatest(requestPersonalDays, getPersonalDays)
+  takeLatest(
+    requestPersonalDays,
+    withErrorHandling(getPersonalDays, () =>
+      errorHandlingAction(errorReceivingPersonalDays)
+    )
+  )
 ];

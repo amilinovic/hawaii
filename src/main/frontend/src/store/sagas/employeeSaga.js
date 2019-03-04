@@ -20,50 +20,55 @@ import {
   removeEmployeeApi,
   updateEmployeeApi
 } from '../services/employeeService';
+import {
+  errorHandlingAction,
+  withErrorHandling
+} from './HOC/withErrorHandling';
 
 export const createEmployeeSaga = function*(action) {
-  try {
-    yield call(createEmployeeApi(action.payload));
-    yield put(createEmployeeSuccess());
-  } catch (error) {
-    yield put(errorCreatingEmployee(error));
-  }
+  yield call(createEmployeeApi(action.payload));
+  yield put(createEmployeeSuccess());
 };
 
 export const getEmployeeSaga = function*(action) {
-  try {
-    const employeeInformation = yield call(getEmployeeApi(action.payload));
-    yield put(receiveEmployee(employeeInformation));
-  } catch (error) {
-    yield put(errorReceivingEmployee(error));
-    if (error.status === 401) {
-      yield put(push('/login'));
-    }
-  }
+  const employeeInformation = yield call(getEmployeeApi(action.payload));
+  yield put(receiveEmployee(employeeInformation));
 };
 
 export const updateEmployeeSaga = function*(action) {
-  try {
-    yield call(updateEmployeeApi(action.payload));
-    yield put(updateEmployeeSuccessful());
-  } catch (error) {
-    yield put(updateEmployeeError(error));
-  }
+  yield call(updateEmployeeApi(action.payload));
+  yield put(updateEmployeeSuccessful());
 };
 
 export const removeEmployeeSaga = function*(action) {
-  try {
-    yield call(removeEmployeeApi(action.payload.id));
-    yield put(removeEmployeeSuccess());
-    yield put(push('/administration'));
-  } catch (error) {
-    yield put(errorRemovingEmployee(error));
-  }
+  yield call(removeEmployeeApi(action.payload.id));
+  yield put(removeEmployeeSuccess());
+  yield put(push('/administration'));
 };
 
 export const employeeSaga = [
-  takeLatest(requestEmployee, getEmployeeSaga),
-  takeLatest(updateEmployee, updateEmployeeSaga),
-  takeLatest(createEmployee, createEmployeeSaga),
-  takeLatest(removeEmployee, removeEmployeeSaga)
+  takeLatest(
+    requestEmployee,
+    withErrorHandling(getEmployeeSaga, () =>
+      errorHandlingAction(errorReceivingEmployee)
+    )
+  ),
+  takeLatest(
+    updateEmployee,
+    withErrorHandling(updateEmployeeSaga, () =>
+      errorHandlingAction(updateEmployeeError)
+    )
+  ),
+  takeLatest(
+    createEmployee,
+    withErrorHandling(createEmployeeSaga, () =>
+      errorHandlingAction(errorCreatingEmployee)
+    )
+  ),
+  takeLatest(
+    removeEmployee,
+    withErrorHandling(removeEmployeeSaga, () =>
+      errorHandlingAction(errorRemovingEmployee)
+    )
+  )
 ];

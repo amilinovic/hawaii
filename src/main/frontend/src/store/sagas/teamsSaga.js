@@ -1,4 +1,3 @@
-import { push } from 'connected-react-router';
 import { call, put, takeLatest } from 'redux-saga/effects';
 import {
   errorReceivingTeams,
@@ -6,17 +5,21 @@ import {
   requestTeams
 } from '../actions/teamsActions';
 import { getTeamsApi } from '../services/teamsService';
+import {
+  errorHandlingAction,
+  withErrorHandling
+} from './HOC/withErrorHandling';
 
-export const getAllTeams = function*() {
-  try {
-    const teamsInformation = yield call(getTeamsApi);
-    yield put(receiveTeams(teamsInformation));
-  } catch (error) {
-    yield put(errorReceivingTeams(error));
-    if (error.status === 401) {
-      yield put(push('/login'));
-    }
-  }
+const getAllTeamsSaga = function*() {
+  const teamsInformation = yield call(getTeamsApi);
+  yield put(receiveTeams(teamsInformation));
 };
 
-export const teamsSaga = [takeLatest(requestTeams, getAllTeams)];
+export const teamsSaga = [
+  takeLatest(
+    requestTeams,
+    withErrorHandling(getAllTeamsSaga, () =>
+      errorHandlingAction(errorReceivingTeams)
+    )
+  )
+];

@@ -16,40 +16,44 @@ import {
   removeTeamApi,
   updateTeamApi
 } from '../services/teamService';
+import {
+  errorHandlingAction,
+  withErrorHandling
+} from './HOC/withErrorHandling';
 
 export const getTeamSaga = function*(action) {
-  try {
-    const teamInformation = yield call(getTeamApi(action.payload));
-    yield put(receiveTeam(teamInformation));
-  } catch (error) {
-    yield put(errorReceivingTeam(error));
-    if (error.status === 401) {
-      yield put(push('/login'));
-    }
-  }
+  const teamInformation = yield call(getTeamApi(action.payload));
+  yield put(receiveTeam(teamInformation));
 };
 
 export const removeTeamSaga = function*(action) {
-  try {
-    yield call(removeTeamApi(action.payload.id));
-    yield put(removeTeamSuccess());
-    yield put(push('/administration'));
-  } catch (error) {
-    yield put(errorRemovingTeam(error));
-  }
+  yield call(removeTeamApi(action.payload.id));
+  yield put(removeTeamSuccess());
+  yield put(push('/administration'));
 };
 
 export const updateTeamSaga = function*(action) {
-  try {
-    yield call(updateTeamApi(action.payload));
-    yield put(updateTeamSuccessful());
-  } catch (error) {
-    yield put(updateTeamError(error));
-  }
+  yield call(updateTeamApi(action.payload));
+  yield put(updateTeamSuccessful());
 };
 
 export const teamSaga = [
-  takeLatest(requestTeam, getTeamSaga),
-  takeLatest(updateTeam, updateTeamSaga),
-  takeLatest(removeTeam, removeTeamSaga)
+  takeLatest(
+    requestTeam,
+    withErrorHandling(getTeamSaga, () =>
+      errorHandlingAction(errorReceivingTeam)
+    )
+  ),
+  takeLatest(
+    updateTeam,
+    withErrorHandling(updateTeamSaga, () =>
+      errorHandlingAction(updateTeamError)
+    )
+  ),
+  takeLatest(
+    removeTeam,
+    withErrorHandling(removeTeamSaga, () =>
+      errorHandlingAction(errorRemovingTeam)
+    )
+  )
 ];
