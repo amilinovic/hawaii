@@ -366,8 +366,8 @@ public class RequestService {
   private void handleBonusRequestApproval(Request request, User approver) {
     setCurrentlyApprovedBy(approver, request);
     int neededApprovals = request.getUser().getTeam().getTeamApprovers().size();
-    if (request.getCurrentlyApprovedBy().size() == neededApprovals) {
-      request.setRequestStatus(RequestStatus.APPROVED);
+    if (request.getCurrentlyApprovedBy().size() != neededApprovals) {
+      request.setRequestStatus(RequestStatus.PENDING);
     }
   }
 
