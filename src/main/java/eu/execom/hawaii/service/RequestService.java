@@ -318,7 +318,6 @@ public class RequestService {
             break;
           }
         }
-
         allowanceService.applyPendingRequest(request, true);
         applyRequest(request, false);
         sendNotificationsService.sendNotificationForRequestedLeave(request.getRequestStatus(), user);
@@ -366,14 +365,10 @@ public class RequestService {
 
   private void handleBonusRequestApproval(Request request, User approver) {
     setCurrentlyApprovedBy(approver, request);
-
     int neededApprovals = request.getUser().getTeam().getTeamApprovers().size();
-
     if (request.getCurrentlyApprovedBy().size() == neededApprovals) {
       request.setRequestStatus(RequestStatus.APPROVED);
-    } else
-      request.setRequestStatus(RequestStatus.PENDING);
-
+    }
   }
 
   private void setCurrentlyApprovedBy(User approver, Request request) {
@@ -381,13 +376,11 @@ public class RequestService {
 
     if (!isRequestAlreadyApprovedByApprover(approver, request)) {
       currentlyApprovedBy.add(approver);
+      request.setCurrentlyApprovedBy(currentlyApprovedBy);
     }
-    request.setCurrentlyApprovedBy(currentlyApprovedBy);
-
   }
 
   private boolean isRequestAlreadyApprovedByApprover(User approver, Request request) {
-
     return request.getCurrentlyApprovedBy()
                   .stream()
                   .anyMatch(teamApprover -> teamApprover.getId().equals(approver.getId()));
