@@ -61,7 +61,7 @@ public class TeamController {
   public ResponseEntity<TeamDto> createTeam(@ApiIgnore @AuthenticationPrincipal User authUser,
       @RequestBody TeamDto teamDto) {
     var team = MAPPER.map(teamDto, Team.class);
-    team = teamService.save(team, authUser);
+    team = teamService.create(team, authUser);
 
     return new ResponseEntity<>(new TeamDto(team), HttpStatus.CREATED);
   }
