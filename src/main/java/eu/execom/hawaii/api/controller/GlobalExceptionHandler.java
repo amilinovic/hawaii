@@ -84,6 +84,6 @@ public class GlobalExceptionHandler {
   }
 
   private void logException(HttpServletRequest request, Exception ex) {
-    log.error("Requesting resource: {} raised exception: {}", request.getRequestURI(), ex);
+    log.error("Requesting resource: '{}' raised exception: '{}'", request.getRequestURI(), ex);
   }
 }

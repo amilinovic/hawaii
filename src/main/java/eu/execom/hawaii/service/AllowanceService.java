@@ -367,9 +367,9 @@ public class AllowanceService {
 
   private void logAndThrowInsufficientHoursException(int remainingHours, int requestedHours, String userEmail,
       String leaveType) {
-    log.error("Insufficient hours: available {}, requested {}, for user with email {}", remainingHours, requestedHours,
-        userEmail);
-    throw new InsufficientHoursException("You don't have enough " + leaveType + " hours for this request.");
+    log.error("Insufficient hours: available '{}', requested '{}', for user with email '{}'", remainingHours,
+        requestedHours, userEmail);
+    throw new InsufficientHoursException(leaveType);
   }
 
   public AllowanceForUserDto getAllowancesForUser(User user) {

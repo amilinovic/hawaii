@@ -123,8 +123,8 @@ public class TeamService {
   }
 
   private void logAndThrowActionNotAllowedException(Team team) {
-    log.error("Team: {}, still contains {} members, team needs to be empty before it can be deleted.", team.getName(),
-        team.getUsers().size());
+    log.error("Team: '{}', still contains '{}' members, team needs to be empty before it can be deleted.",
+        team.getName(), team.getUsers().size());
     throw new ActionNotAllowedException(
         "Team still contains members, team needs to be empty before it can be deleted.");
   }

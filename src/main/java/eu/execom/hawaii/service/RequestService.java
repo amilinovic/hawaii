@@ -271,7 +271,7 @@ public class RequestService {
   }
 
   private void logAndThrowEntityExistsException(List<Day> matchingDays) {
-    log.error("Request for days: {} overlaps with existing requests.",
+    log.error("Request for days: '{}' overlaps with existing requests.",
         matchingDays.stream().map(day -> day.getDate().toString()).collect(Collectors.joining(", ")));
     throw new EntityExistsException("New request overlaps with existing one.");
   }
@@ -353,13 +353,13 @@ public class RequestService {
   }
 
   private void logAndThrowRequestAlreadyCanceledException(User user) {
-    log.error("Request by user: {}, is already canceled.", user.getEmail());
-    throw new RequestAlreadyCanceledException("This request has already been canceled.");
+    log.error("Request by user: '{}', is already canceled.", user.getEmail());
+    throw new RequestAlreadyCanceledException();
   }
 
-  private void logAndThrowNotAuthorizedApprovalException(User user, String performeAction) {
-    log.error("Approver not authorized to {} this request for user with email: {}", performeAction, user.getEmail());
-    throw new NotAuthorizedApprovalException("You are not authorized to " + performeAction + " this request.");
+  private void logAndThrowNotAuthorizedApprovalException(User user, String handleAction) {
+    log.error("Approver not authorized to '{}' this request for user with email: '{}'", handleAction, user.getEmail());
+    throw new NotAuthorizedApprovalException(handleAction);
   }
 
   private void saveAuditInformation(OperationPerformed operationPerformed, User modifiedByUser, Request request,
