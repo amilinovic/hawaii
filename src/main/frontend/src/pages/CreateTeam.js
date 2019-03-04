@@ -5,6 +5,7 @@ import Switch from 'react-switch';
 import { bindActionCreators } from 'redux';
 import * as Yup from 'yup';
 import withResetOnNavigate from '../components/HOC/withResetOnNavigate';
+import EmployeeSearchResults from '../components/search-dropdown/search-results/EmployeeSearchResults';
 import SearchDropdown from '../components/search-dropdown/SearchDropdown';
 import { requestEmployees } from '../store/actions/employeesActions';
 import { searchEmployees } from '../store/actions/employeesSearchActions';
@@ -90,10 +91,9 @@ class CreateTeam extends Component {
                   name="sendEmailToTeammatesForSicknessRequestEnabled"
                 />
               </div>
-              <SearchDropdown
-                results={this.props.employees}
-                searchAction={searchEmployees}
-              />
+              <SearchDropdown searchAction={searchEmployees}>
+                <EmployeeSearchResults employees={this.props.employees} />
+              </SearchDropdown>
               <div className="d-flex justify-content-between mt-3">
                 <div className="mb-5">
                   <h3>Team members</h3>

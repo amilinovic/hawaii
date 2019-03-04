@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { DebounceInput } from 'react-debounce-input';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import EmployeeSearchResults from './search-results/EmployeeSearchResults';
 
 const numberOfCharacters = 4;
 const Results = styled.div`
@@ -101,10 +100,9 @@ class SearchDropdown extends Component {
           dropdownIsActive={this.state.dropdownIsActive}
           className="results position-absolute w-100 p-4 border border-top-0"
         >
-          <EmployeeSearchResults
-            inputReference={this.inputReference}
-            results={this.props.results}
-          />
+          {React.cloneElement(this.props.children, {
+            inputReference: this.inputReference
+          })}
         </Results>
       </div>
     );
