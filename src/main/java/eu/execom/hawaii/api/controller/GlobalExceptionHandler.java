@@ -1,7 +1,6 @@
 package eu.execom.hawaii.api.controller;
 
 import eu.execom.hawaii.exceptions.ActionNotAllowedException;
-import eu.execom.hawaii.exceptions.DuplicateEntryException;
 import eu.execom.hawaii.exceptions.InsufficientHoursException;
 import eu.execom.hawaii.exceptions.NotAuthorizedApprovalException;
 import eu.execom.hawaii.exceptions.RequestAlreadyCanceledException;
@@ -61,12 +60,6 @@ public class GlobalExceptionHandler {
 
   @ExceptionHandler(ActionNotAllowedException.class)
   public ResponseEntity<Map<String, String>> handle(HttpServletRequest request, ActionNotAllowedException ex) {
-    logException(request, ex);
-    return new ResponseEntity<>(Collections.singletonMap("error", ex.getMessage()), HttpStatus.CONFLICT);
-  }
-
-  @ExceptionHandler(DuplicateEntryException.class)
-  public ResponseEntity<Map<String, String>> handle(HttpServletRequest request, DuplicateEntryException ex) {
     logException(request, ex);
     return new ResponseEntity<>(Collections.singletonMap("error", ex.getMessage()), HttpStatus.CONFLICT);
   }

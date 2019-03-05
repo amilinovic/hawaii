@@ -1,11 +1,11 @@
 package eu.execom.hawaii.service;
 
-import eu.execom.hawaii.exceptions.DuplicateEntryException;
 import eu.execom.hawaii.model.LeaveProfile;
 import eu.execom.hawaii.repository.LeaveProfileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
@@ -48,7 +48,7 @@ public class LeaveProfileService {
    */
   public LeaveProfile create(LeaveProfile leaveProfile) {
     if (leaveProfileRepository.existsByLeaveProfileType(leaveProfile.getLeaveProfileType())) {
-      throw new DuplicateEntryException("Profile with same type already exists.");
+      throw new EntityExistsException("Profile with same type already exists.");
     }
 
     return leaveProfileRepository.save(leaveProfile);
