@@ -100,9 +100,7 @@ class SearchDropdown extends Component {
           dropdownIsActive={this.state.dropdownIsActive}
           className="results position-absolute w-100 p-4 border border-top-0"
         >
-          {React.cloneElement(this.props.children, {
-            inputReference: this.inputReference
-          })}
+          {this.props.children(this.inputReference)}
         </Results>
       </div>
     );

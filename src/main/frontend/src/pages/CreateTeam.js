@@ -92,7 +92,12 @@ class CreateTeam extends Component {
                 />
               </div>
               <SearchDropdown searchAction={searchEmployees}>
-                <EmployeeSearchResults employees={this.props.employees} />
+                {inputReference => (
+                  <EmployeeSearchResults
+                    inputReference={inputReference}
+                    employees={this.props.employees}
+                  />
+                )}
               </SearchDropdown>
               <div className="d-flex justify-content-between mt-3">
                 <div className="mb-5">
