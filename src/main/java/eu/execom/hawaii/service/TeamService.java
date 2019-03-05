@@ -120,11 +120,15 @@ public class TeamService {
       teamRepository.deleteById(id);
       saveAuditInformation(OperationPerformed.DELETE, modifiedByUser, team, previousTeamState);
     } else {
-      log.error("Team: {}, still contains {} members, team needs to be empty before it can be deleted.", team.getName(),
-          team.getUsers().size());
-      throw new ActionNotAllowedException();
+      logAndThrowActionNotAllowedException(team);
     }
+  }
 
+  private void logAndThrowActionNotAllowedException(Team team) {
+    log.error("Team: '{}', still contains '{}' members, team needs to be empty before it can be deleted.",
+        team.getName(), team.getUsers().size());
+    throw new ActionNotAllowedException(
+        "Team still contains members, team needs to be empty before it can be deleted.");
   }
 
   private void saveAuditInformation(OperationPerformed operationPerformed, User modifiedByUser, Team team,

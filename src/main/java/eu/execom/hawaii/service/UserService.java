@@ -138,7 +138,8 @@ public class UserService {
    */
   @Transactional(readOnly = true)
   public User findByEmail(String email) {
-    return userRepository.findByEmail(email).orElseThrow(EntityNotFoundException::new);
+    return userRepository.findByEmail(email)
+                         .orElseThrow(() -> new EntityNotFoundException("User with given email doesn't exist."));
   }
 
   /**
@@ -170,7 +171,7 @@ public class UserService {
    * Saves the provided User to repository.
    * Makes audit of that save.
    *
-   * @param user           the User entity to be persisted.
+   * @param user the User entity to be persisted.
    * @param modifiedByUser user that made the change to User entity.
    * @return saved User.
    */
@@ -186,7 +187,7 @@ public class UserService {
    * Saves the provided User to repository.
    * Makes audit of that save.
    *
-   * @param user           the User entity to be persisted.
+   * @param user the User entity to be persisted.
    * @param modifiedByUser user that made the change to User entity.
    * @return saved User.
    */
