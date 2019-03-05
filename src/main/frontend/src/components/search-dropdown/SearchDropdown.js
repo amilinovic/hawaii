@@ -34,7 +34,10 @@ class SearchDropdown extends Component {
     this.setState({
       inputIsActive: true
     });
-    this.props.dispatch(this.props.searchAction(this.inputReference.value));
+
+    if (this.inputReference.value.length >= numberOfCharacters) {
+      this.props.dispatch(this.props.searchAction(this.inputReference.value));
+    }
   };
 
   render() {
