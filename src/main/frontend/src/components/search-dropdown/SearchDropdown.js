@@ -19,16 +19,9 @@ class SearchDropdown extends Component {
   };
 
   mouseEnter() {
-    if (this.inputReference.value.length < numberOfCharacters) {
-      this.setState({
-        inputIsActive: false,
-        dropdownIsActive: false
-      });
-    } else {
-      this.setState({
-        dropdownIsActive: true
-      });
-    }
+    this.setState({
+      dropdownIsActive: true
+    });
   }
 
   mouseLeave() {
@@ -43,15 +36,6 @@ class SearchDropdown extends Component {
         inputIsActive: true
       });
       this.inputReference.focus();
-    }
-  }
-
-  mouseOver() {
-    if (this.inputReference.value.length < numberOfCharacters) {
-      this.setState({
-        inputIsActive: false,
-        dropdownIsActive: false
-      });
     }
   }
 
@@ -95,7 +79,6 @@ class SearchDropdown extends Component {
         <Results
           onMouseEnter={() => this.mouseEnter()}
           onMouseLeave={() => this.mouseLeave()}
-          onMouseOver={() => this.mouseOver()}
           inputIsActive={this.state.inputIsActive}
           dropdownIsActive={this.state.dropdownIsActive}
           className="results position-absolute w-100 p-4 border border-top-0"
