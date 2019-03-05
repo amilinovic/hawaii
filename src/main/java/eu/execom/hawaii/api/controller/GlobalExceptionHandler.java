@@ -1,6 +1,7 @@
 package eu.execom.hawaii.api.controller;
 
 import eu.execom.hawaii.exceptions.ActionNotAllowedException;
+import eu.execom.hawaii.exceptions.DuplicateEntryException;
 import eu.execom.hawaii.exceptions.InsufficientHoursException;
 import eu.execom.hawaii.exceptions.NotAuthorizedApprovalException;
 import eu.execom.hawaii.exceptions.RequestAlreadyCanceledException;
@@ -8,13 +9,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
-import java.nio.file.AccessDeniedException;
 import java.util.Collections;
 import java.util.Map;
 
@@ -64,17 +65,17 @@ public class GlobalExceptionHandler {
     return new ResponseEntity<>(Collections.singletonMap("error", ex.getMessage()), HttpStatus.CONFLICT);
   }
 
+  @ExceptionHandler(DuplicateEntryException.class)
+  public ResponseEntity<Map<String, String>> handle(HttpServletRequest request, DuplicateEntryException ex) {
+    logException(request, ex);
+    return new ResponseEntity<>(Collections.singletonMap("error", ex.getMessage()), HttpStatus.CONFLICT);
+  }
+
   @ExceptionHandler(InsufficientHoursException.class)
   public ResponseEntity<Map<String, String>> handle(HttpServletRequest request, InsufficientHoursException ex) {
     logException(request, ex);
     return new ResponseEntity<>(Collections.singletonMap("error", ex.getMessage()),
         HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE);
-  }
-
-  @ExceptionHandler(IllegalArgumentException.class)
-  public ResponseEntity<Map<String, String>> handle(HttpServletRequest request, IllegalArgumentException ex) {
-    logException(request, ex);
-    return new ResponseEntity<>(Collections.singletonMap("error", ex.getMessage()), HttpStatus.BAD_REQUEST);
   }
 
   @ExceptionHandler(Exception.class)

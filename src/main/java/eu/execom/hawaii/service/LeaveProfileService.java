@@ -1,5 +1,6 @@
 package eu.execom.hawaii.service;
 
+import eu.execom.hawaii.exceptions.DuplicateEntryException;
 import eu.execom.hawaii.model.LeaveProfile;
 import eu.execom.hawaii.repository.LeaveProfileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +48,7 @@ public class LeaveProfileService {
    */
   public LeaveProfile create(LeaveProfile leaveProfile) {
     if (leaveProfileRepository.existsByLeaveProfileType(leaveProfile.getLeaveProfileType())) {
-      throw new IllegalArgumentException("Profile with same type already exists.");
+      throw new DuplicateEntryException("Profile with same type already exists.");
     }
 
     return leaveProfileRepository.save(leaveProfile);
