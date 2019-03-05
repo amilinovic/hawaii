@@ -13,6 +13,7 @@ import {
 import CalendarContainer from '../calendar/CalendarContainer';
 import withResetOnNavigate from '../HOC/withResetOnNavigate';
 import Loading from '../loading/Loading';
+import RequestModal from '../modal/RequestModal';
 
 class Dashboard extends Component {
   componentDidMount() {
@@ -27,6 +28,7 @@ class Dashboard extends Component {
 
     return (
       <div className="d-flex flex-grow-1 justify-content-between">
+        <RequestModal />
         <CalendarContainer
           publicHolidays={this.props.publicHolidays}
           personalDays={this.props.personalDays}
