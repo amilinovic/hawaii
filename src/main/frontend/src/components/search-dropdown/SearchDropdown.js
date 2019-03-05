@@ -8,8 +8,6 @@ const Results = styled.div`
   background: white;
   height: 150px;
   overflow: auto;
-  display: ${props =>
-    props.dropdownIsActive || props.inputIsActive ? 'block' : 'none'};
 `;
 
 class SearchDropdown extends Component {
@@ -18,44 +16,26 @@ class SearchDropdown extends Component {
     dropdownIsActive: false
   };
 
-  mouseEnter() {
+  mouseEnter = () => {
     this.setState({
       dropdownIsActive: true
     });
-  }
+  };
 
-  mouseLeave() {
-    if (this.inputReference.value.length < numberOfCharacters) {
-      this.setState({
-        inputIsActive: false,
-        dropdownIsActive: false
-      });
-    } else {
-      this.setState({
-        dropdownIsActive: false,
-        inputIsActive: true
-      });
-      this.inputReference.focus();
-    }
-  }
+  mouseLeave = () => {
+    this.setState({
+      dropdownIsActive: false,
+      inputIsActive: true
+    });
+    this.inputReference.focus();
+  };
 
-  checkIfInputIsValid() {
-    if (this.inputReference.value.length >= numberOfCharacters) {
-      this.setState({
-        inputIsActive: true
-      });
-    } else {
-      this.setState({
-        inputIsActive: false,
-        dropdownIsActive: false
-      });
-    }
-  }
-
-  search() {
-    this.checkIfInputIsValid();
+  search = () => {
+    this.setState({
+      inputIsActive: true
+    });
     this.props.dispatch(this.props.searchAction(this.inputReference.value));
-  }
+  };
 
   render() {
     return (
@@ -64,7 +44,6 @@ class SearchDropdown extends Component {
           inputRef={ref => {
             this.inputReference = ref;
           }}
-          onFocus={() => this.checkIfInputIsValid()}
           onBlur={() =>
             this.setState({
               inputIsActive: false
@@ -72,19 +51,21 @@ class SearchDropdown extends Component {
           }
           minLength={numberOfCharacters}
           debounceTimeout={300}
-          onChange={e => this.search(e)}
+          onChange={this.search}
           placeholder="Users search (type 4 characters to search)"
           className="w-100 border"
         />
-        <Results
-          onMouseEnter={() => this.mouseEnter()}
-          onMouseLeave={() => this.mouseLeave()}
-          inputIsActive={this.state.inputIsActive}
-          dropdownIsActive={this.state.dropdownIsActive}
-          className="results position-absolute w-100 p-4 border border-top-0"
-        >
-          {this.props.children(this.inputReference)}
-        </Results>
+        {this.inputReference &&
+        this.inputReference.value.length >= 4 &&
+        (this.state.inputIsActive || this.state.dropdownIsActive) ? (
+          <Results
+            onMouseEnter={this.mouseEnter}
+            onMouseLeave={this.mouseLeave}
+            className="results position-absolute w-100 p-4 border border-top-0"
+          >
+            {this.props.children(this.inputReference)}
+          </Results>
+        ) : null}
       </div>
     );
   }
