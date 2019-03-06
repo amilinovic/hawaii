@@ -7,7 +7,6 @@ import { bindActionCreators } from 'redux';
 import * as Yup from 'yup';
 import { createLeaveRequest } from '../../../store/actions/leaveRequestActions';
 import { getUser } from '../../../store/selectors';
-import Button from '../../common/Button';
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required()
@@ -84,11 +83,9 @@ class LeaveRequest extends Component {
                 onChange={handleChange}
               />
               <div className="d-flex justify-content-end">
-                <Button
-                  onClick={handleSubmit}
-                  className="btn btn-danger"
-                  title="Apply Leave"
-                />
+                <button className="btn" onClick={handleSubmit} type="submit">
+                  Apply Leave
+                </button>
               </div>
             </div>
           </div>

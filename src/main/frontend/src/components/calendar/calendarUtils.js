@@ -57,7 +57,7 @@ const checkIfPersonalDay = dayObject => {
   }
 
   const personalDay = personalData.find(personalDay =>
-    personalDay.date.isSame(personalData.day.date, 'day')
+    moment(personalDay.date).isSame(day, 'day')
   );
 
   return { ...dayObject, personalDay };
