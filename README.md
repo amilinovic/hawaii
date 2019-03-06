@@ -49,23 +49,30 @@ Password: root
 project_root
 ```
 
-2 . Make a copy of application.properties.example in `src/main/resources named` application.properties and change to mached desired config
+2 . Make a copy of application.properties.example in `src/main/resources named` application.properties and change to matched desired config
 
 3 . Generate war file <br/>
 
-- Generating standard war file
+- Generating war file with default profile (automatically builds frontend as build-frontend is default profile)
 ```
 mvn clean install 
 ```
+same as
+```
+mvn clean install -P build-frontend
+```
+- Generating war file with dev profile enabled (development profile, does not build frontend automatically)
+```
+mvn clean install -P dev
+```
 
-- Generating war file with skip-tests profile enabled (standard war file without tests)
+- Generating war file with skip-tests profile enabled (same as development profile but without tests)
 ```
 mvn clean install -P skip-tests
 ```
-
-- Generating war file with build-frontend profile enabled (standard war file with frontend build)
+- Profiles can be mixed and matched like in example below
 ```
-mvn clean install -P build-frontend
+mvn clean install -P build-frontend, skip-tests
 ```
 
 4 . Run SQL script which can be found in `src/main/resources` in order to populate database

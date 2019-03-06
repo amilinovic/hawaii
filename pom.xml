@@ -203,6 +203,10 @@
         </plugins>
     </build>
     <profiles>
+        <!-- development profile -->
+        <profile>
+            <id>dev</id>
+        </profile>
         <!-- skip unit test -->
         <profile>
             <id>skip-tests</id>
@@ -210,9 +214,13 @@
                 <maven.test.skip>true</maven.test.skip>
             </properties>
         </profile>
-        <!--build frontend-->
+        <!--build frontend -->
+        <!-- this profile is active by default -->
         <profile>
             <id>build-frontend</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <build>
                 <plugins>
                     <plugin>
