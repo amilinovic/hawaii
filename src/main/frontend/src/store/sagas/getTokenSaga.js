@@ -18,6 +18,6 @@ export const getToken = function*(action) {
 export const getTokenSaga = [
   takeEvery(
     requestToken,
-    withErrorHandling(getToken, e => genericErrorHandler(receiveTokenError(e)))
+    withErrorHandling(getToken, genericErrorHandler(receiveTokenError))
   )
 ];

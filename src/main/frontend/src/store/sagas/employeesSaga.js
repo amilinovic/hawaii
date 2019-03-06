@@ -18,8 +18,9 @@ export const getEmployees = function*() {
 export const employeesSaga = [
   takeLatest(
     requestEmployees,
-    withErrorHandling(getEmployees, e =>
-      genericErrorHandler(errorReceivingEmployees(e))
+    withErrorHandling(
+      getEmployees,
+      genericErrorHandler(errorReceivingEmployees)
     )
   )
 ];

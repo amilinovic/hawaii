@@ -18,8 +18,9 @@ export const getAllLeaveTypes = function*() {
 export const leaveTypesSaga = [
   takeLatest(
     requestLeaveTypes,
-    withErrorHandling(getAllLeaveTypes, e =>
-      genericErrorHandler(errorReceivingLeaveTypes(e))
+    withErrorHandling(
+      getAllLeaveTypes,
+      genericErrorHandler(errorReceivingLeaveTypes)
     )
   )
 ];

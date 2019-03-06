@@ -40,20 +40,14 @@ export const updateTeamSaga = function*(action) {
 export const teamSaga = [
   takeLatest(
     requestTeam,
-    withErrorHandling(getTeamSaga, e =>
-      genericErrorHandler(errorReceivingTeam(e))
-    )
+    withErrorHandling(getTeamSaga, genericErrorHandler(errorReceivingTeam))
   ),
   takeLatest(
     updateTeam,
-    withErrorHandling(updateTeamSaga, e =>
-      genericErrorHandler(updateTeamError(e))
-    )
+    withErrorHandling(updateTeamSaga, genericErrorHandler(updateTeamError))
   ),
   takeLatest(
     removeTeam,
-    withErrorHandling(removeTeamSaga, e =>
-      genericErrorHandler(errorRemovingTeam(e))
-    )
+    withErrorHandling(removeTeamSaga, genericErrorHandler(errorRemovingTeam))
   )
 ];

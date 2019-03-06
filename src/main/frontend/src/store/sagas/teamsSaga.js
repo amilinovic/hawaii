@@ -18,8 +18,6 @@ const getAllTeamsSaga = function*() {
 export const teamsSaga = [
   takeLatest(
     requestTeams,
-    withErrorHandling(getAllTeamsSaga, e =>
-      genericErrorHandler(errorReceivingTeams(e))
-    )
+    withErrorHandling(getAllTeamsSaga, genericErrorHandler(errorReceivingTeams))
   )
 ];

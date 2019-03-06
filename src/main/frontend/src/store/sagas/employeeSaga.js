@@ -49,26 +49,30 @@ export const removeEmployeeSaga = function*(action) {
 export const employeeSaga = [
   takeLatest(
     requestEmployee,
-    withErrorHandling(getEmployeeSaga, e =>
-      genericErrorHandler(errorReceivingEmployee(e))
+    withErrorHandling(
+      getEmployeeSaga,
+      genericErrorHandler(errorReceivingEmployee)
     )
   ),
   takeLatest(
     updateEmployee,
-    withErrorHandling(updateEmployeeSaga, e =>
-      genericErrorHandler(updateEmployeeError(e))
+    withErrorHandling(
+      updateEmployeeSaga,
+      genericErrorHandler(updateEmployeeError)
     )
   ),
   takeLatest(
     createEmployee,
-    withErrorHandling(createEmployeeSaga, e =>
-      genericErrorHandler(errorCreatingEmployee(e))
+    withErrorHandling(
+      createEmployeeSaga,
+      genericErrorHandler(errorCreatingEmployee)
     )
   ),
   takeLatest(
     removeEmployee,
-    withErrorHandling(removeEmployeeSaga, e =>
-      genericErrorHandler(errorRemovingEmployee(e))
+    withErrorHandling(
+      removeEmployeeSaga,
+      genericErrorHandler(errorRemovingEmployee)
     )
   )
 ];

@@ -18,8 +18,9 @@ export const getPublicHolidays = function*() {
 export const publicHolidaysSaga = [
   takeLatest(
     requestPublicHolidays,
-    withErrorHandling(getPublicHolidays, e =>
-      genericErrorHandler(errorReceivingPublicHolidays(e))
+    withErrorHandling(
+      getPublicHolidays,
+      genericErrorHandler(errorReceivingPublicHolidays)
     )
   )
 ];

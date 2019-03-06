@@ -24,6 +24,7 @@ export function withErrorHandling(saga, errorHandler) {
   };
 }
 
-export const genericErrorHandler = function*(action) {
-  yield put(action);
-};
+export const genericErrorHandler = action =>
+  function*(e) {
+    yield put(action(e));
+  };

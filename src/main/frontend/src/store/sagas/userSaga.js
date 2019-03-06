@@ -18,8 +18,6 @@ const getUserSaga = function*(action) {
 export const userSaga = [
   takeLatest(
     requestUser,
-    withErrorHandling(getUserSaga, e =>
-      genericErrorHandler(errorReceivingUser(e))
-    )
+    withErrorHandling(getUserSaga, genericErrorHandler(errorReceivingUser))
   )
 ];

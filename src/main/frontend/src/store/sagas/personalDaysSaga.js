@@ -18,8 +18,9 @@ export const getPersonalDays = function*() {
 export const personalDaysSaga = [
   takeLatest(
     requestPersonalDays,
-    withErrorHandling(getPersonalDays, e =>
-      genericErrorHandler(errorReceivingPersonalDays(e))
+    withErrorHandling(
+      getPersonalDays,
+      genericErrorHandler(errorReceivingPersonalDays)
     )
   )
 ];
