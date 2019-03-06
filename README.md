@@ -66,15 +66,6 @@ mvn clean install -P build-frontend
 mvn clean install -P dev
 ```
 
-- Generating war file with skip-tests profile enabled (same as development profile but without tests)
-```
-mvn clean install -P skip-tests
-```
-- Profiles can be mixed and matched like in example below
-```
-mvn clean install -P build-frontend, skip-tests
-```
-
 4 . Run SQL script which can be found in `src/main/resources` in order to populate database
 
 ![](readme-gifs/sql_script.gif)
