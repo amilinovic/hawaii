@@ -1,3 +1,12 @@
-import { getFactory } from './request';
+import { getFactory, searchFactory } from './request';
 
-export const getEmployeesApi = getFactory('/users');
+const apiEndpoint = '/users';
+
+export const getEmployeesApi = getFactory(apiEndpoint);
+export const searchEmployeesApi = user =>
+  searchFactory(`${apiEndpoint}/search`, {
+    searchQuery: user,
+    page: 0,
+    size: 5,
+    userStatusType: 'ACTIVE'
+  });

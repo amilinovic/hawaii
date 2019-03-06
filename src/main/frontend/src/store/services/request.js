@@ -32,7 +32,17 @@ const del = url => {
     .then(res => res.body);
 };
 
+const search = (url, query) => {
+  return request
+    .get(getLink(url))
+    .query(query)
+    .set('X-ID-TOKEN', getTokenFromSessionStorage().token)
+    .then(res => res.body);
+};
+
 export const getFactory = url => async () => await get(url);
 export const delFactory = url => async () => await del(url);
 export const postFactory = (url, data) => async () => await post(url, data);
 export const putFactory = (url, data) => async () => await put(url, data);
+export const searchFactory = (url, query) => async () =>
+  await search(url, query);

@@ -1,11 +1,18 @@
 import { FieldArray, Formik } from 'formik';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import Switch from 'react-switch';
 import { bindActionCreators } from 'redux';
+import * as Yup from 'yup';
 import withResetOnNavigate from '../components/HOC/withResetOnNavigate';
+import SearchDropdown from '../components/search-dropdown/SearchDropdown';
 import { requestEmployees } from '../store/actions/employeesActions';
 import { requestTeam, updateTeam } from '../store/actions/teamActions';
-import { getEmployees, getTeam } from '../store/selectors';
+import { getSearchEmployees, getTeam } from '../store/selectors';
+
+const validationSchema = Yup.object().shape({
+  name: Yup.string().required()
+});
 
 class EditTeam extends Component {
   componentDidMount() {
@@ -19,54 +26,89 @@ class EditTeam extends Component {
     return (
       <div className="d-flex p-4 justify-content-center flex-column">
         <Formik
+          validationSchema={validationSchema}
           initialValues={this.props.team}
           onSubmit={this.props.updateTeam}
           enableReinitialize
-          render={({ handleSubmit, handleChange, values }) => (
+          render={({
+            handleSubmit,
+            handleChange,
+            values,
+            errors,
+            touched,
+            setFieldValue
+          }) => (
             <React.Fragment>
               <input
-                className="mb-3"
+                className={`${
+                  errors.name && touched.name ? 'border-danger' : ''
+                } w-100 mb-3 border`}
                 name="name"
                 defaultValue={values.name}
                 placeholder="Team name"
                 onChange={handleChange}
               />
-              {this.props.employees.map(employee => {
-                return (
-                  <label
-                    className="d-flex justify-content-between"
-                    key={employee.id}
-                  >
-                    {employee.fullName}
-                    <div className="mb-2">
-                      <FieldArray
-                        name="users"
-                        render={arrayHelpers => (
-                          <button
-                            className="btn mr-2"
-                            type="button"
-                            onClick={() => arrayHelpers.push(employee)}
-                          >
-                            Add member
-                          </button>
-                        )}
-                      />
-                      <FieldArray
-                        name="teamApprovers"
-                        render={arrayHelpers => (
-                          <button
-                            className="btn"
-                            type="button"
-                            onClick={() => arrayHelpers.push(employee)}
-                          >
-                            Add approver
-                          </button>
-                        )}
-                      />
-                    </div>
-                  </label>
-                );
-              })}
+              <input
+                className="w-100 border mb-3"
+                name="sicknessRequestEmails"
+                defaultValue={values.sicknessRequestEmails}
+                placeholder="Sickness request emails"
+                onChange={handleChange}
+              />
+              <input
+                className="w-100 border mb-3"
+                name="annualRequestEmails"
+                defaultValue={values.annualRequestEmails}
+                placeholder="Annual request emails"
+                onChange={handleChange}
+              />
+              <input
+                className="w-100 border mb-3"
+                name="bonusRequestEmails"
+                defaultValue={values.bonusRequestEmails}
+                placeholder="Bonus request emails"
+                onChange={handleChange}
+              />
+              <div className="d-flex justify-content-between mb-3">
+                <h5>Send email to teammates for annual request</h5>
+                <Switch
+                  onChange={() =>
+                    setFieldValue(
+                      'sendEmailToTeammatesForAnnualRequestEnabled',
+                      !values.sendEmailToTeammatesForAnnualRequestEnabled
+                    )
+                  }
+                  checked={values.sendEmailToTeammatesForAnnualRequestEnabled}
+                  name="sendEmailToTeammatesForAnnualRequestEnabled"
+                />
+              </div>
+              <div className="d-flex justify-content-between mb-3">
+                <h5>Send email to teammates for bonus request</h5>
+                <Switch
+                  onChange={() =>
+                    setFieldValue(
+                      'sendEmailToTeammatesForBonusRequestEnabled',
+                      !values.sendEmailToTeammatesForBonusRequestEnabled
+                    )
+                  }
+                  checked={values.sendEmailToTeammatesForBonusRequestEnabled}
+                  name="sendEmailToTeammatesForBonusRequestEnabled"
+                />
+              </div>
+              <div className="d-flex justify-content-between mb-3">
+                <h5>Send email to teammates for bonus request</h5>
+                <Switch
+                  onChange={() =>
+                    setFieldValue(
+                      'sendEmailToTeammatesForSicknessRequestEnabled',
+                      !values.sendEmailToTeammatesForSicknessRequestEnabled
+                    )
+                  }
+                  checked={values.sendEmailToTeammatesForSicknessRequestEnabled}
+                  name="sendEmailToTeammatesForSicknessRequestEnabled"
+                />
+              </div>
+              <SearchDropdown results={this.props.employees} />
               <div className="d-flex justify-content-between mt-3">
                 <div className="mb-5">
                   <h3>Team members</h3>
@@ -77,7 +119,24 @@ class EditTeam extends Component {
                 <div className="mb-5">
                   <h3>Team approvers</h3>
                   {values.teamApprovers.map(user => {
-                    return <h5 key={user.id}>{user.fullName}</h5>;
+                    return (
+                      <h5 key={user.id}>
+                        {user.fullName}
+                        <FieldArray
+                          name="teamApprovers"
+                          render={arrayHelpers => (
+                            <span
+                              className="text-danger ml-2"
+                              onClick={() => {
+                                arrayHelpers.pop(user);
+                              }}
+                            >
+                              x
+                            </span>
+                          )}
+                        />
+                      </h5>
+                    );
                   })}
                 </div>
               </div>
@@ -93,7 +152,7 @@ class EditTeam extends Component {
 }
 
 const mapStateToProps = state => ({
-  employees: getEmployees(state),
+  employees: getSearchEmployees(state),
   team: getTeam(state)
 });
 

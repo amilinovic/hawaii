@@ -20,6 +20,7 @@ public class RequestDto {
   private LocalDateTime submissionTime;
   @NotNull
   private List<DayDto> days;
+  private List<UserDto> currentlyApprovedBy;
 
   public RequestDto(Request request) {
     this.id = request.getId();
@@ -29,6 +30,7 @@ public class RequestDto {
     this.reason = request.getReason();
     this.submissionTime = request.getSubmissionTime();
     this.days = request.getDays().stream().map(DayDto::new).collect(Collectors.toList());
+    this.currentlyApprovedBy = request.getCurrentlyApprovedBy().stream().map(UserDto::new).collect(Collectors.toList());
   }
 
 }

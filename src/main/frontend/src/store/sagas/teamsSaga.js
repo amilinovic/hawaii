@@ -1,10 +1,11 @@
 import { call, put, takeLatest } from 'redux-saga/effects';
 import {
+  errorReceivingTeams,
   receiveTeams,
-  requestTeams,
-  errorReceivingTeams
+  requestTeams
 } from '../actions/teamsActions';
 import { getTeamsApi } from '../services/teamsService';
+import { toastrError } from './toastrHelperSaga';
 
 export const getAllTeams = function*() {
   try {
@@ -12,6 +13,7 @@ export const getAllTeams = function*() {
     yield put(receiveTeams(teamsInformation));
   } catch (error) {
     yield put(errorReceivingTeams(error));
+    yield put(toastrError(error.message));
   }
 };
 

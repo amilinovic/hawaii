@@ -5,14 +5,16 @@ import { bindActionCreators } from 'redux';
 import { requestTeams } from '../../store/actions/teamsActions';
 import { getTeams } from '../../store/selectors';
 import withResetOnNavigate from '../HOC/withResetOnNavigate';
+import Loading from '../loading/Loading';
 import TeamItem from './TeamItem';
+
 class Teams extends Component {
   componentDidMount() {
     this.props.requestTeams();
   }
 
   render() {
-    if (!this.props.teams) return null;
+    if (!this.props.teams) return <Loading />;
 
     const teamItems = this.props.teams
       .filter(item => !item.deleted)

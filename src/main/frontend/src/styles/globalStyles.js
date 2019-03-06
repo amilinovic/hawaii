@@ -69,4 +69,11 @@ textarea {
     outline: none;	
   }	
 }	
+
+input {	
+    &:focus,	
+    &:active {	
+      outline: none;	
+    }	
+  }	
 `;

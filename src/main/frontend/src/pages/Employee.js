@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { NavLink } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import withResetOnNavigate from '../components/HOC/withResetOnNavigate';
 import {
@@ -44,12 +45,18 @@ class Employee extends Component {
         <h5 className="text-danger mb-3">{startedWorkingAtExecomDate}</h5>
         <h1>Team name</h1>
         <h5 className="text-danger mb-3">{teamName}</h5>
-        <button
-          className="btn btn-danger"
-          onClick={() => this.props.removeEmployee({ id })}
-        >
-          Delete
-        </button>
+
+        <div>
+          <button className="btn mr-3">
+            <NavLink to={`/employee/${id}/edit`}>Edit</NavLink>
+          </button>
+          <button
+            className="btn btn-danger"
+            onClick={() => this.props.removeEmployee({ id })}
+          >
+            Delete
+          </button>
+        </div>
       </div>
     );
   }

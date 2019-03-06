@@ -2,25 +2,32 @@ import { Formik } from 'formik';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import * as Yup from 'yup';
 import withResetOnNavigate from '../components/HOC/withResetOnNavigate';
+import Loading from '../components/loading/Loading';
 import { createEmployee } from '../store/actions/employeeActions';
 import { requestTeams } from '../store/actions/teamsActions';
 import { getTeams } from '../store/selectors';
 
-class CreateEmployee extends Component {
-  state = {
-    employee: {
-      leaveProfileId: 1,
-      userStatusType: 'ACTIVE'
-    }
-  };
+const validationSchema = Yup.object().shape({
+  fullName: Yup.string().required(),
+  email: Yup.string()
+    .email()
+    .required(),
+  userRole: Yup.string().required(),
+  teamId: Yup.string().required(),
+  jobTitle: Yup.string().required(),
+  startedWorkingAtExecomDate: Yup.string().required(),
+  startedWorkingDate: Yup.string().required()
+});
 
+class CreateEmployee extends Component {
   componentDidMount() {
     this.props.requestTeams();
   }
 
   render() {
-    if (!this.props.teams) return null;
+    if (!this.props.teams) return <Loading />;
 
     const teams = this.props.teams.map(team => {
       return (
@@ -33,60 +40,100 @@ class CreateEmployee extends Component {
     return (
       <div className="d-flex p-4 justify-content-center flex-column">
         <Formik
+          validationSchema={validationSchema}
           initialValues={{
+            fullName: '',
+            email: '',
+            jobTitle: '',
+            userRole: '',
+            teamId: '',
+            startedWorkingDate: '',
+            startedWorkingAtExecomDate: '',
             leaveProfileId: 2,
-            userRole: 'HR_MANAGER',
             userStatusType: 'ACTIVE'
           }}
           onSubmit={this.props.createEmployee}
         >
-          {({ handleSubmit, handleChange }) => (
+          {({ handleSubmit, handleChange, values, errors, touched }) => (
             <React.Fragment>
               <input
-                className="mb-3"
+                className={`${
+                  errors.fullName && touched.fullName ? 'border-danger' : ''
+                } mb-3 border`}
                 name="fullName"
                 type="text"
                 onChange={handleChange}
                 placeholder="Full Name"
               />
               <input
-                className="mb-3"
+                className={`${
+                  errors.email && touched.email ? 'border-danger' : ''
+                } mb-3 border`}
                 name="email"
                 type="text"
                 onChange={handleChange}
-                placeholder="email"
+                placeholder="Email"
               />
               <input
-                className="mb-3"
+                className={`${
+                  errors.jobTitle && touched.jobTitle ? 'border-danger' : ''
+                } mb-3 border`}
                 name="jobTitle"
                 type="text"
                 onChange={handleChange}
                 placeholder="Job title"
               />
-              <select className="mb-3" name="userRole" onChange={handleChange}>
-                <option defaultValue value="HR_MANAGER">
-                  HR manager
+              <select
+                className={`${
+                  errors.userRole && touched.userRole ? 'border-danger' : ''
+                } mb-3 border`}
+                name="userRole"
+                onChange={handleChange}
+                value={values.userRole}
+              >
+                <option value="" disabled>
+                  Select role
                 </option>
+                <option value="HR_MANAGER">HR manager</option>
               </select>
-              <select className="mb-3" name="teamId" onChange={handleChange}>
+              <select
+                className={`${
+                  errors.teamId && touched.teamId ? 'border-danger' : ''
+                } mb-3 border`}
+                name="teamId"
+                onChange={handleChange}
+                value={values.teamId}
+              >
+                <option value="" disabled>
+                  Select team
+                </option>
                 {teams}
               </select>
               <input
-                className="mb-3"
+                className={`${
+                  errors.startedWorkingDate && touched.startedWorkingDate
+                    ? 'border-danger'
+                    : ''
+                } mb-3 border`}
                 name="startedWorkingDate"
                 type="text"
                 onChange={handleChange}
                 placeholder="Started working date"
               />
               <input
-                className="mb-3"
+                className={`${
+                  errors.startedWorkingAtExecomDate &&
+                  touched.startedWorkingAtExecomDate
+                    ? 'border-danger'
+                    : ''
+                } mb-3 border`}
                 name="startedWorkingAtExecomDate"
                 type="text"
                 onChange={handleChange}
                 placeholder="Started working at execom date"
               />
               <input
-                className="mb-3"
+                className="mb-3 border"
                 name="yearsOfService"
                 type="text"
                 onChange={handleChange}

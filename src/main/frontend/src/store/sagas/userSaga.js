@@ -1,4 +1,3 @@
-import { actions as toastrActions } from 'react-redux-toastr';
 import { call, put, takeEvery } from 'redux-saga/effects';
 import {
   errorReceivingUser,
@@ -6,6 +5,7 @@ import {
   requestUser
 } from '../actions/userActions';
 import { getUserApi } from '../services/userService';
+import { toastrError } from './toastrHelperSaga';
 
 export const getUser = function*(action) {
   try {
@@ -13,13 +13,7 @@ export const getUser = function*(action) {
     yield put(receiveUser(userInformation));
   } catch (error) {
     yield put(errorReceivingUser(error));
-    yield put(
-      toastrActions.add({
-        type: 'error',
-        title: 'Error',
-        message: error.message
-      })
-    );
+    yield put(toastrError(error.message));
   }
 };
 
