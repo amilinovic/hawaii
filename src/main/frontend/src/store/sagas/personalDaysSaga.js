@@ -6,7 +6,7 @@ import {
 } from '../actions/personalDaysActions';
 import { getPersonalDaysApi } from '../services/personalDayService';
 import {
-  errorHandlingAction,
+  genericErrorHandler,
   withErrorHandling
 } from './HOC/withErrorHandling';
 
@@ -18,8 +18,8 @@ export const getPersonalDays = function*() {
 export const personalDaysSaga = [
   takeLatest(
     requestPersonalDays,
-    withErrorHandling(getPersonalDays, () =>
-      errorHandlingAction(errorReceivingPersonalDays)
+    withErrorHandling(getPersonalDays, e =>
+      genericErrorHandler(errorReceivingPersonalDays(e))
     )
   )
 ];

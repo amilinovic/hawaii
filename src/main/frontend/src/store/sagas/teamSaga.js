@@ -17,7 +17,7 @@ import {
   updateTeamApi
 } from '../services/teamService';
 import {
-  errorHandlingAction,
+  genericErrorHandler,
   withErrorHandling
 } from './HOC/withErrorHandling';
 
@@ -40,20 +40,20 @@ export const updateTeamSaga = function*(action) {
 export const teamSaga = [
   takeLatest(
     requestTeam,
-    withErrorHandling(getTeamSaga, () =>
-      errorHandlingAction(errorReceivingTeam)
+    withErrorHandling(getTeamSaga, e =>
+      genericErrorHandler(errorReceivingTeam(e))
     )
   ),
   takeLatest(
     updateTeam,
-    withErrorHandling(updateTeamSaga, () =>
-      errorHandlingAction(updateTeamError)
+    withErrorHandling(updateTeamSaga, e =>
+      genericErrorHandler(updateTeamError(e))
     )
   ),
   takeLatest(
     removeTeam,
-    withErrorHandling(removeTeamSaga, () =>
-      errorHandlingAction(errorRemovingTeam)
+    withErrorHandling(removeTeamSaga, e =>
+      genericErrorHandler(errorRemovingTeam(e))
     )
   )
 ];

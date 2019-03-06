@@ -6,7 +6,7 @@ import {
 } from '../actions/leaveTypesActions';
 import { getLeaveTypesService } from '../services/leaveTypesService';
 import {
-  errorHandlingAction,
+  genericErrorHandler,
   withErrorHandling
 } from './HOC/withErrorHandling';
 
@@ -18,8 +18,8 @@ export const getAllLeaveTypes = function*() {
 export const leaveTypesSaga = [
   takeLatest(
     requestLeaveTypes,
-    withErrorHandling(getAllLeaveTypes, () =>
-      errorHandlingAction(errorReceivingLeaveTypes)
+    withErrorHandling(getAllLeaveTypes, e =>
+      genericErrorHandler(errorReceivingLeaveTypes(e))
     )
   )
 ];

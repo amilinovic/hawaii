@@ -12,7 +12,7 @@ export function withErrorHandling(saga, errorHandler) {
       if (e.status === 401) {
         yield put(push('/login'));
       }
-      yield errorHandler();
+      yield errorHandler(e);
       yield put(
         toastrActions.add({
           type: 'error',
@@ -24,6 +24,6 @@ export function withErrorHandling(saga, errorHandler) {
   };
 }
 
-export const errorHandlingAction = function*(action) {
-  yield put(action());
+export const genericErrorHandler = function*(action) {
+  yield put(action);
 };

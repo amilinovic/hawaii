@@ -6,7 +6,7 @@ import {
 } from '../actions/userActions';
 import { getUserApi } from '../services/userService';
 import {
-  errorHandlingAction,
+  genericErrorHandler,
   withErrorHandling
 } from './HOC/withErrorHandling';
 
@@ -18,8 +18,8 @@ const getUserSaga = function*(action) {
 export const userSaga = [
   takeLatest(
     requestUser,
-    withErrorHandling(getUserSaga, () =>
-      errorHandlingAction(errorReceivingUser)
+    withErrorHandling(getUserSaga, e =>
+      genericErrorHandler(errorReceivingUser(e))
     )
   )
 ];

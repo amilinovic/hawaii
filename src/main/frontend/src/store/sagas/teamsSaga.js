@@ -6,7 +6,7 @@ import {
 } from '../actions/teamsActions';
 import { getTeamsApi } from '../services/teamsService';
 import {
-  errorHandlingAction,
+  genericErrorHandler,
   withErrorHandling
 } from './HOC/withErrorHandling';
 
@@ -18,8 +18,8 @@ const getAllTeamsSaga = function*() {
 export const teamsSaga = [
   takeLatest(
     requestTeams,
-    withErrorHandling(getAllTeamsSaga, () =>
-      errorHandlingAction(errorReceivingTeams)
+    withErrorHandling(getAllTeamsSaga, e =>
+      genericErrorHandler(errorReceivingTeams(e))
     )
   )
 ];

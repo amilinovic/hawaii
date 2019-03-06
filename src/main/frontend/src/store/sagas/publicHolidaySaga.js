@@ -6,7 +6,7 @@ import {
 } from '../actions/publicHolidayActions';
 import { getPublicHolidaysApi } from '../services/publicHolidaysService';
 import {
-  errorHandlingAction,
+  genericErrorHandler,
   withErrorHandling
 } from './HOC/withErrorHandling';
 
@@ -18,8 +18,8 @@ export const getPublicHolidays = function*() {
 export const publicHolidaysSaga = [
   takeLatest(
     requestPublicHolidays,
-    withErrorHandling(getPublicHolidays, () =>
-      errorHandlingAction(errorReceivingPublicHolidays)
+    withErrorHandling(getPublicHolidays, e =>
+      genericErrorHandler(errorReceivingPublicHolidays(e))
     )
   )
 ];

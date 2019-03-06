@@ -6,7 +6,7 @@ import {
 } from '../actions/employeesActions';
 import { getEmployeesApi } from '../services/employeesService';
 import {
-  errorHandlingAction,
+  genericErrorHandler,
   withErrorHandling
 } from './HOC/withErrorHandling';
 
@@ -18,8 +18,8 @@ export const getEmployees = function*() {
 export const employeesSaga = [
   takeLatest(
     requestEmployees,
-    withErrorHandling(getEmployees, () =>
-      errorHandlingAction(errorReceivingEmployees)
+    withErrorHandling(getEmployees, e =>
+      genericErrorHandler(errorReceivingEmployees(e))
     )
   )
 ];

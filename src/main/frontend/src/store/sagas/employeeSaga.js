@@ -21,7 +21,7 @@ import {
   updateEmployeeApi
 } from '../services/employeeService';
 import {
-  errorHandlingAction,
+  genericErrorHandler,
   withErrorHandling
 } from './HOC/withErrorHandling';
 
@@ -49,26 +49,26 @@ export const removeEmployeeSaga = function*(action) {
 export const employeeSaga = [
   takeLatest(
     requestEmployee,
-    withErrorHandling(getEmployeeSaga, () =>
-      errorHandlingAction(errorReceivingEmployee)
+    withErrorHandling(getEmployeeSaga, e =>
+      genericErrorHandler(errorReceivingEmployee(e))
     )
   ),
   takeLatest(
     updateEmployee,
-    withErrorHandling(updateEmployeeSaga, () =>
-      errorHandlingAction(updateEmployeeError)
+    withErrorHandling(updateEmployeeSaga, e =>
+      genericErrorHandler(updateEmployeeError(e))
     )
   ),
   takeLatest(
     createEmployee,
-    withErrorHandling(createEmployeeSaga, () =>
-      errorHandlingAction(errorCreatingEmployee)
+    withErrorHandling(createEmployeeSaga, e =>
+      genericErrorHandler(errorCreatingEmployee(e))
     )
   ),
   takeLatest(
     removeEmployee,
-    withErrorHandling(removeEmployeeSaga, () =>
-      errorHandlingAction(errorRemovingEmployee)
+    withErrorHandling(removeEmployeeSaga, e =>
+      genericErrorHandler(errorRemovingEmployee(e))
     )
   )
 ];
