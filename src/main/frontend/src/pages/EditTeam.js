@@ -41,10 +41,8 @@ class EditTeam extends Component {
             <React.Fragment>
               <input
                 className={`${
-                  errors.name && touched.name
-                    ? 'border border-danger'
-                    : 'border'
-                } w-100 mb-3`}
+                  errors.name && touched.name ? 'border-danger' : ''
+                } w-100 mb-3 border`}
                 name="name"
                 defaultValue={values.name}
                 placeholder="Team name"
@@ -61,14 +59,14 @@ class EditTeam extends Component {
                 className="w-100 border mb-3"
                 name="annualRequestEmails"
                 defaultValue={values.annualRequestEmails}
-                placeholder="Sickness request emails"
+                placeholder="Annual request emails"
                 onChange={handleChange}
               />
               <input
                 className="w-100 border mb-3"
                 name="bonusRequestEmails"
                 defaultValue={values.bonusRequestEmails}
-                placeholder="Sickness request emails"
+                placeholder="Bonus request emails"
                 onChange={handleChange}
               />
               <div className="d-flex justify-content-between mb-3">

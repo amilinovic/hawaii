@@ -30,6 +30,12 @@ class SearchDropdown extends Component {
     this.inputReference.focus();
   };
 
+  inputBlur = () => {
+    this.setState({
+      inputIsActive: false
+    });
+  };
+
   search = () => {
     this.setState({
       inputIsActive: true
@@ -41,26 +47,24 @@ class SearchDropdown extends Component {
   };
 
   render() {
+    const shouldRenderResults =
+      this.inputReference &&
+      this.inputReference.value.length >= 4 &&
+      (this.state.inputIsActive || this.state.dropdownIsActive);
     return (
       <div className="position-relative">
         <DebounceInput
           inputRef={ref => {
             this.inputReference = ref;
           }}
-          onBlur={() =>
-            this.setState({
-              inputIsActive: false
-            })
-          }
+          onBlur={this.inputBlur}
           minLength={numberOfCharacters}
           debounceTimeout={300}
           onChange={this.search}
           placeholder="Users search (type 4 characters to search)"
           className="w-100 border"
         />
-        {this.inputReference &&
-        this.inputReference.value.length >= 4 &&
-        (this.state.inputIsActive || this.state.dropdownIsActive) ? (
+        {shouldRenderResults && (
           <Results
             onMouseEnter={this.mouseEnter}
             onMouseLeave={this.mouseLeave}
@@ -68,7 +72,7 @@ class SearchDropdown extends Component {
           >
             {this.props.children(this.inputReference)}
           </Results>
-        ) : null}
+        )}
       </div>
     );
   }

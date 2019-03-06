@@ -53,10 +53,8 @@ class EditEmployee extends Component {
             <React.Fragment>
               <input
                 className={`${
-                  errors.fullName && touched.fullName
-                    ? 'border border-danger'
-                    : 'border'
-                } mb-3`}
+                  errors.fullName && touched.fullName ? 'border-danger' : ''
+                } mb-3 border`}
                 name="fullName"
                 onChange={handleChange}
                 defaultValue={values.fullName}
@@ -64,10 +62,8 @@ class EditEmployee extends Component {
               />
               <input
                 className={`${
-                  errors.email && touched.email
-                    ? 'border border-danger'
-                    : 'border'
-                } mb-3`}
+                  errors.email && touched.email ? 'border-danger' : ''
+                } mb-3 border`}
                 name="email"
                 onChange={handleChange}
                 defaultValue={values.email}
@@ -75,10 +71,8 @@ class EditEmployee extends Component {
               />
               <input
                 className={`${
-                  errors.jobTitle && touched.jobTitle
-                    ? 'border border-danger'
-                    : 'border'
-                } mb-3`}
+                  errors.jobTitle && touched.jobTitle ? 'border-danger' : ''
+                } mb-3 border`}
                 name="jobTitle"
                 onChange={handleChange}
                 defaultValue={values.jobTitle}
@@ -86,10 +80,8 @@ class EditEmployee extends Component {
               />
               <select
                 className={`${
-                  errors.userRole && touched.userRole
-                    ? 'border border-danger'
-                    : 'border'
-                } mb-3`}
+                  errors.userRole && touched.userRole ? 'border-danger' : ''
+                } mb-3 border`}
                 name="userRole"
                 onChange={handleChange}
                 value={values.userRole}
@@ -99,10 +91,8 @@ class EditEmployee extends Component {
               </select>
               <select
                 className={`${
-                  errors.teamId && touched.teamId
-                    ? 'border border-danger'
-                    : 'border'
-                } mb-3`}
+                  errors.teamId && touched.teamId ? 'border-danger' : ''
+                } mb-3 border`}
                 name="teamId"
                 onChange={handleChange}
                 value={values.teamId}
@@ -112,9 +102,9 @@ class EditEmployee extends Component {
               <input
                 className={`${
                   errors.startedWorkingDate && touched.startedWorkingDate
-                    ? 'border border-danger'
-                    : 'border'
-                } mb-3`}
+                    ? 'border-danger'
+                    : ''
+                } mb-3 border`}
                 name="startedWorkingDate"
                 onChange={handleChange}
                 defaultValue={values.startedWorkingDate}
@@ -124,9 +114,9 @@ class EditEmployee extends Component {
                 className={`${
                   errors.startedWorkingAtExecomDate &&
                   touched.startedWorkingAtExecomDate
-                    ? 'border border-danger'
-                    : 'border'
-                } mb-3`}
+                    ? 'border-danger'
+                    : ''
+                } mb-3 border`}
                 name="startedWorkingAtExecomDate"
                 onChange={handleChange}
                 defaultValue={values.startedWorkingAtExecomDate}

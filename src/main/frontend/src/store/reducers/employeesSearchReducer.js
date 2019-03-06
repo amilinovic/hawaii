@@ -6,7 +6,7 @@ import {
 } from '../actions/employeesSearchActions';
 import { navigateOut } from '../actions/navigateActions';
 
-export const initialState = { isFetching: false, results: null };
+export const initialState = { isFetching: false, results: [] };
 
 const actionHandlers = {
   [searchEmployees]: state => {
@@ -26,7 +26,7 @@ const actionHandlers = {
     return {
       ...state,
       isFetching: false,
-      results: null
+      results: []
     };
   },
   [navigateOut]: state => {

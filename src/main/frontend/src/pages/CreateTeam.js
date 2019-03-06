@@ -40,18 +40,35 @@ class CreateTeam extends Component {
             setFieldValue
           }) => (
             <React.Fragment>
-              <div className="mb-3">
-                <input
-                  className={`${
-                    errors.name && touched.name
-                      ? 'border border-danger'
-                      : 'border'
-                  } w-100`}
-                  name="name"
-                  onChange={handleChange}
-                  placeholder="Team name"
-                />
-              </div>
+              <input
+                className={`${
+                  errors.name && touched.name ? 'border-danger' : ''
+                } w-100 border mb-3`}
+                name="name"
+                onChange={handleChange}
+                placeholder="Team name"
+              />
+              <input
+                className="w-100 border mb-3"
+                name="sicknessRequestEmails"
+                defaultValue={values.sicknessRequestEmails}
+                placeholder="Sickness request emails"
+                onChange={handleChange}
+              />
+              <input
+                className="w-100 border mb-3"
+                name="annualRequestEmails"
+                defaultValue={values.annualRequestEmails}
+                placeholder="Annual request emails"
+                onChange={handleChange}
+              />
+              <input
+                className="w-100 border mb-3"
+                name="bonusRequestEmails"
+                defaultValue={values.bonusRequestEmails}
+                placeholder="Bonus request emails"
+                onChange={handleChange}
+              />
               <div className="d-flex justify-content-between mb-3">
                 <h5>Send email to teammates for annual request</h5>
                 <Switch
