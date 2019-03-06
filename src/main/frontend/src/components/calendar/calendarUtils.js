@@ -1,4 +1,4 @@
-import * as _ from 'lodash';
+import { get } from 'lodash';
 import flow from 'lodash/flow';
 import moment from 'moment';
 
@@ -45,7 +45,7 @@ const checkIfPublicHoliday = (day, publicHolidays, personalData) => {
   return {
     day,
     personalData,
-    publicHoliday: _.get(publicHolidayCheck, 'name')
+    publicHoliday: get(publicHolidayCheck, 'name')
   };
 };
 

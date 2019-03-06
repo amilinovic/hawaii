@@ -40,4 +40,8 @@ public class Absence extends BaseEntity implements Serializable {
   @OneToMany(mappedBy = "absence")
   private List<Request> leaveRequests;
 
+  public boolean isBonusDays() {
+    return AbsenceType.BONUS_DAYS.equals(absenceType);
+  }
+
 }

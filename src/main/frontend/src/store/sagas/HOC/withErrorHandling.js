@@ -1,6 +1,6 @@
 import { push } from 'connected-react-router';
-import { actions as toastrActions } from 'react-redux-toastr';
 import { put } from 'redux-saga/effects';
+import { toastrError } from '../toastrHelperSaga';
 
 export function withErrorHandling(saga, errorHandler) {
   return function* sagaWithErrorHandler(...args) {
@@ -13,13 +13,7 @@ export function withErrorHandling(saga, errorHandler) {
         yield put(push('/login'));
       }
       yield errorHandler(e);
-      yield put(
-        toastrActions.add({
-          type: 'error',
-          title: 'Error',
-          message: e.message
-        })
-      );
+      yield put(toastrError(e.message));
     }
   };
 }

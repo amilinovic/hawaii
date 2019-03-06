@@ -2,7 +2,7 @@ import React from 'react';
 import Tab from '../tabs/Tab';
 
 const Tabs = ({ activeTabIndex, data, handleTabClick }) => (
-  <div className="d-flex flex-row flex-grow-1">
+  <div className="d-flex flex-row">
     {data.map(({ label }, index) => (
       <Tab
         key={index}

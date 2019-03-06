@@ -2,7 +2,6 @@ package eu.execom.hawaii.service;
 
 import eu.execom.hawaii.exceptions.NotAuthorizedApprovalException;
 import eu.execom.hawaii.exceptions.RequestAlreadyCanceledException;
-import eu.execom.hawaii.model.Absence;
 import eu.execom.hawaii.model.Day;
 import eu.execom.hawaii.model.Request;
 import eu.execom.hawaii.model.Team;
@@ -40,6 +39,9 @@ import java.util.stream.Collectors;
 public class RequestService {
 
   private static final String REQUESTS_CACHE = "requestsCache";
+  private static final String APPROVE = "approve";
+  private static final String CANCEL = "cancel";
+  private static final String REJECT = "reject";
 
   private RequestRepository requestRepository;
   private UserRepository userRepository;
@@ -251,9 +253,7 @@ public class RequestService {
                                      .collect(Collectors.toList());
 
     if (!matchingDays.isEmpty()) {
-      log.error("Request for days: {} overlaps with existing requests.",
-          matchingDays.stream().map(day -> day.getDate().toString()).collect(Collectors.joining(", ")));
-      throw new EntityExistsException();
+      logAndThrowEntityExistsException(matchingDays);
     }
     if (AbsenceType.SICKNESS.equals(newRequest.getAbsence().getAbsenceType())) {
       newRequest.setRequestStatus(RequestStatus.APPROVED);
@@ -268,6 +268,12 @@ public class RequestService {
       sendNotificationsService.sendNotificationToApproversAboutSubmittedRequest(newRequest);
     }
     return newRequest;
+  }
+
+  private void logAndThrowEntityExistsException(List<Day> matchingDays) {
+    log.error("Request for days: '{}' overlaps with existing requests.",
+        matchingDays.stream().map(day -> day.getDate().toString()).collect(Collectors.joining(", ")));
+    throw new EntityExistsException("New request overlaps with existing one.");
   }
 
   private Predicate<Day> isRequestDaysMatch(Request newRequest) {
@@ -310,8 +316,13 @@ public class RequestService {
     switch (request.getRequestStatus()) {
       case APPROVED:
         if (!userIsRequestApprover) {
-          log.error("Approver not authorized to approve this request for user with email: {}", user.getEmail());
-          throw new NotAuthorizedApprovalException();
+          logAndThrowNotAuthorizedApprovalException(user, APPROVE);
+        }
+        if (request.getAbsence().isBonusDays()) {
+          handleBonusRequestApproval(request, authUser);
+          if (request.isPending()) {
+            break;
+          }
         }
         allowanceService.applyPendingRequest(request, true);
         applyRequest(request, false);
@@ -319,8 +330,7 @@ public class RequestService {
         break;
       case CANCELED:
         if (requestIsCanceled) {
-          log.error("Request by user: {}, is already canceled.", user.getEmail());
-          throw new RequestAlreadyCanceledException();
+          logAndThrowRequestAlreadyCanceledException(user);
         } else if (userIsRequestApprover && (requestIsApproved || requestHasPendingCancellation)) {
           applyRequest(request, true);
           sendNotificationsService.sendNotificationForRequestedLeave(request.getRequestStatus(), user);
@@ -331,14 +341,12 @@ public class RequestService {
         } else if (requestIsPending && userIsAuthUser) {
           allowanceService.applyPendingRequest(request, true);
         } else {
-          log.error("User not authorized to cancel this request for user with email: {}", user.getEmail());
-          throw new NotAuthorizedApprovalException();
+          logAndThrowNotAuthorizedApprovalException(user, CANCEL);
         }
         break;
       case REJECTED:
         if (!userIsRequestApprover) {
-          log.error("Approver not authorized to reject this request for user with email: {}", user.getEmail());
-          throw new NotAuthorizedApprovalException();
+          logAndThrowNotAuthorizedApprovalException(user, REJECT);
         }
         allowanceService.applyPendingRequest(request, true);
         sendNotificationsService.sendNotificationForRequestedLeave(request.getRequestStatus(), user);
@@ -350,12 +358,46 @@ public class RequestService {
     return update(request, authUser);
   }
 
+  private void logAndThrowRequestAlreadyCanceledException(User user) {
+    log.error("Request by user: '{}', is already canceled.", user.getEmail());
+    throw new RequestAlreadyCanceledException();
+  }
+
+  private void logAndThrowNotAuthorizedApprovalException(User user, String handleAction) {
+    log.error("Approver not authorized to '{}' this request for user with email: '{}'", handleAction, user.getEmail());
+    throw new NotAuthorizedApprovalException(handleAction);
+  }
+
   private void saveAuditInformation(OperationPerformed operationPerformed, User modifiedByUser, Request request,
       RequestAudit previousRequestState) {
     var currentRequestState = RequestAudit.fromRequest(request);
 
     auditInformationService.saveAudit(operationPerformed, modifiedByUser, request.getUser(), previousRequestState,
         currentRequestState);
+  }
+
+  private void handleBonusRequestApproval(Request request, User approver) {
+    setCurrentlyApprovedBy(approver, request);
+    int neededApprovals = request.getUser().getTeam().getTeamApprovers().size();
+    if (request.getCurrentlyApprovedBy().size() != neededApprovals) {
+      request.setRequestStatus(RequestStatus.PENDING);
+    }
+  }
+
+  private void setCurrentlyApprovedBy(User approver, Request request) {
+    List<User> currentlyApprovedBy = request.getCurrentlyApprovedBy();
+
+    if (!isRequestAlreadyApprovedByApprover(approver, request)) {
+      currentlyApprovedBy.add(approver);
+      request.setCurrentlyApprovedBy(currentlyApprovedBy);
+      requestRepository.save(request);
+    }
+  }
+
+  private boolean isRequestAlreadyApprovedByApprover(User approver, Request request) {
+    return request.getCurrentlyApprovedBy()
+                  .stream()
+                  .anyMatch(teamApprover -> teamApprover.getId().equals(approver.getId()));
   }
 
   private boolean isUserRequestApprover(User approver, User requestUser) {

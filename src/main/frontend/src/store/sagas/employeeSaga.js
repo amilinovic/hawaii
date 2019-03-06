@@ -24,10 +24,12 @@ import {
   genericErrorHandler,
   withErrorHandling
 } from './HOC/withErrorHandling';
+import { toastrSuccess } from './toastrHelperSaga';
 
 export const createEmployeeSaga = function*(action) {
   yield call(createEmployeeApi(action.payload));
   yield put(createEmployeeSuccess());
+  yield put(toastrSuccess('Succesfully created employee'));
 };
 
 export const getEmployeeSaga = function*(action) {
@@ -38,11 +40,13 @@ export const getEmployeeSaga = function*(action) {
 export const updateEmployeeSaga = function*(action) {
   yield call(updateEmployeeApi(action.payload));
   yield put(updateEmployeeSuccessful());
+  yield put(toastrSuccess('Succesfully updated employee'));
 };
 
 export const removeEmployeeSaga = function*(action) {
   yield call(removeEmployeeApi(action.payload.id));
   yield put(removeEmployeeSuccess());
+  yield put(toastrSuccess('Succesfully deleted employee'));
   yield put(push('/administration'));
 };
 
