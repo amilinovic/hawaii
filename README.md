@@ -28,7 +28,7 @@ To create the credentials file, go to
 Google API console > Credentials > Create credentials > 
 Service account key > Choose JSON (default) > Create.
 ```
-Save the generated file to the application's `src/main/resources` folder and rename it
+Save the generated file to the applications `src/main/resources` folder and rename it
 to `service_account.json`.
 
 - Create `application.properties` in reference to `application.properties.example`. Setup configurations based on 
@@ -49,11 +49,21 @@ Password: root
 project_root
 ```
 
-2 . Make a copy of application.properties.example in `src/main/resources named` application.properties and change to mached desired config
+2 . Make a copy of application.properties.example in `src/main/resources named` application.properties and change to matched desired config
 
 3 . Generate war file <br/>
+
+- Generating war file with default profile (automatically builds frontend as build-frontend is default profile)
 ```
-mvn clean install
+mvn clean install 
+```
+same as
+```
+mvn clean install -P build-frontend
+```
+- Generating war file with dev profile enabled (development profile, does not build frontend automatically)
+```
+mvn clean install -P dev
 ```
 
 4 . Run SQL script which can be found in `src/main/resources` in order to populate database
