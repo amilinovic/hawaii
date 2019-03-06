@@ -67,7 +67,7 @@ public class AllowanceService {
    */
   @Transactional
   public void applyPendingRequest(Request request, boolean requestCanceled) {
-    var yearOfRequest = request.getDays().get(0).getDate().getYear();
+    var yearOfRequest = request.getSubmissionTime().getYear();
     var currentYearAllowance = getByUserAndYear(request.getUser().getId(), yearOfRequest);
     var nextYearAllowance = getByUserAndYear(request.getUser().getId(), yearOfRequest + 1);
 
