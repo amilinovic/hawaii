@@ -225,13 +225,8 @@ public class AllowanceService {
   private void applyAnnual(Allowance currentYearAllowance, Allowance nextYearAllowance, int requestedHours) {
     var currentYearAnnual = currentYearAllowance.getTakenAnnual();
     var nextYearAnnual = nextYearAllowance.getTakenAnnual();
-
     var remainingAnnualHoursCurrentYear = calculateRemainingAnnualHoursWithoutPending(currentYearAllowance);
-    var usedInPreviousYear = nextYearAllowance.getUsedInPreviousYear();
-
-
     var nextYearRequestedHours = requestedHours - remainingAnnualHoursCurrentYear + nextYearAnnual;
-
     if (nextYearRequestedHours > 0) {
       currentYearAllowance.setTakenAnnual(currentYearAnnual + remainingAnnualHoursCurrentYear);
       nextYearAllowance.setTakenAnnual(nextYearRequestedHours);
