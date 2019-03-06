@@ -1,30 +1,25 @@
 import request from 'superagent';
 import { getLink } from '../getLink';
+
 export const tokenRequest = async userObj => {
-  try {
-    const response = await request
-      .get(getLink('/users/me'))
-      .set('X-ID-TOKEN', userObj.tokenId)
-      .set('Accept', 'application/json');
+  const response = await request
+    .get(getLink('/users/me'))
+    .set('X-ID-TOKEN', userObj.tokenId)
+    .set('Accept', 'application/json');
 
-    const [token, role, user] = [
-      response.headers['x-auth-token'],
-      response.headers.role,
-      response.body
-    ];
+  const [token, role, user] = [
+    response.headers['x-auth-token'],
+    response.headers.role,
+    response.body
+  ];
 
-    // TODO vrackovic: Investigate `user` stored in sessionStorage and store it if needed in future
-    sessionStorage.setItem('token', userObj.tokenId);
-    sessionStorage.setItem('role', response.body.userRole);
-    sessionStorage.setItem('userEmail', response.body.email);
-    return {
-      token,
-      role,
-      user
-    };
-  } catch (e) {
-    // TODO error handling
-    console.log(e);
-  }
-  return false;
+  sessionStorage.setItem('token', userObj.tokenId);
+  sessionStorage.setItem('role', response.body.userRole);
+  sessionStorage.setItem('userEmail', response.body.email);
+
+  return {
+    token,
+    role,
+    user
+  };
 };
