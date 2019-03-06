@@ -33,6 +33,8 @@ public class LeaveProfile extends BaseEntity implements Serializable {
 
   private int training;
 
+  private int maxAllowanceFromNextYear;
+
   private boolean deleted;
 
   private boolean upgradeable;

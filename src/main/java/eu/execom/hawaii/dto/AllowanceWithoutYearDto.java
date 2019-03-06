@@ -17,6 +17,7 @@ public class AllowanceWithoutYearDto {
   private int training;
   private int takenTraining;
   private int pendingTraining;
+  private int usedInPreviousYear;
 
   public AllowanceWithoutYearDto(Allowance allowance) {
     this.userId = allowance.getUser().getId();
@@ -30,5 +31,6 @@ public class AllowanceWithoutYearDto {
     this.training = allowance.getTraining();
     this.takenTraining = allowance.getTakenTraining();
     this.pendingTraining = allowance.getPendingTraining();
+    this.usedInPreviousYear = allowance.getUsedInPreviousYear();
   }
 }
