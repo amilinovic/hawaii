@@ -335,8 +335,9 @@ public class AllowanceService {
   private int calculateNextYearRemainingAnnualHours(Allowance allowance) {
     var takenAnnual = allowance.getTakenAnnual();
     var pendingAnnual = allowance.getPendingAnnual();
+    var annual = allowance.getAnnual();
 
-    return FIVE_DAYS - takenAnnual - pendingAnnual;
+    return annual - takenAnnual - pendingAnnual;
   }
 
   private void checkRemainingTrainingHours(Allowance allowance, int requestedHours) {
