@@ -70,6 +70,9 @@ export default class RequestModal extends Component {
   };
 
   render() {
+    const checkIfSpecificRequest =
+      this.state.isLeave || this.state.isBonus || this.state.isSickness;
+
     return (
       <div>
         <button className="btn btn-danger" onClick={this.toggle}>
@@ -116,6 +119,11 @@ export default class RequestModal extends Component {
                   <p>Bonus</p>
                 </LeaveWrapper>
               </div>
+            )}
+            {checkIfSpecificRequest && (
+              <button className="btn" onClick={this.resetState}>
+                Back
+              </button>
             )}
           </ModalBody>
         </Modal>

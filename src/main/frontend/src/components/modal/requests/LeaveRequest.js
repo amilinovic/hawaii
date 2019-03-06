@@ -2,7 +2,11 @@ import { Formik } from 'formik';
 import React, { Component } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import * as Yup from 'yup';
+import { createLeaveRequest } from '../../../store/actions/leaveRequestActions';
+import { getUser } from '../../../store/selectors';
 import Button from '../../common/Button';
 
 const validationSchema = Yup.object().shape({
@@ -21,18 +25,23 @@ class LeaveRequest extends Component {
   };
 
   render() {
+    console.log(this.props);
     return (
       <Formik
-        validationSchema={validationSchema}
+        // validationSchema={validationSchema}
         initialValues={{
-          name: '',
-          teamApprovers: [],
-          users: [],
-          sendEmailToTeammatesForBonusRequestEnabled: false,
-          sendEmailToTeammatesForSicknessRequestEnabled: false,
-          sendEmailToTeammatesForAnnualRequestEnabled: false
+          user: this.props.user,
+          absence: {
+            id: 1,
+            absenceType: 'DEDUCTED_LEAVE',
+            absenceSubtype: 'ANNUAL',
+            name: 'Annual leave - Vacation',
+            comment: 'string',
+            active: true,
+            iconUrl: 'icons/vacation.png'
+          }
         }}
-        onSubmit={this.props.createTeam}
+        onSubmit={this.props.createLeaveRequest}
         render={({
           handleSubmit,
           handleChange,
@@ -42,6 +51,7 @@ class LeaveRequest extends Component {
           setFieldValue
         }) => (
           <div className="d-flex justify-content-between">
+            {console.log(values)}
             <div className="px-2">
               <div className="d-flex justify-content-between mb-2">
                 <label htmlFor="leaveType">Type of Leave</label>
@@ -66,9 +76,19 @@ class LeaveRequest extends Component {
           </div> */}
             </div>
             <div className="px-2 d-flex flex-column">
-              <textarea className="mb-3" name="" id="" rows="10" />
+              <textarea
+                className="mb-3"
+                name="reason"
+                id=""
+                rows="10"
+                onChange={handleChange}
+              />
               <div className="d-flex justify-content-end">
-                <Button className="btn btn-danger" title="Apply Leave" />
+                <Button
+                  onClick={handleSubmit}
+                  className="btn btn-danger"
+                  title="Apply Leave"
+                />
               </div>
             </div>
           </div>
@@ -78,4 +98,14 @@ class LeaveRequest extends Component {
   }
 }
 
-export default LeaveRequest;
+const mapDispatchToProps = dispatch =>
+  bindActionCreators({ createLeaveRequest }, dispatch);
+
+const mapStateToProps = state => ({
+  user: getUser(state)
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(LeaveRequest);
