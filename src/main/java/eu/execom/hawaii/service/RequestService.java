@@ -377,6 +377,7 @@ public class RequestService {
     if (!isRequestAlreadyApprovedByApprover(approver, request)) {
       currentlyApprovedBy.add(approver);
       request.setCurrentlyApprovedBy(currentlyApprovedBy);
+      requestRepository.save(request);
     }
   }
 
