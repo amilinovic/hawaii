@@ -4,13 +4,17 @@ import { NavLink } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import { requestEmployees } from '../../store/actions/employeesActions';
 import { getEmployees } from '../../store/selectors';
+import Loading from '../loading/Loading';
 import EmployeeInfo from './EmployeeInfo';
 
 class Employees extends Component {
   componentDidMount() {
     this.props.requestEmployees();
   }
+
   render() {
+    if (!this.props.employees) return <Loading />;
+
     return (
       <div className="container-fluid">
         <div className="row">

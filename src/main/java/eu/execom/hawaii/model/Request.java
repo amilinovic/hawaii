@@ -10,6 +10,9 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
@@ -21,7 +24,7 @@ import lombok.ToString;
 
 @Entity
 @Data
-@ToString(exclude = "days")
+@ToString(exclude = {"days", "currentlyApprovedBy"})
 @EqualsAndHashCode(callSuper = false)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class Request extends BaseEntity implements Serializable {
@@ -41,6 +44,10 @@ public class Request extends BaseEntity implements Serializable {
   private String reason;
 
   private LocalDateTime submissionTime;
+
+  @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+  @JoinTable(name = "currently_approved_by", joinColumns = @JoinColumn(name = "request_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
+  private List<User> currentlyApprovedBy;
 
   @NotNull
   @OneToMany(mappedBy = "request", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
