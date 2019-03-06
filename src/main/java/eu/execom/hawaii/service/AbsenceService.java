@@ -58,7 +58,7 @@ public class AbsenceService {
    */
   public void delete(Long id) {
     if (!absenceRepository.existsById(id)) {
-      throw new EntityNotFoundException();
+      throw new EntityNotFoundException("Absence already deleted.");
     }
     absenceRepository.deleteById(id);
   }

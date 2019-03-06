@@ -335,4 +335,14 @@
                              onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
                              referencedTableName="user"/>
   </changeSet>
+  <changeSet author="admin" id="{initialId}-27">
+    <createTable tableName="currently_approved_by">
+      <column name="request_id" type="BIGINT(19)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="user_id" type="BIGINT(19)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
 </databaseChangeLog>

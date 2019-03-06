@@ -6,14 +6,14 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.Lob;
-import javax.persistence.Basic;
-import javax.persistence.FetchType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -25,8 +25,8 @@ import java.util.List;
 
 @Entity
 @Data
-@ToString(exclude = {"approverTeams", "requests", "allowances", "userPushTokens", "modifierAuditInformation",
-    "userAuditInformation"})
+@ToString(exclude = {"approverTeams", "currentlyApprovedBy", "requests", "allowances", "userPushTokens",
+    "modifierAuditInformation", "userAuditInformation"})
 @EqualsAndHashCode(callSuper = false)
 public class User extends BaseEntity implements Serializable {
 
@@ -87,5 +87,8 @@ public class User extends BaseEntity implements Serializable {
 
   @OneToMany(mappedBy = "modifiedUser")
   private List<AuditInformation> userAuditInformation;
+
+  @ManyToMany(mappedBy = "currentlyApprovedBy", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+  private List<Request> currentlyApprovedBy;
 
 }

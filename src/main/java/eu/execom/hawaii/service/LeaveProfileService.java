@@ -5,6 +5,7 @@ import eu.execom.hawaii.repository.LeaveProfileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
@@ -47,7 +48,7 @@ public class LeaveProfileService {
    */
   public LeaveProfile create(LeaveProfile leaveProfile) {
     if (leaveProfileRepository.existsByLeaveProfileType(leaveProfile.getLeaveProfileType())) {
-      throw new IllegalArgumentException("Profile with same type already exists.");
+      throw new EntityExistsException("Profile with same type already exists.");
     }
 
     return leaveProfileRepository.save(leaveProfile);
@@ -70,7 +71,7 @@ public class LeaveProfileService {
    */
   public void delete(Long id) {
     if (!leaveProfileRepository.existsById(id)) {
-      throw new EntityNotFoundException();
+      throw new EntityNotFoundException("Leave Profile already deleted.");
     }
     leaveProfileRepository.deleteById(id);
   }

@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Team management service.
@@ -76,20 +75,22 @@ public class TeamService {
    * Saves the provided Team to repository.
    * Makes audit of that save.
    *
-   * @param team           the Team entity to be persisted.
+   * @param team the Team entity to be persisted.
    * @param modifiedByUser user that made changes to that Team entity.
    * @return saved Team.
    */
   @Transactional
-  public Team save(Team team, User modifiedByUser) {
+  public Team create(Team team, User modifiedByUser) {
     saveAuditInformation(OperationPerformed.CREATE, modifiedByUser, team, null);
-    return teamRepository.save(team);
+    team.getUsers().forEach(user -> user.setTeam(team));
+
+    return teamRepository.create(team);
   }
 
   /**
    * Saves the provided Team to repository.
    *
-   * @param team           the Team entity to be persisted.
+   * @param team the Team entity to be persisted.
    * @param modifiedByUser user that made change to Team entity.
    * @return saved Team.
    */
@@ -119,11 +120,15 @@ public class TeamService {
       teamRepository.deleteById(id);
       saveAuditInformation(OperationPerformed.DELETE, modifiedByUser, team, previousTeamState);
     } else {
-      log.error("Team: {}, still contains {} members, team needs to be empty before it can be deleted.", team.getName(),
-          team.getUsers().size());
-      throw new ActionNotAllowedException();
+      logAndThrowActionNotAllowedException(team);
     }
+  }
 
+  private void logAndThrowActionNotAllowedException(Team team) {
+    log.error("Team: '{}', still contains '{}' members, team needs to be empty before it can be deleted.",
+        team.getName(), team.getUsers().size());
+    throw new ActionNotAllowedException(
+        "Team still contains members, team needs to be empty before it can be deleted.");
   }
 
   private void saveAuditInformation(OperationPerformed operationPerformed, User modifiedByUser, Team team,
