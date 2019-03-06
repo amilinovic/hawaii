@@ -51,6 +51,7 @@ class SearchDropdown extends Component {
       this.inputReference &&
       this.inputReference.value.length >= 4 &&
       (this.state.inputIsActive || this.state.dropdownIsActive);
+
     return (
       <div className="position-relative">
         <DebounceInput
