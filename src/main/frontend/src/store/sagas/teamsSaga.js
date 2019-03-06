@@ -5,16 +5,19 @@ import {
   requestTeams
 } from '../actions/teamsActions';
 import { getTeamsApi } from '../services/teamsService';
-import { toastrError } from './toastrHelperSaga';
+import {
+  genericErrorHandler,
+  withErrorHandling
+} from './HOC/withErrorHandling';
 
-export const getAllTeams = function*() {
-  try {
-    const teamsInformation = yield call(getTeamsApi);
-    yield put(receiveTeams(teamsInformation));
-  } catch (error) {
-    yield put(errorReceivingTeams(error));
-    yield put(toastrError(error.message));
-  }
+const getAllTeamsSaga = function*() {
+  const teamsInformation = yield call(getTeamsApi);
+  yield put(receiveTeams(teamsInformation));
 };
 
-export const teamsSaga = [takeLatest(requestTeams, getAllTeams)];
+export const teamsSaga = [
+  takeLatest(
+    requestTeams,
+    withErrorHandling(getAllTeamsSaga, genericErrorHandler(errorReceivingTeams))
+  )
+];

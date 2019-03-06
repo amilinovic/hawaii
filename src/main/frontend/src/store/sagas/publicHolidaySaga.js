@@ -5,16 +5,22 @@ import {
   requestPublicHolidays
 } from '../actions/publicHolidayActions';
 import { getPublicHolidaysApi } from '../services/publicHolidaysService';
+import {
+  genericErrorHandler,
+  withErrorHandling
+} from './HOC/withErrorHandling';
 
 export const getPublicHolidays = function*() {
-  try {
-    const publicHolidays = yield call(getPublicHolidaysApi);
-    yield put(receivePublicHolidays(publicHolidays));
-  } catch (error) {
-    yield put(errorReceivingPublicHolidays(error));
-  }
+  const publicHolidays = yield call(getPublicHolidaysApi);
+  yield put(receivePublicHolidays(publicHolidays));
 };
 
 export const publicHolidaysSaga = [
-  takeLatest(requestPublicHolidays, getPublicHolidays)
+  takeLatest(
+    requestPublicHolidays,
+    withErrorHandling(
+      getPublicHolidays,
+      genericErrorHandler(errorReceivingPublicHolidays)
+    )
+  )
 ];

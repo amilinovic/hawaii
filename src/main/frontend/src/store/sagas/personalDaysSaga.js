@@ -5,16 +5,22 @@ import {
   requestPersonalDays
 } from '../actions/personalDaysActions';
 import { getPersonalDaysApi } from '../services/personalDayService';
+import {
+  genericErrorHandler,
+  withErrorHandling
+} from './HOC/withErrorHandling';
 
 export const getPersonalDays = function*() {
-  try {
-    const personalDays = yield call(getPersonalDaysApi);
-    yield put(receivePersonalDays(personalDays));
-  } catch (error) {
-    yield put(errorReceivingPersonalDays(error));
-  }
+  const personalDays = yield call(getPersonalDaysApi);
+  yield put(receivePersonalDays(personalDays));
 };
 
 export const personalDaysSaga = [
-  takeLatest(requestPersonalDays, getPersonalDays)
+  takeLatest(
+    requestPersonalDays,
+    withErrorHandling(
+      getPersonalDays,
+      genericErrorHandler(errorReceivingPersonalDays)
+    )
+  )
 ];

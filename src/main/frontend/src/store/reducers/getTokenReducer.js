@@ -1,10 +1,12 @@
 import { handleActions } from 'redux-actions';
-import { RECEIVE_TOKEN } from '../actions/getTokenActions';
+import { clearAuthorization } from '../actions/authorizationActions';
+import { receiveToken } from '../actions/getTokenActions';
 
 export const initialState = {};
 
 const actionHandlers = {
-  [RECEIVE_TOKEN]: (state, action) => action.payload
+  [receiveToken]: (state, action) => action.payload,
+  [clearAuthorization]: () => null
 };
 
 const reducer = handleActions(actionHandlers, initialState);
