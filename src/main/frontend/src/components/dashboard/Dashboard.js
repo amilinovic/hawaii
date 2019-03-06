@@ -27,8 +27,11 @@ class Dashboard extends Component {
       return <Loading />;
 
     return (
-      <div className="d-flex flex-grow-1 justify-content-between">
-        <RequestModal />
+      <div className="d-flex flex-grow-1 justify-content-between flex-column">
+        <div className="d-flex justify-content-between px-4 pt-4 align-items-center">
+          <h1>My Leave</h1>
+          <RequestModal />
+        </div>
         <CalendarContainer
           publicHolidays={this.props.publicHolidays}
           personalDays={this.props.personalDays}

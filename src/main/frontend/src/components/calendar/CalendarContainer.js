@@ -51,7 +51,7 @@ export default class CalendarContainer extends Component {
 
   render() {
     return (
-      <div className="p-4 d-flex flex-column flex-grow-1">
+      <div className="px-4 d-flex flex-column flex-grow-1">
         <YearSelection className="rounded d-flex align-items-center justify-content-center p-2 my-3">
           <YearControlButton
             onClick={() => this.handleYearChange(this.state.selectedYear - 1)}

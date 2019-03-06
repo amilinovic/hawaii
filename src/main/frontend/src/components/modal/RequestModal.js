@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
-import { Button, Modal, ModalBody } from 'reactstrap';
+import { Modal, ModalBody } from 'reactstrap';
 import styled from 'styled-components';
 import BonusIcon from '../../img/icons/bonus_ss.png';
 import LeaveIcon from '../../img/icons/leave_ss.png';
 import SicknessIcon from '../../img/icons/sickness_ss.png';
+import BonusRequest from './requests/BonusRequest';
 import LeaveRequest from './requests/LeaveRequest';
+import SicknessRequest from './requests/SicknessRequest';
 
 const ModalHeader = styled.div`
   background: #e45052;
@@ -70,9 +72,9 @@ export default class RequestModal extends Component {
   render() {
     return (
       <div>
-        <Button color="danger" onClick={this.toggle}>
-          Request
-        </Button>
+        <button className="btn btn-danger" onClick={this.toggle}>
+          + New Request
+        </button>
         <Modal
           onClosed={() => this.resetState()}
           isOpen={this.state.modal}
@@ -89,6 +91,10 @@ export default class RequestModal extends Component {
           <ModalBody className="py-4">
             {this.state.isLeave ? (
               <LeaveRequest />
+            ) : this.state.isSickness ? (
+              <SicknessRequest />
+            ) : this.state.isBonus ? (
+              <BonusRequest />
             ) : (
               <div className="d-flex justify-content-around">
                 <LeaveWrapper onClick={() => this.requestType('isLeave')}>
