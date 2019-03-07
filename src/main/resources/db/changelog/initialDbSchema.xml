@@ -35,6 +35,9 @@
       <column name="carried_over" type="INT(10)">
         <constraints nullable="false"/>
       </column>
+      <column name="used_in_previous_year" type="INT(10)">
+        <constraints nullable="false"/>
+      </column>
       <column name="manual_adjust" type="INT(10)">
         <constraints nullable="false"/>
       </column>
@@ -95,6 +98,9 @@
         <constraints nullable="false"/>
       </column>
       <column name="max_carried_over" type="INT(10)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="max_allowance_from_next_year" type="INT(10)">
         <constraints nullable="false"/>
       </column>
       <column name="deleted" type="BIT(1)">

@@ -16,6 +16,7 @@ public class LeaveProfileDto {
   private int entitlement;
   private int maxCarriedOver;
   private int maxBonusDays;
+  private int maxAllowanceFromNextYear;
   private int training;
   private boolean deleted;
   private boolean upgradeable;
@@ -29,6 +30,7 @@ public class LeaveProfileDto {
     this.entitlement = leaveProfile.getEntitlement();
     this.maxCarriedOver = leaveProfile.getMaxCarriedOver();
     this.maxBonusDays = leaveProfile.getMaxBonusDays();
+    this.maxAllowanceFromNextYear = leaveProfile.getMaxAllowanceFromNextYear();
     this.training = leaveProfile.getTraining();
     this.deleted = leaveProfile.isDeleted();
     this.upgradeable = leaveProfile.isUpgradeable();
