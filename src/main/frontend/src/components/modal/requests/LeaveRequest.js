@@ -113,7 +113,6 @@ class LeaveRequest extends Component {
           setFieldValue
         }) => (
           <div className="d-flex justify-content-between">
-            {console.log(errors, values)}
             <div className="px-2">
               <div className="mb-2">
                 <label htmlFor="leaveType">Type of Leave</label>
@@ -135,6 +134,7 @@ class LeaveRequest extends Component {
               <div className="mb-2">
                 <span>Start Date</span>
                 <DatePicker
+                  className="border"
                   selected={this.state.startDate}
                   selectsStart
                   startDate={this.state.startDate}
@@ -152,6 +152,7 @@ class LeaveRequest extends Component {
                 <span>End Date</span>
                 <div>
                   <DatePicker
+                    className="border"
                     selected={this.state.endDate}
                     selectsEnd
                     startDate={this.state.startDate}
