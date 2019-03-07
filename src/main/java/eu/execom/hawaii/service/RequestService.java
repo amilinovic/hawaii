@@ -26,7 +26,12 @@ import javax.persistence.EntityExistsException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.ArrayList;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -321,6 +326,7 @@ public class RequestService {
             break;
           }
         }
+        setApprovedBy(request,authUser);
         allowanceService.applyPendingRequest(request, true);
         applyRequest(request, false);
         sendNotificationsService.sendNotificationForRequestedLeave(request.getRequestStatus(), user);
@@ -378,6 +384,11 @@ public class RequestService {
     int neededApprovals = request.getUser().getTeam().getTeamApprovers().size();
     if (request.getCurrentlyApprovedBy().size() != neededApprovals) {
       request.setRequestStatus(RequestStatus.PENDING);
+    }
+  }
+  private void setApprovedBy(Request request, User user){
+    if(!request.getAbsence().isBonusDays()) {
+      request.setCurrentlyApprovedBy(List.of(user));
     }
   }
 
