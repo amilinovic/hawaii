@@ -26,11 +26,7 @@ import javax.persistence.EntityExistsException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -242,6 +238,7 @@ public class RequestService {
     newRequest.setUser(user);
     LocalDateTime submissionTime = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
     newRequest.setSubmissionTime(submissionTime);
+    newRequest.setCurrentlyApprovedBy(new ArrayList<>());
     googleCalendarService.handleCreatedRequest(newRequest);
 
     var requests = findAllByUser(user.getId());
