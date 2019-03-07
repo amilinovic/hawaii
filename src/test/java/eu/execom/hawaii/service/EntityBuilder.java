@@ -175,6 +175,25 @@ public class EntityBuilder {
     return allowance;
   }
 
+  static Allowance nextYearAllowance(User user) {
+    var allowance = new Allowance();
+    allowance.setId(3L);
+    allowance.setUser(user);
+    allowance.getUser().setId(1L);
+    allowance.setYear(nextYear());
+    allowance.getYear().setId(1L);
+    allowance.setAnnual(160);
+    allowance.setTakenAnnual(0);
+    allowance.setSickness(0);
+    allowance.setBonus(0);
+    allowance.setCarriedOver(40);
+    allowance.setManualAdjust(0);
+    allowance.setTraining(16);
+    allowance.setTakenTraining(0);
+
+    return allowance;
+  }
+
   static Year thisYear() {
     var year = new Year();
     year.setId(1L);
@@ -208,7 +227,7 @@ public class EntityBuilder {
     var absence = new Absence();
     absence.setId(2L);
     absence.setAbsenceType(AbsenceType.BONUS_DAYS);
-    absence.setName("Training");
+    absence.setName("Bonus");
     absence.setComment("Description");
     absence.setActive(true);
     absence.setIconUrl("icons/training.png");
