@@ -35,6 +35,12 @@ export default class CalendarContainer extends Component {
     )
   };
 
+  componentDidUpdate(prevProps) {
+    if (prevProps !== this.props) {
+      this.handleYearChange(this.state.selectedYear);
+    }
+  }
+
   handleYearChange = selectedYear => {
     this.setState(prevState => {
       return {
