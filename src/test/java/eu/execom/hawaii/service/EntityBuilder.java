@@ -85,6 +85,7 @@ public class EntityBuilder {
     leaveProfile.setMaxCarriedOver(40);
     leaveProfile.setMaxBonusDays(40);
     leaveProfile.setTraining(16);
+    leaveProfile.setMaxAllowanceFromNextYear(40);
     leaveProfile.setUpgradeable(false);
     leaveProfile.setLeaveProfileType(LeaveProfileType.DEFAULT);
     leaveProfile.setComment("No comment");
@@ -101,6 +102,7 @@ public class EntityBuilder {
     leaveProfile.setMaxCarriedOver(40);
     leaveProfile.setMaxBonusDays(40);
     leaveProfile.setTraining(24);
+    leaveProfile.setMaxAllowanceFromNextYear(40);
     leaveProfile.setUpgradeable(true);
     leaveProfile.setLeaveProfileType(LeaveProfileType.FIVE_TO_TEN_YEARS);
     leaveProfile.setComment("No comment");
@@ -116,6 +118,7 @@ public class EntityBuilder {
     leaveProfile.setEntitlement(176);
     leaveProfile.setMaxCarriedOver(40);
     leaveProfile.setTraining(24);
+    leaveProfile.setMaxAllowanceFromNextYear(40);
     leaveProfile.setUpgradeable(true);
     leaveProfile.setLeaveProfileType(LeaveProfileType.TEN_TO_FIFTEEN_YEARS);
     leaveProfile.setComment("No comment");
@@ -152,6 +155,7 @@ public class EntityBuilder {
     allowance.setManualAdjust(0);
     allowance.setTraining(16);
     allowance.setTakenTraining(0);
+    allowance.setUsedInPreviousYear(0);
 
     return allowance;
   }
@@ -171,6 +175,7 @@ public class EntityBuilder {
     allowance.setManualAdjust(0);
     allowance.setTraining(16);
     allowance.setTakenTraining(0);
+    allowance.setUsedInPreviousYear(0);
 
     return allowance;
   }
@@ -190,6 +195,7 @@ public class EntityBuilder {
     allowance.setManualAdjust(0);
     allowance.setTraining(16);
     allowance.setTakenTraining(0);
+    allowance.setUsedInPreviousYear(0);
 
     return allowance;
   }
