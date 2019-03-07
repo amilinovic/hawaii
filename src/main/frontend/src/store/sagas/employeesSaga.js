@@ -5,14 +5,22 @@ import {
   requestEmployees
 } from '../actions/employeesActions';
 import { getEmployeesApi } from '../services/employeesService';
+import {
+  genericErrorHandler,
+  withErrorHandling
+} from './HOC/withErrorHandling';
 
 export const getEmployees = function*() {
-  try {
-    const employeesInformation = yield call(getEmployeesApi);
-    yield put(receiveEmployees(employeesInformation));
-  } catch (error) {
-    yield put(errorReceivingEmployees(error));
-  }
+  const employeesInformation = yield call(getEmployeesApi);
+  yield put(receiveEmployees(employeesInformation));
 };
 
-export const employeesSaga = [takeLatest(requestEmployees, getEmployees)];
+export const employeesSaga = [
+  takeLatest(
+    requestEmployees,
+    withErrorHandling(
+      getEmployees,
+      genericErrorHandler(errorReceivingEmployees)
+    )
+  )
+];

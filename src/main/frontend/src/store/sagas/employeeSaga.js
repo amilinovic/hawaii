@@ -20,47 +20,63 @@ import {
   removeEmployeeApi,
   updateEmployeeApi
 } from '../services/employeeService';
+import {
+  genericErrorHandler,
+  withErrorHandling
+} from './HOC/withErrorHandling';
+import { toastrSuccess } from './toastrHelperSaga';
 
 export const createEmployeeSaga = function*(action) {
-  try {
-    yield call(createEmployeeApi(action.payload));
-    yield put(createEmployeeSuccess());
-  } catch (error) {
-    yield put(errorCreatingEmployee(error));
-  }
+  yield call(createEmployeeApi(action.payload));
+  yield put(createEmployeeSuccess());
+  yield put(toastrSuccess('Succesfully created employee'));
 };
 
 export const getEmployeeSaga = function*(action) {
-  try {
-    const employeeInformation = yield call(getEmployeeApi(action.payload));
-    yield put(receiveEmployee(employeeInformation));
-  } catch (error) {
-    yield put(errorReceivingEmployee(error));
-  }
+  const employeeInformation = yield call(getEmployeeApi(action.payload));
+  yield put(receiveEmployee(employeeInformation));
 };
 
 export const updateEmployeeSaga = function*(action) {
-  try {
-    yield call(updateEmployeeApi(action.payload));
-    yield put(updateEmployeeSuccessful());
-  } catch (error) {
-    yield put(updateEmployeeError(error));
-  }
+  yield call(updateEmployeeApi(action.payload));
+  yield put(updateEmployeeSuccessful());
+  yield put(toastrSuccess('Succesfully updated employee'));
 };
 
 export const removeEmployeeSaga = function*(action) {
-  try {
-    yield call(removeEmployeeApi(action.payload.id));
-    yield put(removeEmployeeSuccess());
-    yield put(push('/administration'));
-  } catch (error) {
-    yield put(errorRemovingEmployee(error));
-  }
+  yield call(removeEmployeeApi(action.payload.id));
+  yield put(removeEmployeeSuccess());
+  yield put(toastrSuccess('Succesfully deleted employee'));
+  yield put(push('/administration'));
 };
 
 export const employeeSaga = [
-  takeLatest(requestEmployee, getEmployeeSaga),
-  takeLatest(updateEmployee, updateEmployeeSaga),
-  takeLatest(createEmployee, createEmployeeSaga),
-  takeLatest(removeEmployee, removeEmployeeSaga)
+  takeLatest(
+    requestEmployee,
+    withErrorHandling(
+      getEmployeeSaga,
+      genericErrorHandler(errorReceivingEmployee)
+    )
+  ),
+  takeLatest(
+    updateEmployee,
+    withErrorHandling(
+      updateEmployeeSaga,
+      genericErrorHandler(updateEmployeeError)
+    )
+  ),
+  takeLatest(
+    createEmployee,
+    withErrorHandling(
+      createEmployeeSaga,
+      genericErrorHandler(errorCreatingEmployee)
+    )
+  ),
+  takeLatest(
+    removeEmployee,
+    withErrorHandling(
+      removeEmployeeSaga,
+      genericErrorHandler(errorRemovingEmployee)
+    )
+  )
 ];

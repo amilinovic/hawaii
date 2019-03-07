@@ -20,13 +20,15 @@ export default class Administration extends Component {
     const { activeTabIndex } = this.state;
     const activeItem = this.state.tabList[activeTabIndex];
     return (
-      <div className="d-flex flex-column p-4">
+      <div className="d-flex flex-column p-4 flex-grow-1">
         <Tabs
           handleTabClick={this.handleTabClick}
           data={this.state.tabList}
           activeTabIndex={activeTabIndex}
         />
-        <div className="flex-1 pt-4">{activeItem.content}</div>
+        <div className="flex-1 pt-4 flex-grow-1 d-flex">
+          {activeItem.content}
+        </div>
       </div>
     );
   }

@@ -1,26 +1,23 @@
-import { actions as toastrActions } from 'react-redux-toastr';
-import { call, put, takeEvery } from 'redux-saga/effects';
+import { call, put, takeLatest } from 'redux-saga/effects';
 import {
   errorReceivingUser,
   receiveUser,
   requestUser
 } from '../actions/userActions';
 import { getUserApi } from '../services/userService';
+import {
+  genericErrorHandler,
+  withErrorHandling
+} from './HOC/withErrorHandling';
 
-export const getUser = function*(action) {
-  try {
-    const userInformation = yield call(getUserApi, action.payload);
-    yield put(receiveUser(userInformation));
-  } catch (error) {
-    yield put(errorReceivingUser(error));
-    yield put(
-      toastrActions.add({
-        type: 'error',
-        title: 'Error',
-        message: error.message
-      })
-    );
-  }
+const getUserSaga = function*(action) {
+  const userInformation = yield call(getUserApi, action.payload);
+  yield put(receiveUser(userInformation));
 };
 
-export const userSaga = [takeEvery(requestUser, getUser)];
+export const userSaga = [
+  takeLatest(
+    requestUser,
+    withErrorHandling(getUserSaga, genericErrorHandler(errorReceivingUser))
+  )
+];

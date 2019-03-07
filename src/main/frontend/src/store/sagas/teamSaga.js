@@ -1,6 +1,9 @@
 import { push } from 'connected-react-router';
 import { call, put, takeLatest } from 'redux-saga/effects';
 import {
+  createTeam,
+  createTeamError,
+  createTeamSuccessful,
   errorReceivingTeam,
   errorRemovingTeam,
   receiveTeam,
@@ -12,41 +15,57 @@ import {
   updateTeamSuccessful
 } from '../actions/teamActions';
 import {
+  createTeamApi,
   getTeamApi,
   removeTeamApi,
   updateTeamApi
 } from '../services/teamService';
+import {
+  genericErrorHandler,
+  withErrorHandling
+} from './HOC/withErrorHandling';
+import { toastrSuccess } from './toastrHelperSaga';
 
-export const getTeamSaga = function*(action) {
-  try {
-    const teamInformation = yield call(getTeamApi(action.payload));
-    yield put(receiveTeam(teamInformation));
-  } catch (error) {
-    yield put(errorReceivingTeam(error));
-  }
+const getTeamSaga = function*(action) {
+  const teamInformation = yield call(getTeamApi(action.payload));
+  yield put(receiveTeam(teamInformation));
 };
 
-export const removeTeamSaga = function*(action) {
-  try {
-    yield call(removeTeamApi(action.payload.id));
-    yield put(removeTeamSuccess());
-    yield put(push('/administration'));
-  } catch (error) {
-    yield put(errorRemovingTeam(error));
-  }
+const removeTeamSaga = function*(action) {
+  yield call(removeTeamApi(action.payload.id));
+  yield put(removeTeamSuccess());
+  yield put(toastrSuccess('Succesfully removed team'));
+  yield put(push('/administration'));
 };
 
-export const updateTeamSaga = function*(action) {
-  try {
-    yield call(updateTeamApi(action.payload));
-    yield put(updateTeamSuccessful());
-  } catch (error) {
-    yield put(updateTeamError(error));
-  }
+const updateTeamSaga = function*(action) {
+  yield call(updateTeamApi(action.payload));
+  yield put(updateTeamSuccessful());
+  yield put(toastrSuccess('Succesfully updated team'));
+};
+
+const createTeamSaga = function*(action) {
+  yield call(createTeamApi(action.payload));
+  yield put(createTeamSuccessful());
+  yield put(push('/administration'));
+  yield put(toastrSuccess('Successfully created team'));
 };
 
 export const teamSaga = [
-  takeLatest(requestTeam, getTeamSaga),
-  takeLatest(updateTeam, updateTeamSaga),
-  takeLatest(removeTeam, removeTeamSaga)
+  takeLatest(
+    requestTeam,
+    withErrorHandling(getTeamSaga, genericErrorHandler(errorReceivingTeam))
+  ),
+  takeLatest(
+    updateTeam,
+    withErrorHandling(updateTeamSaga, genericErrorHandler(updateTeamError))
+  ),
+  takeLatest(
+    removeTeam,
+    withErrorHandling(removeTeamSaga, genericErrorHandler(errorRemovingTeam))
+  ),
+  takeLatest(
+    createTeam,
+    withErrorHandling(createTeamSaga, genericErrorHandler(createTeamError))
+  )
 ];
