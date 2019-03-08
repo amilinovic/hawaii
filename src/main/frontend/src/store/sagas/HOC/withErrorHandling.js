@@ -10,7 +10,7 @@ export function withErrorHandling(saga, errorHandler) {
       // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/yield*
       yield* saga(...args);
     } catch (e) {
-      const errorMessage = get(e.response.body, 'error', 'No error message');
+      const errorMessage = get(e, 'response.body.error', 'No error message');
 
       if (e.status === 401) {
         yield put(push('/login'));
