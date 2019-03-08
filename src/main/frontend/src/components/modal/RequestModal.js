@@ -47,7 +47,7 @@ class RequestModal extends Component {
   };
 
   componentDidUpdate(prevProps) {
-    if (prevProps !== this.props && this.props.modal.close) {
+    if (prevProps !== this.props && this.props.modal.shouldClose) {
       this.setState(prevState => ({
         modal: !prevState.modal
       }));

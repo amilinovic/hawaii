@@ -2,20 +2,20 @@ import { handleActions } from 'redux-actions';
 import { closeModal, resetModalState } from '../actions/modalActions';
 
 export const initialState = {
-  close: false
+  shouldClose: false
 };
 
 const actionHandlers = {
   [closeModal]: state => {
     return {
       ...state,
-      close: true
+      shouldClose: true
     };
   },
   [resetModalState]: state => {
     return {
       ...state,
-      close: false
+      shouldClose: false
     };
   }
 };
