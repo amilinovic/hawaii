@@ -1,4 +1,4 @@
 import { postFactory } from './request';
 
-export const createLeaveRequestApi = requestObject =>
+export const requestApi = requestObject =>
   postFactory('/requests', requestObject);

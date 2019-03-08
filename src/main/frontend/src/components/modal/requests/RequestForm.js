@@ -1,14 +1,14 @@
+import en from 'date-fns/locale/en-GB';
 import { Formik } from 'formik';
 import moment from 'moment';
 import React, { Component } from 'react';
-import DatePicker from 'react-datepicker';
+import DatePicker, { registerLocale } from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker-cssmodules.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import * as Yup from 'yup';
-import { createLeaveRequest } from '../../../store/actions/leaveRequestActions';
-import { getUser } from '../../../store/selectors';
+
+registerLocale('en-GB', en);
 
 const validationSchema = Yup.object().shape({
   reason: Yup.string().required(),
@@ -17,7 +17,7 @@ const validationSchema = Yup.object().shape({
   })
 });
 
-class LeaveRequest extends Component {
+class RequestForm extends Component {
   state = {
     startDate: new Date(),
     endDate: new Date()
@@ -82,6 +82,18 @@ class LeaveRequest extends Component {
   };
 
   render() {
+    let leaveTypes;
+
+    if (this.props.leaveTypes) {
+      leaveTypes = this.props.leaveTypes.map(leave => {
+        return (
+          <option key={leave.id} value={leave.id}>
+            {leave.name}
+          </option>
+        );
+      });
+    }
+
     return (
       <Formik
         validationSchema={validationSchema}
@@ -90,7 +102,7 @@ class LeaveRequest extends Component {
             id: this.props.user.id
           },
           absence: {
-            id: ''
+            id: !this.props.leaveTypes ? 3 : ''
           },
           reason: '',
           requestStatus: 'PENDING',
@@ -103,7 +115,9 @@ class LeaveRequest extends Component {
           ],
           currentlyApprovedBy: []
         }}
-        onSubmit={this.props.createLeaveRequest}
+        onSubmit={values =>
+          this.props.dispatch(this.props.requestAction(values))
+        }
         render={({
           handleSubmit,
           handleChange,
@@ -114,27 +128,29 @@ class LeaveRequest extends Component {
         }) => (
           <div className="d-flex justify-content-between">
             <div className="px-2">
-              <div className="mb-2">
-                <label htmlFor="leaveType">Type of Leave</label>
-                <select
-                  className={`${
-                    errors.absence && touched.absence ? 'border-danger' : ''
-                  } mb-3 border`}
-                  name="absence.id"
-                  onChange={handleChange}
-                  value={values.absence.id}
-                >
-                  <option value="" disabled>
-                    Select leave type
-                  </option>
-                  <option value="1">Annual leave</option>
-                  <option value="2">Training</option>
-                </select>
-              </div>
+              {this.props.leaveTypes && (
+                <div className="mb-2">
+                  <label htmlFor="leaveType">Type of Leave</label>
+                  <select
+                    className={`${
+                      errors.absence && touched.absence ? 'border-danger' : ''
+                    } mb-3 border`}
+                    name="absence.id"
+                    onChange={handleChange}
+                    value={values.absence.id}
+                  >
+                    <option value="" disabled>
+                      Select leave type
+                    </option>
+                    {leaveTypes}
+                  </select>
+                </div>
+              )}
               <div className="mb-2">
                 <span>Start Date</span>
                 <DatePicker
                   className="border"
+                  locale="en-GB"
                   selected={this.state.startDate}
                   selectsStart
                   startDate={this.state.startDate}
@@ -153,12 +169,16 @@ class LeaveRequest extends Component {
                 <div>
                   <DatePicker
                     className="border"
+                    locale="en-GB"
                     selected={this.state.endDate}
                     selectsEnd
                     startDate={this.state.startDate}
                     endDate={this.state.endDate}
                     onChange={e => {
-                      setFieldValue('days', this.selectEndDateHandler(e));
+                      setFieldValue(
+                        'days',
+                        this.selectEndDateHandler(e, values.days[0].duration)
+                      );
                     }}
                     filterDate={this.isWeekday}
                   />
@@ -224,7 +244,7 @@ class LeaveRequest extends Component {
                 name="reason"
                 rows="10"
                 onChange={handleChange}
-                placeholder="Enter a reason for your leave request"
+                placeholder="Please enter a reason"
               />
               <div className="d-flex justify-content-end">
                 <button className="btn" onClick={handleSubmit} type="submit">
@@ -239,14 +259,4 @@ class LeaveRequest extends Component {
   }
 }
 
-const mapDispatchToProps = dispatch =>
-  bindActionCreators({ createLeaveRequest }, dispatch);
-
-const mapStateToProps = state => ({
-  user: getUser(state)
-});
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(LeaveRequest);
+export default connect()(RequestForm);

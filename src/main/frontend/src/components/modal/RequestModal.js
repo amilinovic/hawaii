@@ -7,10 +7,13 @@ import BonusIcon from '../../img/icons/bonus_ss.png';
 import LeaveIcon from '../../img/icons/leave_ss.png';
 import SicknessIcon from '../../img/icons/sickness_ss.png';
 import { resetModalState } from '../../store/actions/modalActions';
-import { getModal } from '../../store/selectors';
-import BonusRequest from './requests/BonusRequest';
-import LeaveRequest from './requests/LeaveRequest';
-import SicknessRequest from './requests/SicknessRequest';
+import {
+  createBonusRequest,
+  createLeaveRequest,
+  createSicknessRequest
+} from '../../store/actions/requestsActions';
+import { getModal, getUser } from '../../store/selectors';
+import RequestForm from './requests/RequestForm';
 
 const ModalHeader = styled.div`
   background: #e45052;
@@ -37,6 +40,44 @@ const LeaveWrapper = styled.div`
     }
   }
 `;
+
+const deductedLeaveTypes = [
+  {
+    id: 1,
+    name: 'Annual leave - Vacation'
+  },
+  {
+    id: 2,
+    name: 'Training & Education'
+  }
+];
+
+const sicknessLeaveTypes = [
+  {
+    id: 4,
+    name: 'Asthma related'
+  },
+  {
+    id: 5,
+    name: 'Chest related'
+  },
+  {
+    id: 6,
+    name: 'Dental Problems'
+  },
+  {
+    id: 7,
+    name: 'Cold / Influenza'
+  },
+  {
+    id: 8,
+    name: 'Fever'
+  },
+  {
+    id: 9,
+    name: 'Food poisoing'
+  }
+];
 
 class RequestModal extends Component {
   state = {
@@ -80,11 +121,19 @@ class RequestModal extends Component {
       this.state.isLeave || this.state.isBonus || this.state.isSickness;
 
     const requestType = this.state.isLeave ? (
-      <LeaveRequest />
+      <RequestForm
+        user={this.props.user}
+        leaveTypes={deductedLeaveTypes}
+        requestAction={createLeaveRequest}
+      />
     ) : this.state.isSickness ? (
-      <SicknessRequest />
+      <RequestForm
+        user={this.props.user}
+        leaveTypes={sicknessLeaveTypes}
+        requestAction={createSicknessRequest}
+      />
     ) : this.state.isBonus ? (
-      <BonusRequest />
+      <RequestForm user={this.props.user} requestAction={createBonusRequest} />
     ) : null;
 
     return (
@@ -152,7 +201,8 @@ class RequestModal extends Component {
 }
 
 const mapStateToProps = state => ({
-  modal: getModal(state)
+  modal: getModal(state),
+  user: getUser(state)
 });
 
 const mapDispatchToProps = dispatch =>
