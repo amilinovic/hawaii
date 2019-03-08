@@ -8,4 +8,5 @@ export const getSearchEmployees = state => state.employeesSearch;
 export const getPublicHolidays = state => state.publicHolidays;
 export const getPersonalDays = state => state.personalDays;
 export const getRequest = state => state.request;
+export const getModal = state => state.modal;
 export const getLeaveTypes = state => state.leaveTypes;

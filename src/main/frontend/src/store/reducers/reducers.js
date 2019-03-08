@@ -5,6 +5,7 @@ import employees from './employeesReducer';
 import employeesSearch from './employeesSearchReducer';
 import authorization from './getTokenReducer';
 import leaveTypes from './leaveTypesReducer';
+import modal from './modalReducer';
 import personalDays from './personalDaysReducer';
 import publicHolidays from './publicHolidaysReducer';
 import team from './teamReducer';
@@ -22,5 +23,6 @@ export default combineReducers({
   personalDays,
   publicHolidays,
   leaveTypes,
+  modal,
   toastr
 });

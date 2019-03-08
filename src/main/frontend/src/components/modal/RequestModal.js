@@ -1,9 +1,13 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { Modal, ModalBody } from 'reactstrap';
+import { bindActionCreators } from 'redux';
 import styled from 'styled-components';
 import BonusIcon from '../../img/icons/bonus_ss.png';
 import LeaveIcon from '../../img/icons/leave_ss.png';
 import SicknessIcon from '../../img/icons/sickness_ss.png';
+import { resetModalState } from '../../store/actions/modalActions';
+import { getModal } from '../../store/selectors';
 import BonusRequest from './requests/BonusRequest';
 import LeaveRequest from './requests/LeaveRequest';
 import SicknessRequest from './requests/SicknessRequest';
@@ -22,10 +26,6 @@ const IconWrapper = styled.div`
 `;
 
 const LeaveWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  margin: 20px;
   img,
   p {
     transition: opacity ease-in 100ms;
@@ -36,18 +36,24 @@ const LeaveWrapper = styled.div`
       opacity: 0.4;
     }
   }
-  p {
-    padding: 10px;
-  }
 `;
 
-export default class RequestModal extends Component {
+class RequestModal extends Component {
   state = {
     modal: false,
     isLeave: false,
     isSickness: false,
     isBonus: false
   };
+
+  componentDidUpdate(prevProps) {
+    if (prevProps !== this.props && this.props.modal.close) {
+      this.setState(prevState => ({
+        modal: !prevState.modal
+      }));
+      this.props.resetModalState();
+    }
+  }
 
   toggle = () => {
     this.setState(prevState => ({
@@ -73,6 +79,14 @@ export default class RequestModal extends Component {
     const checkIfSpecificRequest =
       this.state.isLeave || this.state.isBonus || this.state.isSickness;
 
+    const requestType = this.state.isLeave ? (
+      <LeaveRequest />
+    ) : this.state.isSickness ? (
+      <SicknessRequest />
+    ) : this.state.isBonus ? (
+      <BonusRequest />
+    ) : null;
+
     return (
       <div>
         <button className="btn btn-danger" onClick={this.toggle}>
@@ -92,34 +106,39 @@ export default class RequestModal extends Component {
             </span>
           </ModalHeader>
           <ModalBody className="py-4">
-            {this.state.isLeave ? (
-              <LeaveRequest />
-            ) : this.state.isSickness ? (
-              <SicknessRequest />
-            ) : this.state.isBonus ? (
-              <BonusRequest />
-            ) : (
+            {requestType}
+            {!checkIfSpecificRequest && (
               <div className="d-flex justify-content-around">
-                <LeaveWrapper onClick={() => this.requestType('isLeave')}>
+                <LeaveWrapper
+                  className="d-flex align-items-center flex-column m-4"
+                  onClick={() => this.requestType('isLeave')}
+                >
                   <IconWrapper>
                     <img src={LeaveIcon} alt="leave_icon" />
                   </IconWrapper>
-                  <p>Leave</p>
+                  <p className="p-3">Leave</p>
                 </LeaveWrapper>
-                <LeaveWrapper onClick={() => this.requestType('isSickness')}>
+                <LeaveWrapper
+                  className="d-flex align-items-center flex-column m-4"
+                  onClick={() => this.requestType('isSickness')}
+                >
                   <IconWrapper>
                     <img src={SicknessIcon} alt="sickness_icon" />
                   </IconWrapper>
-                  <p>Sickness</p>
+                  <p className="p-3">Sickness</p>
                 </LeaveWrapper>
-                <LeaveWrapper onClick={() => this.requestType('isBonus')}>
+                <LeaveWrapper
+                  className="d-flex align-items-center flex-column m-4"
+                  onClick={() => this.requestType('isBonus')}
+                >
                   <IconWrapper>
                     <img src={BonusIcon} alt="bonus_icon" />
                   </IconWrapper>
-                  <p>Bonus</p>
+                  <p className="p-3">Bonus</p>
                 </LeaveWrapper>
               </div>
             )}
+
             {checkIfSpecificRequest && (
               <button className="btn" onClick={this.resetState}>
                 Back
@@ -131,3 +150,15 @@ export default class RequestModal extends Component {
     );
   }
 }
+
+const mapStateToProps = state => ({
+  modal: getModal(state)
+});
+
+const mapDispatchToProps = dispatch =>
+  bindActionCreators({ resetModalState }, dispatch);
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(RequestModal);

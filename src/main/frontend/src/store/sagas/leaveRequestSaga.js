@@ -4,6 +4,7 @@ import {
   createLeaveRequestError,
   createLeaveRequestSuccessful
 } from '../actions/leaveRequestActions';
+import { closeModal } from '../actions/modalActions';
 import { requestPersonalDays } from '../actions/personalDaysActions';
 import { createLeaveRequestApi } from '../services/leaveRequestService';
 import {
@@ -17,6 +18,7 @@ export const createLeaveRequestSaga = function*(action) {
   yield put(createLeaveRequestSuccessful());
   yield put(toastrSuccess('Leave request successfuly created'));
   yield put(requestPersonalDays());
+  yield put(closeModal());
 };
 
 export const leaveRequestSaga = [
