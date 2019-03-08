@@ -5,8 +5,10 @@ import Switch from 'react-switch';
 import { bindActionCreators } from 'redux';
 import * as Yup from 'yup';
 import withResetOnNavigate from '../components/HOC/withResetOnNavigate';
+import EmployeeSearchResults from '../components/search-dropdown/search-results/EmployeeSearchResults';
 import SearchDropdown from '../components/search-dropdown/SearchDropdown';
 import { requestEmployees } from '../store/actions/employeesActions';
+import { searchEmployees } from '../store/actions/employeesSearchActions';
 import { requestTeam, updateTeam } from '../store/actions/teamActions';
 import { getSearchEmployees, getTeam } from '../store/selectors';
 
@@ -108,7 +110,14 @@ class EditTeam extends Component {
                   name="sendEmailToTeammatesForSicknessRequestEnabled"
                 />
               </div>
-              <SearchDropdown results={this.props.employees} />
+              <SearchDropdown searchAction={searchEmployees}>
+                {inputReference => (
+                  <EmployeeSearchResults
+                    inputReference={inputReference}
+                    employees={this.props.employees}
+                  />
+                )}
+              </SearchDropdown>
               <div className="d-flex justify-content-between mt-3">
                 <div className="mb-5">
                   <h3>Team members</h3>
@@ -157,7 +166,10 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch =>
-  bindActionCreators({ requestTeam, requestEmployees, updateTeam }, dispatch);
+  bindActionCreators(
+    { requestTeam, searchEmployees, requestEmployees, updateTeam },
+    dispatch
+  );
 
 export default connect(
   mapStateToProps,
