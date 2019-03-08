@@ -1,4 +1,5 @@
 import { push } from 'connected-react-router';
+import { get } from 'lodash';
 import { put } from 'redux-saga/effects';
 import { toastrError } from '../toastrHelperSaga';
 
@@ -9,11 +10,14 @@ export function withErrorHandling(saga, errorHandler) {
       // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/yield*
       yield* saga(...args);
     } catch (e) {
+      const errorMessage = get(e, 'response.body.error', 'No error message');
+
       if (e.status === 401) {
         yield put(push('/login'));
       }
-      yield errorHandler(e);
-      yield put(toastrError(e.message));
+
+      yield errorHandler(errorMessage);
+      yield put(toastrError(errorMessage));
     }
   };
 }
