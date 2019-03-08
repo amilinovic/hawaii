@@ -35,7 +35,6 @@ public class AllowanceService {
 
   private static final int HALF_DAY = 4;
   private static final int FULL_DAY = 8;
-  private static final int FIVE_DAYS = 40;
   private static final String ANNUAL = "annual";
   private static final String TRAINING = "training";
   private static final String BONUS = "bonus";
@@ -67,7 +66,7 @@ public class AllowanceService {
    */
   @Transactional
   public void applyPendingRequest(Request request, boolean requestCanceled) {
-    var yearOfRequest = request.getDays().get(0).getDate().getYear();
+    var yearOfRequest = request.getSubmissionTime().getYear();
     var currentYearAllowance = getByUserAndYear(request.getUser().getId(), yearOfRequest);
     var nextYearAllowance = getByUserAndYear(request.getUser().getId(), yearOfRequest + 1);
 
@@ -226,10 +225,8 @@ public class AllowanceService {
   private void applyAnnual(Allowance currentYearAllowance, Allowance nextYearAllowance, int requestedHours) {
     var currentYearAnnual = currentYearAllowance.getTakenAnnual();
     var nextYearAnnual = nextYearAllowance.getTakenAnnual();
-
     var remainingAnnualHoursCurrentYear = calculateRemainingAnnualHoursWithoutPending(currentYearAllowance);
     var nextYearRequestedHours = requestedHours - remainingAnnualHoursCurrentYear + nextYearAnnual;
-
     if (nextYearRequestedHours > 0) {
       currentYearAllowance.setTakenAnnual(currentYearAnnual + remainingAnnualHoursCurrentYear);
       nextYearAllowance.setTakenAnnual(nextYearRequestedHours);
@@ -320,23 +317,26 @@ public class AllowanceService {
         allowance.getAnnual() + allowance.getBonus() + allowance.getCarriedOver() + allowance.getManualAdjust();
     var takenAnnual = allowance.getTakenAnnual();
     var pendingAnnual = allowance.getPendingAnnual();
+    var usedInPreviousYear = allowance.getUsedInPreviousYear();
 
-    return totalHours - takenAnnual - pendingAnnual;
+    return totalHours - takenAnnual - pendingAnnual - usedInPreviousYear;
   }
 
   private int calculateRemainingAnnualHoursWithoutPending(Allowance allowance) {
     var totalHours =
         allowance.getAnnual() + allowance.getBonus() + allowance.getCarriedOver() + allowance.getManualAdjust();
     var takenAnnual = allowance.getTakenAnnual();
+    var usedInPreviousYear = allowance.getUsedInPreviousYear();
 
-    return totalHours - takenAnnual;
+    return totalHours - takenAnnual - usedInPreviousYear;
   }
 
   private int calculateNextYearRemainingAnnualHours(Allowance allowance) {
     var takenAnnual = allowance.getTakenAnnual();
     var pendingAnnual = allowance.getPendingAnnual();
+    var allowanceFromNextYear = allowance.getUser().getLeaveProfile().getMaxAllowanceFromNextYear();
 
-    return FIVE_DAYS - takenAnnual - pendingAnnual;
+    return allowanceFromNextYear - takenAnnual - pendingAnnual;
   }
 
   private void checkRemainingTrainingHours(Allowance allowance, int requestedHours) {
