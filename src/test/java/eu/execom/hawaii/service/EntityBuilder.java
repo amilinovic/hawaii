@@ -140,6 +140,19 @@ public class EntityBuilder {
     return request;
   }
 
+  static Request requestII(Absence absence, List<Day> days) {
+    var request = new Request();
+    request.setId(2L);
+    request.setUser(user(team()));
+    request.getUser().setId(1L);
+    request.setAbsence(absence);
+    request.setRequestStatus(RequestStatus.PENDING);
+    request.setReason("My request reason");
+    request.setDays(days);
+
+    return request;
+  }
+
   public static Allowance allowance(User user) {
     var allowance = new Allowance();
     allowance.setId(1L);
@@ -155,7 +168,8 @@ public class EntityBuilder {
     allowance.setManualAdjust(0);
     allowance.setTraining(16);
     allowance.setTakenTraining(0);
-    allowance.setUsedInPreviousYear(0);
+    allowance.setTakenInPreviousYear(0);
+    allowance.setPendingInPreviousYear(0);
 
     return allowance;
   }
@@ -175,7 +189,8 @@ public class EntityBuilder {
     allowance.setManualAdjust(0);
     allowance.setTraining(16);
     allowance.setTakenTraining(0);
-    allowance.setUsedInPreviousYear(0);
+    allowance.setTakenInPreviousYear(0);
+    allowance.setPendingInPreviousYear(0);
 
     return allowance;
   }
@@ -195,7 +210,8 @@ public class EntityBuilder {
     allowance.setManualAdjust(0);
     allowance.setTraining(16);
     allowance.setTakenTraining(0);
-    allowance.setUsedInPreviousYear(0);
+    allowance.setTakenInPreviousYear(0);
+    allowance.setPendingInPreviousYear(0);
 
     return allowance;
   }
@@ -229,19 +245,6 @@ public class EntityBuilder {
     return publicHoliday;
   }
 
-  static Absence absence() {
-    var absence = new Absence();
-    absence.setId(2L);
-    absence.setAbsenceType(AbsenceType.BONUS_DAYS);
-    absence.setName("Bonus");
-    absence.setComment("Description");
-    absence.setActive(true);
-    absence.setIconUrl("icons/training.png");
-    absence.setLeaveRequests(new ArrayList<>());
-
-    return absence;
-  }
-
   static Absence absenceAnnual() {
     var absence = new Absence();
     absence.setId(1L);
@@ -258,10 +261,36 @@ public class EntityBuilder {
 
   static Absence absenceTraining() {
     var absence = new Absence();
-    absence.setId(3L);
+    absence.setId(2L);
     absence.setAbsenceType(AbsenceType.DEDUCTED_LEAVE);
     absence.setAbsenceSubtype(AbsenceSubtype.TRAINING);
     absence.setName("Training");
+    absence.setComment("Description");
+    absence.setActive(true);
+    absence.setIconUrl("icons/training.png");
+    absence.setLeaveRequests(new ArrayList<>());
+
+    return absence;
+  }
+
+  static Absence absenceSickness() {
+    var absence = new Absence();
+    absence.setId(3L);
+    absence.setAbsenceType(AbsenceType.SICKNESS);
+    absence.setName("Training");
+    absence.setComment("Description");
+    absence.setActive(true);
+    absence.setIconUrl("icons/training.png");
+    absence.setLeaveRequests(new ArrayList<>());
+
+    return absence;
+  }
+
+  static Absence absenceBonus() {
+    var absence = new Absence();
+    absence.setId(4L);
+    absence.setAbsenceType(AbsenceType.BONUS_DAYS);
+    absence.setName("Bonus");
     absence.setComment("Description");
     absence.setActive(true);
     absence.setIconUrl("icons/training.png");
