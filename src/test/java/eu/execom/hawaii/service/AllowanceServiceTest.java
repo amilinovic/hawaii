@@ -15,8 +15,6 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -46,7 +44,6 @@ public class AllowanceServiceTest {
   private int nextYear;
   private Day dayOne;
   private Day dayTwo;
-  private LocalDateTime submissionTime;
   private User mockUser;
   private Allowance currentYearAllowance;
   private Allowance nextYearAllowance;
@@ -58,7 +55,6 @@ public class AllowanceServiceTest {
     mockUser = EntityBuilder.user(EntityBuilder.team());
     dayOne = EntityBuilder.day(LocalDate.of(thisYear, 11, 26));
     dayTwo = EntityBuilder.day(LocalDate.of(thisYear, 11, 27));
-    submissionTime = LocalDateTime.of(dayOne.getDate(), LocalTime.NOON);
     currentYearAllowance = EntityBuilder.allowance(mockUser);
     nextYearAllowance = EntityBuilder.nextYearAllowance(mockUser);
   }
@@ -252,7 +248,6 @@ public class AllowanceServiceTest {
   public void shouldFailToApplyPendingAnnualLeaveRequestDueInsufficientHours() {
     //given
     var request = EntityBuilder.request(EntityBuilder.absenceAnnual(), List.of(dayOne, dayTwo));
-    request.setSubmissionTime(submissionTime);
     currentYearAllowance.setTakenAnnual(200);
     nextYearAllowance.setTakenInPreviousYear(20);
     nextYearAllowance.setPendingInPreviousYear(20);
@@ -268,7 +263,6 @@ public class AllowanceServiceTest {
   public void shouldApplyPendingAnnualLeaveRequestOnCurrentYear() {
     // given
     var request = EntityBuilder.request(EntityBuilder.absenceAnnual(), List.of(dayOne, dayTwo));
-    request.setSubmissionTime(submissionTime);
     currentYearAllowance.setTakenAnnual(180);
     currentYearAllowance.setPendingAnnual(0);
     nextYearAllowance.setPendingInPreviousYear(0);
@@ -292,7 +286,6 @@ public class AllowanceServiceTest {
   public void shouldApplyPendingAnnualLeaveRequestOnNextYear() {
     // given
     var request = EntityBuilder.request(EntityBuilder.absenceAnnual(), List.of(dayOne, dayTwo));
-    request.setSubmissionTime(submissionTime);
     currentYearAllowance.setTakenAnnual(200);
     currentYearAllowance.setPendingAnnual(0);
     nextYearAllowance.setPendingInPreviousYear(0);
@@ -316,7 +309,6 @@ public class AllowanceServiceTest {
   public void shouldApplyPendingAnnualLeaveRequestOnCurrentAndNextYear() {
     // given
     var request = EntityBuilder.request(EntityBuilder.absenceAnnual(), List.of(dayOne, dayTwo));
-    request.setSubmissionTime(submissionTime);
     currentYearAllowance.setTakenAnnual(192);
     currentYearAllowance.setPendingAnnual(0);
     nextYearAllowance.setTakenInPreviousYear(24);
@@ -340,7 +332,6 @@ public class AllowanceServiceTest {
   public void shouldApplyPendingAnnualLeaveCancellationCurrentYear() {
     // given
     var request = EntityBuilder.request(EntityBuilder.absenceAnnual(), List.of(dayOne, dayTwo));
-    request.setSubmissionTime(submissionTime);
     currentYearAllowance.setTakenAnnual(200);
     currentYearAllowance.setPendingAnnual(16);
     nextYearAllowance.setPendingInPreviousYear(0);
@@ -363,7 +354,6 @@ public class AllowanceServiceTest {
   public void shouldApplyPendingAnnualLeaveCancellationNextYear() {
     // given
     var request = EntityBuilder.request(EntityBuilder.absenceAnnual(), List.of(dayOne, dayTwo));
-    request.setSubmissionTime(submissionTime);
     currentYearAllowance.setTakenAnnual(200);
     currentYearAllowance.setPendingAnnual(0);
     nextYearAllowance.setPendingInPreviousYear(16);
@@ -386,7 +376,6 @@ public class AllowanceServiceTest {
   public void shouldApplyPendingAnnualLeaveCancellationCurrentAndNextYear() {
     // given
     var request = EntityBuilder.request(EntityBuilder.absenceAnnual(), List.of(dayOne, dayTwo));
-    request.setSubmissionTime(submissionTime);
     currentYearAllowance.setTakenAnnual(200);
     currentYearAllowance.setPendingAnnual(8);
     nextYearAllowance.setPendingInPreviousYear(8);
@@ -408,7 +397,6 @@ public class AllowanceServiceTest {
   @Test
   public void shouldApplyPendingAnnualLeaveRequestAndApplyRequestOnCurrentYear() {
     var request = EntityBuilder.request(EntityBuilder.absenceAnnual(), List.of(dayOne, dayTwo));
-    request.setSubmissionTime(submissionTime);
     currentYearAllowance.setTakenAnnual(184);
     currentYearAllowance.setPendingAnnual(0);
     nextYearAllowance.setPendingInPreviousYear(0);
@@ -442,7 +430,6 @@ public class AllowanceServiceTest {
   @Test
   public void shouldApplyPendingAnnualLeaveRequestAndApplyRequestOnNextYear() {
     var request = EntityBuilder.request(EntityBuilder.absenceAnnual(), List.of(dayOne, dayTwo));
-    request.setSubmissionTime(submissionTime);
     currentYearAllowance.setTakenAnnual(200);
     currentYearAllowance.setPendingAnnual(0);
     nextYearAllowance.setPendingInPreviousYear(0);
@@ -475,7 +462,6 @@ public class AllowanceServiceTest {
   @Test
   public void shouldApplyPendingAnnualLeaveRequestAndApplyRequestOnCurrentAndNextYear() {
     var request = EntityBuilder.request(EntityBuilder.absenceAnnual(), List.of(dayOne, dayTwo));
-    request.setSubmissionTime(submissionTime);
     currentYearAllowance.setTakenAnnual(192);
     currentYearAllowance.setPendingAnnual(0);
     nextYearAllowance.setTakenInPreviousYear(24);
@@ -510,7 +496,6 @@ public class AllowanceServiceTest {
   @Test
   public void shouldApplyPendingAnnualLeaveRequestAndApplyRequestOnCurrentYearWithRequestAlreadyPending() {
     var request = EntityBuilder.request(EntityBuilder.absenceAnnual(), List.of(dayOne, dayTwo));
-    request.setSubmissionTime(submissionTime);
     currentYearAllowance.setTakenAnnual(176);
     currentYearAllowance.setPendingAnnual(8);
     nextYearAllowance.setPendingInPreviousYear(0);
@@ -544,7 +529,6 @@ public class AllowanceServiceTest {
   @Test
   public void shouldApplyPendingAnnualLeaveRequestAndApplyRequestOnNextYearWithRequestAlreadyPending() {
     var request = EntityBuilder.request(EntityBuilder.absenceAnnual(), List.of(dayOne, dayTwo));
-    request.setSubmissionTime(submissionTime);
     currentYearAllowance.setTakenAnnual(200);
     currentYearAllowance.setPendingAnnual(0);
     nextYearAllowance.setTakenInPreviousYear(8);
@@ -578,7 +562,6 @@ public class AllowanceServiceTest {
   @Test
   public void shouldApplyPendingAnnualLeaveRequestAndApplyRequestOnCurrentAndNextYearWithRequestAlreadyPending() {
     var request = EntityBuilder.request(EntityBuilder.absenceAnnual(), List.of(dayOne, dayTwo));
-    request.setSubmissionTime(submissionTime);
     currentYearAllowance.setTakenAnnual(192);
     currentYearAllowance.setPendingAnnual(8);
     nextYearAllowance.setTakenInPreviousYear(0);
@@ -615,8 +598,6 @@ public class AllowanceServiceTest {
     var dayFour = EntityBuilder.day(LocalDate.of(thisYear, 11, 29));
     var secondRequest = EntityBuilder.requestII(EntityBuilder.absenceAnnual(), List.of(dayThree, dayFour));
 
-    firstRequest.setSubmissionTime(submissionTime);
-    secondRequest.setSubmissionTime(submissionTime.plusDays(1));
     currentYearAllowance.setTakenAnnual(192);
     currentYearAllowance.setPendingAnnual(0);
     nextYearAllowance.setTakenInPreviousYear(0);
@@ -657,7 +638,6 @@ public class AllowanceServiceTest {
   public void shouldApplyPendingTraining() {
     // given
     var request = EntityBuilder.request(EntityBuilder.absenceTraining(), List.of(dayOne, dayTwo));
-    request.setSubmissionTime(submissionTime);
 
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(nextYearAllowance);
@@ -677,7 +657,6 @@ public class AllowanceServiceTest {
     //given
     var dayThree = EntityBuilder.day(LocalDate.of(thisYear, 11, 28));
     var request = EntityBuilder.request(EntityBuilder.absenceTraining(), List.of(dayOne, dayTwo, dayThree));
-    request.setSubmissionTime(submissionTime);
 
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
 

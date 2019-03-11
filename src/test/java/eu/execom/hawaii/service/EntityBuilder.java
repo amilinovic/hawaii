@@ -18,6 +18,8 @@ import eu.execom.hawaii.model.enumerations.UserRole;
 import eu.execom.hawaii.model.enumerations.UserStatusType;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -134,6 +136,7 @@ public class EntityBuilder {
     request.getUser().setId(1L);
     request.setAbsence(absence);
     request.setRequestStatus(RequestStatus.PENDING);
+    request.setSubmissionTime(LocalDateTime.of(TODAYS_DATE, LocalTime.NOON));
     request.setReason("My request reason");
     request.setDays(days);
 
@@ -147,6 +150,7 @@ public class EntityBuilder {
     request.getUser().setId(1L);
     request.setAbsence(absence);
     request.setRequestStatus(RequestStatus.PENDING);
+    request.setSubmissionTime(LocalDateTime.of(TODAYS_DATE, LocalTime.NOON));
     request.setReason("My request reason");
     request.setDays(days);
 
