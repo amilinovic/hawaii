@@ -81,10 +81,13 @@ class RequestForm extends Component {
     });
   };
 
+  setAbsenceType = id =>
+    this.props.leaveTypes.find(leaveType => leaveType.id === parseInt(id, 16));
+
   render() {
     let leaveTypes;
 
-    if (this.props.leaveTypes) {
+    if (this.props.leaveTypes.length > 1) {
       leaveTypes = this.props.leaveTypes.map(leave => {
         return (
           <option key={leave.id} value={leave.id}>
@@ -98,12 +101,13 @@ class RequestForm extends Component {
       <Formik
         validationSchema={validationSchema}
         initialValues={{
-          user: {
-            id: this.props.user.id
-          },
-          absence: {
-            id: !this.props.leaveTypes ? 3 : ''
-          },
+          user: this.props.user,
+          absence:
+            this.props.leaveTypes.length > 1
+              ? {
+                  id: ''
+                }
+              : this.props.leaveTypes[0],
           reason: '',
           requestStatus: 'PENDING',
           days: [
@@ -125,10 +129,13 @@ class RequestForm extends Component {
           errors,
           touched,
           setFieldValue
+          //   TODO: Implement request overview screen
+          //   validateForm,
+          //   setTouched
         }) => (
           <div className="d-flex justify-content-between">
             <div className="px-2">
-              {this.props.leaveTypes && (
+              {this.props.leaveTypes.length > 1 && (
                 <div className="mb-2">
                   <label htmlFor="leaveType">Type of Leave</label>
                   <select
@@ -136,7 +143,12 @@ class RequestForm extends Component {
                       errors.absence && touched.absence ? 'border-danger' : ''
                     } mb-3 border`}
                     name="absence.id"
-                    onChange={handleChange}
+                    onChange={e => {
+                      setFieldValue(
+                        'absence',
+                        this.setAbsenceType(e.currentTarget.value)
+                      );
+                    }}
                     value={values.absence.id}
                   >
                     <option value="" disabled>
@@ -247,6 +259,19 @@ class RequestForm extends Component {
                 placeholder="Please enter a reason"
               />
               <div className="d-flex justify-content-end">
+                {/* 
+                TODO: Implement request overview screen
+                <button
+                  type="button"
+                  onClick={() =>
+                    validateForm().then(errors => {
+                      setTouched(errors);
+                    })
+                  }
+                >
+                  Next
+                </button> */}
+
                 <button className="btn" onClick={handleSubmit} type="submit">
                   Apply Leave
                 </button>

@@ -12,7 +12,7 @@ import {
   createLeaveRequest,
   createSicknessRequest
 } from '../../store/actions/requestsActions';
-import { getModal, getUser } from '../../store/selectors';
+import { getLeaveTypes, getModal, getUser } from '../../store/selectors';
 import RequestForm from './requests/RequestForm';
 
 const ModalHeader = styled.div`
@@ -40,44 +40,6 @@ const LeaveWrapper = styled.div`
     }
   }
 `;
-
-const deductedLeaveTypes = [
-  {
-    id: 1,
-    name: 'Annual leave - Vacation'
-  },
-  {
-    id: 2,
-    name: 'Training & Education'
-  }
-];
-
-const sicknessLeaveTypes = [
-  {
-    id: 4,
-    name: 'Asthma related'
-  },
-  {
-    id: 5,
-    name: 'Chest related'
-  },
-  {
-    id: 6,
-    name: 'Dental Problems'
-  },
-  {
-    id: 7,
-    name: 'Cold / Influenza'
-  },
-  {
-    id: 8,
-    name: 'Fever'
-  },
-  {
-    id: 9,
-    name: 'Food poisoing'
-  }
-];
 
 class RequestModal extends Component {
   state = {
@@ -116,6 +78,12 @@ class RequestModal extends Component {
     }));
   };
 
+  filterLeaveTypes = leaveType => {
+    return this.props.leaveTypes.filter(
+      leave => leave.absenceType === leaveType
+    );
+  };
+
   render() {
     const checkIfSpecificRequest =
       this.state.isLeave || this.state.isBonus || this.state.isSickness;
@@ -123,17 +91,21 @@ class RequestModal extends Component {
     const requestType = this.state.isLeave ? (
       <RequestForm
         user={this.props.user}
-        leaveTypes={deductedLeaveTypes}
+        leaveTypes={this.filterLeaveTypes('DEDUCTED_LEAVE')}
         requestAction={createLeaveRequest}
       />
     ) : this.state.isSickness ? (
       <RequestForm
         user={this.props.user}
-        leaveTypes={sicknessLeaveTypes}
+        leaveTypes={this.filterLeaveTypes('SICKNESS')}
         requestAction={createSicknessRequest}
       />
     ) : this.state.isBonus ? (
-      <RequestForm user={this.props.user} requestAction={createBonusRequest} />
+      <RequestForm
+        user={this.props.user}
+        requestAction={createBonusRequest}
+        leaveTypes={this.filterLeaveTypes('BONUS_DAYS')}
+      />
     ) : null;
 
     return (
@@ -202,7 +174,8 @@ class RequestModal extends Component {
 
 const mapStateToProps = state => ({
   modal: getModal(state),
-  user: getUser(state)
+  user: getUser(state),
+  leaveTypes: getLeaveTypes(state)
 });
 
 const mapDispatchToProps = dispatch =>
