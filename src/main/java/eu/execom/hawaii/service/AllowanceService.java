@@ -170,6 +170,7 @@ public class AllowanceService {
   @Transactional
   public void applyRequest(Request request, boolean requestCanceled) {
     var yearOfRequest = request.getDays().get(0).getDate().getYear();
+    var requestForPreviousYear = isRequestForPreviousYear(yearOfRequest, request);
     var currentYearAllowance = getByUserAndYear(request.getUser().getId(), yearOfRequest);
     var nextYearAllowance = getByUserAndYear(request.getUser().getId(), yearOfRequest + 1);
     var absence = request.getAbsence();
@@ -212,6 +213,9 @@ public class AllowanceService {
         var leaveProfile = request.getUser().getLeaveProfile();
         checkRemainingBonusHours(leaveProfile, currentYearAllowance, hours);
         applyBonus(currentYearAllowance, hours);
+        if (requestForPreviousYear) {
+          addHoursToCarriedOver(nextYearAllowance, leaveProfile, hours);
+        }
         break;
       default:
         throw new IllegalArgumentException("Unsupported absence type: " + absenceType);
@@ -282,6 +286,24 @@ public class AllowanceService {
     int calculatedBonus = allowance.getBonus() + hours;
     allowance.setBonus(calculatedBonus);
     allowanceRepository.save(allowance);
+  }
+
+  private void addHoursToCarriedOver(Allowance nextYearAllowance, LeaveProfile leaveProfile, int hours) {
+    var alreadyCarriedOver = nextYearAllowance.getCarriedOver();
+    var availableHours = getAvailableHoursForCarryOver(leaveProfile, nextYearAllowance, hours);
+    nextYearAllowance.setCarriedOver(alreadyCarriedOver + availableHours);
+
+    allowanceRepository.save(nextYearAllowance);
+  }
+
+  private int getAvailableHoursForCarryOver(LeaveProfile leaveProfile, Allowance nextYearAllowance, int hours) {
+    var remainingHoursForCarryOver = leaveProfile.getMaxCarriedOver() - nextYearAllowance.getCarriedOver();
+
+    return (hours > remainingHoursForCarryOver) ? remainingHoursForCarryOver : hours;
+  }
+
+  private boolean isRequestForPreviousYear(int yearOfRequest, Request request) {
+    return yearOfRequest < request.getSubmissionTime().getYear();
   }
 
   private List<Day> getWorkingDaysOnly(List<Day> days) {

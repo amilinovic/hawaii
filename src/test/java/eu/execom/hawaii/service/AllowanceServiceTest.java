@@ -42,21 +42,25 @@ public class AllowanceServiceTest {
 
   private int thisYear;
   private int nextYear;
+  private int lastYear;
   private Day dayOne;
   private Day dayTwo;
   private User mockUser;
   private Allowance currentYearAllowance;
   private Allowance nextYearAllowance;
+  private Allowance lastYearAllowance;
 
   @Before
   public void setUp() {
     thisYear = EntityBuilder.thisYear().getYear();
     nextYear = EntityBuilder.nextYear().getYear();
+    lastYear = EntityBuilder.lastYear().getYear();
     mockUser = EntityBuilder.user(EntityBuilder.team());
     dayOne = EntityBuilder.day(LocalDate.of(thisYear, 11, 26));
     dayTwo = EntityBuilder.day(LocalDate.of(thisYear, 11, 27));
     currentYearAllowance = EntityBuilder.allowance(mockUser);
     nextYearAllowance = EntityBuilder.nextYearAllowance(mockUser);
+    lastYearAllowance = EntityBuilder.lastYearAllowance(mockUser);
   }
 
   @Test
@@ -708,7 +712,6 @@ public class AllowanceServiceTest {
     request.setRequestStatus(RequestStatus.APPROVED);
 
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
-    given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(nextYearAllowance);
 
     // when
     allowanceService.applyRequest(request, false);
@@ -717,6 +720,54 @@ public class AllowanceServiceTest {
     assertThat("Expect bonus hours to be 16", currentYearAllowance.getBonus(), is(16));
     verify(allowanceRepository, times(2)).findByUserIdAndYearYear(anyLong(), anyInt());
     verify(allowanceRepository).save(any());
+    verifyNoMoreInteractions(allowanceRepository);
+  }
+
+  @Test
+  public void shouldApplyAllRequestedBonusDaysFromLastYear() {
+    // given
+    dayOne.setDate(dayOne.getDate().minusYears(1));
+    dayTwo.setDate(dayTwo.getDate().minusYears(1));
+    var request = EntityBuilder.request(EntityBuilder.absenceBonus(), List.of(dayOne, dayTwo));
+    request.setRequestStatus(RequestStatus.APPROVED);
+    lastYearAllowance.setBonus(16);
+    currentYearAllowance.setCarriedOver(16);
+
+    given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), lastYear)).willReturn(lastYearAllowance);
+    given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
+
+    // when
+    allowanceService.applyRequest(request, false);
+
+    // then
+    assertThat("Expect bonus hours to be 32", lastYearAllowance.getBonus(), is(32));
+    assertThat("Expect carriedOver to be 32", currentYearAllowance.getCarriedOver(), is(32));
+    verify(allowanceRepository, times(2)).findByUserIdAndYearYear(anyLong(), anyInt());
+    verify(allowanceRepository, times(2)).save(any());
+    verifyNoMoreInteractions(allowanceRepository);
+  }
+
+  @Test
+  public void shouldApplySomeRequestedBonusDaysFromLastYear() {
+    // given
+    dayOne.setDate(dayOne.getDate().minusYears(1));
+    dayTwo.setDate(dayTwo.getDate().minusYears(1));
+    var request = EntityBuilder.request(EntityBuilder.absenceBonus(), List.of(dayOne, dayTwo));
+    request.setRequestStatus(RequestStatus.APPROVED);
+    lastYearAllowance.setBonus(16);
+    currentYearAllowance.setCarriedOver(32);
+
+    given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), lastYear)).willReturn(lastYearAllowance);
+    given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
+
+    // when
+    allowanceService.applyRequest(request, false);
+
+    // then
+    assertThat("Expect bonus hours to be 32", lastYearAllowance.getBonus(), is(32));
+    assertThat("Expect carriedOver to be 40", currentYearAllowance.getCarriedOver(), is(40));
+    verify(allowanceRepository, times(2)).findByUserIdAndYearYear(anyLong(), anyInt());
+    verify(allowanceRepository, times(2)).save(any());
     verifyNoMoreInteractions(allowanceRepository);
   }
 
