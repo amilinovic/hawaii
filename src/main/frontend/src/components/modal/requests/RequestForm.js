@@ -162,6 +162,7 @@ class RequestForm extends Component {
                 <span>Start Date</span>
                 <DatePicker
                   className="border"
+                  dateFormat="dd-MMM-yyyy"
                   locale="en-GB"
                   selected={this.state.startDate}
                   selectsStart
@@ -181,6 +182,7 @@ class RequestForm extends Component {
                 <div>
                   <DatePicker
                     className="border"
+                    dateFormat="dd-MMM-yyyy"
                     locale="en-GB"
                     selected={this.state.endDate}
                     selectsEnd
