@@ -1,6 +1,8 @@
 import styled from 'styled-components';
+import ifProp from 'styled-tools/dist/cjs/ifProp';
 
 export const MainLogo = styled.div`
+  opacity: ${ifProp('isMinimized', '0', '1')};
   font-family: 'Varela Round';
   background-color: transparent;
   color: white;
@@ -11,6 +13,7 @@ export const MainLogo = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  transition: 0.2s ease-in-out;
   span {
     display: flex;
     width: 100%;
