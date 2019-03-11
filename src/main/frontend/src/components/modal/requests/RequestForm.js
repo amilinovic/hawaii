@@ -41,23 +41,23 @@ class RequestForm extends Component {
       endDate: end
     });
 
-    return this.createDays(start, end, dayDuration);
+    return this.createDays(moment(start), moment(end), dayDuration);
   };
 
   createDays = (start, end, dayDuration) => {
-    const numberOfDays = moment(end).diff(moment(start).startOf('day'), 'days');
+    const numberOfDays = end.diff(start.startOf('day'), 'days');
     const days = [
       {
-        date: moment(start).format('YYYY-MM-DD'),
+        date: start.format('YYYY-MM-DD'),
         duration: dayDuration,
         requestStatus: 'PENDING'
       }
     ];
 
     for (let i = 1; i <= numberOfDays; i++) {
-      if (this.isWeekday(moment(start).add(i, 'days'))) {
+      if (this.isWeekday(start.add(i, 'days'))) {
         days.push({
-          date: moment(moment(start).add(i, 'days')).format('YYYY-MM-DD'),
+          date: moment(start.add(i, 'days')).format('YYYY-MM-DD'),
           duration: dayDuration,
           requestStatus: 'PENDING'
         });

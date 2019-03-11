@@ -59,6 +59,7 @@ class RequestModal extends Component {
       this.setState(prevState => ({
         modal: !prevState.modal
       }));
+
       this.props.resetModalState();
     }
   }
@@ -70,17 +71,17 @@ class RequestModal extends Component {
   };
 
   resetState = () => {
-    this.setState(() => ({
+    this.setState({
       isLeave: false,
       isSickness: false,
       isBonus: false
-    }));
+    });
   };
 
   requestType = leaveType => {
-    this.setState(() => ({
+    this.setState({
       [leaveType]: true
-    }));
+    });
   };
 
   filterLeaveTypes = leaveType => {
@@ -89,32 +90,28 @@ class RequestModal extends Component {
     );
   };
 
-  render() {
-    const checkIfSpecificRequest =
-      this.state.isLeave || this.state.isBonus || this.state.isSickness;
+  getFormProps = () => {
+    if (this.state.isLeave) {
+      return {
+        leaveTypes: this.filterLeaveTypes('DEDUCTED_LEAVE'),
+        requestAction: createLeaveRequest
+      };
+    } else if (this.state.isSickness) {
+      return {
+        leaveTypes: this.filterLeaveTypes('SICKNESS'),
+        requestAction: createSicknessRequest
+      };
+    } else {
+      return {
+        leaveTypes: this.filterLeaveTypes('BONUS_DAYS'),
+        requestAction: createBonusRequest
+      };
+    }
+  };
 
-    const requestType = this.state.isLeave ? (
-      <RequestForm
-        user={this.props.user}
-        leaveTypes={this.filterLeaveTypes('DEDUCTED_LEAVE')}
-        requestAction={createLeaveRequest}
-        allowance={this.props.allowance}
-      />
-    ) : this.state.isSickness ? (
-      <RequestForm
-        user={this.props.user}
-        leaveTypes={this.filterLeaveTypes('SICKNESS')}
-        requestAction={createSicknessRequest}
-        allowance={this.props.allowance}
-      />
-    ) : this.state.isBonus ? (
-      <RequestForm
-        user={this.props.user}
-        requestAction={createBonusRequest}
-        leaveTypes={this.filterLeaveTypes('BONUS_DAYS')}
-        allowance={this.props.allowance}
-      />
-    ) : null;
+  render() {
+    const isSpecificRequest =
+      this.state.isLeave || this.state.isBonus || this.state.isSickness;
 
     return (
       <div>
@@ -135,8 +132,14 @@ class RequestModal extends Component {
             </span>
           </ModalHeader>
           <ModalBody className="py-4">
-            {requestType}
-            {!checkIfSpecificRequest && (
+            {isSpecificRequest && (
+              <RequestForm
+                user={this.props.user}
+                allowance={this.props.allowance}
+                {...this.getFormProps()}
+              />
+            )}
+            {!isSpecificRequest && (
               <div className="d-flex justify-content-around">
                 <LeaveWrapper
                   className="d-flex align-items-center flex-column m-4"
@@ -168,7 +171,7 @@ class RequestModal extends Component {
               </div>
             )}
 
-            {checkIfSpecificRequest && (
+            {isSpecificRequest && (
               <button className="btn" onClick={this.resetState}>
                 Back
               </button>
