@@ -1,5 +1,6 @@
 import { reducer as toastr } from 'react-redux-toastr';
 import { combineReducers } from 'redux';
+import allowance from './allowanceReducer';
 import employee from './employeeReducer';
 import employees from './employeesReducer';
 import employeesSearch from './employeesSearchReducer';
@@ -24,5 +25,6 @@ export default combineReducers({
   publicHolidays,
   leaveTypes,
   modal,
+  allowance,
   toastr
 });

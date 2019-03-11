@@ -12,7 +12,12 @@ import {
   createLeaveRequest,
   createSicknessRequest
 } from '../../store/actions/requestsActions';
-import { getLeaveTypes, getModal, getUser } from '../../store/selectors';
+import {
+  getAllowance,
+  getLeaveTypes,
+  getModal,
+  getUser
+} from '../../store/selectors';
 import RequestForm from './requests/RequestForm';
 
 const ModalHeader = styled.div`
@@ -93,18 +98,21 @@ class RequestModal extends Component {
         user={this.props.user}
         leaveTypes={this.filterLeaveTypes('DEDUCTED_LEAVE')}
         requestAction={createLeaveRequest}
+        allowance={this.props.allowance}
       />
     ) : this.state.isSickness ? (
       <RequestForm
         user={this.props.user}
         leaveTypes={this.filterLeaveTypes('SICKNESS')}
         requestAction={createSicknessRequest}
+        allowance={this.props.allowance}
       />
     ) : this.state.isBonus ? (
       <RequestForm
         user={this.props.user}
         requestAction={createBonusRequest}
         leaveTypes={this.filterLeaveTypes('BONUS_DAYS')}
+        allowance={this.props.allowance}
       />
     ) : null;
 
@@ -175,7 +183,8 @@ class RequestModal extends Component {
 const mapStateToProps = state => ({
   modal: getModal(state),
   user: getUser(state),
-  leaveTypes: getLeaveTypes(state)
+  leaveTypes: getLeaveTypes(state),
+  allowance: getAllowance(state)
 });
 
 const mapDispatchToProps = dispatch =>

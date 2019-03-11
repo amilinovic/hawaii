@@ -1,6 +1,9 @@
 import moment from 'moment';
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import styled from 'styled-components';
+import { requestAllowance } from '../../store/actions/allowanceActions';
 import { createCalendar } from '../calendar/calendarUtils';
 import YearlyCalendar from './YearlyCalendar';
 
@@ -25,7 +28,7 @@ const CalendarContainerBlock = styled.div`
   background: white;
 `;
 
-export default class CalendarContainer extends Component {
+class CalendarContainer extends Component {
   state = {
     selectedYear: moment().year(),
     calendar: createCalendar(
@@ -34,6 +37,10 @@ export default class CalendarContainer extends Component {
       this.props.personalDays
     )
   };
+
+  componentDidMount() {
+    this.props.requestAllowance(this.state.selectedYear);
+  }
 
   componentDidUpdate(prevProps) {
     if (prevProps !== this.props) {
@@ -53,6 +60,8 @@ export default class CalendarContainer extends Component {
         )
       };
     });
+
+    this.props.requestAllowance(selectedYear);
   };
 
   render() {
@@ -83,3 +92,16 @@ export default class CalendarContainer extends Component {
     );
   }
 }
+
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(
+    {
+      requestAllowance
+    },
+    dispatch
+  );
+
+export default connect(
+  null,
+  mapDispatchToProps
+)(CalendarContainer);

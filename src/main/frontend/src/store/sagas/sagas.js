@@ -1,4 +1,5 @@
 import { all } from 'redux-saga/effects';
+import { allowanceSaga } from './allowanceSaga';
 import { employeeSaga } from './employeeSaga';
 import { employeesSaga } from './employeesSaga';
 import { employeesSearchSaga } from './employeesSearchSaga';
@@ -25,6 +26,7 @@ export default function* saga() {
     ...leaveTypesSaga,
     ...personalDaysSaga,
     ...publicHolidaysSaga,
+    ...allowanceSaga,
     ...requestsSaga
   ]);
 }
