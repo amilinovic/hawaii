@@ -86,7 +86,7 @@ public class EntityBuilder {
     leaveProfile.setMaxBonusDays(40);
     leaveProfile.setTraining(16);
     leaveProfile.setUpgradeable(false);
-    leaveProfile.setLeaveProfileType(LeaveProfileType.DEFAULT);
+    leaveProfile.setLeaveProfileType(LeaveProfileType.ZERO_TO_FIVE_YEARS);
     leaveProfile.setComment("No comment");
     leaveProfile.setUsers(new ArrayList<>());
 

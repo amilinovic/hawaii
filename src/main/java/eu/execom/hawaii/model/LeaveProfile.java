@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -35,17 +36,21 @@ public class LeaveProfile extends BaseEntity implements Serializable {
 
   private int maxAllowanceFromNextYear;
 
-  private boolean deleted;
-
+  @Column(updatable = false)
   private boolean upgradeable;
 
   @NotNull
   @Enumerated(EnumType.STRING)
+  @Column(updatable = false)
   private LeaveProfileType leaveProfileType;
 
   private String comment;
 
   @OneToMany(mappedBy = "leaveProfile", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
   private List<User> users;
+
+  public boolean isCustom() {
+    return LeaveProfileType.CUSTOM.equals(leaveProfileType);
+  }
 
 }
