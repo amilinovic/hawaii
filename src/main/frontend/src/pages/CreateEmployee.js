@@ -30,12 +30,20 @@ class CreateEmployee extends Component {
   }
 
   render() {
-    if (!this.props.teams) return <Loading />;
+    if (!this.props.teams || !this.props.leaveProfiles) return <Loading />;
 
     const teams = this.props.teams.map(team => {
       return (
         <option key={team.id} value={team.id}>
           {team.name}
+        </option>
+      );
+    });
+
+    const leaveProfiles = this.props.leaveProfiles.map(leaveProfile => {
+      return (
+        <option key={leaveProfile.id} value={leaveProfile.id}>
+          {leaveProfile.name}
         </option>
       );
     });
@@ -112,11 +120,7 @@ class CreateEmployee extends Component {
                 <option value="" disabled>
                   Select leave profile
                 </option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
+                {leaveProfiles}
               </select>
               <select
                 className={`${
@@ -153,13 +157,6 @@ class CreateEmployee extends Component {
                 type="text"
                 onChange={handleChange}
                 placeholder="Started working at execom date"
-              />
-              <input
-                className="mb-3 border"
-                name="yearsOfService"
-                type="text"
-                onChange={handleChange}
-                placeholder="Years of service"
               />
               <button className="btn" onClick={handleSubmit} type="submit">
                 Create
