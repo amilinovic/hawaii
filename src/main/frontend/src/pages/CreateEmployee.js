@@ -6,8 +6,9 @@ import * as Yup from 'yup';
 import withResetOnNavigate from '../components/HOC/withResetOnNavigate';
 import Loading from '../components/loading/Loading';
 import { createEmployee } from '../store/actions/employeeActions';
+import { requestLeaveProfiles } from '../store/actions/leaveProfilesActions';
 import { requestTeams } from '../store/actions/teamsActions';
-import { getTeams } from '../store/selectors';
+import { getLeaveProfiles, getTeams } from '../store/selectors';
 
 const validationSchema = Yup.object().shape({
   fullName: Yup.string().required(),
@@ -18,12 +19,14 @@ const validationSchema = Yup.object().shape({
   teamId: Yup.string().required(),
   jobTitle: Yup.string().required(),
   startedWorkingAtExecomDate: Yup.string().required(),
-  startedWorkingDate: Yup.string().required()
+  startedWorkingDate: Yup.string().required(),
+  leaveProfileId: Yup.string().required()
 });
 
 class CreateEmployee extends Component {
   componentDidMount() {
     this.props.requestTeams();
+    this.props.requestLeaveProfiles();
   }
 
   render() {
@@ -49,7 +52,7 @@ class CreateEmployee extends Component {
             teamId: '',
             startedWorkingDate: '',
             startedWorkingAtExecomDate: '',
-            leaveProfileId: 2,
+            leaveProfileId: '',
             userStatusType: 'ACTIVE'
           }}
           onSubmit={this.props.createEmployee}
@@ -95,6 +98,25 @@ class CreateEmployee extends Component {
                   Select role
                 </option>
                 <option value="HR_MANAGER">HR manager</option>
+              </select>
+              <select
+                className={`${
+                  errors.leaveProfileId && touched.leaveProfileId
+                    ? 'border-danger'
+                    : ''
+                } mb-3 border`}
+                name="leaveProfileId"
+                onChange={handleChange}
+                value={values.leaveProfileId}
+              >
+                <option value="" disabled>
+                  Select leave profile
+                </option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
               </select>
               <select
                 className={`${
@@ -151,11 +173,15 @@ class CreateEmployee extends Component {
 }
 
 const mapStateToProps = state => ({
-  teams: getTeams(state)
+  teams: getTeams(state),
+  leaveProfiles: getLeaveProfiles(state)
 });
 
 const mapDispatchToProps = dispatch =>
-  bindActionCreators({ createEmployee, requestTeams }, dispatch);
+  bindActionCreators(
+    { createEmployee, requestTeams, requestLeaveProfiles },
+    dispatch
+  );
 
 export default connect(
   mapStateToProps,

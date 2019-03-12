@@ -9,8 +9,9 @@ import {
   requestEmployee,
   updateEmployee
 } from '../store/actions/employeeActions';
+import { requestLeaveProfiles } from '../store/actions/leaveProfilesActions';
 import { requestTeams } from '../store/actions/teamsActions';
-import { getEmployee, getTeams } from '../store/selectors';
+import { getEmployee, getLeaveProfiles, getTeams } from '../store/selectors';
 
 const validationSchema = Yup.object().shape({
   fullName: Yup.string().required(),
@@ -21,13 +22,15 @@ const validationSchema = Yup.object().shape({
   teamId: Yup.string().required(),
   jobTitle: Yup.string().required(),
   startedWorkingAtExecomDate: Yup.string().required(),
-  startedWorkingDate: Yup.string().required()
+  startedWorkingDate: Yup.string().required(),
+  leaveProfileId: Yup.string().required()
 });
 
 class EditEmployee extends Component {
   componentDidMount() {
     this.props.requestEmployee(this.props.match.params.id);
     this.props.requestTeams();
+    this.props.requestLeaveProfiles();
   }
 
   render() {
@@ -91,6 +94,25 @@ class EditEmployee extends Component {
               </select>
               <select
                 className={`${
+                  errors.leaveProfileId && touched.leaveProfileId
+                    ? 'border-danger'
+                    : ''
+                } mb-3 border`}
+                name="leaveProfileId"
+                onChange={handleChange}
+                value={values.leaveProfileId}
+              >
+                <option value="" disabled>
+                  Select leave profile
+                </option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+              <select
+                className={`${
                   errors.teamId && touched.teamId ? 'border-danger' : ''
                 } mb-3 border`}
                 name="teamId"
@@ -142,12 +164,13 @@ class EditEmployee extends Component {
 
 const mapStateToProps = state => ({
   employee: getEmployee(state),
-  teams: getTeams(state)
+  teams: getTeams(state),
+  leaveProfiles: getLeaveProfiles(state)
 });
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
-    { updateEmployee, requestEmployee, requestTeams },
+    { updateEmployee, requestEmployee, requestTeams, requestLeaveProfiles },
     dispatch
   );
 

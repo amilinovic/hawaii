@@ -9,3 +9,4 @@ export const getPublicHolidays = state => state.publicHolidays;
 export const getPersonalDays = state => state.personalDays;
 export const getRequest = state => state.request;
 export const getLeaveTypes = state => state.leaveTypes;
+export const getLeaveProfiles = state => state.leaveProfiles;
