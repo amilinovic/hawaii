@@ -103,6 +103,14 @@ public class AllowanceService {
     return allowanceRepository.findByUserIdAndYearYear(userId, year);
   }
 
+  /**
+   * Gets pending annual hours for current year and for next year if next year is active. Checks if pending annual hours for next year minus
+   * canceled hours is less than zero.
+   * <p>
+   * If it is, it means that some or all of those canceled hours belong to current year and rest to next year.
+   * If it isn't, it means that all of those canceled hours belong to next year.
+   * Also, if next year isn't active, all canceled hours belong to current year.
+   */
   private void cancelPendingAnnual(Allowance currentYearAllowance, int requestedHours) {
     var currentYearPendingAnnual = currentYearAllowance.getPendingAnnual();
     var nextYearPendingInPreviousYear = 0;
@@ -126,6 +134,14 @@ public class AllowanceService {
     }
   }
 
+  /**
+   * Gets pending annual hours for current year and for next year if year is active. Checks if there is less hours in current
+   * year then is requested.
+   * <p>
+   * If it is, it means that some or all of requested hours will be taken from next year allowance if next year is active.
+   * If it isn't, it means that all of requested hours will be taken from current year if there is enough remaining hours.
+   * if there is not enough annual hours in current year and next year isn't active, request won't be created.
+   */
   private void applyPendingAnnual(Allowance currentYearAllowance, int requestedHours) {
     var currentYearPendingAnnual = currentYearAllowance.getPendingAnnual();
     var remainingHoursCurrentYear = calculateRemainingAnnualHours(currentYearAllowance);
@@ -211,6 +227,14 @@ public class AllowanceService {
     }
   }
 
+  /**
+   * If next year is active, gets taken annual hours for current and next year. Checks if taken annual hours for next year minus
+   * canceled hours is less than zero.
+   * <p>
+   * If it is, it means that some or all of those canceled hours belong to current year and rest to next year.
+   * If it isn't, it means that all of those canceled hours belong to next year.
+   * Also, if next year isn't active, all canceled hours belong to current year.
+   */
   private void cancelAnnual(Allowance currentYearAllowance, int requestedHours) {
     var currentYearTakenAnnual = currentYearAllowance.getTakenAnnual();
 
@@ -229,12 +253,19 @@ public class AllowanceService {
 
       allowanceRepository.save(nextYearAllowance);
     } else {
-      currentYearAllowance.setTakenAnnual(
-          currentYearTakenAnnual + requestedHours); // linija u kojoj je promenjen flow(ovako mi je logicno da treba )
+      currentYearAllowance.setTakenAnnual(currentYearTakenAnnual + requestedHours);
       allowanceRepository.save(currentYearAllowance);
     }
   }
 
+  /**
+   * Gets taken annual hours for current year and for next year if year is active. Checks if there is less available hours in current
+   * year then is requested hours.
+   * <p>
+   * If it is, it means that some or all of requested hours will be taken from next year allowance if next year is active.
+   * If it isn't, it means that all of requested hours will be taken from current year if there is enough remaining hours.
+   * if there is not enough annual hours in current year and next year isn't active, request won't be created.
+   */
   private void applyAnnual(Allowance currentYearAllowance, int requestedHours) {
     var currentYearAnnual = currentYearAllowance.getTakenAnnual();
     var remainingAnnualHoursCurrentYear = calculateRemainingAnnualHoursWithoutPending(currentYearAllowance);
