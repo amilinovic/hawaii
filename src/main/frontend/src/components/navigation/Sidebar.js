@@ -11,16 +11,13 @@ import LeaveIcon from '../../img/icons/icons leave white (24).png';
 import LogoutIcon from '../../img/icons/icons logout white (24).png';
 import AdministrationIcon from '../../img/icons/icons team calendar white (24).png';
 import { MainLogo } from '../common/mainLogo';
-import { MinimizeIcon } from '../common/MinimizeIcon';
 import { NavigationLink } from '../common/navigationLink';
+import { ToggleSidebarButton } from '../common/ToggleSidebarButton';
 
 const Aside = styled.aside`
   background-color: #323234;
   width: ${ifProp('isMinimized', '45px', '300px')};
   min-width: ${ifProp('isMinimized', '45px', '300px')};
-  display: flex;
-  flex-direction: column;
-  padding-bottom: 50px;
   font-weight: 600;
   transition: 0.2s ease-in-out;
   overflow: hidden;
@@ -89,9 +86,12 @@ export default class Sidebar extends Component {
 
   render() {
     return (
-      <Aside isMinimized={this.state.isMinimized}>
+      <Aside
+        className="d-flex flex-column pb-5"
+        isMinimized={this.state.isMinimized}
+      >
         <span className="d-flex justify-content-center text-white">
-          <MinimizeIcon
+          <ToggleSidebarButton
             click={this.toggleSidebar}
             isMinimized={this.state.isMinimized}
           />

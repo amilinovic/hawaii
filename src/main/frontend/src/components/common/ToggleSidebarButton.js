@@ -12,10 +12,8 @@ const ToggleButton = styled.div`
   height: 2px;
   width: ${ifProp('isMinimized', '25px', '12px')};
   background-color: #fff;
-  position: relative;
   top: 50%;
   left: 0;
-  margin: auto;
   transition: all 0.3s ease-in-out;
   &:before {
     content: '';
@@ -39,10 +37,13 @@ const ToggleButton = styled.div`
   }
 `;
 
-export const MinimizeIcon = props => {
+export const ToggleSidebarButton = props => {
   return (
     <HamburgerWrapper onClick={props.click}>
-      <ToggleButton isMinimized={props.isMinimized} />
+      <ToggleButton
+        className="m-auto position-relative"
+        isMinimized={props.isMinimized}
+      />
     </HamburgerWrapper>
   );
 };
