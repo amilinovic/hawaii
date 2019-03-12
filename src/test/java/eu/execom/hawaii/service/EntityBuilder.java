@@ -163,7 +163,6 @@ public class EntityBuilder {
     allowance.setUser(user);
     allowance.getUser().setId(1L);
     allowance.setYear(thisYear());
-    allowance.getYear().setId(1L);
     allowance.setAnnual(160);
     allowance.setTakenAnnual(0);
     allowance.setSickness(0);
@@ -184,7 +183,6 @@ public class EntityBuilder {
     allowance.setUser(user);
     allowance.getUser().setId(1L);
     allowance.setYear(thisYear());
-    allowance.getYear().setId(1L);
     allowance.setAnnual(168);
     allowance.setTakenAnnual(0);
     allowance.setSickness(0);
@@ -205,7 +203,26 @@ public class EntityBuilder {
     allowance.setUser(user);
     allowance.getUser().setId(1L);
     allowance.setYear(nextYear());
-    allowance.getYear().setId(1L);
+    allowance.setAnnual(160);
+    allowance.setTakenAnnual(0);
+    allowance.setSickness(0);
+    allowance.setBonus(0);
+    allowance.setCarriedOver(40);
+    allowance.setManualAdjust(0);
+    allowance.setTraining(16);
+    allowance.setTakenTraining(0);
+    allowance.setTakenInPreviousYear(0);
+    allowance.setPendingInPreviousYear(0);
+
+    return allowance;
+  }
+
+  static Allowance lastYearAllowance(User user) {
+    var allowance = new Allowance();
+    allowance.setId(4L);
+    allowance.setUser(user);
+    allowance.getUser().setId(1L);
+    allowance.setYear(lastYear());
     allowance.setAnnual(160);
     allowance.setTakenAnnual(0);
     allowance.setSickness(0);
@@ -234,7 +251,17 @@ public class EntityBuilder {
     var year = new Year();
     year.setId(2L);
     year.setActive(true);
-    year.setYear(TODAYS_DATE.getYear() + 1);
+    year.setYear(TODAYS_DATE.plusYears(1).getYear());
+    year.setAllowances(new ArrayList<>());
+
+    return year;
+  }
+
+  static Year lastYear() {
+    var year = new Year();
+    year.setId(3L);
+    year.setActive(true);
+    year.setYear(TODAYS_DATE.minusYears(1).getYear());
     year.setAllowances(new ArrayList<>());
 
     return year;
