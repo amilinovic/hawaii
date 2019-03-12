@@ -2,11 +2,11 @@ import { handleActions } from 'redux-actions';
 import { receiveLeaveProfiles } from '../actions/leaveProfilesActions';
 import { navigateOut } from '../actions/navigateActions';
 
-export const initialState = [];
+export const initialState = null;
 
 const actionHandlers = {
   [receiveLeaveProfiles]: (state, action) => action.payload,
-  [navigateOut]: () => []
+  [navigateOut]: () => null
 };
 
 const reducer = handleActions(actionHandlers, initialState);

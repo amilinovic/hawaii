@@ -32,3 +32,14 @@ export const createLeaveProfileSuccessful = createAction(
   CREATE_LEAVE_PROFILE_SUCCESSFUL
 );
 export const createLeaveProfileError = createAction(CREATE_LEAVE_PROFILE_ERROR);
+
+export const UPDATE_LEAVE_PROFILE = 'UPDATE_LEAVE_PROFILE';
+export const UPDATE_LEAVE_PROFILE_SUCCESSFUL =
+  'UPDATE_LEAVE_PROFILE_SUCCESSFUL';
+export const UPDATE_LEAVE_PROFILE_ERROR = 'UPDATE_LEAVE_PROFILE_ERROR';
+
+export const updateLeaveProfile = createAction(UPDATE_LEAVE_PROFILE);
+export const updateLeaveProfileSuccessful = createAction(
+  UPDATE_LEAVE_PROFILE_SUCCESSFUL
+);
+export const updateLeaveProfileError = createAction(UPDATE_LEAVE_PROFILE_ERROR);

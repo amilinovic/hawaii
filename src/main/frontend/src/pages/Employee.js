@@ -22,6 +22,7 @@ class Employee extends Component {
         teamName,
         fullName,
         email,
+        leaveProfileId,
         jobTitle,
         yearsOfService,
         startedWorkingDate,
@@ -37,6 +38,8 @@ class Employee extends Component {
         <h5 className="text-danger mb-3">{email}</h5>
         <h1>Job Title</h1>
         <h5 className="text-danger mb-3">{jobTitle}</h5>
+        <h1>Leave profile</h1>
+        <h5 className="text-danger mb-3">{leaveProfileId}</h5>
         <h1>Years of service</h1>
         <h5 className="text-danger mb-3">{yearsOfService}</h5>
         <h1>Started working at execom</h1>

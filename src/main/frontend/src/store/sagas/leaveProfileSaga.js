@@ -9,12 +9,16 @@ import {
   receiveLeaveProfile,
   removeLeaveProfile,
   removeLeaveProfileSuccess,
-  requestLeaveProfile
+  requestLeaveProfile,
+  updateLeaveProfile,
+  updateLeaveProfileError,
+  updateLeaveProfileSuccessful
 } from '../actions/leaveProfileActions';
 import {
   createLeaveProfileApi,
   getLeaveProfileApi,
-  removeLeaveProfileApi
+  removeLeaveProfileApi,
+  updateLeaveProfileApi
 } from '../services/leaveProfileService';
 import {
   genericErrorHandler,
@@ -41,6 +45,12 @@ const createLeaveProfileSaga = function*(action) {
   yield put(toastrSuccess('Successfully created LeaveProfile'));
 };
 
+const updateLeaveProfileSaga = function*(action) {
+  yield call(updateLeaveProfileApi(action.payload));
+  yield put(updateLeaveProfileSuccessful());
+  yield put(toastrSuccess('Succesfully updated leave profile'));
+};
+
 export const leaveProfileSaga = [
   takeLatest(
     requestLeaveProfile,
@@ -61,6 +71,13 @@ export const leaveProfileSaga = [
     withErrorHandling(
       createLeaveProfileSaga,
       genericErrorHandler(createLeaveProfileError)
+    )
+  ),
+  takeLatest(
+    updateLeaveProfile,
+    withErrorHandling(
+      updateLeaveProfileSaga,
+      genericErrorHandler(updateLeaveProfileError)
     )
   )
 ];

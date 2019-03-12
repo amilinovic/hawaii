@@ -12,6 +12,7 @@ import CreateEmployee from '../pages/CreateEmployee';
 import CreateLeaveProfile from '../pages/CreateLeaveProfile';
 import CreateTeam from '../pages/CreateTeam';
 import EditEmployee from '../pages/EditEmployee';
+import EditLeaveProfile from '../pages/EditLeaveProfile';
 import EditTeam from '../pages/EditTeam';
 import Employee from '../pages/Employee';
 import Leave from '../pages/Leave';
@@ -57,6 +58,10 @@ class Panel extends Component {
                 <Route
                   path="/leave-profiles/create"
                   component={CreateLeaveProfile}
+                />
+                <Route
+                  path="/leave-profiles/:id/edit"
+                  component={EditLeaveProfile}
                 />
                 <Route path="/leave-profiles/:id" component={LeaveProfile} />
               </Switch>
