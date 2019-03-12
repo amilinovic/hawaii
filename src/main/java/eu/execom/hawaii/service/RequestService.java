@@ -242,8 +242,6 @@ public class RequestService {
     newRequest.setUser(user);
     LocalDateTime submissionTime = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
     newRequest.setSubmissionTime(submissionTime);
-    googleCalendarService.handleCreatedRequest(newRequest);
-
     var requests = findAllByUser(user.getId());
     List<Day> matchingDays = requests.stream()
                                      .map(Request::getDays)
@@ -267,6 +265,8 @@ public class RequestService {
       save(newRequest, authUser);
       sendNotificationsService.sendNotificationToApproversAboutSubmittedRequest(newRequest);
     }
+    googleCalendarService.handleCreatedRequest(newRequest);
+
     return newRequest;
   }
 
