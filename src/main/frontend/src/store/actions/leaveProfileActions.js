@@ -9,3 +9,26 @@ export const receiveLeaveProfile = createAction(RECEIVE_LEAVE_PROFILE);
 export const errorReceivingLeaveProfile = createAction(
   RECEIVE_LEAVE_PROFILE_ERROR
 );
+
+export const REMOVE_LEAVE_PROFILE = 'REMOVE_LEAVE_PROFILE';
+export const REMOVE_LEAVE_PROFILE_SUCCESS = 'REMOVE_LEAVE_PROFILE_SUCCESS';
+export const REMOVE_LEAVE_PROFILE_ERROR = 'REMOVE_LEAVE_PROFILE_ERROR';
+
+export const removeLeaveProfile = createAction(REMOVE_LEAVE_PROFILE);
+export const removeLeaveProfileSuccess = createAction(
+  REMOVE_LEAVE_PROFILE_SUCCESS
+);
+export const errorRemovingLeaveProfile = createAction(
+  REMOVE_LEAVE_PROFILE_ERROR
+);
+
+export const CREATE_LEAVE_PROFILE = 'CREATE_LEAVE_PROFILE';
+export const CREATE_LEAVE_PROFILE_SUCCESSFUL =
+  'CREATE_LEAVE_PROFILE_SUCCESSFUL';
+export const CREATE_LEAVE_PROFILE_ERROR = 'CREATE_LEAVE_PROFILE_ERROR';
+
+export const createLeaveProfile = createAction(CREATE_LEAVE_PROFILE);
+export const createLeaveProfileSuccessful = createAction(
+  CREATE_LEAVE_PROFILE_SUCCESSFUL
+);
+export const createLeaveProfileError = createAction(CREATE_LEAVE_PROFILE_ERROR);

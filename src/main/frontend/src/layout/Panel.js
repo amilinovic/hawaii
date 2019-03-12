@@ -9,6 +9,7 @@ import TopHeader from '../components/header/TopHeader';
 import Sidebar from '../components/navigation/Sidebar';
 import Administration from '../pages/Administration';
 import CreateEmployee from '../pages/CreateEmployee';
+import CreateLeaveProfile from '../pages/CreateLeaveProfile';
 import CreateTeam from '../pages/CreateTeam';
 import EditEmployee from '../pages/EditEmployee';
 import EditTeam from '../pages/EditTeam';
@@ -53,6 +54,10 @@ class Panel extends Component {
                 <Route path="/employee/create" component={CreateEmployee} />
                 <Route path="/employee/:id/edit" component={EditEmployee} />
                 <Route path="/employee/:id" component={Employee} />
+                <Route
+                  path="/leave-profiles/create"
+                  component={CreateLeaveProfile}
+                />
                 <Route path="/leave-profiles/:id" component={LeaveProfile} />
               </Switch>
             </PanelContent>

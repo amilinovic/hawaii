@@ -24,7 +24,7 @@ class LeaveProfiles extends Component {
       <div className="container-fluid">
         <div className="row">
           <div className="col-md-12">
-            <NavLink to={'/leave-profile/create'}>
+            <NavLink to={'/leave-profiles/create'}>
               <input
                 type="button"
                 value="Create leave profile"

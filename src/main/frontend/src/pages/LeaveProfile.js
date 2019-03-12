@@ -4,7 +4,10 @@ import { NavLink } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import withResetOnNavigate from '../components/HOC/withResetOnNavigate';
 import Loading from '../components/loading/Loading';
-import { requestLeaveProfile } from '../store/actions/leaveProfileActions';
+import {
+  removeLeaveProfile,
+  requestLeaveProfile
+} from '../store/actions/leaveProfileActions';
 import { getLeaveProfile } from '../store/selectors';
 
 class LeaveProfile extends Component {
@@ -53,7 +56,9 @@ class LeaveProfile extends Component {
             <button
               className="btn btn-danger"
               onClick={() =>
-                this.props.removeTeam({ id: this.props.match.params.id })
+                this.props.removeLeaveProfile({
+                  id: this.props.match.params.id
+                })
               }
             >
               Delete
@@ -70,7 +75,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch =>
-  bindActionCreators({ requestLeaveProfile }, dispatch);
+  bindActionCreators({ requestLeaveProfile, removeLeaveProfile }, dispatch);
 
 export default connect(
   mapStateToProps,
