@@ -18,6 +18,8 @@ import eu.execom.hawaii.model.enumerations.UserRole;
 import eu.execom.hawaii.model.enumerations.UserStatusType;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -85,6 +87,7 @@ public class EntityBuilder {
     leaveProfile.setMaxCarriedOver(40);
     leaveProfile.setMaxBonusDays(40);
     leaveProfile.setTraining(16);
+    leaveProfile.setMaxAllowanceFromNextYear(40);
     leaveProfile.setUpgradeable(false);
     leaveProfile.setLeaveProfileType(LeaveProfileType.DEFAULT);
     leaveProfile.setComment("No comment");
@@ -101,6 +104,7 @@ public class EntityBuilder {
     leaveProfile.setMaxCarriedOver(40);
     leaveProfile.setMaxBonusDays(40);
     leaveProfile.setTraining(24);
+    leaveProfile.setMaxAllowanceFromNextYear(40);
     leaveProfile.setUpgradeable(true);
     leaveProfile.setLeaveProfileType(LeaveProfileType.FIVE_TO_TEN_YEARS);
     leaveProfile.setComment("No comment");
@@ -116,6 +120,7 @@ public class EntityBuilder {
     leaveProfile.setEntitlement(176);
     leaveProfile.setMaxCarriedOver(40);
     leaveProfile.setTraining(24);
+    leaveProfile.setMaxAllowanceFromNextYear(40);
     leaveProfile.setUpgradeable(true);
     leaveProfile.setLeaveProfileType(LeaveProfileType.TEN_TO_FIFTEEN_YEARS);
     leaveProfile.setComment("No comment");
@@ -131,6 +136,21 @@ public class EntityBuilder {
     request.getUser().setId(1L);
     request.setAbsence(absence);
     request.setRequestStatus(RequestStatus.PENDING);
+    request.setSubmissionTime(LocalDateTime.of(TODAYS_DATE, LocalTime.NOON));
+    request.setReason("My request reason");
+    request.setDays(days);
+
+    return request;
+  }
+
+  static Request requestII(Absence absence, List<Day> days) {
+    var request = new Request();
+    request.setId(2L);
+    request.setUser(user(team()));
+    request.getUser().setId(1L);
+    request.setAbsence(absence);
+    request.setRequestStatus(RequestStatus.PENDING);
+    request.setSubmissionTime(LocalDateTime.of(TODAYS_DATE, LocalTime.NOON));
     request.setReason("My request reason");
     request.setDays(days);
 
@@ -152,6 +172,8 @@ public class EntityBuilder {
     allowance.setManualAdjust(0);
     allowance.setTraining(16);
     allowance.setTakenTraining(0);
+    allowance.setTakenInPreviousYear(0);
+    allowance.setPendingInPreviousYear(0);
 
     return allowance;
   }
@@ -171,6 +193,29 @@ public class EntityBuilder {
     allowance.setManualAdjust(0);
     allowance.setTraining(16);
     allowance.setTakenTraining(0);
+    allowance.setTakenInPreviousYear(0);
+    allowance.setPendingInPreviousYear(0);
+
+    return allowance;
+  }
+
+  static Allowance nextYearAllowance(User user) {
+    var allowance = new Allowance();
+    allowance.setId(3L);
+    allowance.setUser(user);
+    allowance.getUser().setId(1L);
+    allowance.setYear(nextYear());
+    allowance.getYear().setId(1L);
+    allowance.setAnnual(160);
+    allowance.setTakenAnnual(0);
+    allowance.setSickness(0);
+    allowance.setBonus(0);
+    allowance.setCarriedOver(40);
+    allowance.setManualAdjust(0);
+    allowance.setTraining(16);
+    allowance.setTakenTraining(0);
+    allowance.setTakenInPreviousYear(0);
+    allowance.setPendingInPreviousYear(0);
 
     return allowance;
   }
@@ -204,19 +249,6 @@ public class EntityBuilder {
     return publicHoliday;
   }
 
-  static Absence absence() {
-    var absence = new Absence();
-    absence.setId(2L);
-    absence.setAbsenceType(AbsenceType.BONUS_DAYS);
-    absence.setName("Training");
-    absence.setComment("Description");
-    absence.setActive(true);
-    absence.setIconUrl("icons/training.png");
-    absence.setLeaveRequests(new ArrayList<>());
-
-    return absence;
-  }
-
   static Absence absenceAnnual() {
     var absence = new Absence();
     absence.setId(1L);
@@ -233,10 +265,36 @@ public class EntityBuilder {
 
   static Absence absenceTraining() {
     var absence = new Absence();
-    absence.setId(3L);
+    absence.setId(2L);
     absence.setAbsenceType(AbsenceType.DEDUCTED_LEAVE);
     absence.setAbsenceSubtype(AbsenceSubtype.TRAINING);
     absence.setName("Training");
+    absence.setComment("Description");
+    absence.setActive(true);
+    absence.setIconUrl("icons/training.png");
+    absence.setLeaveRequests(new ArrayList<>());
+
+    return absence;
+  }
+
+  static Absence absenceSickness() {
+    var absence = new Absence();
+    absence.setId(3L);
+    absence.setAbsenceType(AbsenceType.SICKNESS);
+    absence.setName("Training");
+    absence.setComment("Description");
+    absence.setActive(true);
+    absence.setIconUrl("icons/training.png");
+    absence.setLeaveRequests(new ArrayList<>());
+
+    return absence;
+  }
+
+  static Absence absenceBonus() {
+    var absence = new Absence();
+    absence.setId(4L);
+    absence.setAbsenceType(AbsenceType.BONUS_DAYS);
+    absence.setName("Bonus");
     absence.setComment("Description");
     absence.setActive(true);
     absence.setIconUrl("icons/training.png");
