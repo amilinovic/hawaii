@@ -21,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -193,6 +194,9 @@ public class UserService {
    */
   @Transactional
   public User create(User user, User modifiedByUser) {
+    if(userRepository.existsByEmail(user.getEmail())){
+      logAndThrowEntityExistsException(user);
+    }
     saveAuditInformation(OperationPerformed.CREATE, modifiedByUser, user, null);
 
     return userRepository.save(user);
@@ -360,6 +364,11 @@ public class UserService {
       auditInformationService.saveAudit(operationPerformed, modifiedByUser, modifiedUser, previousUserState,
           currentUserState);
     }
+  }
+
+  private void logAndThrowEntityExistsException(User user) {
+    log.error("User with email {} already exists.", user.getEmail());
+    throw new EntityExistsException("User with email " + user.getEmail() + " already exists.");
   }
 
 }
