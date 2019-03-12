@@ -10,6 +10,7 @@ import eu.execom.hawaii.service.TokenIdentityVerifier;
 import eu.execom.hawaii.service.UserService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -26,6 +27,7 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 
 @EnableWebSecurity
 @EnableSwagger2
+@Import(springfox.bean.validators.configuration.BeanValidatorPluginsConfiguration.class)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
   private final List<String> clientIds;
   private final UserService userService;

@@ -3,6 +3,7 @@ package eu.execom.hawaii.dto;
 import eu.execom.hawaii.model.Team;
 import lombok.Data;
 
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,14 +12,27 @@ import java.util.stream.Collectors;
 public class TeamDto {
 
   private Long id;
+
+  @NotNull
   private String name;
+
   private String sicknessRequestEmails;
+
   private String annualRequestEmails;
+
   private String bonusRequestEmails;
+
+  @NotNull
   private boolean sendEmailToTeammatesForSicknessRequestEnabled;
+
+  @NotNull
   private boolean sendEmailToTeammatesForAnnualRequestEnabled;
+
+  @NotNull
   private boolean sendEmailToTeammatesForBonusRequestEnabled;
+
   private List<UserDto> users = new ArrayList<>();
+
   private List<UserDto> teamApprovers = new ArrayList<>();
 
   public TeamDto(Team team) {

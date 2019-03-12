@@ -3,14 +3,20 @@ package eu.execom.hawaii.dto;
 import eu.execom.hawaii.model.PublicHoliday;
 import lombok.Data;
 
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Data
 public class PublicHolidayDto {
 
-  private boolean deleted;
+  @NotNull
   private String name;
+
+  @NotNull
   private LocalDate date;
+
+  @NotNull
+  private boolean deleted;
 
   public PublicHolidayDto(PublicHoliday publicHoliday) {
     this.deleted = publicHoliday.isDeleted();
