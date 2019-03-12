@@ -25,6 +25,7 @@ import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.MonthDay;
+import java.time.Period;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -238,11 +239,18 @@ public class UserService {
     saveAuditInformation(OperationPerformed.DELETE, modifiedByUser, user, previousUserState);
   }
 
+  public User setAllowanceAndYearsOfServiceForUserOnCreateUser(User user, User modifiedByUser) {
+    user.setAllowances(createAllowanceForUserOnCreateUser(user));
+    user.setYearsOfService(calculateYearsOfService(user));
+
+    return create(user, modifiedByUser);
+  }
+
   /**
    * Gets users leave profile and currently active years, and creates allowances
    * according with values from leave profile
    */
-  public User createAllowanceForUserOnCreateUser(User user, User modifiedByUser) {
+  private List<Allowance> createAllowanceForUserOnCreateUser(User user) {
     var leaveProfile = leaveProfileRepository.getOne(user.getLeaveProfile().getId());
     var openedActiveYears = yearRepository.findAllByYearGreaterThanEqual(LocalDate.now().getYear());
     List<Allowance> userAllowances = new ArrayList<>();
@@ -250,8 +258,12 @@ public class UserService {
       Allowance allowance = createAllowance(user, year, leaveProfile);
       userAllowances.add(allowance);
     }
-    user.setAllowances(userAllowances);
-    return create(user, modifiedByUser);
+
+    return userAllowances;
+  }
+
+  private int calculateYearsOfService(User user) {
+    return Period.between(user.getStartedWorkingDate(), user.getStartedWorkingAtExecomDate()).getYears();
   }
 
   /**
@@ -260,7 +272,7 @@ public class UserService {
    * If date of Leave Profile update was before half year mark, only half of allowance bonus should
    * be added, and full amount if it was afterwards. Following years allowances receive full amount.
    *
-   * @param user the User entity for witch allowances should be updated.
+   * @param user the User entity for which allowances should be updated.
    * @param previousLeaveProfile the LeaveProfile entity necessary for determining difference in allowance.
    * @param todaysDate year, month and date for today.
    */
