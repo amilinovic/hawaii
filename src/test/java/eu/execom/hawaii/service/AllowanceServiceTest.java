@@ -2,9 +2,8 @@ package eu.execom.hawaii.service;
 
 import eu.execom.hawaii.exceptions.InsufficientHoursException;
 import eu.execom.hawaii.model.Allowance;
+import eu.execom.hawaii.model.Day;
 import eu.execom.hawaii.model.User;
-import eu.execom.hawaii.model.enumerations.AbsenceSubtype;
-import eu.execom.hawaii.model.enumerations.AbsenceType;
 import eu.execom.hawaii.model.enumerations.RequestStatus;
 import eu.execom.hawaii.repository.AllowanceRepository;
 import eu.execom.hawaii.repository.PublicHolidayRepository;
@@ -43,17 +42,25 @@ public class AllowanceServiceTest {
 
   private int thisYear;
   private int nextYear;
+  private int lastYear;
+  private Day dayOne;
+  private Day dayTwo;
   private User mockUser;
   private Allowance currentYearAllowance;
+  private Allowance nextYearAllowance;
+  private Allowance lastYearAllowance;
 
   @Before
   public void setUp() {
-
     thisYear = EntityBuilder.thisYear().getYear();
     nextYear = EntityBuilder.nextYear().getYear();
-
+    lastYear = EntityBuilder.lastYear().getYear();
     mockUser = EntityBuilder.user(EntityBuilder.team());
+    dayOne = EntityBuilder.day(LocalDate.of(thisYear, 11, 26));
+    dayTwo = EntityBuilder.day(LocalDate.of(thisYear, 11, 27));
     currentYearAllowance = EntityBuilder.allowance(mockUser);
+    nextYearAllowance = EntityBuilder.nextYearAllowance(mockUser);
+    lastYearAllowance = EntityBuilder.lastYearAllowance(mockUser);
   }
 
   @Test
@@ -72,17 +79,55 @@ public class AllowanceServiceTest {
   }
 
   @Test
+  public void shouldApplyAnnualLeaveRequestOnCurrentYearAllowance() {
+    // given
+    var request = EntityBuilder.request(EntityBuilder.absenceAnnual(), List.of(dayOne, dayTwo));
+    currentYearAllowance.setTakenAnnual(184);
+    nextYearAllowance.setTakenInPreviousYear(0);
+
+    given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
+    given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(nextYearAllowance);
+
+    // when
+    allowanceService.applyRequest(request, false);
+
+    // then
+    assertThat("Expect taken annual hours for this year to be 200", currentYearAllowance.getTakenAnnual(), is(200));
+    assertThat("Expect taken annual hours from next year to be 0", nextYearAllowance.getTakenInPreviousYear(), is(0));
+    verify(allowanceRepository, times(2)).findByUserIdAndYearYear(anyLong(), anyInt());
+    verify(allowanceRepository).save(any());
+    verifyNoMoreInteractions(allowanceRepository);
+  }
+
+  @Test
+  public void shouldApplyAnnualLeaveRequestOnNextYearAllowance() {
+    // given
+    var request = EntityBuilder.request(EntityBuilder.absenceAnnual(), List.of(dayOne, dayTwo));
+    currentYearAllowance.setTakenAnnual(200);
+    nextYearAllowance.setTakenInPreviousYear(0);
+
+    given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
+    given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(nextYearAllowance);
+
+    // when
+    allowanceService.applyRequest(request, false);
+
+    // then
+    assertThat("Expect taken annual hours for this year to be 200", currentYearAllowance.getTakenAnnual(), is(200));
+    assertThat("Expect taken annual hours from next year to be 16", nextYearAllowance.getTakenInPreviousYear(), is(16));
+    verify(allowanceRepository, times(2)).findByUserIdAndYearYear(anyLong(), anyInt());
+    verify(allowanceRepository, times(2)).save(any());
+    verifyNoMoreInteractions(allowanceRepository);
+  }
+
+  @Test
   public void shouldApplyAnnualLeaveRequestOnCurrentAndNextYear() {
     // given
-    var dayOne = EntityBuilder.day(LocalDate.of(thisYear, 11, 25));
-    var dayTwo = EntityBuilder.day(LocalDate.of(thisYear, 11, 28));
     var request = EntityBuilder.request(EntityBuilder.absenceAnnual(), Arrays.asList(dayOne, dayTwo));
-
     var startYearFrom = LocalDate.of(thisYear, 1, 1);
     var endYearTo = LocalDate.of(thisYear, 12, 31);
-    var nextYearAllowance = EntityBuilder.allowance(mockUser);
-    nextYearAllowance.setId(2L);
-    nextYearAllowance.setYear(EntityBuilder.nextYear());
+    currentYearAllowance.setTakenAnnual(192);
+    nextYearAllowance.setTakenInPreviousYear(8);
 
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(nextYearAllowance);
@@ -93,32 +138,29 @@ public class AllowanceServiceTest {
     allowanceService.applyRequest(request, false);
 
     // then
+    assertThat("Expect taken annual hours for this year to be 200", currentYearAllowance.getTakenAnnual(), is(200));
+    assertThat("Expect taken annual hours from next year to be 16", nextYearAllowance.getTakenInPreviousYear(), is(16));
     verify(allowanceRepository, times(2)).findByUserIdAndYearYear(anyLong(), anyInt());
-    verify(allowanceRepository).save(any());
+    verify(allowanceRepository, times(2)).save(any());
     verifyNoMoreInteractions(allowanceRepository);
   }
 
-  // Also same for pending
-
   @Test
-  public void shouldApplyAnnualLeaveRequestOnNextYearAllowance() {
+  public void shouldApplyAnnualLeaveRequestCancellationCurrentYear() {
     // given
-    var dayOne = EntityBuilder.day(LocalDate.of(thisYear, 11, 26));
-    var dayTwo = EntityBuilder.day(LocalDate.of(thisYear, 11, 27));
     var request = EntityBuilder.request(EntityBuilder.absenceAnnual(), List.of(dayOne, dayTwo));
-
     currentYearAllowance.setTakenAnnual(200);
-    var nextYearAllowance = EntityBuilder.allowance(mockUser);
-    nextYearAllowance.setId(2L);
-    nextYearAllowance.setYear(EntityBuilder.nextYear());
+    nextYearAllowance.setTakenInPreviousYear(0);
 
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(nextYearAllowance);
 
     // when
-    allowanceService.applyRequest(request, false);
+    allowanceService.applyRequest(request, true);
 
     // then
+    assertThat("Expect taken annual hours for this year to be 184", currentYearAllowance.getTakenAnnual(), is(184));
+    assertThat("Expect taken annual hours from next year to be 0", nextYearAllowance.getTakenInPreviousYear(), is(0));
     verify(allowanceRepository, times(2)).findByUserIdAndYearYear(anyLong(), anyInt());
     verify(allowanceRepository, times(2)).save(any());
     verifyNoMoreInteractions(allowanceRepository);
@@ -127,14 +169,9 @@ public class AllowanceServiceTest {
   @Test
   public void shouldApplyAnnualLeaveRequestCancellationNextYear() {
     // given
-    var dayOne = EntityBuilder.day(LocalDate.of(thisYear, 11, 26));
-    var dayTwo = EntityBuilder.day(LocalDate.of(thisYear, 11, 27));
     var request = EntityBuilder.request(EntityBuilder.absenceAnnual(), List.of(dayOne, dayTwo));
-
     currentYearAllowance.setTakenAnnual(200);
-    var nextYearAllowance = EntityBuilder.allowance(mockUser);
-    nextYearAllowance.setId(2L);
-    nextYearAllowance.setYear(EntityBuilder.nextYear());
+    nextYearAllowance.setTakenInPreviousYear(24);
 
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(nextYearAllowance);
@@ -143,23 +180,19 @@ public class AllowanceServiceTest {
     allowanceService.applyRequest(request, true);
 
     // then
+    assertThat("Expect taken annual hours for this year to be 200", currentYearAllowance.getTakenAnnual(), is(200));
+    assertThat("Expect taken annual hours from next year to be 8", nextYearAllowance.getTakenInPreviousYear(), is(8));
     verify(allowanceRepository, times(2)).findByUserIdAndYearYear(anyLong(), anyInt());
-    verify(allowanceRepository, times(2)).save(any());
+    verify(allowanceRepository).save(any());
     verifyNoMoreInteractions(allowanceRepository);
   }
 
   @Test
   public void shouldApplyAnnualLeaveRequestCancellationCurrentAndNextYear() {
     // given
-    var dayOne = EntityBuilder.day(LocalDate.of(thisYear, 11, 26));
-    var dayTwo = EntityBuilder.day(LocalDate.of(thisYear, 11, 27));
     var request = EntityBuilder.request(EntityBuilder.absenceAnnual(), List.of(dayOne, dayTwo));
-
     currentYearAllowance.setTakenAnnual(200);
-    var nextYearAllowance = EntityBuilder.allowance(mockUser);
-    nextYearAllowance.setId(2L);
-    nextYearAllowance.setYear(EntityBuilder.nextYear());
-    nextYearAllowance.setTakenAnnual(24);
+    nextYearAllowance.setTakenInPreviousYear(8);
 
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(nextYearAllowance);
@@ -168,110 +201,75 @@ public class AllowanceServiceTest {
     allowanceService.applyRequest(request, true);
 
     // then
+
+    assertThat("Expect taken annual hours for this year to be 192", currentYearAllowance.getTakenAnnual(), is(192));
+    assertThat("Expect taken annual hours from next year to be 0", nextYearAllowance.getTakenInPreviousYear(), is(0));
     verify(allowanceRepository, times(2)).findByUserIdAndYearYear(anyLong(), anyInt());
-    verify(allowanceRepository).save(any());
+    verify(allowanceRepository, times(2)).save(any());
     verifyNoMoreInteractions(allowanceRepository);
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void shouldFailToApplyRequest() {
     // given
-    var absence = EntityBuilder.absenceAnnual();
-    absence.setAbsenceSubtype(null);
-
-    var dayOne = EntityBuilder.day(LocalDate.of(thisYear, 11, 25));
-    var request = EntityBuilder.request(absence, List.of(dayOne));
+    var request = EntityBuilder.request(EntityBuilder.absenceAnnual(), List.of(dayOne));
+    request.getAbsence().setAbsenceSubtype(null);
 
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
 
     // when
     allowanceService.applyRequest(request, false);
-
   }
 
   @Test(expected = InsufficientHoursException.class)
   public void shouldFailToApplyAnnualRequestDueInsufficientHours() {
     //given
-    var absence = EntityBuilder.absenceAnnual();
-    absence.setAbsenceSubtype(AbsenceSubtype.ANNUAL);
+    var request = EntityBuilder.request(EntityBuilder.absenceAnnual(), List.of(dayOne, dayTwo));
+    currentYearAllowance.setTakenAnnual(200);
+    nextYearAllowance.setPendingInPreviousYear(20);
+    nextYearAllowance.setTakenInPreviousYear(20);
 
-    var allowance = EntityBuilder.allowance(mockUser);
-    allowance.setTakenAnnual(160);
-    allowance.setCarriedOver(0);
-
-    var nextYearAllownace = EntityBuilder.allowance(mockUser);
-    nextYearAllownace.setTakenAnnual(160);
-    nextYearAllownace.setCarriedOver(0);
-
-    var dayOne = EntityBuilder.day(LocalDate.of(thisYear, 10, 17));
-    var dayTwo = EntityBuilder.day(LocalDate.of(thisYear, 10, 18));
-
-    var request = EntityBuilder.request(absence, List.of(dayOne, dayTwo));
-
-    given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(allowance);
-    given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(nextYearAllownace);
+    given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
+    given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(nextYearAllowance);
 
     // when
     allowanceService.applyRequest(request, false);
-
   }
 
   @Test(expected = InsufficientHoursException.class)
   public void shouldFailToApplyTrainingRequestDueInsufficientHours() {
     //given
-    var absence = EntityBuilder.absenceAnnual();
-    absence.setAbsenceSubtype(AbsenceSubtype.TRAINING);
-
-    var dayOne = EntityBuilder.day(LocalDate.of(thisYear, 11, 20));
-    var dayTwo = EntityBuilder.day(LocalDate.of(thisYear, 11, 21));
-    var dayThree = EntityBuilder.day(LocalDate.of(thisYear, 11, 22));
-    var request = EntityBuilder.request(absence, List.of(dayOne, dayTwo, dayThree));
+    var dayThree = EntityBuilder.day(LocalDate.of(thisYear, 11, 28));
+    var request = EntityBuilder.request(EntityBuilder.absenceTraining(), List.of(dayOne, dayTwo, dayThree));
 
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
 
     //when
     allowanceService.applyRequest(request, false);
-
   }
 
-  @Test
-  public void shouldApplyPendingAnnualLeaveRequestOnCurrentAndNextYear() {
-    // given
-    var dayOne = EntityBuilder.day(LocalDate.of(thisYear, 11, 26));
-    var dayTwo = EntityBuilder.day(LocalDate.of(thisYear, 11, 27));
+  @Test(expected = InsufficientHoursException.class)
+  public void shouldFailToApplyPendingAnnualLeaveRequestDueInsufficientHours() {
+    //given
     var request = EntityBuilder.request(EntityBuilder.absenceAnnual(), List.of(dayOne, dayTwo));
-    request.setRequestStatus(RequestStatus.PENDING);
-
     currentYearAllowance.setTakenAnnual(200);
-    var nextYearAllowance = EntityBuilder.allowance(mockUser);
-    nextYearAllowance.setId(2L);
-    nextYearAllowance.setYear(EntityBuilder.nextYear());
-    nextYearAllowance.setTakenAnnual(24);
+    nextYearAllowance.setTakenInPreviousYear(20);
+    nextYearAllowance.setPendingInPreviousYear(20);
 
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(nextYearAllowance);
 
-    // when
+    //when
     allowanceService.applyPendingRequest(request, false);
-
-    // then
-    verify(allowanceRepository, times(2)).findByUserIdAndYearYear(anyLong(), anyInt());
-    verify(allowanceRepository, times(2)).save(any());
-    verifyNoMoreInteractions(allowanceRepository);
   }
 
   @Test
   public void shouldApplyPendingAnnualLeaveRequestOnCurrentYear() {
     // given
-    var dayOne = EntityBuilder.day(LocalDate.of(thisYear, 11, 26));
-    var dayTwo = EntityBuilder.day(LocalDate.of(thisYear, 11, 27));
     var request = EntityBuilder.request(EntityBuilder.absenceAnnual(), List.of(dayOne, dayTwo));
-    request.setRequestStatus(RequestStatus.PENDING);
-
-    currentYearAllowance.setTakenAnnual(160);
-    var nextYearAllowance = EntityBuilder.allowance(mockUser);
-    nextYearAllowance.setId(2L);
-    nextYearAllowance.setYear(EntityBuilder.nextYear());
+    currentYearAllowance.setTakenAnnual(180);
+    currentYearAllowance.setPendingAnnual(0);
+    nextYearAllowance.setPendingInPreviousYear(0);
 
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(nextYearAllowance);
@@ -280,32 +278,55 @@ public class AllowanceServiceTest {
     allowanceService.applyPendingRequest(request, false);
 
     // then
+    assertThat("Expect pending annual hours for this year to be 16", currentYearAllowance.getPendingAnnual(), is(16));
+    assertThat("Expect pending annual hours from next year to be 0", nextYearAllowance.getPendingInPreviousYear(),
+        is(0));
     verify(allowanceRepository, times(2)).findByUserIdAndYearYear(anyLong(), anyInt());
     verify(allowanceRepository).save(any());
     verifyNoMoreInteractions(allowanceRepository);
   }
 
   @Test
-  public void shouldApplyPendingAnnualLeaveCancellationCurrentAndNextYear() {
+  public void shouldApplyPendingAnnualLeaveRequestOnNextYear() {
     // given
-    var dayOne = EntityBuilder.day(LocalDate.of(thisYear, 11, 26));
-    var dayTwo = EntityBuilder.day(LocalDate.of(thisYear, 11, 27));
     var request = EntityBuilder.request(EntityBuilder.absenceAnnual(), List.of(dayOne, dayTwo));
-    request.setRequestStatus(RequestStatus.PENDING);
-
     currentYearAllowance.setTakenAnnual(200);
-    var nextYearAllowance = EntityBuilder.allowance(mockUser);
-    nextYearAllowance.setId(2L);
-    nextYearAllowance.setYear(EntityBuilder.nextYear());
-    nextYearAllowance.setPendingAnnual(8);
+    currentYearAllowance.setPendingAnnual(0);
+    nextYearAllowance.setPendingInPreviousYear(0);
 
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(nextYearAllowance);
 
     // when
-    allowanceService.applyPendingRequest(request, true);
+    allowanceService.applyPendingRequest(request, false);
 
     // then
+    assertThat("Expect pending annual hours for this year to be 0", currentYearAllowance.getPendingAnnual(), is(0));
+    assertThat("Expect pending annual hours from next year to be 16", nextYearAllowance.getPendingInPreviousYear(),
+        is(16));
+    verify(allowanceRepository, times(2)).findByUserIdAndYearYear(anyLong(), anyInt());
+    verify(allowanceRepository, times(2)).save(any());
+    verifyNoMoreInteractions(allowanceRepository);
+  }
+
+  @Test
+  public void shouldApplyPendingAnnualLeaveRequestOnCurrentAndNextYear() {
+    // given
+    var request = EntityBuilder.request(EntityBuilder.absenceAnnual(), List.of(dayOne, dayTwo));
+    currentYearAllowance.setTakenAnnual(192);
+    currentYearAllowance.setPendingAnnual(0);
+    nextYearAllowance.setTakenInPreviousYear(24);
+    nextYearAllowance.setPendingInPreviousYear(0);
+
+    given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
+    given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(nextYearAllowance);
+
+    // when
+    allowanceService.applyPendingRequest(request, false);
+
+    // then
+    assertThat("Expect pending hours for this year to be 8", currentYearAllowance.getPendingAnnual(), is(8));
+    assertThat("Expect pending hours from next year to be 8", nextYearAllowance.getPendingInPreviousYear(), is(8));
     verify(allowanceRepository, times(2)).findByUserIdAndYearYear(anyLong(), anyInt());
     verify(allowanceRepository, times(2)).save(any());
     verifyNoMoreInteractions(allowanceRepository);
@@ -314,16 +335,10 @@ public class AllowanceServiceTest {
   @Test
   public void shouldApplyPendingAnnualLeaveCancellationCurrentYear() {
     // given
-    var dayOne = EntityBuilder.day(LocalDate.of(thisYear, 11, 26));
-    var dayTwo = EntityBuilder.day(LocalDate.of(thisYear, 11, 27));
     var request = EntityBuilder.request(EntityBuilder.absenceAnnual(), List.of(dayOne, dayTwo));
-    request.setRequestStatus(RequestStatus.PENDING);
-
     currentYearAllowance.setTakenAnnual(200);
-    var nextYearAllowance = EntityBuilder.allowance(mockUser);
-    nextYearAllowance.setId(2L);
-    nextYearAllowance.setYear(EntityBuilder.nextYear());
-    nextYearAllowance.setPendingAnnual(16);
+    currentYearAllowance.setPendingAnnual(16);
+    nextYearAllowance.setPendingInPreviousYear(0);
 
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(nextYearAllowance);
@@ -332,20 +347,302 @@ public class AllowanceServiceTest {
     allowanceService.applyPendingRequest(request, true);
 
     // then
+    assertThat("Expect pending hours for this year to be 0", currentYearAllowance.getPendingAnnual(), is(0));
+    assertThat("Expect pending hours from next year to be 0", nextYearAllowance.getPendingInPreviousYear(), is(0));
+    verify(allowanceRepository, times(2)).findByUserIdAndYearYear(anyLong(), anyInt());
+    verify(allowanceRepository, times(2)).save(any());
+    verifyNoMoreInteractions(allowanceRepository);
+  }
+
+  @Test
+  public void shouldApplyPendingAnnualLeaveCancellationNextYear() {
+    // given
+    var request = EntityBuilder.request(EntityBuilder.absenceAnnual(), List.of(dayOne, dayTwo));
+    currentYearAllowance.setTakenAnnual(200);
+    currentYearAllowance.setPendingAnnual(0);
+    nextYearAllowance.setPendingInPreviousYear(16);
+
+    given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
+    given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(nextYearAllowance);
+
+    // when
+    allowanceService.applyPendingRequest(request, true);
+
+    // then
+    assertThat("Expect pending hours for this year to be 0", currentYearAllowance.getPendingAnnual(), is(0));
+    assertThat("Expect pending hours from next year to be 0", nextYearAllowance.getPendingInPreviousYear(), is(0));
     verify(allowanceRepository, times(2)).findByUserIdAndYearYear(anyLong(), anyInt());
     verify(allowanceRepository).save(any());
     verifyNoMoreInteractions(allowanceRepository);
   }
 
   @Test
+  public void shouldApplyPendingAnnualLeaveCancellationCurrentAndNextYear() {
+    // given
+    var request = EntityBuilder.request(EntityBuilder.absenceAnnual(), List.of(dayOne, dayTwo));
+    currentYearAllowance.setTakenAnnual(200);
+    currentYearAllowance.setPendingAnnual(8);
+    nextYearAllowance.setPendingInPreviousYear(8);
+
+    given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
+    given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(nextYearAllowance);
+
+    // when
+    allowanceService.applyPendingRequest(request, true);
+
+    // then
+    assertThat("Expect pending hours for this year to be 0", currentYearAllowance.getPendingAnnual(), is(0));
+    assertThat("Expect pending hours from next year to be 0", nextYearAllowance.getPendingInPreviousYear(), is(0));
+    verify(allowanceRepository, times(2)).findByUserIdAndYearYear(anyLong(), anyInt());
+    verify(allowanceRepository, times(2)).save(any());
+    verifyNoMoreInteractions(allowanceRepository);
+  }
+
+  @Test
+  public void shouldApplyPendingAnnualLeaveRequestAndApplyRequestOnCurrentYear() {
+    var request = EntityBuilder.request(EntityBuilder.absenceAnnual(), List.of(dayOne, dayTwo));
+    currentYearAllowance.setTakenAnnual(184);
+    currentYearAllowance.setPendingAnnual(0);
+    nextYearAllowance.setPendingInPreviousYear(0);
+
+    given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
+    given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(nextYearAllowance);
+
+    // when request is created
+    allowanceService.applyPendingRequest(request, false);
+
+    // then
+    assertThat("Expect pending annual hours for this year to be 16", currentYearAllowance.getPendingAnnual(), is(16));
+    assertThat("Expect pending annual hours from next year to be 0", nextYearAllowance.getPendingInPreviousYear(),
+        is(0));
+
+    // when request is approved
+    allowanceService.applyPendingRequest(request, true);
+    allowanceService.applyRequest(request, false);
+
+    // then
+    assertThat("Expect pending annual hours for this year to be 0", currentYearAllowance.getPendingAnnual(), is(0));
+    assertThat("Expect pending annual hours from next year to be 0", nextYearAllowance.getPendingInPreviousYear(),
+        is(0));
+    assertThat("Expect taken annual hours for this year to be 200", currentYearAllowance.getTakenAnnual(), is(200));
+    assertThat("Expect taken annual hours from next year to be 0", nextYearAllowance.getTakenInPreviousYear(), is(0));
+    verify(allowanceRepository, times(6)).findByUserIdAndYearYear(anyLong(), anyInt());
+    verify(allowanceRepository, times(4)).save(any());
+    verifyNoMoreInteractions(allowanceRepository);
+  }
+
+  @Test
+  public void shouldApplyPendingAnnualLeaveRequestAndApplyRequestOnNextYear() {
+    var request = EntityBuilder.request(EntityBuilder.absenceAnnual(), List.of(dayOne, dayTwo));
+    currentYearAllowance.setTakenAnnual(200);
+    currentYearAllowance.setPendingAnnual(0);
+    nextYearAllowance.setPendingInPreviousYear(0);
+
+    given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
+    given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(nextYearAllowance);
+
+    // when request is created
+    allowanceService.applyPendingRequest(request, false);
+    // then
+    assertThat("Expect pending annual hours for this year to be 0", currentYearAllowance.getPendingAnnual(), is(0));
+    assertThat("Expect pending annual hours from next year to be 16", nextYearAllowance.getPendingInPreviousYear(),
+        is(16));
+
+    // when request is approved
+    allowanceService.applyPendingRequest(request, true);
+    allowanceService.applyRequest(request, false);
+
+    // then
+    assertThat("Expect pending annual hours for this year to be 0", currentYearAllowance.getPendingAnnual(), is(0));
+    assertThat("Expect pending annual hours from next year to be 0", nextYearAllowance.getPendingInPreviousYear(),
+        is(0));
+    assertThat("Expect taken annual hours for this year to be 200", currentYearAllowance.getTakenAnnual(), is(200));
+    assertThat("Expect taken annual hours from next year to be 16", nextYearAllowance.getTakenInPreviousYear(), is(16));
+    verify(allowanceRepository, times(6)).findByUserIdAndYearYear(anyLong(), anyInt());
+    verify(allowanceRepository, times(5)).save(any());
+    verifyNoMoreInteractions(allowanceRepository);
+  }
+
+  @Test
+  public void shouldApplyPendingAnnualLeaveRequestAndApplyRequestOnCurrentAndNextYear() {
+    var request = EntityBuilder.request(EntityBuilder.absenceAnnual(), List.of(dayOne, dayTwo));
+    currentYearAllowance.setTakenAnnual(192);
+    currentYearAllowance.setPendingAnnual(0);
+    nextYearAllowance.setTakenInPreviousYear(24);
+    nextYearAllowance.setPendingInPreviousYear(0);
+
+    given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
+    given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(nextYearAllowance);
+
+    // when request is created
+    allowanceService.applyPendingRequest(request, false);
+    // then
+    assertThat("Expect pending annual hours for this year to be 8", currentYearAllowance.getPendingAnnual(), is(8));
+    assertThat("Expect pending annual hours from next year to be 8", nextYearAllowance.getPendingInPreviousYear(),
+        is(8));
+
+    // when request is approved
+    allowanceService.applyPendingRequest(request, true);
+    allowanceService.applyRequest(request, false);
+
+    // then
+    assertThat("Expect pending annual hours for this year to be 0", currentYearAllowance.getPendingAnnual(), is(0));
+    assertThat("Expect pending annual hours from next year to be 0", nextYearAllowance.getPendingInPreviousYear(),
+        is(0));
+    assertThat("Expect taken annual hours for this year to be 200", currentYearAllowance.getTakenAnnual(), is(200));
+    assertThat("Expect taken annual hours from next year to be 32", nextYearAllowance.getTakenInPreviousYear(), is(32));
+    verify(allowanceRepository, times(6)).findByUserIdAndYearYear(anyLong(), anyInt());
+    verify(allowanceRepository, times(6)).save(any());
+    verifyNoMoreInteractions(allowanceRepository);
+  }
+
+  //creating and accepting request flow
+  @Test
+  public void shouldApplyPendingAnnualLeaveRequestAndApplyRequestOnCurrentYearWithRequestAlreadyPending() {
+    var request = EntityBuilder.request(EntityBuilder.absenceAnnual(), List.of(dayOne, dayTwo));
+    currentYearAllowance.setTakenAnnual(176);
+    currentYearAllowance.setPendingAnnual(8);
+    nextYearAllowance.setPendingInPreviousYear(0);
+
+    given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
+    given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(nextYearAllowance);
+
+    // when request is created
+    allowanceService.applyPendingRequest(request, false);
+
+    // then
+    assertThat("Expect pending annual hours for this year to be 24", currentYearAllowance.getPendingAnnual(), is(24));
+    assertThat("Expect pending annual hours from next year to be 0", nextYearAllowance.getPendingInPreviousYear(),
+        is(0));
+
+    // when request is approved
+    allowanceService.applyPendingRequest(request, true);
+    allowanceService.applyRequest(request, false);
+
+    // then
+    assertThat("Expect pending annual hours for this year to be 8", currentYearAllowance.getPendingAnnual(), is(8));
+    assertThat("Expect pending annual hours from next year to be 0", nextYearAllowance.getPendingInPreviousYear(),
+        is(0));
+    assertThat("Expect taken annual hours for this year to be 192", currentYearAllowance.getTakenAnnual(), is(192));
+    assertThat("Expect taken annual hours from next year to be 0", nextYearAllowance.getTakenInPreviousYear(), is(0));
+    verify(allowanceRepository, times(6)).findByUserIdAndYearYear(anyLong(), anyInt());
+    verify(allowanceRepository, times(4)).save(any());
+    verifyNoMoreInteractions(allowanceRepository);
+  }
+
+  @Test
+  public void shouldApplyPendingAnnualLeaveRequestAndApplyRequestOnNextYearWithRequestAlreadyPending() {
+    var request = EntityBuilder.request(EntityBuilder.absenceAnnual(), List.of(dayOne, dayTwo));
+    currentYearAllowance.setTakenAnnual(200);
+    currentYearAllowance.setPendingAnnual(0);
+    nextYearAllowance.setTakenInPreviousYear(8);
+    nextYearAllowance.setPendingInPreviousYear(8);
+
+    given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
+    given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(nextYearAllowance);
+
+    // when request is created
+    allowanceService.applyPendingRequest(request, false);
+    // then
+    assertThat("Expect pending annual hours for this year to be 0", currentYearAllowance.getPendingAnnual(), is(0));
+    assertThat("Expect pending annual hours from next year to be 24", nextYearAllowance.getPendingInPreviousYear(),
+        is(24));
+
+    // when request is approved
+    allowanceService.applyPendingRequest(request, true);
+    allowanceService.applyRequest(request, false);
+
+    // then
+    assertThat("Expect pending annual hours for this year to be 0", currentYearAllowance.getPendingAnnual(), is(0));
+    assertThat("Expect pending annual hours from next year to be 8", nextYearAllowance.getPendingInPreviousYear(),
+        is(8));
+    assertThat("Expect taken annual hours for this year to be 200", currentYearAllowance.getTakenAnnual(), is(200));
+    assertThat("Expect taken annual hours from next year to be 24", nextYearAllowance.getTakenInPreviousYear(), is(24));
+    verify(allowanceRepository, times(6)).findByUserIdAndYearYear(anyLong(), anyInt());
+    verify(allowanceRepository, times(5)).save(any());
+    verifyNoMoreInteractions(allowanceRepository);
+  }
+
+  @Test
+  public void shouldApplyPendingAnnualLeaveRequestAndApplyRequestOnCurrentAndNextYearWithRequestAlreadyPending() {
+    var request = EntityBuilder.request(EntityBuilder.absenceAnnual(), List.of(dayOne, dayTwo));
+    currentYearAllowance.setTakenAnnual(192);
+    currentYearAllowance.setPendingAnnual(8);
+    nextYearAllowance.setTakenInPreviousYear(0);
+    nextYearAllowance.setPendingInPreviousYear(8);
+
+    given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
+    given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(nextYearAllowance);
+
+    // when request is created
+    allowanceService.applyPendingRequest(request, false);
+    // then
+    assertThat("Expect pending annual hours for this year to be 8", currentYearAllowance.getPendingAnnual(), is(8));
+    assertThat("Expect pending annual hours from next year to be 24", nextYearAllowance.getPendingInPreviousYear(),
+        is(24));
+
+    // when request is approved
+    allowanceService.applyPendingRequest(request, true);
+    allowanceService.applyRequest(request, false);
+    // then
+    assertThat("Expect pending annual hours for this year to be 8", currentYearAllowance.getPendingAnnual(), is(8));
+    assertThat("Expect pending annual hours from next year to be 8", nextYearAllowance.getPendingInPreviousYear(),
+        is(8));
+    assertThat("Expect taken annual hours for this year to be 200", currentYearAllowance.getTakenAnnual(), is(200));
+    assertThat("Expect taken annual hours from next year to be 8", nextYearAllowance.getTakenInPreviousYear(), is(8));
+    verify(allowanceRepository, times(6)).findByUserIdAndYearYear(anyLong(), anyInt());
+    verify(allowanceRepository, times(5)).save(any());
+    verifyNoMoreInteractions(allowanceRepository);
+  }
+
+  @Test
+  public void shouldApplyTwoPendingAnnualLeaveRequestAndApplyRequestOnCurrentAndNextYear() {
+    var firstRequest = EntityBuilder.request(EntityBuilder.absenceAnnual(), List.of(dayOne, dayTwo));
+    var dayThree = EntityBuilder.day(LocalDate.of(thisYear, 11, 28));
+    var dayFour = EntityBuilder.day(LocalDate.of(thisYear, 11, 29));
+    var secondRequest = EntityBuilder.requestII(EntityBuilder.absenceAnnual(), List.of(dayThree, dayFour));
+
+    currentYearAllowance.setTakenAnnual(192);
+    currentYearAllowance.setPendingAnnual(0);
+    nextYearAllowance.setTakenInPreviousYear(0);
+    nextYearAllowance.setPendingInPreviousYear(0);
+
+    given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
+    given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(nextYearAllowance);
+
+    // when first request is created
+    allowanceService.applyPendingRequest(firstRequest, false);
+    // then
+    assertThat("Expect pending annual hours for this year to be 8", currentYearAllowance.getPendingAnnual(), is(8));
+    assertThat("Expect pending annual hours from next year to be 8", nextYearAllowance.getPendingInPreviousYear(),
+        is(8));
+
+    // when second request is created and first is not approved yet
+    allowanceService.applyPendingRequest(secondRequest, false);
+    // then
+    assertThat("Expect pending annual hours for this year to be 8", currentYearAllowance.getPendingAnnual(), is(8));
+    assertThat("Expect pending annual hours from next year to be 24", nextYearAllowance.getPendingInPreviousYear(),
+        is(24));
+
+    // when first request is approved
+    allowanceService.applyPendingRequest(firstRequest, true);
+    allowanceService.applyRequest(firstRequest, false);
+    // then
+    assertThat("Expect pending annual hours for this year to be 8", currentYearAllowance.getPendingAnnual(), is(8));
+    assertThat("Expect pending annual hours from next year to be 8", nextYearAllowance.getPendingInPreviousYear(),
+        is(8));
+    assertThat("Expect taken annual hours for this year to be 200", currentYearAllowance.getTakenAnnual(), is(200));
+    assertThat("Expect taken annual hours from next year to be 8", nextYearAllowance.getTakenInPreviousYear(), is(8));
+    verify(allowanceRepository, times(8)).findByUserIdAndYearYear(anyLong(), anyInt());
+    verify(allowanceRepository, times(7)).save(any());
+    verifyNoMoreInteractions(allowanceRepository);
+  }
+
+  @Test
   public void shouldApplyPendingTraining() {
     // given
-    var dayOne = EntityBuilder.day(LocalDate.of(thisYear, 11, 26));
-    var dayTwo = EntityBuilder.day(LocalDate.of(thisYear, 11, 27));
     var request = EntityBuilder.request(EntityBuilder.absenceTraining(), List.of(dayOne, dayTwo));
-    request.setRequestStatus(RequestStatus.PENDING);
 
-    var nextYearAllowance = EntityBuilder.allowance(mockUser);
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(nextYearAllowance);
 
@@ -353,20 +650,30 @@ public class AllowanceServiceTest {
     allowanceService.applyPendingRequest(request, false);
 
     // then
+    assertThat("Expect pending training hours to be 16", currentYearAllowance.getPendingTraining(), is(16));
     verify(allowanceRepository, times(2)).findByUserIdAndYearYear(anyLong(), anyInt());
     verify(allowanceRepository).save(any());
     verifyNoMoreInteractions(allowanceRepository);
   }
 
+  @Test(expected = InsufficientHoursException.class)
+  public void shouldFailToApplyPendingTrainingRequestDueInsufficientHours() {
+    //given
+    var dayThree = EntityBuilder.day(LocalDate.of(thisYear, 11, 28));
+    var request = EntityBuilder.request(EntityBuilder.absenceTraining(), List.of(dayOne, dayTwo, dayThree));
+
+    given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
+
+    //when
+    allowanceService.applyPendingRequest(request, false);
+  }
+
   @Test
   public void shouldApplyTraining() {
     // given
-    var dayOne = EntityBuilder.day(LocalDate.of(thisYear, 11, 26));
-    var dayTwo = EntityBuilder.day(LocalDate.of(thisYear, 11, 27));
     var request = EntityBuilder.request(EntityBuilder.absenceTraining(), List.of(dayOne, dayTwo));
     request.setRequestStatus(RequestStatus.APPROVED);
 
-    var nextYearAllowance = EntityBuilder.allowance(mockUser);
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(nextYearAllowance);
 
@@ -374,6 +681,7 @@ public class AllowanceServiceTest {
     allowanceService.applyRequest(request, false);
 
     // then
+    assertThat("Expect training hours to be 16", currentYearAllowance.getTakenTraining(), is(16));
     verify(allowanceRepository, times(2)).findByUserIdAndYearYear(anyLong(), anyInt());
     verify(allowanceRepository).save(any());
     verifyNoMoreInteractions(allowanceRepository);
@@ -381,14 +689,9 @@ public class AllowanceServiceTest {
 
   @Test
   public void shouldApplySickness() {
-    var dayOne = EntityBuilder.day(LocalDate.of(thisYear, 11, 26));
-    var dayTwo = EntityBuilder.day(LocalDate.of(thisYear, 11, 27));
-    var absenceSickness = EntityBuilder.absence();
-    absenceSickness.setAbsenceType(AbsenceType.SICKNESS);
-    var request = EntityBuilder.request(absenceSickness, List.of(dayOne, dayTwo));
-    request.setRequestStatus(RequestStatus.APPROVED);
+    // given
+    var request = EntityBuilder.request(EntityBuilder.absenceSickness(), List.of(dayOne, dayTwo));
 
-    var nextYearAllowance = EntityBuilder.allowance(mockUser);
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(nextYearAllowance);
 
@@ -396,6 +699,7 @@ public class AllowanceServiceTest {
     allowanceService.applyRequest(request, false);
 
     // then
+    assertThat("Expect sick hours to be 16", currentYearAllowance.getSickness(), is(16));
     verify(allowanceRepository, times(2)).findByUserIdAndYearYear(anyLong(), anyInt());
     verify(allowanceRepository).save(any());
     verifyNoMoreInteractions(allowanceRepository);
@@ -403,30 +707,88 @@ public class AllowanceServiceTest {
 
   @Test
   public void shouldApplyBonusDays() {
-    var dayOne = EntityBuilder.day(LocalDate.of(thisYear, 11, 26));
-    var dayTwo = EntityBuilder.day(LocalDate.of(thisYear, 11, 27));
-    var absenceBonusDays = EntityBuilder.absence();
-    var request = EntityBuilder.request(absenceBonusDays, List.of(dayOne, dayTwo));
+    // given
+    var request = EntityBuilder.request(EntityBuilder.absenceBonus(), List.of(dayOne, dayTwo));
     request.setRequestStatus(RequestStatus.APPROVED);
 
-    var nextYearAllowance = EntityBuilder.allowance(mockUser);
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
-    given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(nextYearAllowance);
 
     // when
     allowanceService.applyRequest(request, false);
 
     // then
+    assertThat("Expect bonus hours to be 16", currentYearAllowance.getBonus(), is(16));
     verify(allowanceRepository, times(2)).findByUserIdAndYearYear(anyLong(), anyInt());
     verify(allowanceRepository).save(any());
     verifyNoMoreInteractions(allowanceRepository);
   }
 
   @Test
+  public void shouldApplyAllRequestedBonusDaysFromLastYear() {
+    // given
+    dayOne.setDate(dayOne.getDate().minusYears(1));
+    dayTwo.setDate(dayTwo.getDate().minusYears(1));
+    var request = EntityBuilder.request(EntityBuilder.absenceBonus(), List.of(dayOne, dayTwo));
+    request.setRequestStatus(RequestStatus.APPROVED);
+    lastYearAllowance.setBonus(16);
+    currentYearAllowance.setCarriedOver(16);
+
+    given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), lastYear)).willReturn(lastYearAllowance);
+    given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
+
+    // when
+    allowanceService.applyRequest(request, false);
+
+    // then
+    assertThat("Expect bonus hours to be 32", lastYearAllowance.getBonus(), is(32));
+    assertThat("Expect carriedOver to be 32", currentYearAllowance.getCarriedOver(), is(32));
+    verify(allowanceRepository, times(2)).findByUserIdAndYearYear(anyLong(), anyInt());
+    verify(allowanceRepository, times(2)).save(any());
+    verifyNoMoreInteractions(allowanceRepository);
+  }
+
+  @Test
+  public void shouldApplySomeRequestedBonusDaysFromLastYear() {
+    // given
+    dayOne.setDate(dayOne.getDate().minusYears(1));
+    dayTwo.setDate(dayTwo.getDate().minusYears(1));
+    var request = EntityBuilder.request(EntityBuilder.absenceBonus(), List.of(dayOne, dayTwo));
+    request.setRequestStatus(RequestStatus.APPROVED);
+    lastYearAllowance.setBonus(16);
+    currentYearAllowance.setCarriedOver(32);
+
+    given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), lastYear)).willReturn(lastYearAllowance);
+    given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
+
+    // when
+    allowanceService.applyRequest(request, false);
+
+    // then
+    assertThat("Expect bonus hours to be 32", lastYearAllowance.getBonus(), is(32));
+    assertThat("Expect carriedOver to be 40", currentYearAllowance.getCarriedOver(), is(40));
+    verify(allowanceRepository, times(2)).findByUserIdAndYearYear(anyLong(), anyInt());
+    verify(allowanceRepository, times(2)).save(any());
+    verifyNoMoreInteractions(allowanceRepository);
+  }
+
+  @Test(expected = InsufficientHoursException.class)
+  public void shouldFailToApplyBonusDays() {
+    // given
+    var request = EntityBuilder.request(EntityBuilder.absenceBonus(), List.of(dayOne, dayTwo));
+    request.setRequestStatus(RequestStatus.APPROVED);
+    currentYearAllowance.setBonus(30);
+
+    given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
+    given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(nextYearAllowance);
+
+    // when
+    allowanceService.applyRequest(request, false);
+  }
+
+  @Test
   public void shouldGetAllowancesForUser() {
-    //given
+    // given
     currentYearAllowance.setTakenAnnual(100);
-    var nextYearAllowance = EntityBuilder.allowanceII(mockUser);
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(nextYearAllowance);
 
