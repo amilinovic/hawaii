@@ -14,6 +14,7 @@ import publicHolidays from './publicHolidaysReducer';
 import team from './teamReducer';
 import teams from './teamsReducer';
 import user from './userReducer';
+import years from './yearsReducer';
 
 export default combineReducers({
   authorization,
@@ -29,6 +30,7 @@ export default combineReducers({
   leaveProfiles,
   leaveProfile,
   modal,
+  years,
   allowance,
   toastr
 });

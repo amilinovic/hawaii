@@ -14,6 +14,7 @@ import { requestsSaga } from './requestsSaga';
 import { teamSaga } from './teamSaga';
 import { teamsSaga } from './teamsSaga';
 import { userSaga } from './userSaga';
+import { yearsSaga } from './yearsSaga';
 
 export default function* saga() {
   yield all([
@@ -31,6 +32,7 @@ export default function* saga() {
     ...leaveProfilesSaga,
     ...leaveProfileSaga,
     ...allowanceSaga,
+    ...yearsSaga,
     ...requestsSaga
   ]);
 }

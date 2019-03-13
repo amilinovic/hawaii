@@ -3,12 +3,14 @@ import Employees from '../components/employees/Employees';
 import LeaveProfiles from '../components/leaveProfiles/LeaveProfiles';
 import Tabs from '../components/tabs/Tabs';
 import Teams from '../components/teams/Teams';
+import Years from '../components/years/Years';
 
 export default class Administration extends Component {
   state = {
     tabList: [
       { label: 'Teams', content: <Teams /> },
       { label: 'Employees', content: <Employees /> },
+      { label: 'Years', content: <Years /> },
       { label: 'Leave profiles', content: <LeaveProfiles /> }
     ],
     activeTabIndex: 0

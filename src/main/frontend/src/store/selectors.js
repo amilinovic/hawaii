@@ -13,3 +13,4 @@ export const getLeaveTypes = state => state.leaveTypes;
 export const getLeaveProfiles = state => state.leaveProfiles;
 export const getLeaveProfile = state => state.leaveProfile;
 export const getAllowance = state => state.allowance;
+export const getYears = state => state.years;
