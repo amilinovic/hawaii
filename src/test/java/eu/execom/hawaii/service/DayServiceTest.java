@@ -1,6 +1,5 @@
 package eu.execom.hawaii.service;
 
-import eu.execom.hawaii.model.Absence;
 import eu.execom.hawaii.model.Day;
 import eu.execom.hawaii.model.Request;
 import eu.execom.hawaii.model.User;
@@ -45,11 +44,10 @@ public class DayServiceTest {
 
   @Before
   public void setUp() {
-    Absence absence = EntityBuilder.absence();
     Day day1 = EntityBuilder.day(LocalDate.of(2019, 1, 1));
     Day day2 = EntityBuilder.day(LocalDate.of(2019, 1, 5));
     mockDays = List.of(day1, day2);
-    var mockRequest = EntityBuilder.request(absence, List.of(day1));
+    var mockRequest = EntityBuilder.request(EntityBuilder.absenceAnnual(), List.of(day1));
     mockRequests = List.of(mockRequest);
     mockUser = mockRequest.getUser();
     date = day1.getDate();

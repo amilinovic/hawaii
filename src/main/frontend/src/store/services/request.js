@@ -2,9 +2,10 @@ import request from 'superagent';
 import { getLink } from '../getLink';
 import { getTokenFromSessionStorage } from './getTokenFromSessionStorage';
 
-const get = url => {
+const get = (url, data) => {
   return request
     .get(getLink(url))
+    .query(data)
     .set('X-ID-TOKEN', getTokenFromSessionStorage().token)
     .then(res => res.body);
 };
@@ -40,7 +41,7 @@ const search = (url, query) => {
     .then(res => res.body);
 };
 
-export const getFactory = url => async () => await get(url);
+export const getFactory = (url, data) => async () => await get(url, data);
 export const delFactory = url => async () => await del(url);
 export const postFactory = (url, data) => async () => await post(url, data);
 export const putFactory = (url, data) => async () => await put(url, data);
