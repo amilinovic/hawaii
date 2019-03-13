@@ -39,6 +39,7 @@ class Teams extends Component {
               <thead>
                 <tr>
                   <th>Year</th>
+                  <th>Active</th>
                 </tr>
               </thead>
               <tbody>{yearItems}</tbody>
