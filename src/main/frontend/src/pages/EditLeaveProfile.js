@@ -12,7 +12,12 @@ import {
 import { getLeaveProfile } from '../store/selectors';
 
 const validationSchema = Yup.object().shape({
-  name: Yup.string().required()
+  name: Yup.string().required(),
+  entitlement: Yup.string().required(),
+  maxCarriedOver: Yup.string().required(),
+  maxBonusDays: Yup.string().required(),
+  maxAllowanceFromNextYear: Yup.string().required(),
+  training: Yup.string().required()
 });
 
 class EditLeaveProfile extends Component {
@@ -30,14 +35,7 @@ class EditLeaveProfile extends Component {
           initialValues={this.props.leaveProfile}
           onSubmit={this.props.updateLeaveProfile}
           enableReinitialize
-          render={({
-            handleSubmit,
-            handleChange,
-            values,
-            errors,
-            touched,
-            setFieldValue
-          }) => (
+          render={({ handleSubmit, handleChange, values, errors, touched }) => (
             <React.Fragment>
               <input
                 className={`${
@@ -50,7 +48,9 @@ class EditLeaveProfile extends Component {
               />
               <input
                 className={`${
-                  errors.name && touched.name ? 'border-danger' : ''
+                  errors.entitlement && touched.entitlement
+                    ? 'border-danger'
+                    : ''
                 } w-100 mb-3 border`}
                 name="entitlement"
                 defaultValue={values.entitlement}
@@ -59,7 +59,9 @@ class EditLeaveProfile extends Component {
               />
               <input
                 className={`${
-                  errors.name && touched.name ? 'border-danger' : ''
+                  errors.maxCarriedOver && touched.maxCarriedOver
+                    ? 'border-danger'
+                    : ''
                 } w-100 mb-3 border`}
                 name="maxCarriedOver"
                 defaultValue={values.maxCarriedOver}
@@ -68,7 +70,9 @@ class EditLeaveProfile extends Component {
               />
               <input
                 className={`${
-                  errors.name && touched.name ? 'border-danger' : ''
+                  errors.maxBonusDays && touched.maxBonusDays
+                    ? 'border-danger'
+                    : ''
                 } w-100 mb-3 border`}
                 name="maxBonusDays"
                 defaultValue={values.maxBonusDays}
@@ -77,7 +81,10 @@ class EditLeaveProfile extends Component {
               />
               <input
                 className={`${
-                  errors.name && touched.name ? 'border-danger' : ''
+                  errors.maxAllowanceFromNextYear &&
+                  touched.maxAllowanceFromNextYear
+                    ? 'border-danger'
+                    : ''
                 } w-100 mb-3 border`}
                 name="maxAllowanceFromNextYear"
                 defaultValue={values.maxAllowanceFromNextYear}
@@ -86,7 +93,7 @@ class EditLeaveProfile extends Component {
               />
               <input
                 className={`${
-                  errors.name && touched.name ? 'border-danger' : ''
+                  errors.training && touched.training ? 'border-danger' : ''
                 } w-100 mb-3 border`}
                 name="training"
                 defaultValue={values.training}
@@ -94,12 +101,14 @@ class EditLeaveProfile extends Component {
                 onChange={handleChange}
               />
               <textarea
+                className="border mb-3"
                 name="comment"
                 defaultValue={values.comment}
                 onChange={handleChange}
+                placeholder="Comment"
               />
               <button className="btn" onClick={handleSubmit} type="submit">
-                Update
+                Update leave profile
               </button>
             </React.Fragment>
           )}
