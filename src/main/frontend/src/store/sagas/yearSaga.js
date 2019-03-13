@@ -1,49 +1,47 @@
 import { push } from 'connected-react-router';
 import { call, put, takeLatest } from 'redux-saga/effects';
 import {
-  errorReceivingTeam,
-  errorRemovingTeam,
-  receiveTeam,
-  removeTeam,
-  removeTeamSuccess,
-  requestTeam,
-  updateTeam,
-  updateTeamError,
-  updateTeamSuccessful
-} from '../actions/teamActions';
-import {
   createYear,
   createYearError,
-  createYearSuccessful
+  createYearSuccessful,
+  errorReceivingYear,
+  errorRemovingYear,
+  receiveYear,
+  removeYear,
+  removeYearSuccess,
+  requestYear,
+  updateYear,
+  updateYearError,
+  updateYearSuccessful
 } from '../actions/yearActions';
 import {
-  getTeamApi,
-  removeTeamApi,
-  updateTeamApi
-} from '../services/teamService';
-import { createYearApi } from '../services/yearService';
+  createYearApi,
+  getYearApi,
+  removeYearApi,
+  updateYearApi
+} from '../services/yearService';
 import {
   genericErrorHandler,
   withErrorHandling
 } from './HOC/withErrorHandling';
 import { toastrSuccess } from './toastrHelperSaga';
 
-const getTeamSaga = function*(action) {
-  const teamInformation = yield call(getTeamApi(action.payload));
-  yield put(receiveTeam(teamInformation));
+const getYearSaga = function*(action) {
+  const yearInformation = yield call(getYearApi(action.payload));
+  yield put(receiveYear(yearInformation));
 };
 
-const removeTeamSaga = function*(action) {
-  yield call(removeTeamApi(action.payload.id));
-  yield put(removeTeamSuccess());
-  yield put(toastrSuccess('Succesfully removed team'));
+const removeYearSaga = function*(action) {
+  yield call(removeYearApi(action.payload.id));
+  yield put(removeYearSuccess());
+  yield put(toastrSuccess('Succesfully removed year'));
   yield put(push('/administration'));
 };
 
-const updateTeamSaga = function*(action) {
-  yield call(updateTeamApi(action.payload));
-  yield put(updateTeamSuccessful());
-  yield put(toastrSuccess('Succesfully updated team'));
+const updateYearSaga = function*(action) {
+  yield call(updateYearApi(action.payload));
+  yield put(updateYearSuccessful());
+  yield put(toastrSuccess('Succesfully updated year'));
 };
 
 const createYearSaga = function*(action) {
@@ -55,16 +53,16 @@ const createYearSaga = function*(action) {
 
 export const yearSaga = [
   takeLatest(
-    requestTeam,
-    withErrorHandling(getTeamSaga, genericErrorHandler(errorReceivingTeam))
+    requestYear,
+    withErrorHandling(getYearSaga, genericErrorHandler(errorReceivingYear))
   ),
   takeLatest(
-    updateTeam,
-    withErrorHandling(updateTeamSaga, genericErrorHandler(updateTeamError))
+    updateYear,
+    withErrorHandling(updateYearSaga, genericErrorHandler(updateYearError))
   ),
   takeLatest(
-    removeTeam,
-    withErrorHandling(removeTeamSaga, genericErrorHandler(errorRemovingTeam))
+    removeYear,
+    withErrorHandling(removeYearSaga, genericErrorHandler(errorRemovingYear))
   ),
   takeLatest(
     createYear,

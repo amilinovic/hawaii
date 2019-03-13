@@ -5,24 +5,28 @@ import Switch from 'react-switch';
 import { bindActionCreators } from 'redux';
 import * as Yup from 'yup';
 import withResetOnNavigate from '../components/HOC/withResetOnNavigate';
-import { createYear } from '../store/actions/yearActions';
+import Loading from '../components/loading/Loading';
+import { requestYear, updateYear } from '../store/actions/yearActions';
+import { getYear } from '../store/selectors';
 
 const validationSchema = Yup.object().shape({
   year: Yup.string().required()
 });
 
-class CreateYear extends Component {
+class EditYear extends Component {
+  componentDidMount() {
+    this.props.requestYear(this.props.match.params.id);
+  }
+
   render() {
+    if (!this.props.year) return <Loading />;
+
     return (
       <div className="d-flex p-4 justify-content-center flex-column">
         <Formik
           validationSchema={validationSchema}
-          initialValues={{
-            year: '',
-            active: false,
-            allowances: []
-          }}
-          onSubmit={this.props.createYear}
+          initialValues={this.props.year}
+          onSubmit={this.props.updateYear}
           render={({
             handleSubmit,
             handleChange,
@@ -50,7 +54,7 @@ class CreateYear extends Component {
                 />
               </div>
               <button className="btn" onClick={handleSubmit} type="submit">
-                Create year
+                Update year
               </button>
             </React.Fragment>
           )}
@@ -60,10 +64,14 @@ class CreateYear extends Component {
   }
 }
 
+const mapStateToProps = state => ({
+  year: getYear(state)
+});
+
 const mapDispatchToProps = dispatch =>
-  bindActionCreators({ createYear }, dispatch);
+  bindActionCreators({ updateYear, requestYear }, dispatch);
 
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
-)(withResetOnNavigate()(CreateYear));
+)(withResetOnNavigate()(EditYear));

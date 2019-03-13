@@ -8,9 +8,9 @@ import Years from '../components/years/Years';
 export default class Administration extends Component {
   state = {
     tabList: [
+      { label: 'Panel', content: <Years /> },
       { label: 'Teams', content: <Teams /> },
       { label: 'Employees', content: <Employees /> },
-      { label: 'Years', content: <Years /> },
       { label: 'Leave profiles', content: <LeaveProfiles /> }
     ],
     activeTabIndex: 0

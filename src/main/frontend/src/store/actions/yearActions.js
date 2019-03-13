@@ -1,28 +1,28 @@
 import { createAction } from 'redux-actions';
 
-export const REQUEST_TEAM = 'REQUEST_TEAM';
-export const RECEIVE_TEAM = 'RECEIVE_TEAM';
-export const RECEIVE_TEAM_ERROR = 'RECEIVE_TEAM_ERROR';
+export const REQUEST_YEAR = 'REQUEST_YEAR';
+export const RECEIVE_YEAR = 'RECEIVE_YEAR';
+export const RECEIVE_YEAR_ERROR = 'RECEIVE_YEAR_ERROR';
 
-export const requestTeam = createAction(REQUEST_TEAM);
-export const receiveTeam = createAction(RECEIVE_TEAM);
-export const errorReceivingTeam = createAction(RECEIVE_TEAM_ERROR);
+export const requestYear = createAction(REQUEST_YEAR);
+export const receiveYear = createAction(RECEIVE_YEAR);
+export const errorReceivingYear = createAction(RECEIVE_YEAR_ERROR);
 
-export const REMOVE_TEAM = 'REMOVE_TEAM';
-export const REMOVE_TEAM_SUCCESS = 'REMOVE_TEAM_SUCCESS';
-export const REMOVE_TEAM_ERROR = 'REMOVE_TEAM_ERROR';
+export const REMOVE_YEAR = 'REMOVE_YEAR';
+export const REMOVE_YEAR_SUCCESS = 'REMOVE_YEAR_SUCCESS';
+export const REMOVE_YEAR_ERROR = 'REMOVE_YEAR_ERROR';
 
-export const removeTeam = createAction(REMOVE_TEAM);
-export const removeTeamSuccess = createAction(REMOVE_TEAM_SUCCESS);
-export const errorRemovingTeam = createAction(REMOVE_TEAM_ERROR);
+export const removeYear = createAction(REMOVE_YEAR);
+export const removeYearSuccess = createAction(REMOVE_YEAR_SUCCESS);
+export const errorRemovingYear = createAction(REMOVE_YEAR_ERROR);
 
-export const UPDATE_TEAM = 'UPDATE_TEAM';
-export const UPDATE_TEAM_SUCCESSFUL = 'UPDATE_TEAM_SUCCESSFUL';
-export const UPDATE_TEAM_ERROR = 'UPDATE_TEAM_ERROR';
+export const UPDATE_YEAR = 'UPDATE_YEAR';
+export const UPDATE_YEAR_SUCCESSFUL = 'UPDATE_YEAR_SUCCESSFUL';
+export const UPDATE_YEAR_ERROR = 'UPDATE_YEAR_ERROR';
 
-export const updateTeam = createAction(UPDATE_TEAM);
-export const updateTeamSuccessful = createAction(UPDATE_TEAM_SUCCESSFUL);
-export const updateTeamError = createAction(UPDATE_TEAM_ERROR);
+export const updateYear = createAction(UPDATE_YEAR);
+export const updateYearSuccessful = createAction(UPDATE_YEAR_SUCCESSFUL);
+export const updateYearError = createAction(UPDATE_YEAR_ERROR);
 
 export const CREATE_YEAR = 'CREATE_YEAR';
 export const CREATE_YEAR_SUCCESSFUL = 'CREATE_YEAR_SUCCESSFUL';

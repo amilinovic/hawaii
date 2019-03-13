@@ -15,12 +15,14 @@ import CreateYear from '../pages/CreateYear';
 import EditEmployee from '../pages/EditEmployee';
 import EditLeaveProfile from '../pages/EditLeaveProfile';
 import EditTeam from '../pages/EditTeam';
+import EditYear from '../pages/EditYear';
 import Employee from '../pages/Employee';
 import Leave from '../pages/Leave';
 import LeaveHistory from '../pages/LeaveHistory';
 import LeaveProfile from '../pages/LeaveProfile';
 import Team from '../pages/Team';
 import TeamCalendar from '../pages/TeamCalendar';
+import Year from '../pages/Year';
 import { requestUser } from '../store/actions/userActions';
 import { getUser } from '../store/selectors';
 
@@ -57,6 +59,8 @@ class Panel extends Component {
                 <Route path="/employee/:id/edit" component={EditEmployee} />
                 <Route path="/employee/:id" component={Employee} />
                 <Route path="/years/create" component={CreateYear} />
+                <Route path="/years/:id/edit" component={EditYear} />
+                <Route path="/years/:id" component={Year} />
                 <Route
                   path="/leave-profiles/create"
                   component={CreateLeaveProfile}
