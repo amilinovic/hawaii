@@ -24,6 +24,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -86,7 +87,6 @@ public class AllowanceServiceTest {
     nextYearAllowance.setTakenInPreviousYear(0);
 
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
-    given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(nextYearAllowance);
 
     // when
     allowanceService.applyRequest(request, false);
@@ -94,7 +94,8 @@ public class AllowanceServiceTest {
     // then
     assertThat("Expect taken annual hours for this year to be 200", currentYearAllowance.getTakenAnnual(), is(200));
     assertThat("Expect taken annual hours from next year to be 0", nextYearAllowance.getTakenInPreviousYear(), is(0));
-    verify(allowanceRepository, times(2)).findByUserIdAndYearYear(anyLong(), anyInt());
+    verify(allowanceRepository, times(1)).findByUserIdAndYearYear(anyLong(), anyInt());
+    verify(allowanceRepository, times(2)).existsByUserIdAndYearYear(anyLong(), anyInt());
     verify(allowanceRepository).save(any());
     verifyNoMoreInteractions(allowanceRepository);
   }
@@ -107,6 +108,7 @@ public class AllowanceServiceTest {
     nextYearAllowance.setTakenInPreviousYear(0);
 
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
+    given(allowanceRepository.existsByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(true);
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(nextYearAllowance);
 
     // when
@@ -115,7 +117,8 @@ public class AllowanceServiceTest {
     // then
     assertThat("Expect taken annual hours for this year to be 200", currentYearAllowance.getTakenAnnual(), is(200));
     assertThat("Expect taken annual hours from next year to be 16", nextYearAllowance.getTakenInPreviousYear(), is(16));
-    verify(allowanceRepository, times(2)).findByUserIdAndYearYear(anyLong(), anyInt());
+    verify(allowanceRepository, times(3)).findByUserIdAndYearYear(anyLong(), anyInt());
+    verify(allowanceRepository, times(2)).existsByUserIdAndYearYear(anyLong(), anyInt());
     verify(allowanceRepository, times(2)).save(any());
     verifyNoMoreInteractions(allowanceRepository);
   }
@@ -130,6 +133,7 @@ public class AllowanceServiceTest {
     nextYearAllowance.setTakenInPreviousYear(8);
 
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
+    given(allowanceRepository.existsByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(true);
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(nextYearAllowance);
     given(publicHolidayRepository.findAllByDateIsBetween(startYearFrom, endYearTo)).willReturn(
         List.of(EntityBuilder.publicholiday()));
@@ -140,7 +144,8 @@ public class AllowanceServiceTest {
     // then
     assertThat("Expect taken annual hours for this year to be 200", currentYearAllowance.getTakenAnnual(), is(200));
     assertThat("Expect taken annual hours from next year to be 16", nextYearAllowance.getTakenInPreviousYear(), is(16));
-    verify(allowanceRepository, times(2)).findByUserIdAndYearYear(anyLong(), anyInt());
+    verify(allowanceRepository, times(3)).findByUserIdAndYearYear(anyLong(), anyInt());
+    verify(allowanceRepository, times(2)).existsByUserIdAndYearYear(anyLong(), anyInt());
     verify(allowanceRepository, times(2)).save(any());
     verifyNoMoreInteractions(allowanceRepository);
   }
@@ -153,7 +158,6 @@ public class AllowanceServiceTest {
     nextYearAllowance.setTakenInPreviousYear(0);
 
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
-    given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(nextYearAllowance);
 
     // when
     allowanceService.applyRequest(request, true);
@@ -161,8 +165,9 @@ public class AllowanceServiceTest {
     // then
     assertThat("Expect taken annual hours for this year to be 184", currentYearAllowance.getTakenAnnual(), is(184));
     assertThat("Expect taken annual hours from next year to be 0", nextYearAllowance.getTakenInPreviousYear(), is(0));
-    verify(allowanceRepository, times(2)).findByUserIdAndYearYear(anyLong(), anyInt());
-    verify(allowanceRepository, times(2)).save(any());
+    verify(allowanceRepository, times(1)).findByUserIdAndYearYear(anyLong(), anyInt());
+    verify(allowanceRepository, times(2)).existsByUserIdAndYearYear(anyLong(), anyInt());
+    verify(allowanceRepository, times(1)).save(any());
     verifyNoMoreInteractions(allowanceRepository);
   }
 
@@ -174,6 +179,7 @@ public class AllowanceServiceTest {
     nextYearAllowance.setTakenInPreviousYear(24);
 
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
+    given(allowanceRepository.existsByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(true);
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(nextYearAllowance);
 
     // when
@@ -182,7 +188,8 @@ public class AllowanceServiceTest {
     // then
     assertThat("Expect taken annual hours for this year to be 200", currentYearAllowance.getTakenAnnual(), is(200));
     assertThat("Expect taken annual hours from next year to be 8", nextYearAllowance.getTakenInPreviousYear(), is(8));
-    verify(allowanceRepository, times(2)).findByUserIdAndYearYear(anyLong(), anyInt());
+    verify(allowanceRepository, times(3)).findByUserIdAndYearYear(anyLong(), anyInt());
+    verify(allowanceRepository, times(2)).existsByUserIdAndYearYear(anyLong(), anyInt());
     verify(allowanceRepository).save(any());
     verifyNoMoreInteractions(allowanceRepository);
   }
@@ -195,6 +202,7 @@ public class AllowanceServiceTest {
     nextYearAllowance.setTakenInPreviousYear(8);
 
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
+    given(allowanceRepository.existsByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(true);
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(nextYearAllowance);
 
     // when
@@ -204,7 +212,8 @@ public class AllowanceServiceTest {
 
     assertThat("Expect taken annual hours for this year to be 192", currentYearAllowance.getTakenAnnual(), is(192));
     assertThat("Expect taken annual hours from next year to be 0", nextYearAllowance.getTakenInPreviousYear(), is(0));
-    verify(allowanceRepository, times(2)).findByUserIdAndYearYear(anyLong(), anyInt());
+    verify(allowanceRepository, times(3)).findByUserIdAndYearYear(anyLong(), anyInt());
+    verify(allowanceRepository, times(2)).existsByUserIdAndYearYear(anyLong(), anyInt());
     verify(allowanceRepository, times(2)).save(any());
     verifyNoMoreInteractions(allowanceRepository);
   }
@@ -230,7 +239,6 @@ public class AllowanceServiceTest {
     nextYearAllowance.setTakenInPreviousYear(20);
 
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
-    given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(nextYearAllowance);
 
     // when
     allowanceService.applyRequest(request, false);
@@ -257,7 +265,6 @@ public class AllowanceServiceTest {
     nextYearAllowance.setPendingInPreviousYear(20);
 
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
-    given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(nextYearAllowance);
 
     //when
     allowanceService.applyPendingRequest(request, false);
@@ -272,7 +279,6 @@ public class AllowanceServiceTest {
     nextYearAllowance.setPendingInPreviousYear(0);
 
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
-    given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(nextYearAllowance);
 
     // when
     allowanceService.applyPendingRequest(request, false);
@@ -281,7 +287,8 @@ public class AllowanceServiceTest {
     assertThat("Expect pending annual hours for this year to be 16", currentYearAllowance.getPendingAnnual(), is(16));
     assertThat("Expect pending annual hours from next year to be 0", nextYearAllowance.getPendingInPreviousYear(),
         is(0));
-    verify(allowanceRepository, times(2)).findByUserIdAndYearYear(anyLong(), anyInt());
+    verify(allowanceRepository, times(1)).findByUserIdAndYearYear(anyLong(), anyInt());
+    verify(allowanceRepository, times(2)).existsByUserIdAndYearYear(anyLong(), anyInt());
     verify(allowanceRepository).save(any());
     verifyNoMoreInteractions(allowanceRepository);
   }
@@ -295,6 +302,7 @@ public class AllowanceServiceTest {
     nextYearAllowance.setPendingInPreviousYear(0);
 
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
+    given(allowanceRepository.existsByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(true);
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(nextYearAllowance);
 
     // when
@@ -304,7 +312,8 @@ public class AllowanceServiceTest {
     assertThat("Expect pending annual hours for this year to be 0", currentYearAllowance.getPendingAnnual(), is(0));
     assertThat("Expect pending annual hours from next year to be 16", nextYearAllowance.getPendingInPreviousYear(),
         is(16));
-    verify(allowanceRepository, times(2)).findByUserIdAndYearYear(anyLong(), anyInt());
+    verify(allowanceRepository, times(3)).findByUserIdAndYearYear(anyLong(), anyInt());
+    verify(allowanceRepository, times(2)).existsByUserIdAndYearYear(anyLong(), anyInt());
     verify(allowanceRepository, times(2)).save(any());
     verifyNoMoreInteractions(allowanceRepository);
   }
@@ -319,6 +328,7 @@ public class AllowanceServiceTest {
     nextYearAllowance.setPendingInPreviousYear(0);
 
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
+    given(allowanceRepository.existsByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(true);
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(nextYearAllowance);
 
     // when
@@ -327,7 +337,8 @@ public class AllowanceServiceTest {
     // then
     assertThat("Expect pending hours for this year to be 8", currentYearAllowance.getPendingAnnual(), is(8));
     assertThat("Expect pending hours from next year to be 8", nextYearAllowance.getPendingInPreviousYear(), is(8));
-    verify(allowanceRepository, times(2)).findByUserIdAndYearYear(anyLong(), anyInt());
+    verify(allowanceRepository, times(3)).findByUserIdAndYearYear(anyLong(), anyInt());
+    verify(allowanceRepository, times(2)).existsByUserIdAndYearYear(anyLong(), anyInt());
     verify(allowanceRepository, times(2)).save(any());
     verifyNoMoreInteractions(allowanceRepository);
   }
@@ -341,7 +352,6 @@ public class AllowanceServiceTest {
     nextYearAllowance.setPendingInPreviousYear(0);
 
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
-    given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(nextYearAllowance);
 
     // when
     allowanceService.applyPendingRequest(request, true);
@@ -349,8 +359,9 @@ public class AllowanceServiceTest {
     // then
     assertThat("Expect pending hours for this year to be 0", currentYearAllowance.getPendingAnnual(), is(0));
     assertThat("Expect pending hours from next year to be 0", nextYearAllowance.getPendingInPreviousYear(), is(0));
-    verify(allowanceRepository, times(2)).findByUserIdAndYearYear(anyLong(), anyInt());
-    verify(allowanceRepository, times(2)).save(any());
+    verify(allowanceRepository, times(2)).existsByUserIdAndYearYear(anyLong(), anyInt());
+    verify(allowanceRepository, times(1)).findByUserIdAndYearYear(anyLong(), anyInt());
+    verify(allowanceRepository, times(1)).save(any());
     verifyNoMoreInteractions(allowanceRepository);
   }
 
@@ -363,6 +374,7 @@ public class AllowanceServiceTest {
     nextYearAllowance.setPendingInPreviousYear(16);
 
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
+    given(allowanceRepository.existsByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(true);
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(nextYearAllowance);
 
     // when
@@ -371,7 +383,8 @@ public class AllowanceServiceTest {
     // then
     assertThat("Expect pending hours for this year to be 0", currentYearAllowance.getPendingAnnual(), is(0));
     assertThat("Expect pending hours from next year to be 0", nextYearAllowance.getPendingInPreviousYear(), is(0));
-    verify(allowanceRepository, times(2)).findByUserIdAndYearYear(anyLong(), anyInt());
+    verify(allowanceRepository, times(3)).findByUserIdAndYearYear(anyLong(), anyInt());
+    verify(allowanceRepository, times(2)).existsByUserIdAndYearYear(anyLong(), anyInt());
     verify(allowanceRepository).save(any());
     verifyNoMoreInteractions(allowanceRepository);
   }
@@ -385,6 +398,7 @@ public class AllowanceServiceTest {
     nextYearAllowance.setPendingInPreviousYear(8);
 
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
+    given(allowanceRepository.existsByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(true);
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(nextYearAllowance);
 
     // when
@@ -393,7 +407,8 @@ public class AllowanceServiceTest {
     // then
     assertThat("Expect pending hours for this year to be 0", currentYearAllowance.getPendingAnnual(), is(0));
     assertThat("Expect pending hours from next year to be 0", nextYearAllowance.getPendingInPreviousYear(), is(0));
-    verify(allowanceRepository, times(2)).findByUserIdAndYearYear(anyLong(), anyInt());
+    verify(allowanceRepository, times(3)).findByUserIdAndYearYear(anyLong(), anyInt());
+    verify(allowanceRepository, times(2)).existsByUserIdAndYearYear(anyLong(), anyInt());
     verify(allowanceRepository, times(2)).save(any());
     verifyNoMoreInteractions(allowanceRepository);
   }
@@ -406,7 +421,6 @@ public class AllowanceServiceTest {
     nextYearAllowance.setPendingInPreviousYear(0);
 
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
-    given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(nextYearAllowance);
 
     // when request is created
     allowanceService.applyPendingRequest(request, false);
@@ -426,8 +440,9 @@ public class AllowanceServiceTest {
         is(0));
     assertThat("Expect taken annual hours for this year to be 200", currentYearAllowance.getTakenAnnual(), is(200));
     assertThat("Expect taken annual hours from next year to be 0", nextYearAllowance.getTakenInPreviousYear(), is(0));
-    verify(allowanceRepository, times(6)).findByUserIdAndYearYear(anyLong(), anyInt());
-    verify(allowanceRepository, times(4)).save(any());
+    verify(allowanceRepository, times(3)).findByUserIdAndYearYear(anyLong(), anyInt());
+    verify(allowanceRepository, times(6)).existsByUserIdAndYearYear(anyLong(), anyInt());
+    verify(allowanceRepository, times(3)).save(any());
     verifyNoMoreInteractions(allowanceRepository);
   }
 
@@ -439,6 +454,7 @@ public class AllowanceServiceTest {
     nextYearAllowance.setPendingInPreviousYear(0);
 
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
+    given(allowanceRepository.existsByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(true);
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(nextYearAllowance);
 
     // when request is created
@@ -458,7 +474,8 @@ public class AllowanceServiceTest {
         is(0));
     assertThat("Expect taken annual hours for this year to be 200", currentYearAllowance.getTakenAnnual(), is(200));
     assertThat("Expect taken annual hours from next year to be 16", nextYearAllowance.getTakenInPreviousYear(), is(16));
-    verify(allowanceRepository, times(6)).findByUserIdAndYearYear(anyLong(), anyInt());
+    verify(allowanceRepository, times(9)).findByUserIdAndYearYear(anyLong(), anyInt());
+    verify(allowanceRepository, times(6)).existsByUserIdAndYearYear(anyLong(), anyInt());
     verify(allowanceRepository, times(5)).save(any());
     verifyNoMoreInteractions(allowanceRepository);
   }
@@ -472,6 +489,7 @@ public class AllowanceServiceTest {
     nextYearAllowance.setPendingInPreviousYear(0);
 
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
+    given(allowanceRepository.existsByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(true);
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(nextYearAllowance);
 
     // when request is created
@@ -491,7 +509,8 @@ public class AllowanceServiceTest {
         is(0));
     assertThat("Expect taken annual hours for this year to be 200", currentYearAllowance.getTakenAnnual(), is(200));
     assertThat("Expect taken annual hours from next year to be 32", nextYearAllowance.getTakenInPreviousYear(), is(32));
-    verify(allowanceRepository, times(6)).findByUserIdAndYearYear(anyLong(), anyInt());
+    verify(allowanceRepository, times(9)).findByUserIdAndYearYear(anyLong(), anyInt());
+    verify(allowanceRepository, times(6)).existsByUserIdAndYearYear(anyLong(), anyInt());
     verify(allowanceRepository, times(6)).save(any());
     verifyNoMoreInteractions(allowanceRepository);
   }
@@ -505,7 +524,6 @@ public class AllowanceServiceTest {
     nextYearAllowance.setPendingInPreviousYear(0);
 
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
-    given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(nextYearAllowance);
 
     // when request is created
     allowanceService.applyPendingRequest(request, false);
@@ -525,8 +543,9 @@ public class AllowanceServiceTest {
         is(0));
     assertThat("Expect taken annual hours for this year to be 192", currentYearAllowance.getTakenAnnual(), is(192));
     assertThat("Expect taken annual hours from next year to be 0", nextYearAllowance.getTakenInPreviousYear(), is(0));
-    verify(allowanceRepository, times(6)).findByUserIdAndYearYear(anyLong(), anyInt());
-    verify(allowanceRepository, times(4)).save(any());
+    verify(allowanceRepository, times(3)).findByUserIdAndYearYear(anyLong(), anyInt());
+    verify(allowanceRepository, times(6)).existsByUserIdAndYearYear(anyLong(), anyInt());
+    verify(allowanceRepository, times(3)).save(any());
     verifyNoMoreInteractions(allowanceRepository);
   }
 
@@ -539,6 +558,7 @@ public class AllowanceServiceTest {
     nextYearAllowance.setPendingInPreviousYear(8);
 
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
+    given(allowanceRepository.existsByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(true);
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(nextYearAllowance);
 
     // when request is created
@@ -558,7 +578,8 @@ public class AllowanceServiceTest {
         is(8));
     assertThat("Expect taken annual hours for this year to be 200", currentYearAllowance.getTakenAnnual(), is(200));
     assertThat("Expect taken annual hours from next year to be 24", nextYearAllowance.getTakenInPreviousYear(), is(24));
-    verify(allowanceRepository, times(6)).findByUserIdAndYearYear(anyLong(), anyInt());
+    verify(allowanceRepository, times(9)).findByUserIdAndYearYear(anyLong(), anyInt());
+    verify(allowanceRepository, times(6)).existsByUserIdAndYearYear(anyLong(), anyInt());
     verify(allowanceRepository, times(5)).save(any());
     verifyNoMoreInteractions(allowanceRepository);
   }
@@ -572,6 +593,7 @@ public class AllowanceServiceTest {
     nextYearAllowance.setPendingInPreviousYear(8);
 
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
+    given(allowanceRepository.existsByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(true);
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(nextYearAllowance);
 
     // when request is created
@@ -590,7 +612,8 @@ public class AllowanceServiceTest {
         is(8));
     assertThat("Expect taken annual hours for this year to be 200", currentYearAllowance.getTakenAnnual(), is(200));
     assertThat("Expect taken annual hours from next year to be 8", nextYearAllowance.getTakenInPreviousYear(), is(8));
-    verify(allowanceRepository, times(6)).findByUserIdAndYearYear(anyLong(), anyInt());
+    verify(allowanceRepository, times(9)).findByUserIdAndYearYear(anyLong(), anyInt());
+    verify(allowanceRepository, times(6)).existsByUserIdAndYearYear(anyLong(), anyInt());
     verify(allowanceRepository, times(5)).save(any());
     verifyNoMoreInteractions(allowanceRepository);
   }
@@ -608,6 +631,7 @@ public class AllowanceServiceTest {
     nextYearAllowance.setPendingInPreviousYear(0);
 
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
+    given(allowanceRepository.existsByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(true);
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(nextYearAllowance);
 
     // when first request is created
@@ -633,7 +657,8 @@ public class AllowanceServiceTest {
         is(8));
     assertThat("Expect taken annual hours for this year to be 200", currentYearAllowance.getTakenAnnual(), is(200));
     assertThat("Expect taken annual hours from next year to be 8", nextYearAllowance.getTakenInPreviousYear(), is(8));
-    verify(allowanceRepository, times(8)).findByUserIdAndYearYear(anyLong(), anyInt());
+    verify(allowanceRepository, times(12)).findByUserIdAndYearYear(anyLong(), anyInt());
+    verify(allowanceRepository, times(8)).existsByUserIdAndYearYear(anyLong(), anyInt());
     verify(allowanceRepository, times(7)).save(any());
     verifyNoMoreInteractions(allowanceRepository);
   }
@@ -644,14 +669,13 @@ public class AllowanceServiceTest {
     var request = EntityBuilder.request(EntityBuilder.absenceTraining(), List.of(dayOne, dayTwo));
 
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
-    given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(nextYearAllowance);
 
     // when
     allowanceService.applyPendingRequest(request, false);
 
     // then
     assertThat("Expect pending training hours to be 16", currentYearAllowance.getPendingTraining(), is(16));
-    verify(allowanceRepository, times(2)).findByUserIdAndYearYear(anyLong(), anyInt());
+    verify(allowanceRepository, times(1)).findByUserIdAndYearYear(anyLong(), anyInt());
     verify(allowanceRepository).save(any());
     verifyNoMoreInteractions(allowanceRepository);
   }
@@ -675,14 +699,13 @@ public class AllowanceServiceTest {
     request.setRequestStatus(RequestStatus.APPROVED);
 
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
-    given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(nextYearAllowance);
 
     // when
     allowanceService.applyRequest(request, false);
 
     // then
     assertThat("Expect training hours to be 16", currentYearAllowance.getTakenTraining(), is(16));
-    verify(allowanceRepository, times(2)).findByUserIdAndYearYear(anyLong(), anyInt());
+    verify(allowanceRepository, times(1)).findByUserIdAndYearYear(anyLong(), anyInt());
     verify(allowanceRepository).save(any());
     verifyNoMoreInteractions(allowanceRepository);
   }
@@ -693,14 +716,13 @@ public class AllowanceServiceTest {
     var request = EntityBuilder.request(EntityBuilder.absenceSickness(), List.of(dayOne, dayTwo));
 
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
-    given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(nextYearAllowance);
 
     // when
     allowanceService.applyRequest(request, false);
 
     // then
     assertThat("Expect sick hours to be 16", currentYearAllowance.getSickness(), is(16));
-    verify(allowanceRepository, times(2)).findByUserIdAndYearYear(anyLong(), anyInt());
+    verify(allowanceRepository, times(1)).findByUserIdAndYearYear(anyLong(), anyInt());
     verify(allowanceRepository).save(any());
     verifyNoMoreInteractions(allowanceRepository);
   }
@@ -718,7 +740,7 @@ public class AllowanceServiceTest {
 
     // then
     assertThat("Expect bonus hours to be 16", currentYearAllowance.getBonus(), is(16));
-    verify(allowanceRepository, times(2)).findByUserIdAndYearYear(anyLong(), anyInt());
+    verify(allowanceRepository, times(1)).findByUserIdAndYearYear(anyLong(), anyInt());
     verify(allowanceRepository).save(any());
     verifyNoMoreInteractions(allowanceRepository);
   }
@@ -779,7 +801,6 @@ public class AllowanceServiceTest {
     currentYearAllowance.setBonus(30);
 
     given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), thisYear)).willReturn(currentYearAllowance);
-    given(allowanceRepository.findByUserIdAndYearYear(mockUser.getId(), nextYear)).willReturn(nextYearAllowance);
 
     // when
     allowanceService.applyRequest(request, false);
