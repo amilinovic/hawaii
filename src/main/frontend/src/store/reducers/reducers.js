@@ -11,6 +11,7 @@ import leaveType from './leaveTypeReducer';
 import leaveTypes from './leaveTypesReducer';
 import modal from './modalReducer';
 import personalDays from './personalDaysReducer';
+import publicHoliday from './publicHolidayReducer';
 import publicHolidays from './publicHolidaysReducer';
 import team from './teamReducer';
 import teams from './teamsReducer';
@@ -26,6 +27,7 @@ export default combineReducers({
   employee,
   personalDays,
   publicHolidays,
+  publicHoliday,
   leaveTypes,
   leaveType,
   leaveProfiles,

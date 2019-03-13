@@ -1,11 +1,11 @@
 import { handleActions } from 'redux-actions';
 import { navigateOut } from '../actions/navigateActions';
-import { receivePublicHolidays } from '../actions/publicHolidaysActions';
+import { receivePublicHoliday } from '../actions/publicHolidayActions';
 
 export const initialState = null;
 
 const actionHandlers = {
-  [receivePublicHolidays]: (state, action) => action.payload,
+  [receivePublicHoliday]: (state, action) => action.payload,
   [navigateOut]: () => null
 };
 

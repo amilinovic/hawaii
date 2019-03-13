@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { requestLeaveTypes } from '../../store/actions/leaveTypesActions';
 import { requestPersonalDays } from '../../store/actions/personalDaysActions';
-import { requestPublicHolidays } from '../../store/actions/publicHolidayActions';
+import { requestPublicHolidays } from '../../store/actions/publicHolidaysActions';
 import {
   getLeaveTypes,
   getPersonalDays,
