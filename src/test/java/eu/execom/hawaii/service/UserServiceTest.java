@@ -196,6 +196,7 @@ public class UserServiceTest {
 
     verify(leaveProfileRepository).getOne(anyLong());
     verify(userRepository).save(any());
+    verify(userRepository).existsByEmail(any());
     verify(yearRepository).findAllByYearGreaterThanEqual(anyInt());
     verify(auditInformationService).saveAudit(any(), any(), any(), any(), any());
     verifyNoMoreInteractions(allMocks);

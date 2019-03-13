@@ -319,7 +319,6 @@ public class RequestServiceTest {
     requestTwo.setSubmissionTime(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES));
 
     given(userRepository.getOne(1L)).willReturn(mockUser);
-    given(requestRepository.save(requestTwo)).willReturn(requestTwo);
     given(requestRepository.findAllByUser(mockUser)).willReturn(new ArrayList<>());
 
     // when
