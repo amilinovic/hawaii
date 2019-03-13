@@ -9,7 +9,7 @@ export default class PublicHolidayItem extends Component {
     return (
       <tr>
         <td>
-          <NavLink to={`teams/${id}`}>{name}</NavLink>
+          <NavLink to={`public-holidays/${id}`}>{name}</NavLink>
         </td>
         <td>{date}</td>
       </tr>
