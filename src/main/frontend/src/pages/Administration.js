@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Employees from '../components/employees/Employees';
+import LeaveProfiles from '../components/leaveProfiles/LeaveProfiles';
 import PublicHolidays from '../components/public-holidays/PublicHolidays';
 import Tabs from '../components/tabs/Tabs';
 import Teams from '../components/teams/Teams';
@@ -9,7 +10,8 @@ export default class Administration extends Component {
     tabList: [
       { label: 'Teams', content: <Teams /> },
       { label: 'Employees', content: <Employees /> },
-      { label: 'Public Holidays', content: <PublicHolidays /> }
+      { label: 'Public Holidays', content: <PublicHolidays /> },
+      { label: 'Leave profiles', content: <LeaveProfiles /> }
     ],
     activeTabIndex: 0
   };

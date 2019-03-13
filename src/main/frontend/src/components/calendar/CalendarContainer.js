@@ -1,6 +1,9 @@
 import moment from 'moment';
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import styled from 'styled-components';
+import { requestAllowance } from '../../store/actions/allowanceActions';
 import { createCalendar } from '../calendar/calendarUtils';
 import YearlyCalendar from './YearlyCalendar';
 
@@ -25,7 +28,7 @@ const CalendarContainerBlock = styled.div`
   background: white;
 `;
 
-export default class CalendarContainer extends Component {
+class CalendarContainer extends Component {
   state = {
     selectedYear: moment().year(),
     calendar: createCalendar(
@@ -34,6 +37,16 @@ export default class CalendarContainer extends Component {
       this.props.personalDays
     )
   };
+
+  componentDidMount() {
+    this.props.requestAllowance(this.state.selectedYear);
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps !== this.props) {
+      this.handleYearChange(this.state.selectedYear);
+    }
+  }
 
   handleYearChange = selectedYear => {
     this.setState(prevState => {
@@ -47,11 +60,13 @@ export default class CalendarContainer extends Component {
         )
       };
     });
+
+    this.props.requestAllowance(selectedYear);
   };
 
   render() {
     return (
-      <div className="p-4 d-flex flex-column flex-grow-1">
+      <div className="px-4 d-flex flex-column flex-grow-1">
         <YearSelection className="rounded d-flex align-items-center justify-content-center p-2 my-3">
           <YearControlButton
             onClick={() => this.handleYearChange(this.state.selectedYear - 1)}
@@ -77,3 +92,16 @@ export default class CalendarContainer extends Component {
     );
   }
 }
+
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(
+    {
+      requestAllowance
+    },
+    dispatch
+  );
+
+export default connect(
+  null,
+  mapDispatchToProps
+)(CalendarContainer);

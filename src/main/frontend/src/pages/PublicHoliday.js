@@ -8,9 +8,7 @@ import { getTeam } from '../store/selectors';
 
 class Team extends Component {
   componentDidMount() {
-    //   Change to
-    // this.props.requestTeam(this.props.match.params.id);
-    this.props.requestTeam(1);
+    this.props.requestTeam(this.props.match.params.id);
   }
 
   render() {

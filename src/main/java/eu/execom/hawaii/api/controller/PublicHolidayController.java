@@ -42,7 +42,7 @@ public class PublicHolidayController {
   }
 
   @GetMapping
-  public ResponseEntity<List<PublicHolidayDto>> getPublicHolidays(@RequestParam boolean deleted) {
+  public ResponseEntity<List<PublicHolidayDto>> getPublicHolidays(@RequestParam(defaultValue = "false") boolean deleted) {
     var publicHolidays = publicHolidayService.findAllByDeleted(deleted);
     var publicHolidayDtos = publicHolidays.stream().map(PublicHolidayDto::new).collect(Collectors.toList());
 

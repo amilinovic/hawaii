@@ -9,12 +9,15 @@ import TopHeader from '../components/header/TopHeader';
 import Sidebar from '../components/navigation/Sidebar';
 import Administration from '../pages/Administration';
 import CreateEmployee from '../pages/CreateEmployee';
+import CreateLeaveProfile from '../pages/CreateLeaveProfile';
 import CreateTeam from '../pages/CreateTeam';
 import EditEmployee from '../pages/EditEmployee';
+import EditLeaveProfile from '../pages/EditLeaveProfile';
 import EditTeam from '../pages/EditTeam';
 import Employee from '../pages/Employee';
 import Leave from '../pages/Leave';
 import LeaveHistory from '../pages/LeaveHistory';
+import LeaveProfile from '../pages/LeaveProfile';
 import PublicHoliday from '../pages/PublicHoliday';
 import Team from '../pages/Team';
 import TeamCalendar from '../pages/TeamCalendar';
@@ -54,6 +57,15 @@ class Panel extends Component {
                 <Route path="/employee/:id/edit" component={EditEmployee} />
                 <Route path="/employee/:id" component={Employee} />
                 <Route path="/public-holidays/:id" component={PublicHoliday} />
+                <Route
+                  path="/leave-profiles/create"
+                  component={CreateLeaveProfile}
+                />
+                <Route
+                  path="/leave-profiles/:id/edit"
+                  component={EditLeaveProfile}
+                />
+                <Route path="/leave-profiles/:id" component={LeaveProfile} />
               </Switch>
             </PanelContent>
           </div>
