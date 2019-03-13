@@ -3,7 +3,7 @@ import {
   errorReceivingPublicHolidays,
   receivePublicHolidays,
   requestPublicHolidays
-} from '../actions/publicHolidayActions';
+} from '../actions/publicHolidaysActions';
 import { getPublicHolidaysApi } from '../services/publicHolidaysService';
 import {
   genericErrorHandler,

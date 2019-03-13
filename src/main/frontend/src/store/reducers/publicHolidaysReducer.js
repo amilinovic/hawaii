@@ -1,6 +1,6 @@
 import { handleActions } from 'redux-actions';
 import { navigateOut } from '../actions/navigateActions';
-import { receivePublicHolidays } from '../actions/publicHolidayActions';
+import { receivePublicHolidays } from '../actions/publicHolidaysActions';
 
 export const initialState = null;
 
