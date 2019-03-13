@@ -150,7 +150,7 @@ public class TeamService {
   }
 
   private void logAndThrowEntityExistsException(Team team) {
-    log.error("Team with name {} already exists.", team.getName());
+    log.error("Team with name '{}' already exists.", team.getName());
     throw new EntityExistsException("Team with name " + team.getName() + " already exists.");
   }
 
