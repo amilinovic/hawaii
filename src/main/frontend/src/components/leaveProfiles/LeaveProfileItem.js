@@ -6,6 +6,7 @@ class LeaveProfileItem extends Component {
     const {
       leaveProfile: { id, name }
     } = this.props;
+
     return (
       <tr>
         <td>
