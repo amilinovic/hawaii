@@ -188,7 +188,7 @@
       <column name="email" type="VARCHAR(255)">
         <constraints nullable="false"/>
       </column>
-      <column name="full_name" type="VARCHAR(255)">
+      <column name="full_name" type="NVARCHAR(255)">
         <constraints nullable="false"/>
       </column>
       <column name="job_title" type="VARCHAR(255)"/>
