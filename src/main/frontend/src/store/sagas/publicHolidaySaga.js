@@ -1,25 +1,25 @@
 import { push } from 'connected-react-router';
 import { call, put, takeLatest } from 'redux-saga/effects';
 import {
+  createPublicHoliday,
+  createPublicHolidayError,
+  createPublicHolidaySuccessful,
   errorReceivingPublicHoliday,
-  requestPublicHoliday
+  errorRemovingPublicHoliday,
+  receivePublicHoliday,
+  removePublicHoliday,
+  removePublicHolidaySuccess,
+  requestPublicHoliday,
+  updatePublicHoliday,
+  updatePublicHolidayError,
+  updatePublicHolidaySuccessful
 } from '../actions/publicHolidayActions';
 import {
-  createTeam,
-  createTeamError,
-  createTeamSuccessful,
-  errorRemovingTeam,
-  removeTeam,
-  removeTeamSuccess,
-  updateTeam,
-  updateTeamError,
-  updateTeamSuccessful
-} from '../actions/teamActions';
-import {
-  createTeamApi,
-  removeTeamApi,
-  updateTeamApi
-} from '../services/teamService';
+  createPublicHolidayApi,
+  getPublicHolidayApi,
+  removePublicHolidayApi,
+  updatePublicHolidayApi
+} from '../services/publicHolidayService';
 import {
   genericErrorHandler,
   withErrorHandling
@@ -33,24 +33,24 @@ const getPublicHolidaySaga = function*(action) {
   yield put(receivePublicHoliday(publicHolidayInformation));
 };
 
-const removeTeamSaga = function*(action) {
-  yield call(removeTeamApi(action.payload.id));
-  yield put(removeTeamSuccess());
-  yield put(toastrSuccess('Succesfully removed team'));
+const removePublicHolidaySaga = function*(action) {
+  yield call(removePublicHolidayApi(action.payload.id));
+  yield put(removePublicHolidaySuccess());
+  yield put(toastrSuccess('Succesfully removed public holiday'));
   yield put(push('/administration'));
 };
 
-const updateTeamSaga = function*(action) {
-  yield call(updateTeamApi(action.payload));
-  yield put(updateTeamSuccessful());
-  yield put(toastrSuccess('Succesfully updated team'));
+const updatePublicHolidaySaga = function*(action) {
+  yield call(updatePublicHolidayApi(action.payload));
+  yield put(updatePublicHolidaySuccessful());
+  yield put(toastrSuccess('Succesfully updated public holiday'));
 };
 
-const createTeamSaga = function*(action) {
-  yield call(createTeamApi(action.payload));
-  yield put(createTeamSuccessful());
+const createPublicHolidaySaga = function*(action) {
+  yield call(createPublicHolidayApi(action.payload));
+  yield put(createPublicHolidaySuccessful());
   yield put(push('/administration'));
-  yield put(toastrSuccess('Successfully created team'));
+  yield put(toastrSuccess('Successfully created public holiday'));
 };
 
 export const publicHolidaySaga = [
@@ -62,15 +62,24 @@ export const publicHolidaySaga = [
     )
   ),
   takeLatest(
-    updateTeam,
-    withErrorHandling(updateTeamSaga, genericErrorHandler(updateTeamError))
+    updatePublicHoliday,
+    withErrorHandling(
+      updatePublicHolidaySaga,
+      genericErrorHandler(updatePublicHolidayError)
+    )
   ),
   takeLatest(
-    removeTeam,
-    withErrorHandling(removeTeamSaga, genericErrorHandler(errorRemovingTeam))
+    removePublicHoliday,
+    withErrorHandling(
+      removePublicHolidaySaga,
+      genericErrorHandler(errorRemovingPublicHoliday)
+    )
   ),
   takeLatest(
-    createTeam,
-    withErrorHandling(createTeamSaga, genericErrorHandler(createTeamError))
+    createPublicHoliday,
+    withErrorHandling(
+      createPublicHolidaySaga,
+      genericErrorHandler(createPublicHolidayError)
+    )
   )
 ];

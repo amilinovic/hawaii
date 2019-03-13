@@ -2,7 +2,9 @@ import { delFactory, getFactory, postFactory, putFactory } from './request';
 
 const apiEndpoint = '/publicholidays';
 
-export const createTeamApi = teamObject => postFactory(apiEndpoint, teamObject);
+export const createPublicHolidayApi = publicHolidayObject =>
+  postFactory(apiEndpoint, publicHolidayObject);
 export const getPublicHolidayApi = id => getFactory(`${apiEndpoint}/${id}`);
-export const removeTeamApi = id => delFactory(`${apiEndpoint}/${id}`);
-export const updateTeamApi = teamObject => putFactory(apiEndpoint, teamObject);
+export const removePublicHolidayApi = id => delFactory(`${apiEndpoint}/${id}`);
+export const updatePublicHolidayApi = publicHolidayObject =>
+  putFactory(apiEndpoint, publicHolidayObject);

@@ -10,26 +10,40 @@ export const errorReceivingPublicHoliday = createAction(
   RECEIVE_PUBLIC_HOLIDAY_ERROR
 );
 
-export const REMOVE_TEAM = 'REMOVE_TEAM';
-export const REMOVE_TEAM_SUCCESS = 'REMOVE_TEAM_SUCCESS';
-export const REMOVE_TEAM_ERROR = 'REMOVE_TEAM_ERROR';
+export const REMOVE_PUBLIC_HOLIDAY = 'REMOVE_PUBLIC_HOLIDAY';
+export const REMOVE_PUBLIC_HOLIDAY_SUCCESS = 'REMOVE_PUBLIC_HOLIDAY_SUCCESS';
+export const REMOVE_PUBLIC_HOLIDAY_ERROR = 'REMOVE_PUBLIC_HOLIDAY_ERROR';
 
-export const removeTeam = createAction(REMOVE_TEAM);
-export const removeTeamSuccess = createAction(REMOVE_TEAM_SUCCESS);
-export const errorRemovingTeam = createAction(REMOVE_TEAM_ERROR);
+export const removePublicHoliday = createAction(REMOVE_PUBLIC_HOLIDAY);
+export const removePublicHolidaySuccess = createAction(
+  REMOVE_PUBLIC_HOLIDAY_SUCCESS
+);
+export const errorRemovingPublicHoliday = createAction(
+  REMOVE_PUBLIC_HOLIDAY_ERROR
+);
 
-export const UPDATE_TEAM = 'UPDATE_TEAM';
-export const UPDATE_TEAM_SUCCESSFUL = 'UPDATE_TEAM_SUCCESSFUL';
-export const UPDATE_TEAM_ERROR = 'UPDATE_TEAM_ERROR';
+export const UPDATE_PUBLIC_HOLIDAY = 'UPDATE_PUBLIC_HOLIDAY';
+export const UPDATE_PUBLIC_HOLIDAY_SUCCESSFUL =
+  'UPDATE_PUBLIC_HOLIDAY_SUCCESSFUL';
+export const UPDATE_PUBLIC_HOLIDAY_ERROR = 'UPDATE_PUBLIC_HOLIDAY_ERROR';
 
-export const updateTeam = createAction(UPDATE_TEAM);
-export const updateTeamSuccessful = createAction(UPDATE_TEAM_SUCCESSFUL);
-export const updateTeamError = createAction(UPDATE_TEAM_ERROR);
+export const updatePublicHoliday = createAction(UPDATE_PUBLIC_HOLIDAY);
+export const updatePublicHolidaySuccessful = createAction(
+  UPDATE_PUBLIC_HOLIDAY_SUCCESSFUL
+);
+export const updatePublicHolidayError = createAction(
+  UPDATE_PUBLIC_HOLIDAY_ERROR
+);
 
-export const CREATE_TEAM = 'CREATE_TEAM';
-export const CREATE_TEAM_SUCCESSFUL = 'CREATE_TEAM_SUCCESSFUL';
-export const CREATE_TEAM_ERROR = 'CREATE_TEAM_ERROR';
+export const CREATE_PUBLIC_HOLIDAY = 'CREATE_PUBLIC_HOLIDAY';
+export const CREATE_PUBLIC_HOLIDAY_SUCCESSFUL =
+  'CREATE_PUBLIC_HOLIDAY_SUCCESSFUL';
+export const CREATE_PUBLIC_HOLIDAY_ERROR = 'CREATE_PUBLIC_HOLIDAY_ERROR';
 
-export const createTeam = createAction(CREATE_TEAM);
-export const createTeamSuccessful = createAction(CREATE_TEAM_SUCCESSFUL);
-export const createTeamError = createAction(CREATE_TEAM_ERROR);
+export const createPublicHoliday = createAction(CREATE_PUBLIC_HOLIDAY);
+export const createPublicHolidaySuccessful = createAction(
+  CREATE_PUBLIC_HOLIDAY_SUCCESSFUL
+);
+export const createPublicHolidayError = createAction(
+  CREATE_PUBLIC_HOLIDAY_ERROR
+);

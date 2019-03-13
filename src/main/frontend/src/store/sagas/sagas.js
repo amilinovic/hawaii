@@ -9,6 +9,7 @@ import { leaveProfileSaga } from './leaveProfileSaga';
 import { leaveProfilesSaga } from './leaveProfilesSaga';
 import { leaveTypesSaga } from './leaveTypesSaga';
 import { personalDaysSaga } from './personalDaysSaga';
+import { publicHolidaySaga } from './publicHolidaySaga';
 import { publicHolidaysSaga } from './publicHolidaysSaga';
 import { requestsSaga } from './requestsSaga';
 import { teamSaga } from './teamSaga';
@@ -28,6 +29,7 @@ export default function* saga() {
     ...leaveTypesSaga,
     ...personalDaysSaga,
     ...publicHolidaysSaga,
+    ...publicHolidaySaga,
     ...leaveProfilesSaga,
     ...leaveProfileSaga,
     ...allowanceSaga,

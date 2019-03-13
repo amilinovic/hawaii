@@ -10,9 +10,11 @@ import Sidebar from '../components/navigation/Sidebar';
 import Administration from '../pages/Administration';
 import CreateEmployee from '../pages/CreateEmployee';
 import CreateLeaveProfile from '../pages/CreateLeaveProfile';
+import CreatePublicHoliday from '../pages/CreatePublicHoliday';
 import CreateTeam from '../pages/CreateTeam';
 import EditEmployee from '../pages/EditEmployee';
 import EditLeaveProfile from '../pages/EditLeaveProfile';
+import EditPublicHoliday from '../pages/EditPublicHoliday';
 import EditTeam from '../pages/EditTeam';
 import Employee from '../pages/Employee';
 import Leave from '../pages/Leave';
@@ -56,6 +58,14 @@ class Panel extends Component {
                 <Route path="/employee/create" component={CreateEmployee} />
                 <Route path="/employee/:id/edit" component={EditEmployee} />
                 <Route path="/employee/:id" component={Employee} />
+                <Route
+                  path="/public-holidays/create"
+                  component={CreatePublicHoliday}
+                />
+                <Route
+                  path="/public-holidays/:id/edit"
+                  component={EditPublicHoliday}
+                />
                 <Route path="/public-holidays/:id" component={PublicHoliday} />
                 <Route
                   path="/leave-profiles/create"

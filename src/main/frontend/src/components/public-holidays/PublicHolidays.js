@@ -24,10 +24,10 @@ class PublicHolidays extends Component {
       <div className="container-fluid">
         <div className="row">
           <div className="col-md-12">
-            <NavLink to={'/teams/create'}>
+            <NavLink to={'/public-holidays/create'}>
               <input
                 type="button"
-                value="Create Team"
+                value="Create public holiday"
                 className="btn btn-primary float-right"
               />
             </NavLink>
