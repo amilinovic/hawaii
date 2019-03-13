@@ -16,6 +16,7 @@ export const tokenRequest = async userObj => {
   sessionStorage.setItem('token', userObj.tokenId);
   sessionStorage.setItem('role', response.body.userRole);
   sessionStorage.setItem('userEmail', response.body.email);
+  sessionStorage.setItem('userImageUrl', userObj.profileObj.imageUrl);
 
   return {
     token,
