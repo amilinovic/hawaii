@@ -367,7 +367,7 @@ public class UserService {
   }
 
   private void logAndThrowEntityExistsException(User user) {
-    log.error("User with email {} already exists.", user.getEmail());
+    log.error("User with email '{}' already exists.", user.getEmail());
     throw new EntityExistsException("User with email " + user.getEmail() + " already exists.");
   }
 
