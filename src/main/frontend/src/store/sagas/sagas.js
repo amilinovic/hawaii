@@ -14,6 +14,7 @@ import { requestsSaga } from './requestsSaga';
 import { teamSaga } from './teamSaga';
 import { teamsSaga } from './teamsSaga';
 import { userSaga } from './userSaga';
+import { yearSaga } from './yearSaga';
 import { yearsSaga } from './yearsSaga';
 
 export default function* saga() {
@@ -33,6 +34,7 @@ export default function* saga() {
     ...leaveProfileSaga,
     ...allowanceSaga,
     ...yearsSaga,
+    ...yearSaga,
     ...requestsSaga
   ]);
 }

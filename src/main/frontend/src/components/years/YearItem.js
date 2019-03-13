@@ -10,7 +10,7 @@ export default class YearItem extends Component {
     return (
       <tr>
         <td>
-          <NavLink to={`teams/${yearId}`}>{year}</NavLink>
+          <NavLink to={`years/${yearId}`}>{year}</NavLink>
         </td>
       </tr>
     );

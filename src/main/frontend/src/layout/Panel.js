@@ -11,6 +11,7 @@ import Administration from '../pages/Administration';
 import CreateEmployee from '../pages/CreateEmployee';
 import CreateLeaveProfile from '../pages/CreateLeaveProfile';
 import CreateTeam from '../pages/CreateTeam';
+import CreateYear from '../pages/CreateYear';
 import EditEmployee from '../pages/EditEmployee';
 import EditLeaveProfile from '../pages/EditLeaveProfile';
 import EditTeam from '../pages/EditTeam';
@@ -55,6 +56,7 @@ class Panel extends Component {
                 <Route path="/employee/create" component={CreateEmployee} />
                 <Route path="/employee/:id/edit" component={EditEmployee} />
                 <Route path="/employee/:id" component={Employee} />
+                <Route path="/years/create" component={CreateYear} />
                 <Route
                   path="/leave-profiles/create"
                   component={CreateLeaveProfile}
