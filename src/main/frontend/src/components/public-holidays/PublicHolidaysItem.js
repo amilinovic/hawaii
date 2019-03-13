@@ -6,6 +6,7 @@ export default class PublicHolidayItem extends Component {
     const {
       publicHoliday: { id, name, date }
     } = this.props;
+
     return (
       <tr>
         <td>
