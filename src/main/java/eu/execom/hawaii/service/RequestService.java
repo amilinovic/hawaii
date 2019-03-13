@@ -31,6 +31,7 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -242,6 +243,8 @@ public class RequestService {
     newRequest.setUser(user);
     LocalDateTime submissionTime = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
     newRequest.setSubmissionTime(submissionTime);
+    newRequest.setCurrentlyApprovedBy(new ArrayList<>());
+
     var requests = findAllByUser(user.getId());
     List<Day> matchingDays = requests.stream()
                                      .map(Request::getDays)
@@ -324,6 +327,7 @@ public class RequestService {
             break;
           }
         }
+        setApprovedBy(request, authUser);
         allowanceService.applyPendingRequest(request, true);
         applyRequest(request, false);
         sendNotificationsService.sendNotificationForRequestedLeave(request.getRequestStatus(), user);
@@ -381,6 +385,12 @@ public class RequestService {
     int neededApprovals = request.getUser().getTeam().getTeamApprovers().size();
     if (request.getCurrentlyApprovedBy().size() != neededApprovals) {
       request.setRequestStatus(RequestStatus.PENDING);
+    }
+  }
+
+  private void setApprovedBy(Request request, User user) {
+    if (!request.getAbsence().isBonusDays()) {
+      request.setCurrentlyApprovedBy(List.of(user));
     }
   }
 
