@@ -7,6 +7,7 @@ import { authenticateSaga } from './getTokenFromSessionStorageSaga';
 import { getTokenSaga } from './getTokenSaga';
 import { leaveProfileSaga } from './leaveProfileSaga';
 import { leaveProfilesSaga } from './leaveProfilesSaga';
+import { leaveTypeSaga } from './leaveTypeSaga';
 import { leaveTypesSaga } from './leaveTypesSaga';
 import { personalDaysSaga } from './personalDaysSaga';
 import { publicHolidaySaga } from './publicHolidaySaga';
@@ -27,6 +28,7 @@ export default function* saga() {
     ...employeeSaga,
     ...employeesSearchSaga,
     ...leaveTypesSaga,
+    ...leaveTypeSaga,
     ...personalDaysSaga,
     ...publicHolidaysSaga,
     ...publicHolidaySaga,

@@ -61,6 +61,7 @@ public class PublicHolidayController {
   @PutMapping
   public ResponseEntity<PublicHolidayDto> updatePublicHoliday(@RequestBody PublicHolidayDto publicHolidayDto) {
     var publicHoliday = MAPPER.map(publicHolidayDto, PublicHoliday.class);
+    publicHoliday = publicHolidayService.save(publicHoliday);
     var publicHolidayDtoResponse = new PublicHolidayDto(publicHoliday);
 
     return new ResponseEntity<>(publicHolidayDtoResponse, HttpStatus.OK);

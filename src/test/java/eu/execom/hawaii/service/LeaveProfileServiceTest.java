@@ -24,7 +24,7 @@ import java.util.List;
 public class LeaveProfileServiceTest {
 
   @Mock
-  private LeaveProfileRepository leaveProfileRepo;
+  private LeaveProfileRepository leaveProfileRepository;
   @InjectMocks
   private LeaveProfileService leaveService;
   private LeaveProfile mockLeaveProfile;
@@ -43,7 +43,7 @@ public class LeaveProfileServiceTest {
   @Test
   public void shouldGetAllLeaveProfiles() {
     //given
-    given(leaveProfileRepo.findAll()).willReturn(leaveProfiles);
+    given(leaveProfileRepository.findAll()).willReturn(leaveProfiles);
 
     //when
     List<LeaveProfile> leaveProfiles = leaveService.findAll();
@@ -52,31 +52,30 @@ public class LeaveProfileServiceTest {
     assertNotNull(leaveProfiles);
     assertThat("Expect size to be two", leaveProfiles.size(), is(2));
     assertThat("Expect name to be 'Default'", leaveProfiles.get(0).getName(), is("Default"));
-    verify(leaveProfileRepo).findAll();
-    verifyNoMoreInteractions(leaveProfileRepo);
+    verify(leaveProfileRepository).findAll();
+    verifyNoMoreInteractions(leaveProfileRepository);
   }
 
   @Test
   public void shouldGetLeaveProfileById() {
     //given
     var leaveProfileId = 1L;
-    given(leaveProfileRepo.getOne(leaveProfileId)).willReturn(mockLeaveProfile);
+    given(leaveProfileRepository.getOne(leaveProfileId)).willReturn(mockLeaveProfile);
 
     //when
     var leaveProfile = leaveService.getById(leaveProfileId);
 
     //then
     assertThat("Expect name to be 'Default'", leaveProfile.getName(), is("Default"));
-    verify(leaveProfileRepo).getOne(anyLong());
-    verifyNoMoreInteractions(leaveProfileRepo);
+    verify(leaveProfileRepository).getOne(anyLong());
+    verifyNoMoreInteractions(leaveProfileRepository);
   }
 
   @Test
   public void shouldCreateLeaveProfile() {
     //given
     var leaveProfile3 = EntityBuilder.leaveProfileIII();
-    given(leaveProfileRepo.existsByLeaveProfileType(mockLeaveProfile.getLeaveProfileType())).willReturn(false);
-    given(leaveProfileRepo.save(mockLeaveProfile)).willReturn(leaveProfile3);
+    given(leaveProfileRepository.save(mockLeaveProfile)).willReturn(leaveProfile3);
 
     //when
     var leaveProfile = leaveService.create(mockLeaveProfile);
@@ -84,23 +83,22 @@ public class LeaveProfileServiceTest {
     //then
     assertNotNull(leaveProfile);
     assertThat("Expect name to be 'Ten-Fifteen'", leaveProfile.getName(), is("Ten-Fifteen"));
-    verify(leaveProfileRepo).existsByLeaveProfileType(any());
-    verify(leaveProfileRepo).save(any());
-    verifyNoMoreInteractions(leaveProfileRepo);
+    verify(leaveProfileRepository).save(any());
+    verifyNoMoreInteractions(leaveProfileRepository);
   }
 
   @Test
   public void shouldSaveLeaveProfile() {
     //given
-    given(leaveProfileRepo.save(mockLeaveProfile)).willReturn(mockLeaveProfile);
+    given(leaveProfileRepository.save(mockLeaveProfile)).willReturn(mockLeaveProfile);
 
     //when
-    LeaveProfile leaveProfile = leaveProfileRepo.save(mockLeaveProfile);
+    LeaveProfile leaveProfile = leaveProfileRepository.save(mockLeaveProfile);
 
     //then
     assertNotNull(leaveProfile);
-    verify(leaveProfileRepo).save(mockLeaveProfile);
-    verifyNoMoreInteractions(leaveProfileRepo);
+    verify(leaveProfileRepository).save(mockLeaveProfile);
+    verifyNoMoreInteractions(leaveProfileRepository);
   }
 
 }

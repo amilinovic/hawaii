@@ -182,7 +182,7 @@ public class UserServiceTest {
     given(userRepository.save(user)).willReturn(user);
 
     // when
-    User userWithAllowance = userService.createAllowanceForUserOnCreateUser(user, user);
+    User userWithAllowance = userService.setAllowanceAndYearsOfServiceForUserOnCreateUser(user, user);
 
     // then
     assertThat("Expect to have two allowance created", userWithAllowance.getAllowances().size(), is(2));

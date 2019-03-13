@@ -11,6 +11,7 @@ export const getPersonalDays = state => state.personalDays;
 export const getRequest = state => state.request;
 export const getModal = state => state.modal;
 export const getLeaveTypes = state => state.leaveTypes;
+export const getLeaveType = state => state.leaveType;
 export const getLeaveProfiles = state => state.leaveProfiles;
 export const getLeaveProfile = state => state.leaveProfile;
 export const getAllowance = state => state.allowance;

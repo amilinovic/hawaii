@@ -178,7 +178,7 @@ public class UserController {
   public ResponseEntity<UserDto> createUser(@ApiIgnore @AuthenticationPrincipal User authUser,
       @RequestBody UserDto userDto) {
     User user = MAPPER.map(userDto, User.class);
-    user = userService.createAllowanceForUserOnCreateUser(user, authUser);
+    user = userService.setAllowanceAndYearsOfServiceForUserOnCreateUser(user, authUser);
 
     return new ResponseEntity<>(new UserDto(user), HttpStatus.CREATED);
   }
