@@ -106,9 +106,6 @@
       <column name="max_allowance_from_next_year" type="INT(10)">
         <constraints nullable="false"/>
       </column>
-      <column name="deleted" type="BIT(1)">
-        <constraints nullable="false"/>
-      </column>
       <column name="name" type="VARCHAR(255)">
         <constraints nullable="false"/>
       </column>

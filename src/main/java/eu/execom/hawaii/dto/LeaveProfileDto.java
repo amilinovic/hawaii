@@ -4,7 +4,6 @@ import eu.execom.hawaii.model.LeaveProfile;
 import eu.execom.hawaii.model.enumerations.LeaveProfileType;
 import lombok.Data;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,11 +17,10 @@ public class LeaveProfileDto {
   private int maxBonusDays;
   private int maxAllowanceFromNextYear;
   private int training;
-  private boolean deleted;
   private boolean upgradeable;
   private LeaveProfileType leaveProfileType;
   private String comment;
-  private List<UserDto> users = new ArrayList<>();
+  private List<UserDto> users;
 
   public LeaveProfileDto(LeaveProfile leaveProfile) {
     this.id = leaveProfile.getId();
@@ -32,7 +30,6 @@ public class LeaveProfileDto {
     this.maxBonusDays = leaveProfile.getMaxBonusDays();
     this.maxAllowanceFromNextYear = leaveProfile.getMaxAllowanceFromNextYear();
     this.training = leaveProfile.getTraining();
-    this.deleted = leaveProfile.isDeleted();
     this.upgradeable = leaveProfile.isUpgradeable();
     this.leaveProfileType = leaveProfile.getLeaveProfileType();
     this.comment = leaveProfile.getComment();
