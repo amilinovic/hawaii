@@ -7,6 +7,7 @@ import employeesSearch from './employeesSearchReducer';
 import authorization from './getTokenReducer';
 import leaveProfile from './leaveProfileReducer';
 import leaveProfiles from './leaveProfilesReducer';
+import leaveType from './leaveTypeReducer';
 import leaveTypes from './leaveTypesReducer';
 import modal from './modalReducer';
 import personalDays from './personalDaysReducer';
@@ -26,6 +27,7 @@ export default combineReducers({
   personalDays,
   publicHolidays,
   leaveTypes,
+  leaveType,
   leaveProfiles,
   leaveProfile,
   modal,

@@ -8,7 +8,7 @@ import withResetOnNavigate from '../HOC/withResetOnNavigate';
 import Loading from '../loading/Loading';
 import LeaveTypeItem from './LeaveTypeItem';
 
-class Teams extends Component {
+class LeaveTypes extends Component {
   componentDidMount() {
     this.props.requestLeaveTypes();
   }
@@ -24,10 +24,10 @@ class Teams extends Component {
       <div className="container-fluid">
         <div className="row">
           <div className="col-md-12">
-            <NavLink to={'/teams/create'}>
+            <NavLink to={'/leave-types/create'}>
               <input
                 type="button"
-                value="Create Team"
+                value="Create leave type"
                 className="btn btn-primary float-right"
               />
             </NavLink>
@@ -63,4 +63,4 @@ const mapDispatchToProps = dispatch =>
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(withResetOnNavigate()(Teams));
+)(withResetOnNavigate()(LeaveTypes));

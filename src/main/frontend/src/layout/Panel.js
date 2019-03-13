@@ -10,14 +10,17 @@ import Sidebar from '../components/navigation/Sidebar';
 import Administration from '../pages/Administration';
 import CreateEmployee from '../pages/CreateEmployee';
 import CreateLeaveProfile from '../pages/CreateLeaveProfile';
+import CreateLeaveType from '../pages/CreateLeaveType';
 import CreateTeam from '../pages/CreateTeam';
 import EditEmployee from '../pages/EditEmployee';
 import EditLeaveProfile from '../pages/EditLeaveProfile';
+import EditLeaveType from '../pages/EditLeaveType';
 import EditTeam from '../pages/EditTeam';
 import Employee from '../pages/Employee';
 import Leave from '../pages/Leave';
 import LeaveHistory from '../pages/LeaveHistory';
 import LeaveProfile from '../pages/LeaveProfile';
+import LeaveType from '../pages/LeaveType';
 import Team from '../pages/Team';
 import TeamCalendar from '../pages/TeamCalendar';
 import { requestUser } from '../store/actions/userActions';
@@ -64,6 +67,9 @@ class Panel extends Component {
                   component={EditLeaveProfile}
                 />
                 <Route path="/leave-profiles/:id" component={LeaveProfile} />
+                <Route path="/leave-types/create" component={CreateLeaveType} />
+                <Route path="/leave-types/:id/edit" component={EditLeaveType} />
+                <Route path="/leave-types/:id" component={LeaveType} />
               </Switch>
             </PanelContent>
           </div>
