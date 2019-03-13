@@ -43,5 +43,7 @@ public class Allowance extends BaseEntity implements Serializable {
 
   private int pendingTraining;
 
-  private int usedInPreviousYear;
+  private int takenInPreviousYear;
+
+  private int pendingInPreviousYear;
 }
