@@ -38,9 +38,7 @@ class LeaveProfiles extends Component {
             <table className="table table-hover">
               <thead>
                 <tr>
-                  {/* <th>Name</th>
-                  <th>Members</th>
-                  <th>Approvers</th> */}
+                  <th>Name</th>
                 </tr>
               </thead>
               <tbody>{leaveProfiles}</tbody>

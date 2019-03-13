@@ -11,8 +11,6 @@ class LeaveProfileItem extends Component {
         <td>
           <NavLink to={`leave-profiles/${id}`}>{name}</NavLink>
         </td>
-        {/* <td>test members</td> */}
-        {/* <td>{emails}</td> */}
       </tr>
     );
   }
