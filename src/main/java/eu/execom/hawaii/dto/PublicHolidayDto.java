@@ -9,6 +9,8 @@ import java.time.LocalDate;
 @Data
 public class PublicHolidayDto {
 
+  private Long id;
+
   @NotNull
   private String name;
 
@@ -19,6 +21,7 @@ public class PublicHolidayDto {
   private boolean deleted;
 
   public PublicHolidayDto(PublicHoliday publicHoliday) {
+    this.id = publicHoliday.getId();
     this.deleted = publicHoliday.isDeleted();
     this.name = publicHoliday.getName();
     this.date = publicHoliday.getDate();

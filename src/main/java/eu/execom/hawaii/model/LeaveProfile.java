@@ -42,19 +42,21 @@ public class LeaveProfile extends BaseEntity implements Serializable {
   @NotNull
   private int maxAllowanceFromNextYear;
 
-  @NotNull
-  private boolean deleted;
-
-  @NotNull
+  @Column(updatable = false)
   private boolean upgradeable;
 
   @NotNull
   @Enumerated(EnumType.STRING)
+  @Column(updatable = false)
   private LeaveProfileType leaveProfileType;
 
   private String comment;
 
   @OneToMany(mappedBy = "leaveProfile", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
   private List<User> users;
+
+  public boolean isCustom() {
+    return LeaveProfileType.CUSTOM.equals(leaveProfileType);
+  }
 
 }

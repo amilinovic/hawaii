@@ -313,15 +313,12 @@ public class RequestServiceTest {
   @Test
   public void shouldCreateApprovedSicknessRequest() {
     // given
-    var sicknessAbsence = EntityBuilder.absence();
-    sicknessAbsence.setAbsenceType(AbsenceType.SICKNESS);
-    var requestOne = EntityBuilder.request(sicknessAbsence, List.of(dayOne));
-    var requestTwo = EntityBuilder.request(sicknessAbsence, List.of(dayOne));
+    var requestOne = EntityBuilder.request(EntityBuilder.absenceSickness(), List.of(dayOne));
+    var requestTwo = EntityBuilder.request(EntityBuilder.absenceSickness(), List.of(dayOne));
     requestTwo.setRequestStatus(RequestStatus.APPROVED);
     requestTwo.setSubmissionTime(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES));
 
     given(userRepository.getOne(1L)).willReturn(mockUser);
-    given(requestRepository.save(requestTwo)).willReturn(requestTwo);
     given(requestRepository.findAllByUser(mockUser)).willReturn(new ArrayList<>());
 
     // when

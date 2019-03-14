@@ -42,7 +42,7 @@ public class PublicHolidayController {
   }
 
   @GetMapping
-  public ResponseEntity<List<PublicHolidayDto>> getPublicHolidays(@RequestParam boolean deleted) {
+  public ResponseEntity<List<PublicHolidayDto>> getPublicHolidays(@RequestParam(defaultValue = "false") boolean deleted) {
     var publicHolidays = publicHolidayService.findAllByDeleted(deleted);
     var publicHolidayDtos = publicHolidays.stream().map(PublicHolidayDto::new).collect(Collectors.toList());
 
@@ -61,6 +61,7 @@ public class PublicHolidayController {
   @PutMapping
   public ResponseEntity<PublicHolidayDto> updatePublicHoliday(@RequestBody PublicHolidayDto publicHolidayDto) {
     var publicHoliday = MAPPER.map(publicHolidayDto, PublicHoliday.class);
+    publicHoliday = publicHolidayService.save(publicHoliday);
     var publicHolidayDtoResponse = new PublicHolidayDto(publicHoliday);
 
     return new ResponseEntity<>(publicHolidayDtoResponse, HttpStatus.OK);

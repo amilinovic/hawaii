@@ -1,7 +1,6 @@
 package eu.execom.hawaii.service;
 
 import eu.execom.hawaii.model.Absence;
-import eu.execom.hawaii.model.User;
 import eu.execom.hawaii.repository.AbsenceRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,18 +29,14 @@ public class AbsenceServiceTest {
   @InjectMocks
   private AbsenceService absenceService;
 
-  private User mockUser;
   private Absence mockAbsence;
   private List<Absence> absences;
 
   @Before
   public void setUp() {
-    mockUser = EntityBuilder.user(EntityBuilder.team());
-
     mockAbsence = EntityBuilder.absenceTraining();
-
     var mockAbsence2 = EntityBuilder.absenceAnnual();
-    var mockAbsence3 = EntityBuilder.absence();
+    var mockAbsence3 = EntityBuilder.absenceBonus();
 
     absences = Arrays.asList(mockAbsence, mockAbsence2, mockAbsence3);
   }

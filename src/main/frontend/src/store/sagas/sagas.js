@@ -1,15 +1,23 @@
 import { all } from 'redux-saga/effects';
+import { allowanceSaga } from './allowanceSaga';
 import { employeeSaga } from './employeeSaga';
 import { employeesSaga } from './employeesSaga';
 import { employeesSearchSaga } from './employeesSearchSaga';
 import { authenticateSaga } from './getTokenFromSessionStorageSaga';
 import { getTokenSaga } from './getTokenSaga';
+import { leaveProfileSaga } from './leaveProfileSaga';
+import { leaveProfilesSaga } from './leaveProfilesSaga';
+import { leaveTypeSaga } from './leaveTypeSaga';
 import { leaveTypesSaga } from './leaveTypesSaga';
 import { personalDaysSaga } from './personalDaysSaga';
-import { publicHolidaysSaga } from './publicHolidaySaga';
+import { publicHolidaySaga } from './publicHolidaySaga';
+import { publicHolidaysSaga } from './publicHolidaysSaga';
+import { requestsSaga } from './requestsSaga';
 import { teamSaga } from './teamSaga';
 import { teamsSaga } from './teamsSaga';
 import { userSaga } from './userSaga';
+import { yearSaga } from './yearSaga';
+import { yearsSaga } from './yearsSaga';
 
 export default function* saga() {
   yield all([
@@ -22,7 +30,15 @@ export default function* saga() {
     ...employeeSaga,
     ...employeesSearchSaga,
     ...leaveTypesSaga,
+    ...leaveTypeSaga,
     ...personalDaysSaga,
-    ...publicHolidaysSaga
+    ...publicHolidaysSaga,
+    ...publicHolidaySaga,
+    ...leaveProfilesSaga,
+    ...leaveProfileSaga,
+    ...allowanceSaga,
+    ...yearsSaga,
+    ...yearSaga,
+    ...requestsSaga
   ]);
 }

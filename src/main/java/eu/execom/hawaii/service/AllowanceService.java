@@ -66,9 +66,8 @@ public class AllowanceService {
    */
   @Transactional
   public void applyPendingRequest(Request request, boolean requestCanceled) {
-    var yearOfRequest = request.getSubmissionTime().getYear();
+    var yearOfRequest = request.getDays().get(0).getDate().getYear();
     var currentYearAllowance = getByUserAndYear(request.getUser().getId(), yearOfRequest);
-    var nextYearAllowance = getByUserAndYear(request.getUser().getId(), yearOfRequest + 1);
 
     var absence = request.getAbsence();
     var workingDays = getWorkingDaysOnly(request.getDays());
@@ -82,17 +81,16 @@ public class AllowanceService {
     var isAbsenceTypeTraining = AbsenceSubtype.TRAINING.equals(absence.getAbsenceSubtype());
 
     if (isAbsenceTypeDeductible && isAbsenceTypeAnnual) {
-      checkRemainingAnnualHours(currentYearAllowance, nextYearAllowance, hours);
+      checkRemainingAnnualHours(currentYearAllowance, hours);
       if (requestCanceled) {
-        cancelPendingAnnual(currentYearAllowance, nextYearAllowance, hours);
+        cancelPendingAnnual(currentYearAllowance, hours);
       } else {
-        applyPendingAnnual(currentYearAllowance, nextYearAllowance, hours);
+        applyPendingAnnual(currentYearAllowance, hours);
       }
     } else if (isAbsenceTypeDeductible && isAbsenceTypeTraining) {
       checkRemainingTrainingHours(currentYearAllowance, hours);
       applyPendingTraining(currentYearAllowance, hours);
     }
-
   }
 
   /**
@@ -105,39 +103,65 @@ public class AllowanceService {
     return allowanceRepository.findByUserIdAndYearYear(userId, year);
   }
 
-  private void cancelPendingAnnual(Allowance currentYearAllowance, Allowance nextYearAllowance, int requestedHours) {
+  /**
+   * Gets pending annual hours for current year and for next year if next year is active. Checks if pending annual hours for next year minus
+   * canceled hours is less than zero.
+   * <p>
+   * If it is, it means that some or all of those canceled hours belong to current year and rest to next year.
+   * If it isn't, it means that all of those canceled hours belong to next year.
+   * Also, if next year isn't active, all canceled hours belong to current year.
+   */
+  private void cancelPendingAnnual(Allowance currentYearAllowance, int requestedHours) {
     var currentYearPendingAnnual = currentYearAllowance.getPendingAnnual();
-    var nextYearPendingAnnual = nextYearAllowance.getPendingAnnual();
-    var nextYearRequestedHours = nextYearPendingAnnual + requestedHours;
+    var nextYearPendingInPreviousYear = 0;
+    var nextYearRequestedHours = requestedHours;
 
-    if (nextYearRequestedHours < 0) {
-      currentYearAllowance.setPendingAnnual(currentYearPendingAnnual + nextYearRequestedHours);
-      nextYearAllowance.setPendingAnnual(0);
-
-      allowanceRepository.save(currentYearAllowance);
+    if (nextYearAllowanceExists(currentYearAllowance)) {
+      var nextYearAllowance = getNextYearAllowance(currentYearAllowance);
+      nextYearPendingInPreviousYear = nextYearAllowance.getPendingInPreviousYear();
+      nextYearRequestedHours = nextYearPendingInPreviousYear + requestedHours;
+      if (nextYearRequestedHours < 0) {
+        currentYearAllowance.setPendingAnnual(currentYearPendingAnnual + nextYearRequestedHours);
+        nextYearAllowance.setPendingInPreviousYear(0);
+        allowanceRepository.save(currentYearAllowance);
+      } else {
+        nextYearAllowance.setPendingInPreviousYear(nextYearRequestedHours);
+      }
+      allowanceRepository.save(nextYearAllowance);
     } else {
-      nextYearAllowance.setPendingAnnual(nextYearRequestedHours);
+      currentYearAllowance.setPendingAnnual(currentYearPendingAnnual + nextYearRequestedHours);
+      allowanceRepository.save(currentYearAllowance);
     }
-
-    allowanceRepository.save(nextYearAllowance);
   }
 
-  private void applyPendingAnnual(Allowance currentYearAllowance, Allowance nextYearAllowance, int requestedHours) {
+  /**
+   * Gets pending annual hours for current year and for next year if year is active. Checks if there is less hours in current
+   * year then is requested.
+   * <p>
+   * If it is, it means that some or all of requested hours will be taken from next year allowance if next year is active.
+   * If it isn't, it means that all of requested hours will be taken from current year if there is enough remaining hours.
+   * if there is not enough annual hours in current year and next year isn't active, request won't be created.
+   */
+  private void applyPendingAnnual(Allowance currentYearAllowance, int requestedHours) {
     var currentYearPendingAnnual = currentYearAllowance.getPendingAnnual();
-    var nextYearPendingAnnual = nextYearAllowance.getPendingAnnual();
-
     var remainingHoursCurrentYear = calculateRemainingAnnualHours(currentYearAllowance);
-    var nextYearRequestedHours = requestedHours - remainingHoursCurrentYear + nextYearPendingAnnual;
+    var nextYearRequestedHours = requestedHours - remainingHoursCurrentYear;
 
-    if (nextYearRequestedHours > 0) {
-      currentYearAllowance.setPendingAnnual(currentYearPendingAnnual + remainingHoursCurrentYear);
-      nextYearAllowance.setPendingAnnual(nextYearRequestedHours);
+    if (nextYearAllowanceExists(currentYearAllowance)) {
+      var nextYearAllowance = getNextYearAllowance(currentYearAllowance);
+      var nextYearPendingInPreviousYear = nextYearAllowance.getPendingInPreviousYear();
+      nextYearRequestedHours += nextYearPendingInPreviousYear;
+      if (nextYearRequestedHours > 0) {
+        currentYearAllowance.setPendingAnnual(currentYearPendingAnnual + remainingHoursCurrentYear);
+        nextYearAllowance.setPendingInPreviousYear(nextYearRequestedHours);
+        allowanceRepository.save(nextYearAllowance);
+      } else {
+        currentYearAllowance.setPendingAnnual(currentYearPendingAnnual + requestedHours);
+      }
 
-      allowanceRepository.save(nextYearAllowance);
     } else {
       currentYearAllowance.setPendingAnnual(currentYearPendingAnnual + requestedHours);
     }
-
     allowanceRepository.save(currentYearAllowance);
   }
 
@@ -156,8 +180,8 @@ public class AllowanceService {
   @Transactional
   public void applyRequest(Request request, boolean requestCanceled) {
     var yearOfRequest = request.getDays().get(0).getDate().getYear();
+    var requestForPreviousYear = isRequestForPreviousYear(yearOfRequest, request);
     var currentYearAllowance = getByUserAndYear(request.getUser().getId(), yearOfRequest);
-    var nextYearAllowance = getByUserAndYear(request.getUser().getId(), yearOfRequest + 1);
     var absence = request.getAbsence();
     var workingDays = getWorkingDaysOnly(request.getDays());
     var hours = calculateHours(workingDays);
@@ -174,11 +198,11 @@ public class AllowanceService {
         }
         switch (absenceSubtype) {
           case ANNUAL:
-            checkRemainingAnnualHours(currentYearAllowance, nextYearAllowance, hours);
+            checkRemainingAnnualHours(currentYearAllowance, hours);
             if (requestCanceled) {
-              cancelAnnual(currentYearAllowance, nextYearAllowance, hours);
+              cancelAnnual(currentYearAllowance, hours);
             } else {
-              applyAnnual(currentYearAllowance, nextYearAllowance, hours);
+              applyAnnual(currentYearAllowance, hours);
             }
             break;
           case TRAINING:
@@ -198,44 +222,76 @@ public class AllowanceService {
         var leaveProfile = request.getUser().getLeaveProfile();
         checkRemainingBonusHours(leaveProfile, currentYearAllowance, hours);
         applyBonus(currentYearAllowance, hours);
+        if (requestForPreviousYear) {
+          var nextYearAllowance = getByUserAndYear(request.getUser().getId(), yearOfRequest + 1);
+          addHoursToCarriedOver(nextYearAllowance, leaveProfile, hours);
+        }
         break;
       default:
         throw new IllegalArgumentException("Unsupported absence type: " + absenceType);
     }
   }
 
-  private void cancelAnnual(Allowance currentYearAllowance, Allowance nextYearAllowance, int requestedHours) {
+  /**
+   * If next year is active, gets taken annual hours for current and next year. Checks if taken annual hours for next year minus
+   * canceled hours is less than zero.
+   * <p>
+   * If it is, it means that some or all of those canceled hours belong to current year and rest to next year.
+   * If it isn't, it means that all of those canceled hours belong to next year.
+   * Also, if next year isn't active, all canceled hours belong to current year.
+   */
+  private void cancelAnnual(Allowance currentYearAllowance, int requestedHours) {
     var currentYearTakenAnnual = currentYearAllowance.getTakenAnnual();
-    var nextYearTakenAnnual = nextYearAllowance.getTakenAnnual();
 
-    var nextYearRequestedHours = nextYearTakenAnnual + requestedHours;
+    if (nextYearAllowanceExists(currentYearAllowance)) {
+      var nextYearAllowance = getNextYearAllowance(currentYearAllowance);
+      var nextYearTakenInPreviousYear = nextYearAllowance.getTakenInPreviousYear();
+      var nextYearRequestedHours = nextYearTakenInPreviousYear + requestedHours;
+      if (nextYearRequestedHours < 0) {
+        currentYearAllowance.setTakenAnnual(currentYearTakenAnnual + nextYearRequestedHours);
+        nextYearAllowance.setTakenInPreviousYear(0);
 
-    if (nextYearRequestedHours < 0) {
-      currentYearAllowance.setTakenAnnual(currentYearTakenAnnual + nextYearRequestedHours);
-      nextYearAllowance.setTakenAnnual(0);
-
-      allowanceRepository.save(currentYearAllowance);
-    } else {
-      nextYearAllowance.setTakenAnnual(nextYearRequestedHours);
-    }
-
-    allowanceRepository.save(nextYearAllowance);
-  }
-
-  private void applyAnnual(Allowance currentYearAllowance, Allowance nextYearAllowance, int requestedHours) {
-    var currentYearAnnual = currentYearAllowance.getTakenAnnual();
-    var nextYearAnnual = nextYearAllowance.getTakenAnnual();
-    var remainingAnnualHoursCurrentYear = calculateRemainingAnnualHoursWithoutPending(currentYearAllowance);
-    var nextYearRequestedHours = requestedHours - remainingAnnualHoursCurrentYear + nextYearAnnual;
-    if (nextYearRequestedHours > 0) {
-      currentYearAllowance.setTakenAnnual(currentYearAnnual + remainingAnnualHoursCurrentYear);
-      nextYearAllowance.setTakenAnnual(nextYearRequestedHours);
+        allowanceRepository.save(currentYearAllowance);
+      } else {
+        nextYearAllowance.setTakenInPreviousYear(nextYearRequestedHours);
+      }
 
       allowanceRepository.save(nextYearAllowance);
     } else {
+      currentYearAllowance.setTakenAnnual(currentYearTakenAnnual + requestedHours);
+      allowanceRepository.save(currentYearAllowance);
+    }
+  }
+
+  /**
+   * Gets taken annual hours for current year and for next year if year is active. Checks if there is less available hours in current
+   * year then is requested hours.
+   * <p>
+   * If it is, it means that some or all of requested hours will be taken from next year allowance if next year is active.
+   * If it isn't, it means that all of requested hours will be taken from current year if there is enough remaining hours.
+   * if there is not enough annual hours in current year and next year isn't active, request won't be created.
+   */
+  private void applyAnnual(Allowance currentYearAllowance, int requestedHours) {
+    var currentYearAnnual = currentYearAllowance.getTakenAnnual();
+    var remainingAnnualHoursCurrentYear = calculateRemainingAnnualHoursWithoutPending(currentYearAllowance);
+    var nextYearRequestedHours = requestedHours - remainingAnnualHoursCurrentYear;
+
+    if (nextYearAllowanceExists(currentYearAllowance)) {
+      var nextYearAllowance = getNextYearAllowance(currentYearAllowance);
+      var nextYearTakenInPreviousYear = nextYearAllowance.getTakenInPreviousYear();
+      nextYearRequestedHours += nextYearTakenInPreviousYear;
+
+      if (nextYearRequestedHours > 0) {
+        currentYearAllowance.setTakenAnnual(currentYearAnnual + remainingAnnualHoursCurrentYear);
+        nextYearAllowance.setTakenInPreviousYear(nextYearRequestedHours);
+        allowanceRepository.save(nextYearAllowance);
+      } else {
+        currentYearAllowance.setTakenAnnual(currentYearAnnual + requestedHours);
+      }
+
+    } else {
       currentYearAllowance.setTakenAnnual(currentYearAnnual + requestedHours);
     }
-
     allowanceRepository.save(currentYearAllowance);
   }
 
@@ -255,6 +311,24 @@ public class AllowanceService {
     int calculatedBonus = allowance.getBonus() + hours;
     allowance.setBonus(calculatedBonus);
     allowanceRepository.save(allowance);
+  }
+
+  private void addHoursToCarriedOver(Allowance nextYearAllowance, LeaveProfile leaveProfile, int hours) {
+    var alreadyCarriedOver = nextYearAllowance.getCarriedOver();
+    var availableHours = getAvailableHoursForCarryOver(leaveProfile, nextYearAllowance, hours);
+    nextYearAllowance.setCarriedOver(alreadyCarriedOver + availableHours);
+
+    allowanceRepository.save(nextYearAllowance);
+  }
+
+  private int getAvailableHoursForCarryOver(LeaveProfile leaveProfile, Allowance nextYearAllowance, int hours) {
+    var remainingHoursForCarryOver = leaveProfile.getMaxCarriedOver() - nextYearAllowance.getCarriedOver();
+
+    return (hours > remainingHoursForCarryOver) ? remainingHoursForCarryOver : hours;
+  }
+
+  private boolean isRequestForPreviousYear(int yearOfRequest, Request request) {
+    return yearOfRequest < request.getSubmissionTime().getYear();
   }
 
   private List<Day> getWorkingDaysOnly(List<Day> days) {
@@ -300,24 +374,36 @@ public class AllowanceService {
     return Duration.FULL_DAY.equals(day.getDuration()) ? FULL_DAY : HALF_DAY;
   }
 
-  private void checkRemainingAnnualHours(Allowance currentYearAllowance, Allowance nextYearAllowance,
-      int requestedHours) {
+  /**
+   * Checks remaining annual hours that user has available for current and next year.
+   * If user requested more hours than it is available exception is thrown.
+   */
+  private void checkRemainingAnnualHours(Allowance currentYearAllowance, int requestedHours) {
 
     var userEmail = currentYearAllowance.getUser().getEmail();
     var remainingHoursCurrentYear = calculateRemainingAnnualHours(currentYearAllowance);
-    var remainingHoursNextYear = calculateNextYearRemainingAnnualHours(nextYearAllowance);
+    var remainingHoursNextYear = 0;
+    if (nextYearAllowanceExists(currentYearAllowance)) {
+      var nextYearAllowance = getNextYearAllowance(currentYearAllowance);
+      remainingHoursNextYear = calculateNextYearRemainingAnnualHours(nextYearAllowance);
+    }
 
     if (requestedHours > remainingHoursCurrentYear + remainingHoursNextYear) {
       logAndThrowInsufficientHoursException(remainingHoursCurrentYear, requestedHours, userEmail, ANNUAL);
     }
   }
 
+  /**
+   * Calculates available hours for use in current year for given user.
+   * That is all available hours that user has
+   * minus hours that he already spent, minus hours that are pending for approval and hours used in previous year.
+   */
   public int calculateRemainingAnnualHours(Allowance allowance) {
     var totalHours =
         allowance.getAnnual() + allowance.getBonus() + allowance.getCarriedOver() + allowance.getManualAdjust();
     var takenAnnual = allowance.getTakenAnnual();
     var pendingAnnual = allowance.getPendingAnnual();
-    var usedInPreviousYear = allowance.getUsedInPreviousYear();
+    var usedInPreviousYear = allowance.getTakenInPreviousYear() + allowance.getPendingInPreviousYear();
 
     return totalHours - takenAnnual - pendingAnnual - usedInPreviousYear;
   }
@@ -326,17 +412,21 @@ public class AllowanceService {
     var totalHours =
         allowance.getAnnual() + allowance.getBonus() + allowance.getCarriedOver() + allowance.getManualAdjust();
     var takenAnnual = allowance.getTakenAnnual();
-    var usedInPreviousYear = allowance.getUsedInPreviousYear();
+    var usedInPreviousYear = allowance.getTakenInPreviousYear();
 
     return totalHours - takenAnnual - usedInPreviousYear;
   }
 
+  /**
+   * Calculates available hours for use in next year for given user.
+   * Those hours are calculated based on spent annual hours plus hours that are pending for approval
+   * and maximum allowed hours from next year that user can use in current year with is set based on users LeaveProfile.
+   */
   private int calculateNextYearRemainingAnnualHours(Allowance allowance) {
-    var takenAnnual = allowance.getTakenAnnual();
-    var pendingAnnual = allowance.getPendingAnnual();
-    var allowanceFromNextYear = allowance.getUser().getLeaveProfile().getMaxAllowanceFromNextYear();
+    var maxAllowedAllowanceFromNextYear = allowance.getUser().getLeaveProfile().getMaxAllowanceFromNextYear();
+    var allowanceFromNextYear = allowance.getPendingInPreviousYear() + allowance.getTakenInPreviousYear();
 
-    return allowanceFromNextYear - takenAnnual - pendingAnnual;
+    return maxAllowedAllowanceFromNextYear - allowanceFromNextYear;
   }
 
   private void checkRemainingTrainingHours(Allowance allowance, int requestedHours) {
@@ -370,6 +460,19 @@ public class AllowanceService {
     log.error("Insufficient hours: available '{}', requested '{}', for user with email '{}'", remainingHours,
         requestedHours, userEmail);
     throw new InsufficientHoursException(leaveType);
+  }
+
+  private boolean nextYearAllowanceExists(Allowance allowance) {
+    var year = allowance.getYear().getYear() + 1;
+    var userId = allowance.getUser().getId();
+    return allowanceRepository.existsByUserIdAndYearYear(userId, year);
+  }
+
+  private Allowance getNextYearAllowance(Allowance allowance) {
+    var year = allowance.getYear().getYear() + 1;
+    var userId = allowance.getUser().getId();
+
+    return allowanceRepository.findByUserIdAndYearYear(userId, year);
   }
 
   public AllowanceForUserDto getAllowancesForUser(User user) {

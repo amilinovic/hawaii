@@ -1,11 +1,12 @@
 package eu.execom.hawaii.service;
 
+import eu.execom.hawaii.exceptions.ActionNotAllowedException;
 import eu.execom.hawaii.model.LeaveProfile;
+import eu.execom.hawaii.model.enumerations.LeaveProfileType;
 import eu.execom.hawaii.repository.LeaveProfileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
@@ -42,14 +43,13 @@ public class LeaveProfileService {
   }
 
   /**
-   * Creates the provided leave profile to repository.
+   * Creates custom leave profile to repository.
    *
    * @param leaveProfile the LeaveProfile entity to be persisted.
    */
   public LeaveProfile create(LeaveProfile leaveProfile) {
-    if (leaveProfileRepository.existsByLeaveProfileType(leaveProfile.getLeaveProfileType())) {
-      throw new EntityExistsException("Profile with same type already exists.");
-    }
+    leaveProfile.setLeaveProfileType(LeaveProfileType.CUSTOM);
+    leaveProfile.setUpgradeable(false);
 
     return leaveProfileRepository.save(leaveProfile);
   }
@@ -71,7 +71,14 @@ public class LeaveProfileService {
    */
   public void delete(Long id) {
     if (!leaveProfileRepository.existsById(id)) {
-      throw new EntityNotFoundException("Leave Profile already deleted.");
+      throw new EntityNotFoundException("Leave Profile doesn't exist or is already deleted.");
+    }
+    var leaveProfile = leaveProfileRepository.getOne(id);
+    if (!leaveProfile.isCustom()) {
+      throw new ActionNotAllowedException("Only Custom leave profiles can be deleted.");
+    }
+    if (!leaveProfile.getUsers().isEmpty()) {
+      throw new ActionNotAllowedException("To delete a leave profile, its member list needs to be empty.");
     }
     leaveProfileRepository.deleteById(id);
   }
