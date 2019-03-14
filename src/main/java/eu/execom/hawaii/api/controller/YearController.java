@@ -38,12 +38,12 @@ public class YearController {
   @PostMapping
   public ResponseEntity<YearDto> createYear(@RequestBody YearDto yearDto) {
     Year year;
-    if (!yearService.existsByYear(yearDto.getYear())) {
+    if (!yearService.yearExists(yearDto.getYear())) {
       year = MAPPER.map(yearDto, Year.class);
       yearService.save(year);
       yearService.createAllowanceOnCreateYear(year);
     } else {
-      throw new ActionNotAllowedException("This year already exists.");
+      throw new ActionNotAllowedException("Year " + yearDto.getYear() + " already exists.");
     }
     return new ResponseEntity<>(new YearDto(year), HttpStatus.CREATED);
   }
@@ -67,7 +67,6 @@ public class YearController {
   @PutMapping
   public ResponseEntity<YearDto> updateYear(@RequestBody YearDto yearDto) {
     var year = MAPPER.map(yearDto, Year.class);
-
     if (year.getAllowances().isEmpty()) {
       yearService.createAllowanceOnCreateYear(year);
     }

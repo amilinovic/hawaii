@@ -59,17 +59,16 @@ public class YearService {
     if (createdYear.isActive()) {
       List<User> activeUsers = userRepository.findAllByUserStatusTypeIn(List.of(UserStatusType.ACTIVE));
       for (User user : activeUsers) {
-        LeaveProfile leaveProfile = user.getLeaveProfile();
+        Allowance allowance = createAllowance(createdYear, user);
         var userAllowances = user.getAllowances();
-        Allowance allowance = createAllowance(createdYear, leaveProfile, user);
         userAllowances.add(allowance);
-        user.setAllowances(userAllowances);
       }
     }
   }
 
-  private Allowance createAllowance(Year createdYear, LeaveProfile leaveProfile, User user) {
+  private Allowance createAllowance(Year createdYear, User user) {
     Allowance allowance = new Allowance();
+    LeaveProfile leaveProfile = user.getLeaveProfile();
     allowance.setUser(user);
     allowance.setYear(createdYear);
     allowance.setAnnual(leaveProfile.getEntitlement());
@@ -79,7 +78,7 @@ public class YearService {
     return allowance;
   }
 
-  public boolean existsByYear(int year) {
+  public boolean yearExists(int year) {
     return yearRepository.existsByYear(year);
   }
 }
