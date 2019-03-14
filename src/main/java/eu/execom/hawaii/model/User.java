@@ -62,7 +62,6 @@ public class User extends BaseEntity implements Serializable {
   @NotNull
   private LocalDate startedWorkingAtExecomDate;
 
-  @NotNull
   private int yearsOfService;
 
   @Lob

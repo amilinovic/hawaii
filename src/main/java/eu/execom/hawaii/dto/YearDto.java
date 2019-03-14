@@ -3,6 +3,7 @@ package eu.execom.hawaii.dto;
 import eu.execom.hawaii.model.Year;
 import lombok.Data;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -10,9 +11,14 @@ import java.util.stream.Collectors;
 public class YearDto {
 
   private Long yearId;
+
+  @NotNull
   private int year;
-  private List<AllowanceWithoutYearDto> allowances;
+
+  @NotNull
   private boolean active;
+
+  private List<AllowanceWithoutYearDto> allowances;
 
   public YearDto(Year year) {
     this.yearId = year.getId();

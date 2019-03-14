@@ -13,13 +13,23 @@ import java.util.stream.Collectors;
 public class RequestDto {
 
   private Long id;
+
+  @NotNull
   private UserDto user;
+
+  @NotNull
   private AbsenceDto absence;
+
   private RequestStatus requestStatus;
+
+  @NotNull
   private String reason;
+
   private LocalDateTime submissionTime;
+
   @NotNull
   private List<DayDto> days;
+
   private List<UserDto> currentlyApprovedBy;
 
   public RequestDto(Request request) {

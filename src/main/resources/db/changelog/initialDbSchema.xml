@@ -7,18 +7,18 @@
       <column autoIncrement="true" name="id" type="BIGINT(19)">
         <constraints primaryKey="true"/>
       </column>
-      <column name="absence_subtype" type="VARCHAR(255)"/>
-      <column name="absence_type" type="VARCHAR(255)">
-        <constraints nullable="false"/>
-      </column>
-      <column name="active" type="BIT(1)">
-        <constraints nullable="false"/>
-      </column>
-      <column name="comment" type="VARCHAR(255)"/>
-      <column name="icon_url" type="VARCHAR(255)"/>
-      <column name="name" type="VARCHAR(255)">
-        <constraints nullable="false"/>
-      </column>
+        <column name="name" type="VARCHAR(255)">
+            <constraints nullable="false"/>
+        </column>
+        <column name="absence_type" type="VARCHAR(255)">
+            <constraints nullable="false"/>
+        </column>
+        <column name="absence_subtype" type="VARCHAR(255)"/>
+        <column name="comment" type="VARCHAR(255)"/>
+        <column name="icon_url" type="VARCHAR(255)"/>
+        <column name="active" type="BIT(1)">
+            <constraints nullable="false"/>
+        </column>
     </createTable>
   </changeSet>
   <changeSet author="admin" id="{initialId}-2">
@@ -87,31 +87,31 @@
       <column autoIncrement="true" name="id" type="BIGINT(19)">
         <constraints primaryKey="true"/>
       </column>
-      <column name="leave_profile_type" type="VARCHAR(255)">
-        <constraints nullable="false"/>
-      </column>
-      <column name="upgradeable" type="BIT(1)">
-        <constraints nullable="false"/>
-      </column>
-      <column name="comment" type="VARCHAR(255)"/>
-      <column name="entitlement" type="INT(10)">
-        <constraints nullable="false"/>
-      </column>
-      <column name="max_bonus_days" type="INT(10)">
-        <constraints nullable="false"/>
-      </column>
-      <column name="max_carried_over" type="INT(10)">
-        <constraints nullable="false"/>
-      </column>
-      <column name="max_allowance_from_next_year" type="INT(10)">
-        <constraints nullable="false"/>
-      </column>
-      <column name="name" type="VARCHAR(255)">
-        <constraints nullable="false"/>
-      </column>
-      <column name="training" type="INT(10)">
-        <constraints nullable="false"/>
-      </column>
+        <column name="name" type="VARCHAR(255)">
+            <constraints nullable="false"/>
+        </column>
+        <column name="leave_profile_type" type="VARCHAR(255)">
+            <constraints nullable="false"/>
+        </column>
+        <column name="comment" type="VARCHAR(255)"/>
+        <column name="entitlement" type="INT(10)">
+            <constraints nullable="false"/>
+        </column>
+        <column name="training" type="INT(10)">
+            <constraints nullable="false"/>
+        </column>
+        <column name="max_bonus_days" type="INT(10)">
+            <constraints nullable="false"/>
+        </column>
+        <column name="max_carried_over" type="INT(10)">
+            <constraints nullable="false"/>
+        </column>
+        <column name="max_allowance_from_next_year" type="INT(10)">
+            <constraints nullable="false"/>
+        </column>
+        <column name="upgradeable" type="BIT(1)">
+            <constraints nullable="false"/>
+        </column>
     </createTable>
   </changeSet>
   <changeSet author="admin" id="{initialId}-5">
@@ -119,13 +119,13 @@
       <column autoIncrement="true" name="id" type="BIGINT(19)">
         <constraints primaryKey="true"/>
       </column>
-      <column name="deleted" type="BIT(1)">
-        <constraints nullable="false"/>
-      </column>
-      <column name="date" type="date">
-        <constraints nullable="false"/>
-      </column>
-      <column name="name" type="VARCHAR(255)">
+        <column name="name" type="VARCHAR(255)">
+            <constraints nullable="false"/>
+        </column>
+        <column name="date" type="date">
+            <constraints nullable="false"/>
+        </column>
+        <column name="deleted" type="BIT(1)">
         <constraints nullable="false"/>
       </column>
     </createTable>
@@ -135,10 +135,10 @@
       <column autoIncrement="true" name="id" type="BIGINT(19)">
         <constraints primaryKey="true"/>
       </column>
-      <column name="reason" type="VARCHAR(255)"/>
-      <column name="request_status" type="VARCHAR(255)">
-        <constraints nullable="false"/>
+      <column name="reason" type="VARCHAR(255)">
+          <constraints nullable="false"/>
       </column>
+      <column name="request_status" type="VARCHAR(255)"/>
       <column name="submission_time" type="datetime"/>
       <column name="absence_id" type="BIGINT(19)"/>
       <column name="user_id" type="BIGINT(19)"/>
@@ -146,24 +146,24 @@
   </changeSet>
   <changeSet author="admin" id="{initialId}-7">
     <createTable tableName="team">
-      <column autoIncrement="true" name="id" type="BIGINT(19)">
-        <constraints primaryKey="true"/>
-      </column>
-      <column name="send_email_to_teammates_for_sickness_request_enabled" type="BIT(1)">
-        <constraints nullable="false"/>
-      </column>
-      <column name="send_email_to_teammates_for_annual_request_enabled" type="BIT(1)">
-        <constraints nullable="false"/>
-      </column>
-      <column name="send_email_to_teammates_for_bonus_request_enabled" type="BIT(1)">
-        <constraints nullable="false"/>
-      </column>
-      <column name="sickness_request_emails" type="VARCHAR(255)"/>
-      <column name="annual_request_emails" type="VARCHAR(255)"/>
-      <column name="bonus_request_emails" type="VARCHAR(255)"/>
-      <column name="name" type="VARCHAR(255)">
-        <constraints nullable="false"/>
-      </column>
+        <column autoIncrement="true" name="id" type="BIGINT(19)">
+            <constraints primaryKey="true"/>
+        </column>
+        <column name="name" type="VARCHAR(255)">
+            <constraints nullable="false"/>
+        </column>
+        <column name="send_email_to_teammates_for_sickness_request_enabled" type="BIT(1)">
+            <constraints nullable="false"/>
+        </column>
+        <column name="send_email_to_teammates_for_annual_request_enabled" type="BIT(1)">
+            <constraints nullable="false"/>
+        </column>
+        <column name="send_email_to_teammates_for_bonus_request_enabled" type="BIT(1)">
+            <constraints nullable="false"/>
+        </column>
+        <column name="sickness_request_emails" type="VARCHAR(255)"/>
+        <column name="annual_request_emails" type="VARCHAR(255)"/>
+        <column name="bonus_request_emails" type="VARCHAR(255)"/>
     </createTable>
   </changeSet>
   <changeSet author="admin" id="{initialId}-8">
@@ -181,31 +181,31 @@
       <column autoIncrement="true" name="id" type="BIGINT(19)">
         <constraints primaryKey="true"/>
       </column>
-      <column name="user_status_type" type="VARCHAR(255)">
-        <constraints nullable="false"/>
-      </column>
-      <column name="image" type="MEDIUMBLOB"/>
-      <column name="email" type="VARCHAR(255)">
-        <constraints nullable="false"/>
-      </column>
-      <column name="full_name" type="NVARCHAR(255)">
-        <constraints nullable="false"/>
-      </column>
-      <column name="job_title" type="VARCHAR(255)"/>
-      <column name="user_role" type="VARCHAR(255)">
-        <constraints nullable="false"/>
-      </column>
-      <column name="started_working_date" type="date">
-        <constraints nullable="false"/>
-      </column>
-      <column name="started_working_at_execom_date" type="date">
-        <constraints nullable="false"/>
-      </column>
-      <column name="years_of_service" type="INT(10)">
-        <constraints nullable="false"/>
-      </column>
-      <column name="leave_profile_id" type="BIGINT(19)"/>
-      <column name="team_id" type="BIGINT(19)"/>
+        <column name="full_name" type="VARCHAR(255)">
+            <constraints nullable="false"/>
+        </column>
+        <column name="image" type="MEDIUMBLOB"/>
+        <column name="email" type="VARCHAR(255)">
+            <constraints nullable="false"/>
+        </column>
+        <column name="user_status_type" type="VARCHAR(255)">
+            <constraints nullable="false"/>
+        </column>
+        <column name="job_title" type="VARCHAR(255)"/>
+        <column name="user_role" type="VARCHAR(255)">
+            <constraints nullable="false"/>
+        </column>
+        <column name="years_of_service" type="INT(10)"/>
+        <column name="started_working_date" type="date">
+            <constraints nullable="false"/>
+        </column>
+        <column name="started_working_at_execom_date" type="date">
+            <constraints nullable="false"/>
+        </column>
+        <column name="leave_profile_id" type="BIGINT(19)">
+            <constraints nullable="false"/>
+        </column>
+        <column name="team_id" type="BIGINT(19)"/>
     </createTable>
   </changeSet>
   <changeSet author="admin" id="{initialId}-10">
@@ -293,10 +293,12 @@
       <column autoIncrement="true" name="id" type="BIGINT(19)">
         <constraints primaryKey="true"/>
       </column>
-      <column name="active" type="BIT(1)">
-        <constraints nullable="true"/>
-      </column>
-      <column name="year" type="INT(10)"/>
+        <column name="year" type="INT(10)">
+            <constraints nullable="false"/>
+        </column>
+        <column name="active" type="BIT(1)">
+            <constraints nullable="true"/>
+        </column>
     </createTable>
   </changeSet>
   <changeSet author="admin" id="{initialId}-23">

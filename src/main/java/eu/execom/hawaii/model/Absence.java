@@ -1,18 +1,18 @@
 package eu.execom.hawaii.model;
 
-import java.io.Serializable;
-import java.util.List;
+import eu.execom.hawaii.model.enumerations.AbsenceSubtype;
+import eu.execom.hawaii.model.enumerations.AbsenceType;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
-
-import eu.execom.hawaii.model.enumerations.AbsenceSubtype;
-import eu.execom.hawaii.model.enumerations.AbsenceType;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import java.io.Serializable;
+import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
@@ -29,10 +29,12 @@ public class Absence extends BaseEntity implements Serializable {
   private AbsenceSubtype absenceSubtype;
 
   @NotNull
+  @Column(unique = true)
   private String name;
 
   private String comment;
 
+  @NotNull
   private boolean active;
 
   private String iconUrl;

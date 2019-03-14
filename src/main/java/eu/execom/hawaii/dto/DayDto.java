@@ -7,20 +7,30 @@ import eu.execom.hawaii.model.enumerations.Duration;
 import eu.execom.hawaii.model.enumerations.RequestStatus;
 import lombok.Data;
 
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Data
 public class DayDto {
 
   private Long id;
-  private Long requestId;
-  private LocalDate date;
-  private Duration duration;
-  private RequestStatus requestStatus;
-  private String iconUrl;
-  private AbsenceType absenceType;
-  private AbsenceSubtype absenceSubtype;
 
+  @NotNull
+  private Long requestId;
+
+  @NotNull
+  private LocalDate date;
+
+  @NotNull
+  private Duration duration;
+
+  private RequestStatus requestStatus;
+
+  private String iconUrl;
+
+  private AbsenceType absenceType;
+
+  private AbsenceSubtype absenceSubtype;
 
   public DayDto(Day day) {
     this.id = day.getId();

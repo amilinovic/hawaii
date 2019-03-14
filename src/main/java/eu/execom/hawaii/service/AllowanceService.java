@@ -223,6 +223,7 @@ public class AllowanceService {
         checkRemainingBonusHours(leaveProfile, currentYearAllowance, hours);
         applyBonus(currentYearAllowance, hours);
         if (requestForPreviousYear) {
+          var nextYearAllowance = getByUserAndYear(request.getUser().getId(), yearOfRequest + 1);
           addHoursToCarriedOver(nextYearAllowance, leaveProfile, hours);
         }
         break;

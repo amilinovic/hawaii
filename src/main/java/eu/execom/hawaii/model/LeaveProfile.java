@@ -24,16 +24,22 @@ public class LeaveProfile extends BaseEntity implements Serializable {
   private static final long serialVersionUID = -7099701790737670685L;
 
   @NotNull
+  @Column(unique = true)
   private String name;
 
+  @NotNull
   private int entitlement;
 
+  @NotNull
   private int maxCarriedOver;
 
+  @NotNull
   private int maxBonusDays;
 
+  @NotNull
   private int training;
 
+  @NotNull
   private int maxAllowanceFromNextYear;
 
   @Column(updatable = false)

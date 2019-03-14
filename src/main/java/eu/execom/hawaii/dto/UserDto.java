@@ -5,6 +5,7 @@ import eu.execom.hawaii.model.enumerations.UserRole;
 import eu.execom.hawaii.model.enumerations.UserStatusType;
 import lombok.Data;
 
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,16 +15,35 @@ import java.util.stream.Collectors;
 public class UserDto {
 
   private Long id;
+
+  @NotNull
   private Long teamId;
+
   private String teamName;
+
+  @NotNull
   private Long leaveProfileId;
+
+  @NotNull
   private String fullName;
+
+  @NotNull
   private String email;
+
+  @NotNull
   private UserRole userRole;
+
   private String jobTitle;
+
+  @NotNull
   private UserStatusType userStatusType;
+
+  @NotNull
   private LocalDate startedWorkingDate;
+
+  @NotNull
   private LocalDate startedWorkingAtExecomDate;
+
   private int yearsOfService;
 
   private List<UserPushTokenDto> userPushTokens = new ArrayList<>();

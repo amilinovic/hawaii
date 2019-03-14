@@ -4,6 +4,7 @@ import eu.execom.hawaii.model.LeaveProfile;
 import eu.execom.hawaii.model.enumerations.LeaveProfileType;
 import lombok.Data;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -11,15 +12,33 @@ import java.util.stream.Collectors;
 public class LeaveProfileDto {
 
   private Long id;
+
+  @NotNull
   private String name;
+
+  @NotNull
   private int entitlement;
+
+  @NotNull
   private int maxCarriedOver;
+
+  @NotNull
   private int maxBonusDays;
+
+  @NotNull
   private int maxAllowanceFromNextYear;
+
+  @NotNull
   private int training;
+
+  @NotNull
   private boolean upgradeable;
+
+  @NotNull
   private LeaveProfileType leaveProfileType;
+
   private String comment;
+
   private List<UserDto> users;
 
   public LeaveProfileDto(LeaveProfile leaveProfile) {
