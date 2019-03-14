@@ -1,6 +1,7 @@
 package eu.execom.hawaii.api.controller;
 
 import eu.execom.hawaii.dto.YearDto;
+import eu.execom.hawaii.exceptions.ActionNotAllowedException;
 import eu.execom.hawaii.model.Year;
 import eu.execom.hawaii.service.YearService;
 import lombok.extern.slf4j.Slf4j;
@@ -36,16 +37,15 @@ public class YearController {
 
   @PostMapping
   public ResponseEntity<YearDto> createYear(@RequestBody YearDto yearDto) {
-    Year year = yearService.findOneByYear(yearDto.getYear());
-    Year newYear = new Year();
-    if (year == null) {
-      newYear = MAPPER.map(yearDto, Year.class);
-      yearService.createAllowanceOnCreateYear(newYear);
-      yearService.save(newYear);
+    Year year;
+    if (!yearService.existsByYear(yearDto.getYear())) {
+      year = MAPPER.map(yearDto, Year.class);
+      yearService.save(year);
+      yearService.createAllowanceOnCreateYear(year);
     } else {
-      log.error("Year {} already exists. Will not create new one.", year.getYear());
+      throw new ActionNotAllowedException("This year already exists.");
     }
-    return new ResponseEntity<>(new YearDto(newYear), HttpStatus.CREATED);
+    return new ResponseEntity<>(new YearDto(year), HttpStatus.CREATED);
   }
 
   @GetMapping("/{id}")
@@ -67,6 +67,10 @@ public class YearController {
   @PutMapping
   public ResponseEntity<YearDto> updateYear(@RequestBody YearDto yearDto) {
     var year = MAPPER.map(yearDto, Year.class);
+
+    if (year.getAllowances().isEmpty()) {
+      yearService.createAllowanceOnCreateYear(year);
+    }
     year = yearService.save(year);
 
     return new ResponseEntity<>(new YearDto(year), HttpStatus.OK);

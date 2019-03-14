@@ -1,5 +1,6 @@
 package eu.execom.hawaii.service;
 
+import eu.execom.hawaii.exceptions.ActionNotAllowedException;
 import eu.execom.hawaii.model.Allowance;
 import eu.execom.hawaii.model.LeaveProfile;
 import eu.execom.hawaii.model.User;
@@ -11,7 +12,7 @@ import eu.execom.hawaii.repository.YearRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @Service
@@ -47,18 +48,23 @@ public class YearService {
 
   public void delete(Long id) {
     var year = getById(id);
-    year.setActive(false);
-    yearRepository.save(year);
+    if (!year.isActive() && year.getAllowances().isEmpty()) {
+      yearRepository.deleteById(id);
+    } else {
+      throw new ActionNotAllowedException("Only inactive and years with no allowances assigned can be deleted.");
+    }
   }
 
   public void createAllowanceOnCreateYear(Year createdYear) {
-    List<User> activeUsers = userRepository.findAllByUserStatusTypeIn(Collections.singletonList(UserStatusType.ACTIVE));
-    for (User user : activeUsers) {
-      LeaveProfile leaveProfile = user.getLeaveProfile();
-      var userAllowances = user.getAllowances();
-      Allowance allowance = createAllowance(createdYear, leaveProfile, user);
-      userAllowances.add(allowance);
-      userRepository.save(user);
+    if (createdYear.isActive()) {
+      List<User> activeUsers = userRepository.findAllByUserStatusTypeIn(List.of(UserStatusType.ACTIVE));
+      for (User user : activeUsers) {
+        LeaveProfile leaveProfile = user.getLeaveProfile();
+        var userAllowances = user.getAllowances();
+        Allowance allowance = createAllowance(createdYear, leaveProfile, user);
+        userAllowances.add(allowance);
+        user.setAllowances(userAllowances);
+      }
     }
   }
 
@@ -68,7 +74,12 @@ public class YearService {
     allowance.setYear(createdYear);
     allowance.setAnnual(leaveProfile.getEntitlement());
     allowance.setTraining(leaveProfile.getTraining());
+    allowanceRepository.save(allowance);
 
     return allowance;
+  }
+
+  public boolean existsByYear(int year) {
+    return yearRepository.existsByYear(year);
   }
 }
