@@ -90,6 +90,7 @@ public class TeamServiceTest {
     // then
     assertNotNull(team);
     verify(auditInformationService).saveAudit(any(), any(), any(), any(), any());
+    verify(teamRepository).existsByName(any());
     verify(teamRepository).create(mockTeam);
     verifyNoMoreInteractions(allMocks);
   }

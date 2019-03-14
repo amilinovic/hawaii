@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityExistsException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,6 +82,10 @@ public class TeamService {
    */
   @Transactional
   public Team create(Team team, User modifiedByUser) {
+
+    if (teamRepository.existsByName(team.getName())) {
+      logAndThrowEntityExistsException(team);
+    }
     saveAuditInformation(OperationPerformed.CREATE, modifiedByUser, team, null);
     team.getUsers().forEach(user -> user.setTeam(team));
 
@@ -142,6 +147,11 @@ public class TeamService {
           .forEach(modifiedUser -> auditInformationService.saveAudit(operationPerformed, modifiedByUser, modifiedUser,
               previousTeamState, currentTeamState));
     }
+  }
+
+  private void logAndThrowEntityExistsException(Team team) {
+    log.error("Team with name '{}' already exists.", team.getName());
+    throw new EntityExistsException("Team with name " + team.getName() + " already exists.");
   }
 
 }

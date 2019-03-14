@@ -6,4 +6,6 @@ public interface TeamRepository extends CustomizedTeamRepository<Team, Long> {
 
   void deleteById(Long id);
 
+  boolean existsByName(String name);
+
 }
