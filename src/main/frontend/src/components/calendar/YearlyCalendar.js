@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import { Day } from './Day';
+import Day from './Day';
 import { Month } from './Month';
 
 const TableHeading = styled.th`

@@ -1,21 +1,17 @@
 import { handleActions } from 'redux-actions';
-import { closeModal, resetModalState } from '../actions/modalActions';
+import { toggleModal } from '../actions/modalActions';
 
 export const initialState = {
-  shouldClose: false
+  open: false,
+  day: undefined
 };
 
 const actionHandlers = {
-  [closeModal]: state => {
+  [toggleModal]: (state, action) => {
     return {
       ...state,
-      shouldClose: true
-    };
-  },
-  [resetModalState]: state => {
-    return {
-      ...state,
-      shouldClose: false
+      day: action.payload,
+      open: !state.open
     };
   }
 };

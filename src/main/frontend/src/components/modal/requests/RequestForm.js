@@ -19,8 +19,8 @@ const validationSchema = Yup.object().shape({
 
 class RequestForm extends Component {
   state = {
-    startDate: new Date(),
-    endDate: new Date()
+    startDate: !this.props.day ? new Date() : this.props.day.toDate(),
+    endDate: !this.props.day ? new Date() : this.props.day.toDate()
   };
 
   selectStartDateHandler = (startDate, dayDuration) =>
@@ -112,7 +112,9 @@ class RequestForm extends Component {
           requestStatus: 'PENDING',
           days: [
             {
-              date: moment().format('YYYY-MM-DD'),
+              date: !this.props.day
+                ? this.state.start
+                : this.props.day.toDate(),
               duration: 'FULL_DAY',
               requestStatus: 'PENDING'
             }
@@ -134,6 +136,7 @@ class RequestForm extends Component {
           //   setTouched
         }) => (
           <div className="d-flex justify-content-between">
+            {console.log(values)}
             <div className="px-2">
               {this.props.leaveTypes.length > 1 && (
                 <div className="mb-2">

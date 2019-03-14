@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { requestLeaveTypes } from '../../store/actions/leaveTypesActions';
+import { toggleModal } from '../../store/actions/modalActions';
 import { requestPersonalDays } from '../../store/actions/personalDaysActions';
 import { requestPublicHolidays } from '../../store/actions/publicHolidaysActions';
 import {
@@ -13,7 +14,6 @@ import {
 import CalendarContainer from '../calendar/CalendarContainer';
 import withResetOnNavigate from '../HOC/withResetOnNavigate';
 import Loading from '../loading/Loading';
-import RequestModal from '../modal/RequestModal';
 
 class Dashboard extends Component {
   componentDidMount() {
@@ -21,6 +21,10 @@ class Dashboard extends Component {
     this.props.requestPersonalDays();
     this.props.requestLeaveTypes();
   }
+
+  toggle = () => {
+    this.props.toggleModal();
+  };
 
   render() {
     if (this.props.publicHolidays === null || this.props.personalDays === null)
@@ -30,7 +34,9 @@ class Dashboard extends Component {
       <div className="d-flex flex-grow-1 justify-content-between flex-column">
         <div className="d-flex justify-content-between px-4 pt-4 align-items-center">
           <h1>My Leave</h1>
-          <RequestModal />
+          <button className="btn btn-danger" onClick={this.toggle}>
+            + New Request
+          </button>
         </div>
         <CalendarContainer
           publicHolidays={this.props.publicHolidays}
@@ -53,7 +59,8 @@ const mapDispatchToProps = dispatch =>
     {
       requestPublicHolidays,
       requestPersonalDays,
-      requestLeaveTypes
+      requestLeaveTypes,
+      toggleModal
     },
     dispatch
   );

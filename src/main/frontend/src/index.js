@@ -5,6 +5,7 @@ import ReduxToastr from 'react-redux-toastr';
 import 'react-redux-toastr/lib/css/react-redux-toastr.min.css';
 import 'reset-css/reset.css';
 import App from './App';
+import RequestModal from './components/modal/RequestModal';
 import registerServiceWorker from './registerServiceWorker';
 import store from './store/store';
 import './styles/globalStyles.js';
@@ -23,6 +24,7 @@ ReactDOM.render(
         duration={4000}
         closeOnToastrClick
       />
+      <RequestModal />
       <App />
     </div>
   </Provider>,

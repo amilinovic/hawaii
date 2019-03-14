@@ -1,5 +1,5 @@
 import { call, put, takeLatest } from 'redux-saga/effects';
-import { closeModal } from '../actions/modalActions';
+import { toggleModal } from '../actions/modalActions';
 import { requestPersonalDays } from '../actions/personalDaysActions';
 import {
   createBonusRequest,
@@ -24,7 +24,7 @@ export const createLeaveRequestSaga = function*(action) {
   yield put(createLeaveRequestSuccessful());
   yield put(toastrSuccess('Leave request successfuly created'));
   yield put(requestPersonalDays());
-  yield put(closeModal());
+  yield put(toggleModal());
 };
 
 export const createSicknessRequestSaga = function*(action) {
@@ -32,7 +32,7 @@ export const createSicknessRequestSaga = function*(action) {
   yield put(createSicknessRequestSuccessful());
   yield put(toastrSuccess('Sickness request successfuly created'));
   yield put(requestPersonalDays());
-  yield put(closeModal());
+  yield put(toggleModal());
 };
 
 export const createBonusRequestSaga = function*(action) {
@@ -40,7 +40,7 @@ export const createBonusRequestSaga = function*(action) {
   yield put(createBonusRequestSuccessful());
   yield put(toastrSuccess('Bonus request successfuly created'));
   yield put(requestPersonalDays());
-  yield put(closeModal());
+  yield put(toggleModal());
 };
 
 export const requestsSaga = [

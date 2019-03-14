@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import BonusIcon from '../../img/icons/bonus_ss.png';
 import LeaveIcon from '../../img/icons/leave_ss.png';
 import SicknessIcon from '../../img/icons/sickness_ss.png';
-import { resetModalState } from '../../store/actions/modalActions';
+import { closeModal, toggleModal } from '../../store/actions/modalActions';
 import {
   createBonusRequest,
   createLeaveRequest,
@@ -48,26 +48,14 @@ const LeaveWrapper = styled.div`
 
 class RequestModal extends Component {
   state = {
-    modal: false,
+    // modal: false,
     isLeave: false,
     isSickness: false,
     isBonus: false
   };
 
-  componentDidUpdate(prevProps) {
-    if (prevProps !== this.props && this.props.modal.shouldClose) {
-      this.setState(prevState => ({
-        modal: !prevState.modal
-      }));
-
-      this.props.resetModalState();
-    }
-  }
-
   toggle = () => {
-    this.setState(prevState => ({
-      modal: !prevState.modal
-    }));
+    this.props.toggleModal();
   };
 
   resetState = () => {
@@ -115,12 +103,9 @@ class RequestModal extends Component {
 
     return (
       <div>
-        <button className="btn btn-danger" onClick={this.toggle}>
-          + New Request
-        </button>
         <Modal
           onClosed={() => this.resetState()}
-          isOpen={this.state.modal}
+          isOpen={this.props.modal.open}
           toggle={this.toggle}
           className={this.props.className}
           centered={true}
@@ -136,6 +121,7 @@ class RequestModal extends Component {
               <RequestForm
                 user={this.props.user}
                 allowance={this.props.allowance}
+                day={this.props.modal.day}
                 {...this.getFormProps()}
               />
             )}
@@ -191,7 +177,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch =>
-  bindActionCreators({ resetModalState }, dispatch);
+  bindActionCreators({ closeModal, toggleModal }, dispatch);
 
 export default connect(
   mapStateToProps,

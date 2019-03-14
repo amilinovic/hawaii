@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import styled from 'styled-components';
 import { ifProp, prop, switchProp } from 'styled-tools';
 import HolidayImg from '../../img/holiday.svg';
+import { toggleModal } from '../../store/actions/modalActions';
 
 // TODO: Handle overriding better with styled-components
 const DayCell = styled.td`
@@ -28,11 +31,33 @@ const Image = styled.img`
   height: 15px;
 `;
 
-export const Day = props => {
-  return (
-    <DayCell className="text-center align-middle" {...props}>
-      {props.publicHoliday && <Image src={HolidayImg} alt="public_holiday" />}
-      {props.personalDay && <Image src={props.personalDay.iconUrl} />}
-    </DayCell>
-  );
-};
+class Day extends Component {
+  toggle = day => {
+    this.props.toggleModal(day);
+  };
+
+  render() {
+    return (
+      <DayCell
+        onClick={() => this.toggle(this.props.day)}
+        className="text-center align-middle"
+        {...this.props}
+      >
+        {this.props.publicHoliday && (
+          <Image src={HolidayImg} alt="public_holiday" />
+        )}
+        {this.props.personalDay && (
+          <Image src={this.props.personalDay.iconUrl} />
+        )}
+      </DayCell>
+    );
+  }
+}
+
+const mapDispatchToProps = dispatch =>
+  bindActionCreators({ toggleModal }, dispatch);
+
+export default connect(
+  null,
+  mapDispatchToProps
+)(Day);
