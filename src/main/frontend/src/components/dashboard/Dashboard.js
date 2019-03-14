@@ -52,7 +52,7 @@ class Dashboard extends Component {
         return [
           {
             id: 1,
-            type: 'Approved',
+            type: 'Used',
             hours: allowance.sickness
           }
         ];
@@ -60,7 +60,7 @@ class Dashboard extends Component {
         return [
           {
             id: 1,
-            type: 'Approved',
+            type: 'Used',
             hours: allowance.takenTraining
           },
           {
