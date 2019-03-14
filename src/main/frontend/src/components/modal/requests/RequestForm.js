@@ -32,6 +32,8 @@ class RequestForm extends Component {
     const start = startDate || this.state.startDate;
     let end = endDate || this.state.endDate;
 
+    console.log(start, end);
+
     if (moment(start).isAfter(moment(end))) {
       end = start;
     }
@@ -55,9 +57,11 @@ class RequestForm extends Component {
     ];
 
     for (let i = 1; i <= numberOfDays; i++) {
-      if (this.isWeekday(start.add(i, 'days'))) {
+      if (this.isWeekday(moment(start).add(i, 'days'))) {
         days.push({
-          date: moment(start.add(i, 'days')).format('YYYY-MM-DD'),
+          date: moment(start)
+            .add(i, 'days')
+            .format('YYYY-MM-DD'),
           duration: dayDuration,
           requestStatus: 'PENDING'
         });
@@ -113,8 +117,8 @@ class RequestForm extends Component {
           days: [
             {
               date: !this.props.day
-                ? this.state.start
-                : this.props.day.toDate(),
+                ? moment().format('YYYY-MM-DD')
+                : this.props.day.format('YYYY-MM-DD'),
               duration: 'FULL_DAY',
               requestStatus: 'PENDING'
             }
@@ -136,7 +140,6 @@ class RequestForm extends Component {
           //   setTouched
         }) => (
           <div className="d-flex justify-content-between">
-            {console.log(values)}
             <div className="px-2">
               {this.props.leaveTypes.length > 1 && (
                 <div className="mb-2">
