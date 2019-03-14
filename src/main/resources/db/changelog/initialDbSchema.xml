@@ -181,7 +181,7 @@
       <column autoIncrement="true" name="id" type="BIGINT(19)">
         <constraints primaryKey="true"/>
       </column>
-        <column name="full_name" type="VARCHAR(255)">
+        <column name="full_name" type="NVARCHAR(255)">
             <constraints nullable="false"/>
         </column>
         <column name="image" type="MEDIUMBLOB"/>
