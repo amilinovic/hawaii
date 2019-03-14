@@ -48,7 +48,6 @@ const LeaveWrapper = styled.div`
 
 class RequestModal extends Component {
   state = {
-    // modal: false,
     isLeave: false,
     isSickness: false,
     isBonus: false

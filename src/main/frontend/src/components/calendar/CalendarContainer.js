@@ -66,7 +66,7 @@ class CalendarContainer extends Component {
 
   render() {
     return (
-      <div className="px-4 d-flex flex-column flex-grow-1">
+      <div className="px-4 d-flex flex-column">
         <YearSelection className="rounded d-flex align-items-center justify-content-center p-2 my-3">
           <YearControlButton
             onClick={() => this.handleYearChange(this.state.selectedYear - 1)}
@@ -80,7 +80,7 @@ class CalendarContainer extends Component {
             {'>'}
           </YearControlButton>
         </YearSelection>
-        <CalendarContainerBlock className="p-3 rounded">
+        <CalendarContainerBlock className="p-3 rounded mb-5">
           {this.state.calendar && (
             <YearlyCalendar
               calendar={this.state.calendar}

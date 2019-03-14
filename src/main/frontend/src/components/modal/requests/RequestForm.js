@@ -32,8 +32,6 @@ class RequestForm extends Component {
     const start = startDate || this.state.startDate;
     let end = endDate || this.state.endDate;
 
-    console.log(start, end);
-
     if (moment(start).isAfter(moment(end))) {
       end = start;
     }
