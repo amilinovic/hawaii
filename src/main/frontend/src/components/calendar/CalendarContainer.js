@@ -72,34 +72,14 @@ class CalendarContainer extends Component {
     this.props.requestAllowance(selectedYear);
   };
 
-  filterAllowance = (filter, allowance) => {
-    const filteredAllowance = [];
-
-    if (allowance !== null) {
-      Object.keys(allowance).map(function(key, index) {
-        if (key.toLocaleLowerCase().includes(filter)) {
-          filteredAllowance.push({
-            id: index,
-            hours: allowance[key]
-          });
-        }
-        return null;
-      });
-    }
-
-    return filteredAllowance;
-  };
-
   render() {
     const infoCards = allowanceTypes.map(allowance => {
       return (
         <div key={allowance.type} className="col-4">
           <InfoCard
             title={allowance.title}
-            allowance={this.filterAllowance(
-              allowance.type,
-              this.props.allowance
-            )}
+            allowanceType={allowance.type}
+            allowance={this.props.allowance}
           />
         </div>
       );
