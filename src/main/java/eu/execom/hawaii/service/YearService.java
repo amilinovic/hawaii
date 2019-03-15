@@ -42,16 +42,12 @@ public class YearService {
   }
 
   public Year save(Year year) {
-    saveYear(year);
+    yearRepository.save(year);
     if (year.getAllowances().isEmpty()) {
       createAllowanceOnCreateYear(year);
     }
 
     return year;
-  }
-
-  private Year saveYear(Year year) {
-    return yearRepository.save(year);
   }
 
   public void delete(Long id) {
@@ -70,6 +66,7 @@ public class YearService {
         Allowance allowance = createAllowance(createdYear, user);
         var userAllowances = user.getAllowances();
         userAllowances.add(allowance);
+        userRepository.save(user);
       }
     }
   }
