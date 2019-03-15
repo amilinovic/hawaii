@@ -44,6 +44,8 @@ public class UserDto {
   @NotNull
   private LocalDate startedWorkingAtExecomDate;
 
+  private LocalDate stoppedWorkingAtExecomDate;
+
   private int yearsOfService;
 
   private List<UserPushTokenDto> userPushTokens = new ArrayList<>();
@@ -60,6 +62,7 @@ public class UserDto {
     this.userStatusType = user.getUserStatusType();
     this.startedWorkingDate = user.getStartedWorkingDate();
     this.startedWorkingAtExecomDate = user.getStartedWorkingAtExecomDate();
+    this.stoppedWorkingAtExecomDate = user.getStoppedWorkingAtExecomDate();
     this.yearsOfService = user.getYearsOfService();
     this.userPushTokens = user.getUserPushTokens().stream().map(UserPushTokenDto::new).collect(Collectors.toList());
   }

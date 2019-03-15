@@ -23,6 +23,7 @@ public class UserAudit extends Audit {
   private UserStatusType userStatusType;
   private LocalDate startedWorkingDate;
   private LocalDate startedWorkingAtExecomDate;
+  private LocalDate stoppedWorkingAtExecomDate;
 
   private UserAudit(User user) {
     this.id = user.getId();
@@ -35,6 +36,7 @@ public class UserAudit extends Audit {
     this.userStatusType = user.getUserStatusType();
     this.startedWorkingDate = user.getStartedWorkingDate();
     this.startedWorkingAtExecomDate = user.getStartedWorkingAtExecomDate();
+    this.stoppedWorkingAtExecomDate = user.getStoppedWorkingAtExecomDate();
     this.setAuditedEntity(AuditedEntity.USER);
   }
 
