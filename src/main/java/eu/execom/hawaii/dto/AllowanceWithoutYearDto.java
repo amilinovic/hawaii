@@ -7,16 +7,16 @@ import lombok.Data;
 public class AllowanceWithoutYearDto {
 
   private Long userId;
-  private int annual;
   private int takenAnnual;
   private int pendingAnnual;
+  private int annual;
   private int sickness;
   private int bonus;
   private int carriedOver;
   private int manualAdjust;
-  private int training;
   private int takenTraining;
   private int pendingTraining;
+  private int training;
   private int takenInPreviousYear;
   private int pendingInPreviousYear;
 
