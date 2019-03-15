@@ -9,5 +9,7 @@ public interface YearRepository extends JpaRepository<Year, Long> {
 
   Year findOneByYear(int year);
 
+  boolean existsByYear(int year);
+
   List<Year> findAllByYearGreaterThanEqual(int year);
 }

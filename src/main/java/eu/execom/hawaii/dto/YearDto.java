@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 @Data
 public class YearDto {
 
-  private Long yearId;
+  private Long id;
 
   @NotNull
   private int year;
@@ -21,7 +21,7 @@ public class YearDto {
   private List<AllowanceWithoutYearDto> allowances;
 
   public YearDto(Year year) {
-    this.yearId = year.getId();
+    this.id = year.getId();
     this.year = year.getYear();
     this.allowances = year.getAllowances().stream().map(AllowanceWithoutYearDto::new).collect(Collectors.toList());
     this.active = year.isActive();

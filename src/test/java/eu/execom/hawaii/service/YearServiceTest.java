@@ -1,6 +1,7 @@
 package eu.execom.hawaii.service;
 
 import eu.execom.hawaii.model.Year;
+import eu.execom.hawaii.repository.AllowanceRepository;
 import eu.execom.hawaii.repository.UserRepository;
 import eu.execom.hawaii.repository.YearRepository;
 import org.junit.Before;
@@ -31,6 +32,9 @@ public class YearServiceTest {
 
   @Mock
   private YearRepository yearRepository;
+
+  @Mock
+  private AllowanceRepository allowanceRepository;
 
   @InjectMocks
   private YearService yearService;
@@ -93,6 +97,7 @@ public class YearServiceTest {
   public void shouldDeleteYear() {
     // given
     var yearId = 1L;
+    mockYear.setActive(false);
     given(yearRepository.getOne(yearId)).willReturn(mockYear);
 
     // when
@@ -100,7 +105,7 @@ public class YearServiceTest {
 
     // then
     verify(yearRepository).getOne(anyLong());
-    verify(yearRepository).save(ArgumentMatchers.any());
+    verify(yearRepository).deleteById(anyLong());
     verifyNoMoreInteractions(yearRepository);
   }
 
@@ -112,9 +117,10 @@ public class YearServiceTest {
     var activeUsers = List.of(user1, user2);
 
     given(userRepository.findAllByUserStatusTypeIn(any())).willReturn(activeUsers);
+    given(allowanceRepository.save(any())).willReturn(any());
 
     // when
-    yearService.createAllowanceOnCreateYear(EntityBuilder.nextYear());
+    yearService.save(EntityBuilder.nextYear());
 
     // then
     assertThat("Expect to have one allowance created for user 1", user1.getAllowances().size(), is(1));
@@ -124,8 +130,9 @@ public class YearServiceTest {
     assertThat("Expect allowance to be for next year", user2.getAllowances().get(0).getYear().getYear(),
         is(EntityBuilder.nextYear().getYear()));
     verify(userRepository).findAllByUserStatusTypeIn(any());
-    verify(userRepository, times(2)).save(any());
-    verifyNoMoreInteractions(yearRepository);
+    verify(allowanceRepository, times(2)).save(any());
+    verify(yearRepository).save(any());
+    verifyNoMoreInteractions(yearRepository, allowanceRepository);
   }
 }
 
