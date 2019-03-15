@@ -31,11 +31,12 @@ const LoginContainer = styled.div`
   background: url(${HawaiiWallpaper});
   height: 100%;
   width: 100%;
+  background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: flex-end;
   justify-content: center;
 `;
 
@@ -66,7 +67,7 @@ class Login extends Component {
 
   render() {
     return (
-      <LoginContainer>
+      <LoginContainer className="pb-5">
         <LogoContainer>
           <MainLogo>
             <p>Hawaii</p>
