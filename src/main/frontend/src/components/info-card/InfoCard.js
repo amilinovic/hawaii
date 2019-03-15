@@ -6,15 +6,17 @@ const Card = styled.div`
   background: white;
 `;
 
+const title = ['Taken', 'Pending', 'Remaining'];
+
 export default class InfoCard extends Component {
   render() {
     if (!this.props.allowance) return <Loading />;
 
-    const cardInfo = this.props.allowance.map(item => {
+    const cardInfo = this.props.allowance.map((item, index) => {
       return (
         <div key={item.id} className="d-flex justify-content-between mb-2">
-          <span>{item.type}</span>
-          <span>{item.hours} hours</span>
+          <span>{title[index]}</span>
+          <span>{item.hours / 8} days</span>
         </div>
       );
     });

@@ -4,7 +4,9 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import styled from 'styled-components';
 import { requestAllowance } from '../../store/actions/allowanceActions';
+import { getAllowance } from '../../store/selectors';
 import { createCalendar } from '../calendar/calendarUtils';
+import InfoCard from '../info-card/InfoCard';
 import YearlyCalendar from './YearlyCalendar';
 
 const YearControlButton = styled.button`
@@ -28,6 +30,12 @@ const CalendarContainerBlock = styled.div`
   background: white;
 `;
 
+const allowanceTypes = [
+  { title: 'Leave', type: 'annual' },
+  { title: 'Sickness', type: 'sickness' },
+  { title: 'Training & Education', type: 'training' }
+];
+
 class CalendarContainer extends Component {
   state = {
     selectedYear: moment().year(),
@@ -43,7 +51,7 @@ class CalendarContainer extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps !== this.props) {
+    if (prevProps.personalDays !== this.props.personalDays) {
       this.handleYearChange(this.state.selectedYear);
     }
   }
@@ -64,7 +72,39 @@ class CalendarContainer extends Component {
     this.props.requestAllowance(selectedYear);
   };
 
+  filterAllowance = (filter, allowance) => {
+    const filteredAllowance = [];
+
+    if (allowance !== null) {
+      Object.keys(allowance).map(function(key, index) {
+        if (key.toLocaleLowerCase().includes(filter)) {
+          filteredAllowance.push({
+            id: index,
+            hours: allowance[key]
+          });
+        }
+        return null;
+      });
+    }
+
+    return filteredAllowance;
+  };
+
   render() {
+    const infoCards = allowanceTypes.map(allowance => {
+      return (
+        <div key={allowance.type} className="col-4">
+          <InfoCard
+            title={allowance.title}
+            allowance={this.filterAllowance(
+              allowance.type,
+              this.props.allowance
+            )}
+          />
+        </div>
+      );
+    });
+
     return (
       <div className="px-4 d-flex flex-column">
         <YearSelection className="rounded d-flex align-items-center justify-content-center p-2 my-3">
@@ -88,10 +128,15 @@ class CalendarContainer extends Component {
             />
           )}
         </CalendarContainerBlock>
+        <div className="row">{infoCards}</div>
       </div>
     );
   }
 }
+
+const mapStateToProps = state => ({
+  allowance: getAllowance(state)
+});
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
@@ -102,6 +147,6 @@ const mapDispatchToProps = dispatch =>
   );
 
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
 )(CalendarContainer);

@@ -16,7 +16,7 @@ const DayCell = styled.td`
   background-color: ${ifProp('disabled', '#9e9e9e')};
   background-color: ${ifProp('isWeekend', '#E0E0E0')};
   pointer-events: ${props => (props.disabled || props.isWeekend ? 'none' : '')};
-  cursor: ${ifProp('disabled', 'no-drop')};
+  cursor: pointer;
   &:hover {
     background-color: rgba(0, 0, 0, 0.5);
   }
