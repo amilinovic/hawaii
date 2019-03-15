@@ -181,7 +181,7 @@
       <column autoIncrement="true" name="id" type="BIGINT(19)">
         <constraints primaryKey="true"/>
       </column>
-        <column name="full_name" type="VARCHAR(255)">
+        <column name="full_name" type="NVARCHAR(255)">
             <constraints nullable="false"/>
         </column>
         <column name="image" type="MEDIUMBLOB"/>
@@ -202,7 +202,8 @@
         <column name="started_working_at_execom_date" type="date">
             <constraints nullable="false"/>
         </column>
-        <column name="leave_profile_id" type="BIGINT(19)">
+      <column name="stopped_working_at_execom_date" type="date"/>
+      <column name="leave_profile_id" type="BIGINT(19)">
             <constraints nullable="false"/>
         </column>
         <column name="team_id" type="BIGINT(19)"/>
