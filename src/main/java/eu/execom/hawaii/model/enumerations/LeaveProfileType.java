@@ -1,6 +1,8 @@
 package eu.execom.hawaii.model.enumerations;
 
 public enum LeaveProfileType {
+  EMPLOYEES_3_DAYS_WORKING,
+  EMPLOYEES_4_DAYS_WORKING,
   ZERO_TO_FIVE_YEARS,
   FIVE_TO_TEN_YEARS,
   TEN_TO_FIFTEEN_YEARS,

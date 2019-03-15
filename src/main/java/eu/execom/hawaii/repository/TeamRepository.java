@@ -8,4 +8,6 @@ public interface TeamRepository extends CustomizedTeamRepository<Team, Long> {
 
   boolean existsByName(String name);
 
+  Team findByName(String name);
+
 }
