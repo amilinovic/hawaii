@@ -10,16 +10,17 @@ import java.time.format.DateTimeFormatter;
 
 public class BeanWrapperFieldSetMapperCustom<T> extends BeanWrapperFieldSetMapper<T> {
 
+  private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
   @Override
   protected void initBinder(DataBinder binder) {
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     binder.registerCustomEditor(LocalDate.class, new PropertyEditorSupport() {
 
       @Override
       public String getAsText() throws IllegalArgumentException {
         Object date = getValue();
         if (date != null) {
-          return formatter.format((LocalDate) date);
+          return FORMATTER.format((LocalDate) date);
         } else {
           return "";
         }
@@ -28,7 +29,7 @@ public class BeanWrapperFieldSetMapperCustom<T> extends BeanWrapperFieldSetMappe
       @Override
       public void setAsText(String text) throws IllegalArgumentException {
         if (!StringUtils.isEmpty(text)) {
-          setValue(LocalDate.parse(text, formatter));
+          setValue(LocalDate.parse(text, FORMATTER));
         } else {
           setValue(null);
         }

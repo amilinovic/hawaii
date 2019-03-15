@@ -15,6 +15,7 @@ import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.LineMapper;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
@@ -27,12 +28,13 @@ import javax.sql.DataSource;
 public class SpringBatchConfig {
 
   @Bean
-  public DataSource dataSource() {
+  public DataSource dataSource(@Value("${spring.datasource.url}") String url,
+      @Value("${spring.datasource.username}") String username,
+      @Value("${spring.datasource.password}") String password) {
     final DriverManagerDataSource dataSource = new DriverManagerDataSource();
-    dataSource.setDriverClassName("com.mysql.jdbc.Driver");
-    dataSource.setUrl("jdbc:mysql://localhost:3306/hawaii?useSSL=false&useUnicode=true&characterEncoding=UTF-8");
-    dataSource.setUsername("root");
-    dataSource.setPassword("root");
+    dataSource.setUrl(url);
+    dataSource.setUsername(username);
+    dataSource.setPassword(password);
 
     return dataSource;
   }
@@ -54,9 +56,9 @@ public class SpringBatchConfig {
   }
 
   @Bean
-  public FlatFileItemReader<UserImport> fileItemReader() {
+  public FlatFileItemReader<UserImport> fileItemReader(@Value("${inputFileName}") String inputFileName) {
     FlatFileItemReader<UserImport> flatFileItemReader = new FlatFileItemReader<>();
-    flatFileItemReader.setResource(new ClassPathResource("export user-a Appogee leaves.csv"));
+    flatFileItemReader.setResource(new ClassPathResource(inputFileName));
     flatFileItemReader.setName("CSV Reader");
     flatFileItemReader.setLinesToSkip(1);
     flatFileItemReader.setLineMapper(lineMapper());
@@ -71,8 +73,8 @@ public class SpringBatchConfig {
     DelimitedLineTokenizer lineTokenizer = new DelimitedLineTokenizer();
     lineTokenizer.setDelimiter(",");
     lineTokenizer.setStrict(false);
-    lineTokenizer.setNames("FirstName", "LastName", "Email", "PayrollNo", "ContinuousStartDate", "StartDate",
-        "EndDate", "Status", "Team", "VirtualTeam", "LeaveProfile");
+    lineTokenizer.setNames("FirstName", "LastName", "Email", "PayrollNo", "ContinuousStartDate", "StartDate", "EndDate",
+        "Status", "Team", "VirtualTeam", "LeaveProfile");
 
     BeanWrapperFieldSetMapperCustom<UserImport> fieldSetMapper = new BeanWrapperFieldSetMapperCustom<>();
     fieldSetMapper.setTargetType(UserImport.class);

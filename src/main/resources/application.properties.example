@@ -10,6 +10,7 @@ spring.jpa.hibernate.ddl-auto=none
 ################### Spring Batch Configuration ###############
 spring.batch.job.enabled=false
 spring.batch.initialize-schema=ALWAYS
+inputFileName=export user-a Appogee leaves.csv
 
 ################### Liquibase Configuration ##########################
 spring.liquibase.change-log=classpath:/db/changelog/changelog-master.xml

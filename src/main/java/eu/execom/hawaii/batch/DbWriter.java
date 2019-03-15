@@ -11,18 +11,18 @@ import java.util.List;
 
 @Slf4j
 @Component
-public class DBWriter implements ItemWriter<User> {
+public class DbWriter implements ItemWriter<User> {
 
   private UserRepository userRepository;
 
   @Autowired
-  public DBWriter(UserRepository userRepository) {
+  public DbWriter(UserRepository userRepository) {
     this.userRepository = userRepository;
   }
 
   @Override
   public void write(List<? extends User> users) throws Exception {
-    users.forEach(user -> log.info("Data saved for user: " + user));
+    users.forEach(user -> log.debug("Data saved for user '{}'.", user));
 
     userRepository.saveAll(users);
   }

@@ -27,7 +27,6 @@ public class Processor implements ItemProcessor<UserImport, User> {
   private TeamRepository teamRepository;
   private LeaveProfileRepository leaveProfileRepository;
 
-
   @Autowired
   public Processor(TeamRepository teamRepository, LeaveProfileRepository leaveProfileRepository) {
     this.teamRepository = teamRepository;
@@ -55,7 +54,7 @@ public class Processor implements ItemProcessor<UserImport, User> {
   @Override
   public User process(UserImport userImport) throws Exception {
     User user = createUserFromImport(userImport);
-    log.info("Converting (" + userImport + ") into (" + user + ")");
+    log.debug("Converting '{}' into '{}'.", userImport, user);
 
     return user;
   }
