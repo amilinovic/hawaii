@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import BonusIcon from '../../img/icons/bonus_ss.png';
 import LeaveIcon from '../../img/icons/leave_ss.png';
 import SicknessIcon from '../../img/icons/sickness_ss.png';
-import { closeModal, toggleModal } from '../../store/actions/modalActions';
+import { toggleModal } from '../../store/actions/modalActions';
 import {
   createBonusRequest,
   createLeaveRequest,
@@ -176,7 +176,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch =>
-  bindActionCreators({ closeModal, toggleModal }, dispatch);
+  bindActionCreators({ toggleModal }, dispatch);
 
 export default connect(
   mapStateToProps,
