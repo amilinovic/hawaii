@@ -12,7 +12,6 @@ import eu.execom.hawaii.repository.YearRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @Service
@@ -43,6 +42,15 @@ public class YearService {
   }
 
   public Year save(Year year) {
+    saveYear(year);
+    if (year.getAllowances().isEmpty()) {
+      createAllowanceOnCreateYear(year);
+    }
+
+    return year;
+  }
+
+  private Year saveYear(Year year) {
     return yearRepository.save(year);
   }
 
@@ -55,7 +63,7 @@ public class YearService {
     }
   }
 
-  public void createAllowanceOnCreateYear(Year createdYear) {
+  private void createAllowanceOnCreateYear(Year createdYear) {
     if (createdYear.isActive()) {
       List<User> activeUsers = userRepository.findAllByUserStatusTypeIn(List.of(UserStatusType.ACTIVE));
       for (User user : activeUsers) {

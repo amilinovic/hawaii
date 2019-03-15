@@ -41,7 +41,6 @@ public class YearController {
     if (!yearService.yearExists(yearDto.getYear())) {
       year = MAPPER.map(yearDto, Year.class);
       yearService.save(year);
-      yearService.createAllowanceOnCreateYear(year);
     } else {
       throw new ActionNotAllowedException("Year " + yearDto.getYear() + " already exists.");
     }
@@ -67,9 +66,6 @@ public class YearController {
   @PutMapping
   public ResponseEntity<YearDto> updateYear(@RequestBody YearDto yearDto) {
     var year = MAPPER.map(yearDto, Year.class);
-    if (year.getAllowances().isEmpty()) {
-      yearService.createAllowanceOnCreateYear(year);
-    }
     year = yearService.save(year);
 
     return new ResponseEntity<>(new YearDto(year), HttpStatus.OK);

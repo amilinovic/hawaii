@@ -120,7 +120,7 @@ public class YearServiceTest {
     given(allowanceRepository.save(any())).willReturn(any());
 
     // when
-    yearService.createAllowanceOnCreateYear(EntityBuilder.nextYear());
+    yearService.save(EntityBuilder.nextYear());
 
     // then
     assertThat("Expect to have one allowance created for user 1", user1.getAllowances().size(), is(1));
@@ -131,6 +131,7 @@ public class YearServiceTest {
         is(EntityBuilder.nextYear().getYear()));
     verify(userRepository).findAllByUserStatusTypeIn(any());
     verify(allowanceRepository, times(2)).save(any());
+    verify(yearRepository).save(any());
     verifyNoMoreInteractions(yearRepository, allowanceRepository);
   }
 }
