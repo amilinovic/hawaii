@@ -502,4 +502,10 @@ public class AllowanceService {
 
     return firstAndLastYear;
   }
+
+  public int[] getAllYearsWithAllowanceForUser(User authUser) {
+    List<Allowance> allowances = allowanceRepository.findAllByUserId(authUser.getId());
+
+    return allowances.stream().mapToInt(allowance -> allowance.getYear().getYear()).sorted().toArray();
+  }
 }

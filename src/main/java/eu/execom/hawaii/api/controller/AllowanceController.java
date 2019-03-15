@@ -50,6 +50,14 @@ public class AllowanceController {
     return new ResponseEntity<>(allowanceForUserDto, HttpStatus.OK);
   }
 
+  @GetMapping("/years")
+  public ResponseEntity<int[]> getAllYearsWithAllowanceForUser(
+      @ApiIgnore @AuthenticationPrincipal User authUser) {
+    var allYears = allowanceService.getAllYearsWithAllowanceForUser(authUser);
+
+    return new ResponseEntity<>(allYears, HttpStatus.OK);
+  }
+
   @GetMapping("/user/{id}/year")
   public ResponseEntity<AllowanceWithoutYearDto> getAllowanceForUserInYear(@PathVariable Long id,
       @RequestParam int year) {
